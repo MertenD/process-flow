@@ -2,16 +2,16 @@
     --md-default-fg-color:               hsla(0, 100%, 100%, 0.9);
     --md-default-fg-color--light:        hsla(0, 100%, 100%, 0.9);
     --md-default-fg-color--lighter:      hsla(0, 100%, 100%, 0.9);
-    --md-default-fg-color--lightest:     #222C3C;
-    --md-default-bg-color:               #222C3C;
-    --md-default-bg-color--light:        #222C3C;
-    --md-default-bg-color--lighter:      #222C3C;
-    --md-default-bg-color--lightest:     #222C3C;
+    --md-default-fg-color--lightest:     #1C1C1C;
+    --md-default-bg-color:               #1C1C1C;
+    --md-default-bg-color--light:        #1C1C1C;
+    --md-default-bg-color--lighter:      #1C1C1C;
+    --md-default-bg-color--lightest:     #1C1C1C;
 
     --md-accent-fg-color:                #9BA8BD;
 
-    --md-primary-fg-color:               #F98E35;
-    --md-primary-fg-color--dark:         #F98E35;
+    --md-primary-fg-color:               #34B77C;
+    --md-primary-fg-color--dark:         #34B77C;
 
     --md-code-fg-color:                  hsla(0, 100%, 100%, 0.9);
     --md-code-bg-color:                  #1A202C;

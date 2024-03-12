@@ -11,5 +11,6 @@ extra_css:
   - stylesheets/extra.css
 
 nav:
-  - Home: index.md
-  - Database Overview: "database/database-overview.md"
+  - Project Overview: index.md
+  - Time Tracking: "timetracking.md"
+  - Database: "database.md"
