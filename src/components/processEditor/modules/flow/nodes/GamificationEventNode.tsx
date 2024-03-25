@@ -4,7 +4,7 @@ import {activityShapeStyle} from "./ActivityNode";
 import React, {useEffect, useState} from "react";
 import OptionsContainer from "../../form/OptionsContainer";
 import DropdownOption from "../../form/DropdownOption";
-import {GamificationType} from "../../../model/GamificationType";
+import {GamificationType} from "@/model/GamificationType";
 import GamificationOptions from "../../gamification/GamificationOptions";
 import {PointsGamificationOptionsData} from "../../gamification/PointsGamificationOptions";
 import {BadgeGamificationOptionsData} from "../../gamification/BadgeGamificationOptions";

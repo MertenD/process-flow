@@ -18,7 +18,7 @@ import NodesToolbar from "./toolbars/NodesToolbar";
 import ControlsToolbar from "./toolbars/ControlsToolbar";
 import {v4 as uuidv4} from 'uuid';
 import OnCanvasNodesToolbar from "./toolbars/OnCanvasNodesSelector";
-import {NodeTypes} from "../../model/NodeTypes";
+import {NodeTypes} from "@/model/NodeTypes";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,

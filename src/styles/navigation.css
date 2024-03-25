@@ -1,0 +1,14 @@
+.navigationBar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: tomato;
+    padding: 1rem;
+}
+
+.navigationBar nav ul {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}

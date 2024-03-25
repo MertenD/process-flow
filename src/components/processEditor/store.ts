@@ -18,8 +18,8 @@ import StartNode from "./modules/flow/nodes/StartNode";
 import GatewayNode from "./modules/flow/nodes/GatewayNode";
 import EndNode from "./modules/flow/nodes/EndNode";
 import ChallengeNode from "./modules/flow/nodes/ChallengeNode";
-import {NodeTypes} from "./model/NodeTypes";
-import {PointsType} from "./model/PointsType";
+import {NodeTypes} from "@/model/NodeTypes";
+import {PointsType} from "@/model/PointsType";
 import InfoNode from "./modules/flow/nodes/InfoNode";
 import GamificationEventNode from "./modules/flow/nodes/GamificationEventNode";
 

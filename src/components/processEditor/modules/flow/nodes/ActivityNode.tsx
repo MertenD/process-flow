@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
 import useStore, {handleStyle, selectedColor} from "../../../store";
-import {GamificationType} from "../../../model/GamificationType";
+import {GamificationType} from "@/model/GamificationType";
 import {PointsGamificationOptionsData} from "../../gamification/PointsGamificationOptions";
-import {ActivityType} from "../../../model/ActivityType";
+import {ActivityType} from "@/model/ActivityType";
 import {BadgeGamificationOptionsData} from "../../gamification/BadgeGamificationOptions";
 import DropdownOption from "../../form/DropdownOption";
 import TextOption from "../../form/TextOption";

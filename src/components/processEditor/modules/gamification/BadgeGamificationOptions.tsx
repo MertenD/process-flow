@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react"
-import {BadgeType} from "../../model/BadgeType";
+import {BadgeType} from "@/model/BadgeType";
 import useStore from "../../store";
 import OptionalConditionOption from "../form/OptionalConditionOption";
-import {Comparisons} from "../../model/Comparisons";
+import {Comparisons} from "@/model/Comparisons";
 import SelectWithCustomInputOption from "../form/SelectWithCustomInputOption";
 
 export type BadgeGamificationOptionsData = {

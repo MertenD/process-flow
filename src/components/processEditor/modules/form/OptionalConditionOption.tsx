@@ -1,5 +1,5 @@
 import React from "react"
-import {Comparisons} from "../../model/Comparisons";
+import {Comparisons} from "@/model/Comparisons";
 import ConditionOption from "./ConditionOption";
 
 export interface OptionalConditionOptionsProps {

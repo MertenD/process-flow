@@ -6,7 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import {endNodeShapeStyle} from "../nodes/EndNode";
 import {activityShapeStyle} from "../nodes/ActivityNode";
 import {GatewayShapeStyle} from "../nodes/GatewayNode";
-import {NodeTypes} from "../../../model/NodeTypes";
+import {NodeTypes} from "@/model/NodeTypes";
 import {challengeShapeStyle} from "../nodes/ChallengeNode";
 import {infoNodeShapeStyle} from "../nodes/InfoNode";
 import {eventShapeStyle} from "../nodes/GamificationEventNode";

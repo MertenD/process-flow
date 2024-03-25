@@ -3,7 +3,7 @@ import {activityShapeStyle} from "../nodes/ActivityNode";
 import {startNodeShapeStyle} from "../nodes/StartNode";
 import {GatewayShapeStyle} from "../nodes/GatewayNode";
 import {endNodeShapeStyle} from "../nodes/EndNode";
-import {NodeTypes} from "../../../model/NodeTypes";
+import {NodeTypes} from "@/model/NodeTypes";
 import {challengeShapeStyle} from "../nodes/ChallengeNode";
 import {infoNodeShapeStyle} from "../nodes/InfoNode";
 import {eventShapeStyle} from "../nodes/GamificationEventNode";

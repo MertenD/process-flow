@@ -1,5 +1,5 @@
 import React from "react"
-import {GamificationType} from "../../model/GamificationType";
+import {GamificationType} from "@/model/GamificationType";
 import PointsGamificationOptions, {PointsGamificationOptionsData} from "./PointsGamificationOptions";
 import BadgeGamificationOptions, {BadgeGamificationOptionsData} from "./BadgeGamificationOptions";
 

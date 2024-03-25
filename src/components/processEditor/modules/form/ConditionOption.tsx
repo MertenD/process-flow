@@ -1,5 +1,5 @@
 import React from "react"
-import {Comparisons} from "../../model/Comparisons";
+import {Comparisons} from "@/model/Comparisons";
 import SelectWithCustomInputOption from "./SelectWithCustomInputOption";
 
 // TODO Bei den Variablen auch die Badges mitgeben, um überprüfen zu können ob diese

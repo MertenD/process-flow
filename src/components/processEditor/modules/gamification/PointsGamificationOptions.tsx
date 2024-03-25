@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react"
-import {PointsType} from "../../model/PointsType";
+import {PointsType} from "@/model/PointsType";
 import OptionalConditionOption from "../form/OptionalConditionOption";
-import {Comparisons} from "../../model/Comparisons";
+import {Comparisons} from "@/model/Comparisons";
 import useStore from "../../store";
 import DropdownOption from "../form/DropdownOption";
-import {PointsApplicationMethod} from "../../model/PointsApplicationMethod";
+import {PointsApplicationMethod} from "@/model/PointsApplicationMethod";
 import SelectWithCustomInputOption from "../form/SelectWithCustomInputOption";
 
 export type PointsGamificationOptionsData = {

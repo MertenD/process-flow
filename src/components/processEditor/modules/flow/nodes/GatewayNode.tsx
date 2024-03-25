@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
 import useStore, {handleStyle, selectedColor} from "../../../store";
-import {Comparisons} from "../../../model/Comparisons";
+import {Comparisons} from "@/model/Comparisons";
 import ConditionOption from "../../form/ConditionOption";
 
 export type GatewayNodeData = {

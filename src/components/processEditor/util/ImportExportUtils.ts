@@ -1,8 +1,8 @@
 import {Edge, Node, ReactFlowInstance} from "reactflow";
-import {BpmnDto, mergeBpmnDto} from "../model/Bpmn";
+import {BpmnDto, mergeBpmnDto} from "@/model/Bpmn";
 import {serializeToDto} from "./SerializationUtils";
 import {v4 as uuidv4} from 'uuid';
-import {NodeTypes} from "../model/NodeTypes";
+import {NodeTypes} from "@/model/NodeTypes";
 import {ActivityNodeData} from "../modules/flow/nodes/ActivityNode";
 import {InfoNodeData} from "../modules/flow/nodes/InfoNode";
 import {GatewayNodeData} from "../modules/flow/nodes/GatewayNode";
