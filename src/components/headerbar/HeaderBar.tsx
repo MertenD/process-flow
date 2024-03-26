@@ -1,6 +1,7 @@
 import React from 'react';
 import '@/styles/navigation.css';
 import Navigation from "@/components/headerbar/Navigation";
+import AuthButton from "@/components/AuthButton";
 
 export default function HeaderBar() {
     return (
@@ -12,7 +13,7 @@ export default function HeaderBar() {
                 <Navigation />
             </nav>
             <div className="profile">
-                <button>Profile</button>
+                <AuthButton />
             </div>
         </section>
     );

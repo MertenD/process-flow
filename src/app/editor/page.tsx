@@ -5,8 +5,15 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import ProcessList from "@/components/processList/ProcessList";
+import { redirect } from 'next/navigation'
+import { createClient } from '@/utils/supabase/server'
+export default async function Home() {
+  const supabase = createClient()
+  const { data, error } = await supabase.auth.getUser()
+  if (error || !data?.user) {
+    redirect('/login')
+  }
 
-export default function Home() {
   return (
     <main>
       <ResizablePanelGroup direction="horizontal">
