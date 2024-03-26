@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { headers, cookies } from 'next/headers'
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
-import { Profile } from '@/types/database.types'
-import BackButton from "@/components/BackButton";
+import {cookies, headers} from 'next/headers'
+import {createClient} from '@/utils/supabase/server'
+import {redirect} from 'next/navigation'
+import {Profile} from '@/types/database.types'
+import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
+import {AlertCircle} from "lucide-react";
 
 export default async function Signup(
     { searchParams }: Readonly<{ searchParams: { message: string } }>
@@ -49,29 +50,34 @@ export default async function Signup(
 
         const user = await supabase.auth.getUser().then((response) => response.data.user)
 
-        const createProfileRequest = await supabase
+        await supabase
             .from('profiles')
             .insert([{
                 id: user?.id,
                 username: formData.get('username') as string
             } as Profile])
-            .select('id')
-            .single<{ id: string }>()
 
         return redirect('/')
     }
 
     return (
-        <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-
-            <BackButton classNames="absolute left-8 top-8" />
+        <div className="flex-1 flex flex-col w-full px-8 justify-center items-center gap-2">
 
             <form
-                className="relative animate-in flex flex-col flex-1 justify-center"
+                className="relative animate-in w-96 flex flex-col flex-1 justify-center items-stretch"
                 action={signUp}
             >
+                { searchParams.message && (
+                    <Alert variant="destructive" className="border-red-500 bg-red-300 mb-10">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>
+                            { searchParams.message }
+                        </AlertDescription>
+                    </Alert>
+                ) }
 
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-2 text-center">
                     <p className={"text-5xl font-bold mb-5"}>
                         Sign Up
                     </p>
@@ -110,7 +116,7 @@ export default async function Signup(
                 <button className="btn-primary mb-2">
                     Sign up
                 </button>
-                <Link href={'/login'}>
+                <Link href={'/login'} className="text-center">
                     Already have an account? Sign in
                 </Link>
             </form>
