@@ -3,7 +3,7 @@
 import ReactFlow, {
     Background,
     BackgroundVariant,
-    Controls, MiniMap,
+    Controls, Edge, MiniMap,
     Node,
     OnConnectStartParams,
     Panel,
@@ -19,6 +19,8 @@ import ControlsToolbar from "./toolbars/ControlsToolbar";
 import {v4 as uuidv4} from 'uuid';
 import OnCanvasNodesToolbar from "./toolbars/OnCanvasNodesSelector";
 import {NodeTypes} from "@/model/NodeTypes";
+import {createClient} from "@/utils/supabase/client";
+import {loadProcessModelFromDatabase} from "@/components/processEditor/util/DatabaseUtils";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,
@@ -32,7 +34,11 @@ const selector = (state: any) => ({
     updateNodeParent: state.updateNodeParent
 });
 
-function DragAndDropFlow() {
+export interface DragAndDropFlowProps {
+    processModelId: string
+}
+
+function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
     const { nodes, edges, onNodesChange, onEdgesChange, onConnect, nodeTypes, getNodeById, updateNodeParent } = useStore(selector, shallow);
 
     const connectStartParams = useRef<OnConnectStartParams | null>(null);
@@ -42,6 +48,33 @@ function DragAndDropFlow() {
     const [openOnCanvasNodeSelector, setOpenOnCanvasNodeSelector] = React.useState(false);
     const [lastEventPosition, setLastEventPosition] = React.useState<{x: number, y: number}>({x: 0, y: 0})
     const [isDragging, setIsDragging] = useState(false)
+
+    const supabase = createClient()
+
+    useEffect(() => {
+        console.log("something changed", nodes, edges)
+    }, [nodes, edges]);
+
+    useEffect(() => {
+        loadProcessModelFromDatabase(supabase, processModelId).then((value: { nodes: Node[], edges: Edge[] } | undefined) => {
+            const nodes = value?.nodes
+            const edges = value?.edges
+
+            if (nodes === undefined) {
+                alert("Error loading nodes from database")
+                reactFlowInstance.setNodes([])
+                return
+            }
+            reactFlowInstance.setNodes(nodes)
+
+            if (edges === undefined) {
+                alert("Error loading edges from database")
+                reactFlowInstance.setEdges([])
+                return
+            }
+            reactFlowInstance.setEdges(edges)
+        })
+    }, [processModelId, supabase, reactFlowInstance]);
 
     const onDragOver = useCallback((event: any) => {
         event.preventDefault();
@@ -65,8 +98,8 @@ function DragAndDropFlow() {
             y: event.clientY - reactFlowBounds.top,
         });
 
-        addNodeAtPosition(position, nodeType, nodeData)
-    }, [reactFlowInstance]);
+        addNodeAtPosition(position, nodeType, processModelId, nodeData)
+    }, [addNodeAtPosition, processModelId, reactFlowInstance]);
 
     const onConnectStart = useCallback((event: any, node: OnConnectStartParams) => {
         connectStartParams.current = node;
@@ -87,7 +120,7 @@ function DragAndDropFlow() {
         [reactFlowInstance.project]
     );
 
-    function addNodeAtPosition(position: {x: number, y: number}, nodeType: NodeTypes, data: any = {}): string {
+    function addNodeAtPosition(position: {x: number, y: number}, nodeType: NodeTypes, modelId: string, data: any = {}): string {
         let yOffset = 0
         let zIndex = 0
         switch(nodeType) {
@@ -189,7 +222,7 @@ function DragAndDropFlow() {
             nodeTypes={nodeTypes}
             selectNodesOnDrag={false}
             defaultEdgeOptions={{
-                type: "smoothstep"
+                type: "smoothstep",
             }}
             deleteKeyCode={["Backspace", "Delete"]}
         >
@@ -199,7 +232,7 @@ function DragAndDropFlow() {
                 <NodesToolbar />
             </Panel>
             <Panel position="top-right">
-                <ControlsToolbar />
+                <ControlsToolbar supabase={supabase} processModelId={processModelId} />
             </Panel>
             <MiniMap nodeColor={(node) => {
                 if (node.type === NodeTypes.CHALLENGE_NODE) {
@@ -216,7 +249,7 @@ function DragAndDropFlow() {
                     setOpenOnCanvasNodeSelector(false)
 
                     if (nodeType !== null && connectStartParams.current !== null && connectStartParams.current?.nodeId !== null) {
-                        const id = addNodeAtPosition(reactFlowInstance.project(lastEventPosition), nodeType)
+                        const id = addNodeAtPosition(reactFlowInstance.project(lastEventPosition), nodeType, processModelId)
                         reactFlowInstance.addEdges({
                             id,
                             source: connectStartParams.current.nodeId,
@@ -231,10 +264,14 @@ function DragAndDropFlow() {
     );
 }
 
-export default function BpmnEditor() {
+export interface BpmnEditorProps {
+    processModelId: string
+}
+
+export default function BpmnEditor({ processModelId }: Readonly<BpmnEditorProps>) {
     return (
         <ReactFlowProvider>
-            <DragAndDropFlow />
+            <DragAndDropFlow processModelId={processModelId} />
         </ReactFlowProvider>
     )
 }

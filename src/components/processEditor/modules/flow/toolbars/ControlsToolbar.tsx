@@ -1,15 +1,24 @@
-import React, {useRef} from 'react';
-import useStore from "../../../store";
-import {useReactFlow} from "reactflow";
-import {onExport, onLoad, onSave} from "../../../util/ImportExportUtils";
+"use client"
 
-export default function ControlsToolbar() {
+import React from 'react';
+import useStore from "../../../store";
+import {onExport} from "../../../util/ImportExportUtils";
+import {saveProcessModelToDatabase} from "@/components/processEditor/util/DatabaseUtils";
+import {SupabaseClient} from "@supabase/supabase-js";
+import {useReactFlow} from "reactflow";
+
+export interface ControlsToolbarProps {
+    supabase: SupabaseClient<any, "public", any>
+    processModelId: string
+}
+
+export default function ControlsToolbar({ supabase, processModelId }: Readonly<ControlsToolbarProps>) {
     const nodes = useStore((state) => state.nodes);
     const edges = useStore((state) => state.edges);
     const getChildren = useStore((state) => state.getChildren)
     const getNodeById = useStore((state) => state.getNodeById)
+
     const reactFlowInstance = useReactFlow();
-    const inputFile = useRef<HTMLInputElement | null>(null);
 
     return (
         <aside>
@@ -23,29 +32,14 @@ export default function ControlsToolbar() {
                 alignItems: 'center',
                 justifyContent: 'center',
             }}>
-                <button style={{ width: "100%", marginBottom: 10 }} onClick={_ => onSave(nodes, edges)}>
-                    Save editor file (.json)
-                    <a id="downloadSave" style={{ display: "none"}}></a>
+                <button style={{width: "100%", marginBottom: 10}} onClick={_ =>
+                    saveProcessModelToDatabase(nodes, edges, processModelId, supabase, reactFlowInstance)
+                }>
+                    Save process
                 </button>
-                <button style={{
-                    width: "100%",
-                    marginBottom: 10,
-                    userSelect: "none",
-                }} onClick={() => {
-                    if (inputFile.current !== null) {
-                        inputFile.current.click();
-                    } else {
-                        console.warn("Error while uploading")
-                    }
-                }}>
-                    <input accept={".json"} type='file' id='file' ref={inputFile} hidden onChange={(event) => {
-                        onLoad(event, reactFlowInstance)
-                    }}/>
-                    Upload editor file (.json)
-                </button>
-                <button style={{ width: "100%" }} onClick={_ => onExport(nodes, edges, getChildren, getNodeById)}>
+                <button style={{width: "100%"}} onClick={_ => onExport(nodes, edges, getChildren, getNodeById)}>
                     Export for Engine (.bpmn)
-                    <a id="downloadExport" style={{ display: "none"}}></a>
+                    <a id="downloadExport" style={{display: "none"}}></a>
                 </button>
             </div>
         </aside>

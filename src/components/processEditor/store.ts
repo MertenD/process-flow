@@ -71,8 +71,8 @@ export const useStore = create<RFState>((set, get) => ({
     },
     onNodesChange: (changes: NodeChange[]) => {
         // Ungroup group if the deleted node is a group so the children are not deleted with the group
-        const nodeId = (changes[0] as NodeRemoveChange).id || null
-        if (changes[0].type === "remove" && nodeId !== null && get().getNodeById(nodeId)?.type === NodeTypes.CHALLENGE_NODE) {
+        const nodeId = (changes[0] as NodeRemoveChange)?.id || null
+        if (changes[0]?.type === "remove" && nodeId !== null && get().getNodeById(nodeId)?.type === NodeTypes.CHALLENGE_NODE) {
             const children = get().getChildren(nodeId)
             set({
                 nodes: get().nodes.map((node) => {
