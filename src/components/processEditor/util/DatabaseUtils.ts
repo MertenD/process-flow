@@ -1,10 +1,13 @@
 import {Edge, Node, ReactFlowInstance} from "reactflow";
 import {SupabaseClient} from "@supabase/supabase-js";
 import {NodeTypes} from "@/model/NodeTypes";
+import {GamificationType} from "@/model/GamificationType";
 
 // TODO Check if nodes got deleted and delete them from the database when saving
 
 // TODO Save viewport as well
+
+// TODO Track and cache changed nodes and edges ans only update those
 
 export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], processModelId: string, supabase: SupabaseClient<any, "public", any>, reactFlowInstance: ReactFlowInstance) {
 
@@ -45,6 +48,14 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
                 targetNodeId = oldNewIdMapping.get(outgoingEdge.target)
             }
 
+            let gamificationOptionsId = null
+            if (node.data.gamificationOptions && node.data.gamificationType !== GamificationType.NONE) {
+                gamificationOptionsId = (await supabase.from("gamification_option").upsert(
+                    convertKeysToSnakeCaseWithId(oldNewIdMapping.get(node.id), node.data.gamificationOptions),
+                    { onConflict: "id"}
+                ).select()).data?.[0].id
+            }
+
             await supabase.from("activity_element").upsert({
                 flow_element_id: oldNewIdMapping.get(node.id),
                 task: node.data.task,
@@ -52,7 +63,9 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
                 choices: node.data.choices,
                 input_regex: node.data.inputRegex,
                 variable_name: node.data.variableName,
-                next_flow_element_id: targetNodeId
+                next_flow_element_id: targetNodeId,
+                gamification_type: node.data.gamificationType,
+                gamification_option_id: gamificationOptionsId
             }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.GATEWAY_NODE) {// TODO Implement logic for GATEWAY_NODE
         } else if (nodeType === NodeTypes.START_NODE) {// TODO Implement logic for START_NODE
@@ -144,4 +157,15 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
 
         return {nodes: nodes, edges: edges}
     }
+}
+
+function convertKeysToSnakeCaseWithId(id: string | undefined, obj: any): any {
+    const newObj: any = {
+        id: id
+    };
+    for (const [key, value] of Object.entries(obj)) {
+        const newKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+        newObj[newKey] = value;
+    }
+    return newObj;
 }
