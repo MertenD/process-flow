@@ -68,8 +68,21 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
                 gamification_option_id: gamificationOptionsId
             }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.GATEWAY_NODE) {// TODO Implement logic for GATEWAY_NODE
-        } else if (nodeType === NodeTypes.START_NODE) {// TODO Implement logic for START_NODE
-        } else if (nodeType === NodeTypes.END_NODE) {// TODO Implement logic for END_NODE
+        } else if (nodeType === NodeTypes.START_NODE) {
+            const outgoingEdge = edges.find(edge => edge.source === node.id)
+            let targetNodeId = null
+            if (outgoingEdge) {
+                targetNodeId = oldNewIdMapping.get(outgoingEdge.target)
+            }
+
+            await supabase.from("start_element").upsert({
+                flow_element_id: oldNewIdMapping.get(node.id),
+                next_flow_element_id: targetNodeId
+            }, {onConflict: "flow_element_id"})
+        } else if (nodeType === NodeTypes.END_NODE) {
+            await supabase.from("end_element").upsert({
+                flow_element_id: oldNewIdMapping.get(node.id)
+            }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.INFO_NODE) {// TODO Implement logic for INFO_NODE
         } else if (nodeType === NodeTypes.GAMIFICATION_EVENT_NODE) {// TODO Implement logic for GAMIFICATION_EVENT_NODE
         } else {
@@ -136,8 +149,20 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                     target: nextFlowElementId?.toString()
                 } as Edge)
             } else if (nodeType === NodeTypes.GATEWAY_NODE) {// TODO Implement logic for GATEWAY_NODE
-            } else if (nodeType === NodeTypes.START_NODE) {// TODO Implement logic for START_NODE
-            } else if (nodeType === NodeTypes.END_NODE) {// TODO Implement logic for END_NODE
+            } else if (nodeType === NodeTypes.START_NODE) {
+                const { data } = await supabase
+                    .from("start_element")
+                    .select("*")
+                    .eq("flow_element_id", node.id)
+                    .single()
+                nextFlowElementId = data?.next_flow_element_id
+                edges.push({
+                    id: `${node.id}-${nextFlowElementId}`,
+                    source: node.id.toString(),
+                    target: nextFlowElementId?.toString()
+                } as Edge)
+            } else if (nodeType === NodeTypes.END_NODE) {
+                // No data to load
             } else if (nodeType === NodeTypes.INFO_NODE) {// TODO Implement logic for INFO_NODE
             } else if (nodeType === NodeTypes.GAMIFICATION_EVENT_NODE) {// TODO Implement logic for GAMIFICATION_EVENT_NODE
             } else {
