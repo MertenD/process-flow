@@ -27,7 +27,7 @@ export default function ProcessList({ teamId }: Readonly<ProcessListProps>) {
     }, [teamId])
 
     return (
-        <section className="processList">
+        <section className="processList h-full">
             <h2>Process List</h2>
             <div className="flex flex-col space-y-2">
                 { processes?.map((process, index) => {
