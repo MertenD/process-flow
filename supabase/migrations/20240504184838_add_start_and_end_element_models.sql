@@ -129,11 +129,12 @@ grant truncate on table "public"."start_element" to "service_role";
 
 grant update on table "public"."start_element" to "service_role";
 
-on "public"."end_element"
-as permissive
-for all
-to authenticated
-using (true);
+create policy "Enable all for authenticated users"
+    on "public"."end_element"
+    as permissive
+    for all
+    to authenticated
+    using (true);
 
 
 create policy "Enable all for authenticated users"

@@ -54,7 +54,8 @@ export default async function Signup(
             .from('profiles')
             .insert([{
                 id: user?.id,
-                username: formData.get('username') as string
+                username: formData.get('username') as string,
+                email: user?.email
             } as Profile])
 
         return redirect('/')
