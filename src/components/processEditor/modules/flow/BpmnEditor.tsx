@@ -52,10 +52,6 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
     const supabase = createClient()
 
     useEffect(() => {
-        console.log("something changed", nodes, edges)
-    }, [nodes, edges]);
-
-    useEffect(() => {
         loadProcessModelFromDatabase(supabase, processModelId).then((value: { nodes: Node[], edges: Edge[] } | undefined) => {
             const nodes = value?.nodes
             const edges = value?.edges

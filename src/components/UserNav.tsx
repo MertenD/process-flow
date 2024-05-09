@@ -16,6 +16,8 @@ import {Profile} from "@/types/database.types";
 import {redirect} from "next/navigation";
 import Link from "next/link";
 
+// TODO pass profile information or user information via props
+
 export async function UserNav() {
 
     const cookieStore = cookies()

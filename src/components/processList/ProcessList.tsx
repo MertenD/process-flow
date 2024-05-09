@@ -1,42 +1,41 @@
-"use client"
-
 import "@/styles/processList.css";
-import { createClient } from '@/utils/supabase/client';
-import {useEffect, useState} from "react";
+import {createClient} from '@/utils/supabase/server';
+import {redirect} from "next/navigation";
 
 export interface ProcessListProps {
     teamId: string;
+    selectedProcessId?: string;
 }
 
-export default function ProcessList({ teamId }: Readonly<ProcessListProps>) {
+export default async function ProcessList({ teamId, selectedProcessId }: Readonly<ProcessListProps>) {
 
-    // TODO Replace any with type from database
-    const [processes, setProcesses] = useState<null | any[]>([])
+    const supabase = createClient();
+    const { data: processes } = await supabase
+        .from("process_model")
+        .select("*")
+        .eq("belongs_to", teamId)
 
-    useEffect(() => {
-        const fetchProcesses = async () => {
-            const supabase = createClient();
-            const { data: processes } = await supabase
-                .from("process_model")
-                .select("*")
-                .eq("belongs_to", teamId)
-            setProcesses(processes)
-        }
+    async function handleProcessClick(processId: string) {
+        "use server"
 
-        fetchProcesses().then()
-    }, [teamId])
+        redirect(`/${teamId}/editor/${processId}`)
+    }
 
     return (
         <section className="processList h-full">
             <h2>Process List</h2>
             <div className="flex flex-col space-y-2">
-                { processes?.map((process, index) => {
-                    return <button className="p-4 bg-amber-50 rounded-2xl" key={index} onClick={() => {
-                        window.location.href = `/editor/${process.id}`
-                    }}>
-                        {process.name}
-                    </button>
-                }) }
+                <form>
+                    { processes?.map((process, index) => {
+                        return <button
+                            key={`${process.id}`}
+                            className={`w-full p-4 bg-amber-50 rounded-2 ${selectedProcessId === process.id ? "bg-amber-100" : ""}`}
+                            formAction={handleProcessClick.bind(null, process.id)}
+                        >
+                            {process.name}
+                        </button>
+                    }) }
+                </form>
             </div>
         </section>
     );

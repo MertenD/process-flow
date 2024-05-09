@@ -2,9 +2,9 @@ import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
 import {ResizableHandle, ResizablePanel, ResizablePanelGroup} from "@/components/ui/resizable";
 import ProcessList from "@/components/processList/ProcessList";
-import React from "react";
+import React from 'react';
 
-export default async function EditorLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function EditorLayout({ children, params }: Readonly<{ children: React.ReactNode, params: { teamId: string } }>) {
 
     // TODO Check if user has permission for this process model
 
@@ -26,7 +26,7 @@ export default async function EditorLayout({ children }: Readonly<{ children: Re
             <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel defaultSize={10}>
                     {/* TODO: Add better default */}
-                    <ProcessList teamId={teamIds?.[0] ? teamIds[0].id : "0"} />
+                    <ProcessList teamId={params.teamId} />
                 </ResizablePanel>
                 <ResizableHandle />
                 <ResizablePanel defaultSize={90}>

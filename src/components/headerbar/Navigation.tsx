@@ -5,40 +5,46 @@ import React from "react";
 import {cn} from "@/lib/utils";
 import { usePathname } from 'next/navigation'
 
-export default function Navigation({
-    className
-}: Readonly<React.HTMLAttributes<HTMLElement>>) {
+export interface NavigationProps extends React.HTMLAttributes<HTMLElement> {
+    className?: string;
+    selectedTeamId?: string;
+}
+
+export default function Navigation({ className, selectedTeamId } : Readonly<NavigationProps>) {
 
     const pathname = usePathname()
 
-    return (
-        <nav
-            className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+    const editorPath = `/${selectedTeamId}/editor`
+    const monitoringPath = `/${selectedTeamId}/monitoring`
+    const tasksPath = `/${selectedTeamId}/tasks`
+    const statsPath = `/${selectedTeamId}/stats`
+
+    return <nav
+        className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+    >
+        <Link
+            href={editorPath}
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(editorPath) ? "text-primary" : "text-muted-foreground"}`}
         >
-            <Link
-                href="/editor"
-                className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith("/editor") ? "text-primary" : "text-muted-foreground"}`}
-            >
-                Editor
-            </Link>
-            <Link
-                href="/monitoring"
-                className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith("/monitoring") ? "text-primary" : "text-muted-foreground"}`}
-            >
-                Monitoring
-            </Link>
-            <Link
-                href="/tasks"
-                className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith("/tasks") ? "text-primary" : "text-muted-foreground"}`}
-            >
-                Tasks
-            </Link>
-            <Link
-                href="/stats"
-                className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith("/stats") ? "text-primary" : "text-muted-foreground"}`}
-            >
-                Stats
-            </Link>
-        </nav>
-    )
+            Editor
+        </Link>
+        <Link
+            href={monitoringPath}
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(monitoringPath) ? "text-primary" : "text-muted-foreground"}`}
+        >
+            Monitoring
+        </Link>
+        <Link
+            href={tasksPath}
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(tasksPath) ? "text-primary" : "text-muted-foreground"}`}
+        >
+            Tasks
+        </Link>
+        <Link
+            href={statsPath}
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(statsPath) ? "text-primary" : "text-muted-foreground"}`}
+        >
+            Stats
+        </Link>
+    </nav>
 }

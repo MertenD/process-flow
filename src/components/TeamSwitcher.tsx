@@ -1,10 +1,10 @@
 "use client";
 
-import * as React from "react";
+import React from 'react';
 
-import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import {cn} from "@/lib/utils";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Button} from "@/components/ui/button";
 import {
     Command,
     CommandEmpty,
@@ -23,60 +23,50 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
 import {Check, ChevronsUpDown, CirclePlus} from "lucide-react";
+import createTeamAndAddCreatorAsAdmin from "@/actions/create-team-and-add-creator-as-admin";
 
-const groups = [
-    {
-        label: "Personal Account",
-        teams: [
-            {
-                label: "Alicia Koch",
-                value: "personal",
-            },
-        ],
-    },
-    {
-        label: "Teams",
-        teams: [
-            {
-                label: "Acme Inc.",
-                value: "acme-inc",
-            },
-            {
-                label: "Monsters Inc.",
-                value: "monsters",
-            },
-        ],
-    },
-];
-
-type Team = (typeof groups)[number]["teams"][number];
+export type Team = {
+    label: string;
+    value: string;
+}
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
     typeof PopoverTrigger
 >;
 
-interface TeamSwitcherProps extends PopoverTriggerProps {}
+interface TeamSwitcherProps extends PopoverTriggerProps {
+    userId: string
+    ownTeams: Team[]
+    otherTeams: Team[]
+    selectedTeamId?: string
+}
 
-export default function TeamSwitcher({ className }: TeamSwitcherProps) {
+// TODO Test if it is possible to turn the component into a server side component
+
+export default function TeamSwitcher({ className, userId, ownTeams, otherTeams, selectedTeamId }: Readonly<TeamSwitcherProps>) {
+
+    const groups = [
+        {
+            label: "Your Teams",
+            teams: ownTeams
+        },
+        {
+            label: "Other Teams",
+            teams: otherTeams
+        }
+    ]
+
     const [open, setOpen] = React.useState(false);
     const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
     const [selectedTeam, setSelectedTeam] = React.useState<Team>(
-        groups[0].teams[0],
+        [...ownTeams, ...otherTeams].find(team => team.value.toString() === selectedTeamId?.toString()) ?? {
+            label: "Select a team",
+            value: ""
+        }
     );
 
     return (
@@ -115,6 +105,7 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                                             onSelect={() => {
                                                 setSelectedTeam(team);
                                                 setOpen(false);
+                                                window.location.href = window.location.href.replace(/\/\d+\//, `/${team.value}/`)
                                             }}
                                             className="text-sm"
                                         >
@@ -169,8 +160,8 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                 <div>
                     <div className="space-y-4 py-2 pb-4">
                         <div className="space-y-2">
-                            <Label htmlFor="name">Team name</Label>
-                            <Input id="name" placeholder="Acme Inc." />
+                            <Label htmlFor="team-name">Team name</Label>
+                            <Input id="team-name" placeholder="Acme Inc." />
                         </div>
                     </div>
                 </div>
@@ -179,10 +170,17 @@ export default function TeamSwitcher({ className }: TeamSwitcherProps) {
                         Cancel
                     </Button>
                     <Button type="submit" onClick={() => {
-                        // TODO Create Team in Database and switch to it
+                        const teamName = (document.getElementById("team-name") as HTMLInputElement).value;
+                        createTeamAndAddCreatorAsAdmin(userId, teamName).then((createdTeamId) => {
+                            setShowNewTeamDialog(false);
+                            const createdTeam = { label: teamName, value: createdTeamId.toString() } as Team;
+                            ownTeams.push(createdTeam)
+                            setSelectedTeam(createdTeam)
+                            window.location.href = window.location.href.replace(/\/\d+\//, `/${createdTeamId}/`)
+                        })
                     }}>Continue</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    );
+    )
 }

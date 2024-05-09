@@ -4,6 +4,7 @@ import "../styles/globals.css";
 import HeaderBar from "@/components/headerbar/HeaderBar";
 import {cn} from "@/lib/utils"
 import {ThemeProvider} from "@/components/ui/ThemeProvider";
+import React from "react";
 
 const fontSans = FontSans({
     subsets: ["latin"],
@@ -32,8 +33,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
           >
-            <HeaderBar />
-            {children}
+            { children }
           </ThemeProvider>
       </body>
     </html>
