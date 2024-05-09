@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React from 'react';
 
@@ -28,6 +28,7 @@ import {Label} from "@/components/ui/label";
 import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
 import {Check, ChevronsUpDown, CirclePlus} from "lucide-react";
 import createTeamAndAddCreatorAsAdmin from "@/actions/create-team-and-add-creator-as-admin";
+import { useToast } from "@/components/ui/use-toast"
 
 export type Team = {
     label: string;
@@ -45,9 +46,8 @@ interface TeamSwitcherProps extends PopoverTriggerProps {
     selectedTeamId?: string
 }
 
-// TODO Test if it is possible to turn the component into a server side component
-
 export default function TeamSwitcher({ className, userId, ownTeams, otherTeams, selectedTeamId }: Readonly<TeamSwitcherProps>) {
+    const { toast } = useToast()
 
     const groups = [
         {
@@ -177,6 +177,12 @@ export default function TeamSwitcher({ className, userId, ownTeams, otherTeams, 
                             ownTeams.push(createdTeam)
                             setSelectedTeam(createdTeam)
                             window.location.href = window.location.href.replace(/\/\d+\//, `/${createdTeamId}/`)
+                        }).catch((error) => {
+                            toast({
+                                variant: "destructive",
+                                title: "Something went wrong!",
+                                description: error.message,
+                            })
                         })
                     }}>Continue</Button>
                 </DialogFooter>

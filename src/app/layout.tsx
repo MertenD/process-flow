@@ -1,10 +1,10 @@
 import type {Metadata} from "next";
 import {Inter as FontSans} from "next/font/google";
 import "../styles/globals.css";
-import HeaderBar from "@/components/headerbar/HeaderBar";
 import {cn} from "@/lib/utils"
 import {ThemeProvider} from "@/components/ui/ThemeProvider";
 import React from "react";
+import {Toaster} from "@/components/ui/toaster";
 
 const fontSans = FontSans({
     subsets: ["latin"],
@@ -33,6 +33,7 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
           >
+            <Toaster />
             { children }
           </ThemeProvider>
       </body>
