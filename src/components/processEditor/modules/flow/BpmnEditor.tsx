@@ -3,7 +3,9 @@
 import ReactFlow, {
     Background,
     BackgroundVariant,
-    Controls, Edge, MiniMap,
+    Controls,
+    Edge,
+    MiniMap,
     Node,
     OnConnectStartParams,
     Panel,
@@ -15,12 +17,13 @@ import shallow from 'zustand/shallow';
 import useStore, {edgeStyle} from '../../store';
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import NodesToolbar from "./toolbars/NodesToolbar";
-import ControlsToolbar from "./toolbars/ControlsToolbar";
 import {v4 as uuidv4} from 'uuid';
 import OnCanvasNodesToolbar from "./toolbars/OnCanvasNodesSelector";
 import {NodeTypes} from "@/model/NodeTypes";
 import {createClient} from "@/utils/supabase/client";
 import {loadProcessModelFromDatabase} from "@/components/processEditor/util/DatabaseUtils";
+import SaveButton from "@/components/processEditor/modules/flow/toolbars/SaveButton";
+import CreateInstanceButton from "@/components/CreateInstanceButton";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,
@@ -227,9 +230,6 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
             <Panel position="top-left">
                 <NodesToolbar />
             </Panel>
-            <Panel position="top-right">
-                <ControlsToolbar supabase={supabase} processModelId={processModelId} />
-            </Panel>
             <MiniMap nodeColor={(node) => {
                 if (node.type === NodeTypes.CHALLENGE_NODE) {
                     return node.data.backgroundColor + "88"
@@ -266,8 +266,14 @@ export interface BpmnEditorProps {
 
 export default function BpmnEditor({ processModelId }: Readonly<BpmnEditorProps>) {
     return (
-        <ReactFlowProvider>
-            <DragAndDropFlow processModelId={processModelId} />
-        </ReactFlowProvider>
+        <div className="w-full h-full flex flex-col">
+            <ReactFlowProvider>
+                <div className="w-full bg-amber-400 p-2 flex flex-row space-x-2">
+                    <SaveButton processModelId={processModelId} />
+                    <CreateInstanceButton/>
+                </div>
+                <DragAndDropFlow processModelId={processModelId}/>
+            </ReactFlowProvider>
+        </div>
     )
 }

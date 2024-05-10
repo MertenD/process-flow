@@ -23,6 +23,8 @@ export type ChallengeNodeData = {
     gamificationOptions?: PointsGamificationOptionsData | BadgeGamificationOptionsData
 }
 
+// TODO Resize =>
+
 export default memo(function ChallengeNode({ id, selected, data }: NodeProps<ChallengeNodeData>) {
 
     const minWidth = 360, minHeight = 200
