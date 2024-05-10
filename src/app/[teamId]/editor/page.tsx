@@ -1,6 +1,24 @@
-export default function EditorPage() {
+import {ResizableHandle, ResizablePanel, ResizablePanelGroup} from "@/components/ui/resizable";
+import ProcessList from "@/components/processList/ProcessList";
+import React from "react";
+import {redirect} from "next/navigation";
+import {createClient} from "@/utils/supabase/server";
 
-    return <div>
-        Select a process to edit
-    </div>
+export default async function EditorPage({ params }: Readonly<{ params: { teamId: string } }>) {
+
+    const supabase = createClient()
+    const {data: userData, error} = await supabase.auth.getUser()
+    if (error || !userData.user) {
+        redirect("/login")
+    }
+
+    return <ResizablePanelGroup direction="horizontal">
+        <ResizablePanel defaultSize={10}>
+            <ProcessList teamId={params.teamId} userId={userData.user.id} />
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel defaultSize={90}>
+            Select a process model to edit
+        </ResizablePanel>
+    </ResizablePanelGroup>
 }

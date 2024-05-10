@@ -6,11 +6,12 @@ create policy "Enable insert for authenticated users"
     with check (true);
 
 
-on "public"."role"
-as permissive
-for insert
-        to authenticated
-with check (true);
+create policy "Enable all for for authenticated users"
+    on "public"."role"
+    as permissive
+    for insert
+    to authenticated
+    with check (true);
 
 
 create policy "Enable all for for authenticated users"
