@@ -36,7 +36,7 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
     }, [id, value1, comparison, value2, updateNodeData])
 
     return (
-        <div style={{ backgroundColor: "transparent", position: "relative" }}>
+        <div style={{ backgroundColor: "transparent", position: "relative" }} >
             <ConditionOption
                 variables={ availableVariableNames }
                 value1={ value1 }
@@ -73,9 +73,9 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
             </div>
             <div style={{
                 ...GatewayShapeStyle,
-                backgroundColor: data.backgroundColor || GatewayShapeStyle.backgroundColor,
+                backgroundColor: data.backgroundColor,
                 borderColor: selected ? selectedColor : undefined
-            }} >
+            }} className="bg-background border-2 border-foreground" >
                 <hr style={{ backgroundColor: "black", border: "1px solid black", width: "70%", marginTop: 14 }}/>
                 <hr style={{ backgroundColor: "black", border: "1px solid black", width: "70%", marginTop: -10, transform: "rotateY(0deg) rotate(90deg)" }}/>
             </div>
@@ -91,6 +91,4 @@ export const GatewayShapeStyle = {
     height: 30,
     transform: "rotateY(0deg) rotate(45deg)",
     borderRadius: 6,
-    backgroundColor: "white",
-    border: "3px solid black",
 }

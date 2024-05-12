@@ -32,9 +32,9 @@ export default function GamificationEventNode({ id, selected, data}: NodeProps<G
     return (
         <div style={{
             ...eventShapeStyle,
-            backgroundColor: data.backgroundColor || activityShapeStyle.backgroundColor,
+            backgroundColor: data.backgroundColor,
             borderColor: selected ? selectedColor : undefined
-        }}>
+        }} className="bg-background border-2 border-foreground" >
             <Handle style={handleStyle} type="source" position={Position.Right}/>
             <Handle style={handleStyle} type="target" position={Position.Left}/>
             <OptionsContainer>
@@ -59,8 +59,6 @@ export const eventShapeStyle = {
     minWidth: 50,
     minHeight: 50,
     borderRadius: 6,
-    backgroundColor: "white",
-    border: "3px solid black",
     borderStyle: "double",
     borderWidth: 5
 }

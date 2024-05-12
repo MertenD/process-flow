@@ -3,17 +3,5 @@
     flex-direction: column;
     gap: 0.5rem;
     height: 100%;
-    padding-top: 0.5rem;
-    padding-left: 0.5rem;
-    padding-bottom: 0.5rem;
-    background-color: #34B77C;
-}
-
-.processListItem {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #2D8C5D;
     padding: 0.5rem;
 }

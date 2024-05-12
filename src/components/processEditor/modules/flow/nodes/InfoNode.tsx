@@ -24,9 +24,9 @@ export default function InfoNode({ id, selected, data}: NodeProps<InfoNodeData>)
     return (
         <div style={{
             ...infoNodeShapeStyle,
-            backgroundColor: data.backgroundColor || infoNodeShapeStyle.backgroundColor,
+            backgroundColor: data.backgroundColor,
             borderColor: selected ? selectedColor : undefined
-        }}>
+        }} className="bg-background border-2 border-foreground" >
             <Handle style={handleStyle} type="source" position={Position.Right}/>
             <Handle style={handleStyle} type="target" position={Position.Left}/>
             <OptionsContainer width={250}>
@@ -45,6 +45,4 @@ export const infoNodeShapeStyle = {
     minWidth: 50,
     minHeight: 50,
     borderRadius: 6,
-    backgroundColor: "white",
-    border: "3px solid black",
 }

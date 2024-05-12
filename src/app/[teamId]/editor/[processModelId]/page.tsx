@@ -31,7 +31,7 @@ export default async function EditorProcessPage({ params }: Readonly<{ params: {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={90}>
-            <div className="w-full h-full pl-1">
+            <div className="w-full h-full">
                 <BpmnEditor processModelId={params.processModelId}/> : <div>Select a process model to edit</div>
             </div>
         </ResizablePanel>

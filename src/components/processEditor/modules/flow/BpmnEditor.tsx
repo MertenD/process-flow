@@ -24,6 +24,7 @@ import {createClient} from "@/utils/supabase/client";
 import {loadProcessModelFromDatabase} from "@/components/processEditor/util/DatabaseUtils";
 import SaveButton from "@/components/processEditor/modules/flow/toolbars/SaveButton";
 import CreateInstanceButton from "@/components/CreateInstanceButton";
+import "@/styles/globals.css";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,
@@ -224,6 +225,7 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
                 type: "smoothstep",
             }}
             deleteKeyCode={["Backspace", "Delete"]}
+            className="bg-accent"
         >
             <Controls />
             <Background variant={BackgroundVariant.Dots} />
@@ -235,9 +237,7 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
                     return node.data.backgroundColor + "88"
                 }
                 return node.data.backgroundColor || "gray"
-            }} nodeStrokeWidth={3} zoomable pannable style={{
-                backgroundColor: "#aaa"
-            }} />
+            }} nodeStrokeWidth={3} zoomable pannable className="bg-accent" />
             <OnCanvasNodesToolbar
                 open={openOnCanvasNodeSelector}
                 position={lastEventPosition}
@@ -268,11 +268,13 @@ export default function BpmnEditor({ processModelId }: Readonly<BpmnEditorProps>
     return (
         <div className="w-full h-full flex flex-col">
             <ReactFlowProvider>
-                <div className="w-full bg-amber-400 p-2 flex flex-row space-x-2">
+                <div className="w-full p-3 flex flex-row space-x-2 border-b">
                     <SaveButton processModelId={processModelId} />
                     <CreateInstanceButton/>
                 </div>
-                <DragAndDropFlow processModelId={processModelId}/>
+                <div className="w-full h-full">
+                    <DragAndDropFlow processModelId={processModelId}/>
+                </div>
             </ReactFlowProvider>
         </div>
     )

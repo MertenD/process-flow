@@ -78,3 +78,25 @@
 main {
   height: 100%;
 }
+
+/*noinspection ALL,CssUnusedSymbol*/
+.react-flow__controls-button {
+  @apply bg-background border border-foreground fill-foreground border-b-0;
+}
+
+/*noinspection ALL,CssUnusedSymbol*/
+.react-flow__controls-button:hover {
+  @apply bg-accent;
+}
+
+.react-flow__controls {
+  @apply border-0;
+}
+
+.react-flow__minimap {
+    @apply border-0;
+}
+
+.react-flow__minimap svg path {
+  @apply fill-background;
+}

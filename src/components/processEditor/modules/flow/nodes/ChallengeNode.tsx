@@ -94,7 +94,7 @@ export default memo(function ChallengeNode({ id, selected, data }: NodeProps<Cha
                     height: 15
                 }}
             />
-            <div style={{ ...challengeShapeStyle, width: width, height: height, backgroundColor: backgroundColor + "99" }} >
+            <div style={{ ...challengeShapeStyle, width: width, height: height, backgroundColor: backgroundColor + "99" }} className="border-2 border-foreground" >
                 <OptionsContainer outline={true}>
                     <DropdownOption
                         title={ "Challenge type" }
@@ -141,5 +141,4 @@ export const challengeShapeStyle = {
     minHeight: 50,
     borderRadius: 6,
     backgroundColor: "rgba(200,255,200,0.25)",
-    border: "3px solid black",
 }

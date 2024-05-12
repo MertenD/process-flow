@@ -18,7 +18,9 @@ export default async function EditorPage({ params }: Readonly<{ params: { teamId
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={90}>
-            Select a process model to edit
+            <div className="w-full h-full flex flex-col justify-center items-center bg-accent">
+                Select a process model to edit
+            </div>
         </ResizablePanel>
     </ResizablePanelGroup>
 }

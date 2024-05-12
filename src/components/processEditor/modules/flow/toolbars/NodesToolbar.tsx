@@ -25,18 +25,16 @@ export default function NodesToolbar() {
     return (
         <aside>
             <div style={{
-                borderRadius: 10,
                 padding: 16,
-                background: "white",
-                border: "1px solid black",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: 'center',
                 justifyContent: 'center',
-            }}>
+            }} className="bg-background">
                 Start
                 <div draggable={!isStartAlreadyPlaced}
                     style={{ ...startNodeShapeStyle, marginBottom: 10, borderColor: isStartAlreadyPlaced ? "lightgray" : undefined }}
+                    className="border-2 border-foreground"
                     onDragStart={(event) =>
                         onDragStart(event, NodeTypes.START_NODE, {})
                     }
@@ -44,27 +42,27 @@ export default function NodesToolbar() {
                 End
                 <div draggable style={{ ...endNodeShapeStyle,  marginBottom: 10 }} onDragStart={(event) =>
                     onDragStart(event, NodeTypes.END_NODE, {})
-                } />
+                } className="border-2 border-foreground" />
                 Activity
                 <div draggable style={{ ...activityShapeStyle, marginBottom: 10 }} onDragStart={(event) =>
                     onDragStart(event, NodeTypes.ACTIVITY_NODE, {})
-                } />
+                } className="border-2 border-foreground" />
                 Gateway
                 <div draggable style={{ ...GatewayShapeStyle, marginBottom: 15, marginTop: 5 }} onDragStart={(event) =>
                     onDragStart(event, NodeTypes.GATEWAY_NODE, {})
-                } />
+                } className="border-2 border-foreground" />
                 Challenge
                 <div draggable style={{ ...challengeShapeStyle, marginBottom: 10 }} onDragStart={(event) => {
                     onDragStart(event, NodeTypes.CHALLENGE_NODE, { backgroundColor: "#eeffee"})
-                }} />
+                }} className="border-2 border-foreground" />
                 Info
                 <div draggable style={{ ...infoNodeShapeStyle, marginBottom: 10 }} onDragStart={(event) => {
                     onDragStart(event, NodeTypes.INFO_NODE, {})
-                }} />
+                }} className="border-2 border-foreground" />
                 Gam. Event
                 <div draggable style={{ ...eventShapeStyle, marginBottom: 10}} onDragStart={(event) => {
                     onDragStart(event, NodeTypes.GAMIFICATION_EVENT_NODE, {})
-                }} />
+                }} className="border-2 border-foreground" />
             </div>
         </aside>
     );

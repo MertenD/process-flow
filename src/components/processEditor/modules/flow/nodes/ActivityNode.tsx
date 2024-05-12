@@ -49,9 +49,9 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
     return (
         <div style={{
             ...activityShapeStyle,
-            backgroundColor: data.backgroundColor || activityShapeStyle.backgroundColor,
+            backgroundColor: data.backgroundColor,
             borderColor: selected ? selectedColor : undefined
-        }}>
+        }} className="bg-background border-2 border-foreground" >
             <Handle style={handleStyle} type="source" position={Position.Right}/>
             <Handle style={handleStyle} type="target" position={Position.Left}/>
             <OptionsContainer>
@@ -139,6 +139,4 @@ export const activityShapeStyle = {
     minWidth: 50,
     minHeight: 50,
     borderRadius: 6,
-    backgroundColor: "white",
-    border: "3px solid black"
 }
