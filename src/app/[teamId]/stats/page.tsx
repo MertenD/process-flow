@@ -1,4 +1,4 @@
-export default function MonitoringPage() {
+export default function StatsPage() {
     return (
         <div>
             Stats Page

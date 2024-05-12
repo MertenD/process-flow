@@ -16,6 +16,7 @@ export default function Navigation({ className, selectedTeamId } : Readonly<Navi
 
     const editorPath = `/${selectedTeamId}/editor`
     const monitoringPath = `/${selectedTeamId}/monitoring`
+    const teamPath = `/${selectedTeamId}/team`
     const tasksPath = `/${selectedTeamId}/tasks`
     const statsPath = `/${selectedTeamId}/stats`
 
@@ -33,6 +34,12 @@ export default function Navigation({ className, selectedTeamId } : Readonly<Navi
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(monitoringPath) ? "text-primary" : "text-muted-foreground"}`}
         >
             Monitoring
+        </Link>
+        <Link
+            href={teamPath}
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(teamPath) ? "text-primary" : "text-muted-foreground"}`}
+        >
+            Team
         </Link>
         <Link
             href={tasksPath}

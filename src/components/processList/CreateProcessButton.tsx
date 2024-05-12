@@ -15,6 +15,7 @@ import {Input} from "@/components/ui/input";
 import createProcessModel from "@/actions/create-process-model";
 import {toast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
+import {Textarea} from "@/components/ui/textarea";
 
 export interface CreateProcessButtonProps {
     userId: string
@@ -45,7 +46,7 @@ export default function CreateProcessButton({ userId, teamId }: Readonly<CreateP
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="process-description">Process description</Label>
-                        <Input id="process-description" placeholder="process description" />
+                        <Textarea id="process-description" placeholder="process description" />
                     </div>
                 </div>
             </div>
