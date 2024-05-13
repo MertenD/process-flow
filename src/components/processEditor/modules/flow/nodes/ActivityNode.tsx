@@ -24,7 +24,7 @@ export type ActivityNodeData = {
 
 export default function ActivityNode({ id, selected, data }: NodeProps<ActivityNodeData>) {
 
-    const updateNodeData = useStore((state) => state.updateNodeData)
+    /*const updateNodeData = useStore((state) => state.updateNodeData)
     const [task, setTask] = useState(data.task || "")
     const [activityType, setActivityType] = useState(data.activityType || ActivityType.TEXT_INPUT)
     const [choices, setChoices] = useState(data.choices || "")
@@ -44,7 +44,7 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
             gamificationType: gamificationType,
             gamificationOptions: gamificationType === GamificationType.NONE ? {} : gamificationOptions
         })
-    }, [id, task, activityType, choices, inputRegex, variableName, gamificationType, gamificationOptions, updateNodeData])
+    }, [id, task, activityType, choices, inputRegex, variableName, gamificationType, gamificationOptions, updateNodeData])*/
 
     return (
         <div style={{
@@ -54,7 +54,11 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
         }} className="bg-background border-2 border-foreground" >
             <Handle style={handleStyle} type="source" position={Position.Right}/>
             <Handle style={handleStyle} type="target" position={Position.Left}/>
-            <OptionsContainer>
+            <div className="flex flex-col">
+                <div>{ data.task }</div>
+                <div>{ data.activityType }</div>
+            </div>
+            {/* <OptionsContainer>
                 <TitleOption
                     placeholder={ "Task title" }
                     value={ task }
@@ -130,7 +134,7 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
                     gamificationOptions={ gamificationOptions }
                     onChange={ gamificationOptions => setGamificationOptions(gamificationOptions) }
                 />
-            </OptionsContainer>
+            </OptionsContainer> */}
         </div>
     )
 }
