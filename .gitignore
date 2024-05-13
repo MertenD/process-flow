@@ -8,6 +8,8 @@
 
 /.idea
 
+.env
+
 # testing
 /coverage
 
