@@ -129,20 +129,29 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
             const nodeType = node.type as NodeTypes
             if (nodeType === NodeTypes.CHALLENGE_NODE) {// TODO Implement logic for CHALLENGE_NODE
             } else if (nodeType === NodeTypes.ACTIVITY_NODE) {
-                const { data } = await supabase
+                const { data: activityElementData } = await supabase
                     .from("activity_element")
                     .select("*")
                     .eq("flow_element_id", node.id)
                     .single()
+
+                const { data: gamificationOptions } = await supabase
+                    .from("gamification_option")
+                    .select("*")
+                    .eq("id", activityElementData?.gamification_option_id)
+                    .single()
+
                 nodeData = {
-                    task: data?.task,
-                    activityType: data?.activity_type,
-                    choices: data?.choices,
-                    inputRegex: data?.input_regex,
-                    variableName: data?.variable_name,
+                    task: activityElementData?.task,
+                    activityType: activityElementData?.activity_type,
+                    choices: activityElementData?.choices,
+                    inputRegex: activityElementData?.input_regex,
+                    variableName: activityElementData?.variable_name,
+                    gamificationType: activityElementData?.gamification_type,
+                    gamificationOptions: convertKeysFromSnakeToCamelCase(gamificationOptions)
                 }
 
-                nextFlowElementId = data?.next_flow_element_id
+                nextFlowElementId = activityElementData?.next_flow_element_id
                 edges.push({
                     id: `${node.id}-${nextFlowElementId}`,
                     source: node.id.toString(),
@@ -190,6 +199,18 @@ function convertKeysToSnakeCaseWithId(id: string | undefined, obj: any): any {
     };
     for (const [key, value] of Object.entries(obj)) {
         const newKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+        newObj[newKey] = value;
+    }
+    return newObj;
+}
+
+function convertKeysFromSnakeToCamelCase(obj: any): any {
+    if (!obj) {
+        return undefined
+    }
+    const newObj: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+        const newKey = key.replace(/_([a-z])/g, letter => letter[1].toUpperCase());
         newObj[newKey] = value;
     }
     return newObj;

@@ -272,7 +272,7 @@ export default function BpmnEditor({ processModelId }: Readonly<BpmnEditorProps>
                     <SaveButton processModelId={processModelId} />
                     <CreateInstanceButton/>
                 </div>
-                <div className="w-full h-full">
+                <div className="w-full h-full pl-2 bg-accent">
                     <DragAndDropFlow processModelId={processModelId}/>
                 </div>
             </ReactFlowProvider>
