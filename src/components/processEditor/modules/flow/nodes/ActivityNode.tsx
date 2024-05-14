@@ -10,10 +10,16 @@ import TextOption from "../../form/TextOption";
 import OptionsContainer from "../../form/OptionsContainer";
 import TitleOption from "../../form/TitleOption";
 import GamificationOptions from "../../gamification/GamificationOptions";
+import DynamicOptions, {
+    OptionsDefinition,
+    OptionsInput, OptionsSelect, OptionsSeparator,
+    OptionsStructureType, OptionsTextarea
+} from "@/components/processEditor/modules/flow/toolbars/DynamicOptions";
 
 export type ActivityNodeData = {
     backgroundColor?: string,
     task?: string,
+    description?: string,
     activityType?: ActivityType
     choices?: string,
     inputRegex?: string,
@@ -22,29 +28,73 @@ export type ActivityNodeData = {
     gamificationOptions?: PointsGamificationOptionsData | BadgeGamificationOptionsData
 }
 
+export function getActivityOptionsDefinition(nodeId: string, data: ActivityNodeData): OptionsDefinition {
+    return {
+        title: "Activity Options",
+        nodeId: nodeId,
+        structure: [
+            {
+                type: OptionsStructureType.INPUT,
+                label: "Title",
+                keyString: "task"
+            } as OptionsInput,
+            {
+                type: OptionsStructureType.TEXTAREA,
+                label: "Description",
+                keyString: "description"
+            } as OptionsTextarea,
+            {
+                type: OptionsStructureType.SEPARATOR,
+            } as OptionsSeparator,
+            {
+                type: OptionsStructureType.SELECT,
+                label: "Activity type",
+                options: Object.values(ActivityType),
+                defaultValue: ActivityType.TEXT_INPUT,
+                keyString: "activityType"
+            } as OptionsSelect,
+            {
+                type: OptionsStructureType.INPUT,
+                label: "Input regex",
+                suggestions: [
+                    "[0-9]+",
+                    "[a-zA-Z .,-_]+",
+                    "[a-zA-Z .,-_0-9]+",
+                    "[a-zA-Z]+"
+                ],
+                isHiding: data.activityType !== ActivityType.TEXT_INPUT,
+                keyString: "inputRegex"
+            } as OptionsInput,
+            {
+                type: OptionsStructureType.INPUT,
+                label: "Choices",
+                isHiding: data.activityType !== ActivityType.SINGLE_CHOICE && data.activityType !== ActivityType.MULTIPLE_CHOICE,
+                keyString: "choices"
+            } as OptionsInput,
+            {
+                type: OptionsStructureType.INPUT,
+                label: "Save input as",
+                keyString: "variableName"
+            } as OptionsInput
+        ]
+    } as OptionsDefinition
+}
+
 export default function ActivityNode({ id, selected, data }: NodeProps<ActivityNodeData>) {
-
-    /*const updateNodeData = useStore((state) => state.updateNodeData)
-    const [task, setTask] = useState(data.task || "")
-    const [activityType, setActivityType] = useState(data.activityType || ActivityType.TEXT_INPUT)
-    const [choices, setChoices] = useState(data.choices || "")
-    const [inputRegex, setInputRegex] = useState(data.inputRegex || "")
-    const [variableName, setVariableName] = useState(data.variableName || "")
-    const [gamificationType, setGamificationType] = useState(data.gamificationType || GamificationType.NONE)
-    const [gamificationOptions, setGamificationOptions] = useState(data.gamificationOptions || {})
-
+    
+    const updateNodeData = useStore((state) => state.updateNodeData)
+    
     useEffect(() => {
-        updateNodeData<ActivityNodeData>(id, {
-            backgroundColor: data.backgroundColor,
-            task: task,
-            activityType: activityType,
-            choices: choices,
-            inputRegex: inputRegex,
-            variableName: variableName,
-            gamificationType: gamificationType,
-            gamificationOptions: gamificationType === GamificationType.NONE ? {} : gamificationOptions
+        const optionsDefinition = getActivityOptionsDefinition(id, data)
+        const updatedData = { ...data }
+        optionsDefinition.structure.forEach(option => {
+            if (option.keyString) {
+                // @ts-ignore
+                updatedData[option.keyString] = data[option.keyString] || option.defaultValue
+            }
         })
-    }, [id, task, activityType, choices, inputRegex, variableName, gamificationType, gamificationOptions, updateNodeData])*/
+        updateNodeData<ActivityNodeData>(id, updatedData)
+    }, [])
 
     return (
         <div style={{
@@ -58,29 +108,152 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
                 <div>{ data.task }</div>
                 <div>{ data.activityType }</div>
             </div>
-            {/* <OptionsContainer>
-                <TitleOption
-                    placeholder={ "Task title" }
-                    value={ task }
-                    onValueChanged={ newValue => setTask(newValue) }
-                />
-                <hr style={{ width: "100%" }}/>
-                <DropdownOption
-                    title={ "Activity type" }
-                    values={ Object.values(ActivityType) }
-                    selectedValue={ activityType }
-                    onValueChanged={ newValue => setActivityType(newValue as ActivityType) }
-                />
-                {
-                    (() => {
-                        switch (activityType) {
-                            case ActivityType.TEXT_INPUT:
-                                return (
-                                    <TextOption
-                                        title={ "Input regex" }
-                                        placeholder={ "e.g.: [0-9]+" }
-                                        value={ inputRegex }
-                                        suggestions={[
+        </div>
+    )
+}
+
+export function ActivityOptions({ nodeId, data }: { nodeId: string, data: ActivityNodeData }): React.ReactNode {
+
+    return
+
+    //useEffect(() => {
+    //    updateNodeData<ActivityNodeData>(nodeId)
+    //}, [nodeId, updateNodeData])
+
+    /*    const [task, setTask] = useState(data.task || "")
+        const [description, setDescription] = useState("") // TODO Add description to activity node
+        const [activityType, setActivityType] = useState(data.activityType || ActivityType.TEXT_INPUT)
+        const [choices, setChoices] = useState(data.choices || "")
+        const [inputRegex, setInputRegex] = useState(data.inputRegex || "")
+        const [variableName, setVariableName] = useState(data.variableName || "")
+        const [gamificationType, setGamificationType] = useState(data.gamificationType || GamificationType.NONE)
+        const [gamificationOptions, setGamificationOptions] = useState(data.gamificationOptions || {})
+    
+        useEffect(() => {
+            updateNodeData<ActivityNodeData>(nodeId, {
+                backgroundColor: data.backgroundColor,
+                task: task,
+                activityType: activityType,
+                choices: choices,
+                inputRegex: inputRegex,
+                variableName: variableName,
+                gamificationType: gamificationType,
+                gamificationOptions: gamificationType === GamificationType.NONE ? {} : gamificationOptions
+            })
+        }, [nodeId, task, activityType, choices, inputRegex, variableName, gamificationType, gamificationOptions, updateNodeData])
+    */
+    /*return <OptionsContainer definition={{
+        title: "Activity Options",
+        state: state,
+        setState: setState,
+        structure: [
+            {
+                type: OptionsStructureType.INPUT,
+                label: "Title",
+                value: state.task,
+                onChange: (newValue) => setOption("task", newValue)
+            } as OptionsInput,
+            {
+                type: OptionsStructureType.TEXTAREA,
+                label: "Description",
+                value: state.description,
+                onChange: (newValue) => setOption("description", newValue)
+            } as OptionsTextarea,
+            {
+                type: OptionsStructureType.SEPARATOR
+            } as OptionsSeparator,
+            {
+                type: OptionsStructureType.SELECT,
+                label: "Activity type",
+                value: state.activityType,
+                options: Object.values(ActivityType),
+                onChange: (newValue) => setOption("activityType", newValue)
+            } as OptionsSelect,
+            {
+                type: OptionsStructureType.INPUT,
+                label: "Input regex",
+                value: state.inputRegex,
+                onChange: (newValue) => setOption("inputRegex", newValue),
+                suggestions: [
+                    "[0-9]+",
+                    "[a-zA-Z .,-_]+",
+                    "[a-zA-Z .,-_0-9]+",
+                    "[a-zA-Z]+"
+                ],
+                isHiding: state.activityType !== ActivityType.TEXT_INPUT
+            } as OptionsInput,
+            {
+                type: OptionsStructureType.INPUT,
+                label: "Choices",
+                value: state.choices,
+                onChange: (newValue) => setOption("choices", newValue),
+                isHiding: state.activityType !== ActivityType.SINGLE_CHOICE && state.activityType !== ActivityType.MULTIPLE_CHOICE
+            } as OptionsInput,
+            {
+                type: OptionsStructureType.INPUT,
+                label: "Save input as",
+                value: state.variableName,
+                onChange: (newValue) => setOption("variableName", newValue)
+            } as OptionsInput
+        ]
+    }} />*/
+
+    /*return <div className="w-full flex flex-col space-y-4">
+        <h2 className="text-2xl font-semibold">Activity Options</h2>
+        <div className="space-y-2">
+            <Label htmlFor="task-title-input">Title</Label>
+            <Input
+                id="task-title-input"
+                placeholder="Task title"
+                value={task}
+                onChange={(event) => setDescription(event.target.value)}
+            />
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="task-description-input">Description</Label>
+            <Textarea
+                id="task-description-input"
+                placeholder="Task description"
+                value={description}
+                onChange={(event) => setTask(event.target.value)}
+            />
+        </div>
+        <Separator/>
+        <div className="space-y-2">
+            <Label>Activity type</Label>
+            <Select
+                defaultValue={activityType}
+                onValueChange={(newValue) => setActivityType(newValue as ActivityType)}
+            >
+                <SelectTrigger>
+                    <SelectValue/>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        {Object.values(ActivityType).map(type => {
+                            return <SelectItem key={type} value={type}>{type}</SelectItem>
+                        })}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </div>
+        <div className="space-y-2">
+            {
+                (() => {
+                    switch (activityType) {
+                        case ActivityType.TEXT_INPUT:
+                            return <>
+                                <Label htmlFor="regex-input">Input regex</Label>
+                                <Input
+                                    id="regex-input"
+                                    placeholder="[0-9]+"
+                                    value={inputRegex}
+                                    onChange={(event) => setInputRegex(event.target.value)}
+                                    list={"suggestions-regex"}
+                                />
+                                <datalist id={"suggestions-regex"}>
+                                    {
+                                        [
                                             {
                                                 name: "Number",
                                                 value: "[0-9]+"
@@ -97,46 +270,40 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
                                                 name: "Single word",
                                                 value: "[a-zA-Z]+"
                                             }
-                                        ]}
-                                        onValueChanged={ newValue => setInputRegex(newValue) }
-                                    />
-                                )
-                            case ActivityType.SINGLE_CHOICE:
-                            case ActivityType.MULTIPLE_CHOICE:
-                                return (
-                                    <TextOption
-                                        title={ "Choices" }
-                                        placeholder={ "choice 1,choice 2,..."}
-                                        value={ choices }
-                                        onValueChanged={ newValue => setChoices(newValue) }
-                                    />
-                                )
-                        }
-                    })()
-                }
-                <TextOption
-                    title={ "Save input as" }
-                    placeholder={ "Variable name" }
-                    value={ variableName }
-                    onValueChanged={ newValue => setVariableName(newValue) }
-                />
-                <hr style={{ width: "100%" }}/>
-                <DropdownOption
-                    title={ "Gamification type" }
-                    values={ Object.values(GamificationType) }
-                    selectedValue={ gamificationType }
-                    onValueChanged={ newValue => setGamificationType(newValue as GamificationType) }
-                />
-                <GamificationOptions
-                    parentNodeId={ id }
-                    gamificationType={ gamificationType }
-                    parentVariableName={ variableName }
-                    gamificationOptions={ gamificationOptions }
-                    onChange={ gamificationOptions => setGamificationOptions(gamificationOptions) }
-                />
-            </OptionsContainer> */}
+                                        ].map(suggestion => {
+                                            return <option key={suggestion.value} value={suggestion.value}>
+                                                {suggestion.name}
+                                            </option>
+                                        })
+                                    }
+                                </datalist>
+                            </>
+                        case ActivityType.SINGLE_CHOICE:
+                        case ActivityType.MULTIPLE_CHOICE:
+                            return <>
+                                <Label htmlFor="choices-input">Choices</Label>
+                                <Input
+                                    id="choices-input"
+                                    placeholder="choice 1,choice 2,..."
+                                    value={choices}
+                                    onChange={(event) => setChoices(event.target.value)}
+                                />
+                            </>
+                    }
+                })()
+            }
         </div>
-    )
+        <div className="space-y-2">
+            <Label htmlFor="variable-name-input">Save input as</Label>
+            <Input
+                id="variable-name-input"
+                placeholder="input1"
+                value={variableName}
+                onChange={(event) => setVariableName(event.target.value)}
+            />
+        </div>
+        <Separator/>
+    </div>*/
 }
 
 export const activityShapeStyle = {

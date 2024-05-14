@@ -14,7 +14,7 @@ export default async function EditorLayout({ children, params }: Readonly<{ chil
     }
 
     return (
-        <main>
+        <main className="h-[calc(100vh-64px)] overflow-y-hidden">
             { children }
         </main>
     );

@@ -1,16 +1,22 @@
 "use client"
 
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Node, useOnSelectionChange} from "reactflow";
-import {Input} from "@/components/ui/input";
-import {ActivityNodeData} from "@/components/processEditor/modules/flow/nodes/ActivityNode";
+import {
+    ActivityNodeData,
+    ActivityOptions,
+    getActivityOptionsDefinition
+} from "@/components/processEditor/modules/flow/nodes/ActivityNode";
 import {NodeTypes} from "@/model/NodeTypes";
-import useStore from "@/components/processEditor/store";
 import {ActivityType} from "@/model/ActivityType";
-import {GamificationType} from "@/model/GamificationType";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Separator} from "@/components/ui/separator";
-import {Label} from "@/components/ui/label";
+import DynamicOptions, {
+    OptionsDefinition,
+    OptionsInput,
+    OptionsSelect,
+    OptionsSeparator,
+    OptionsStructureType,
+    OptionsTextarea
+} from "@/components/processEditor/modules/flow/toolbars/DynamicOptions";
 
 export default function OptionsToolbar() {
 
@@ -33,135 +39,136 @@ export default function OptionsToolbar() {
     let options = <></>
     switch (selectedNode.type) {
         case NodeTypes.ACTIVITY_NODE:
-            options = <ActivityOptions nodeId={selectedNode.id} data={selectedNode.data as ActivityNodeData}/>
+            options = <DynamicOptions data={selectedNode.data} optionsDefinition={ getActivityOptionsDefinition(selectedNode.id, selectedNode.data) } />
+            break;
+        default:
+            options = <h2 className="text-2xl font-semibold">{ selectedNode.type }</h2>
             break;
     }
 
-    return <aside className={`p-3 border-l`}>
+    return <aside className="w-[300px] h-full p-3 border-l overflow-y-auto">
         { options }
     </aside>
 }
 
-function ActivityOptions({ nodeId, data }: { nodeId: string, data: ActivityNodeData }): React.ReactNode {
+/*enum OptionsStructureType {
+    INPUT = "input",
+    SELECT = "select",
+    TEXTAREA = "textarea",
+    SEPARATOR = "separator"
+}
 
-    const updateNodeData = useStore((state) => state.updateNodeData)
-    const [task, setTask] = useState(data.task || "")
-    const [activityType, setActivityType] = useState(data.activityType || ActivityType.TEXT_INPUT)
-    const [choices, setChoices] = useState(data.choices || "")
-    const [inputRegex, setInputRegex] = useState(data.inputRegex || "")
-    const [variableName, setVariableName] = useState(data.variableName || "")
-    const [gamificationType, setGamificationType] = useState(data.gamificationType || GamificationType.NONE)
-    const [gamificationOptions, setGamificationOptions] = useState(data.gamificationOptions || {})
+interface OptionsDefinition<Data> {
+    title: string,
+    state: Data,
+    setState: (newState: Data) => void,
+    structure: OptionsBase[]
+}
 
-    useEffect(() => {
-        updateNodeData<ActivityNodeData>(nodeId, {
-            backgroundColor: data.backgroundColor,
-            task: task,
-            activityType: activityType,
-            choices: choices,
-            inputRegex: inputRegex,
-            variableName: variableName,
-            gamificationType: gamificationType,
-            gamificationOptions: gamificationType === GamificationType.NONE ? {} : gamificationOptions
-        })
-    }, [nodeId, task, activityType, choices, inputRegex, variableName, gamificationType, gamificationOptions, updateNodeData])
+interface OptionsBase {
+    type: OptionsStructureType
+    isHiding?: boolean
+}
 
-    return <div className="flex flex-col space-y-4">
-        <h2 className="text-2xl font-semibold">Activity Options</h2>
-        <div className="space-y-2">
-            <Label htmlFor="task-title-input">Title</Label>
+interface OptionsInput extends OptionsBase {
+    label: string
+    value: string
+    suggestions?: string[],
+    onChange: (newValue: string) => void
+}
+
+interface OptionsSelect extends OptionsBase {
+    label: string
+    value: string
+    options: string[],
+    onChange: (newValue: string) => void
+}
+
+interface OptionsTextarea extends OptionsBase {
+    label: string
+    value: string
+    onChange: (newValue: string) => void
+}
+
+interface OptionsSeparator extends OptionsBase {
+}
+
+function OptionsContainer<Data>({ definition }: { definition: OptionsDefinition<Data> }) {
+
+    function InputOption({ label, value, suggestions, onChange }: OptionsInput) {
+
+        const listId = `suggestions-${label.toLowerCase().replace(" ", "-")}`
+
+        return <div className="space-y-2">
+            <Label htmlFor="task-title-input">{label}</Label>
             <Input
                 id="task-title-input"
                 placeholder="Task title"
-                value={task}
-                onChange={(event) => setTask(event.target.value)}
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                list={listId}
             />
+            <datalist id={listId}>
+                {
+                    suggestions?.map(suggestion => {
+                        return <option key={suggestion} value={suggestion}>
+                            {suggestion}
+                        </option>
+                    })
+                }
+            </datalist>
         </div>
-        <Separator />
-        <div className="space-y-2">
-            <Label>Activity type</Label>
+    }
+
+    function SelectOption({ label, value, options, onChange }: OptionsSelect) {
+        return <div className="space-y-2">
+            <Label>{label}</Label>
             <Select
-                defaultValue={activityType}
-                onValueChange={(newValue) => setActivityType(newValue as ActivityType)}
+                defaultValue={value}
+                onValueChange={onChange}
             >
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue />
+                <SelectTrigger>
+                    <SelectValue/>
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        { Object.values(ActivityType).map(type => {
-                            return <SelectItem key={type} value={type}>{ type }</SelectItem>
-                        }) }
+                        {options.map(option => {
+                            return <SelectItem key={option} value={option}>{option}</SelectItem>
+                        })}
                     </SelectGroup>
                 </SelectContent>
             </Select>
         </div>
-        <div className="space-y-2">
-            {
-                (() => {
-                    switch (activityType) {
-                        case ActivityType.TEXT_INPUT:
-                            return <>
-                                <Label htmlFor="regex-input">Input regex</Label>
-                                <Input
-                                    id="regex-input"
-                                    placeholder="[0-9]+"
-                                    value={inputRegex}
-                                    onChange={(event) => setInputRegex(event.target.value)}
-                                    list={"suggestions-regex"}
-                                />
-                                <datalist id={"suggestions-regex"}>
-                                    {
-                                        [
-                                            {
-                                                name: "Number",
-                                                value: "[0-9]+"
-                                            },
-                                            {
-                                                name: "Text without numbers",
-                                                value: "[a-zA-Z .,-_]+"
-                                            },
-                                            {
-                                                name: "Text with numbers",
-                                                value: "[a-zA-Z .,-_0-9]+"
-                                            },
-                                            {
-                                                name: "Single word",
-                                                value: "[a-zA-Z]+"
-                                            }
-                                        ].map(suggestion => {
-                                            return <option key={suggestion.value} value={suggestion.value}>
-                                                {suggestion.name}
-                                            </option>
-                                        })
-                                    }
-                                </datalist>
-                            </>
-                        case ActivityType.SINGLE_CHOICE:
-                        case ActivityType.MULTIPLE_CHOICE:
-                            return <>
-                                <Label htmlFor="choices-input">Choices</Label>
-                                <Input
-                                    id="choices-input"
-                                    placeholder="choice 1,choice 2,..."
-                                    value={choices}
-                                    onChange={(event) => setChoices(event.target.value)}
-                                />
-                            </>
-                    }
-                })()
-            }
-        </div>
-        <div className="space-y-2">
-            <Label htmlFor="variable-name-input">Save input as</Label>
-            <Input
-                id="variable-name-input"
-                placeholder="input1"
-                value={variableName}
-                onChange={(event) => setVariableName(event.target.value)}
+    }
+
+    function TextareaOption({ label, value, onChange }: OptionsTextarea) {
+        return <div className="space-y-2">
+            <Label htmlFor="task-description-input">{label}</Label>
+            <Textarea
+                id="task-description-input"
+                placeholder="Task description"
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
             />
         </div>
-        <Separator />
-    </div>
-}
+    }
 
+    return <div className="w-full flex flex-col space-y-4">
+        <h2 className="text-2xl font-semibold">{ definition.title }</h2>
+        { definition.structure.map(option => {
+            if (option.isHiding) {
+                return <></>
+            }
+            switch (option.type) {
+                case OptionsStructureType.INPUT:
+                    return <InputOption {...(option as OptionsInput)}/>
+                case OptionsStructureType.SELECT:
+                    return <SelectOption {...(option as OptionsSelect)}/>
+                case OptionsStructureType.TEXTAREA:
+                    return <TextareaOption {...(option as OptionsTextarea)}/>
+                case OptionsStructureType.SEPARATOR:
+                    return <Separator />
+            }
+        }) }
+    </div>
+}*/

@@ -28,7 +28,7 @@ export default async function ProcessList({ userId, teamId, selectedProcessId }:
 
     return (
         <section className="processList flex flex-col h-full">
-            <form className="flex flex-col flex-1 space-y-2 p-1">
+            <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">
                 { processes?.map((process, index) => {
                     return <button
                         key={`${process.id}`}
