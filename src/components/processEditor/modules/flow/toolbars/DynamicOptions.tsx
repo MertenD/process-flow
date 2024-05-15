@@ -2,6 +2,11 @@
 
 import {useEffect, useRef} from "react";
 import useStore from "@/components/processEditor/store";
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Textarea} from "@/components/ui/textarea";
+import {Separator} from "@/components/ui/separator";
 
 export enum OptionsStructureType {
     INPUT = "input",
@@ -25,16 +30,18 @@ interface OptionsBase {
 
 export interface OptionsInput extends OptionsBase {
     label: string
-    suggestions?: string[],
+    placeholder: string
+    suggestions?: string[]
+}
+
+export interface OptionsTextarea extends OptionsBase {
+    label: string
+    placeholder: string
 }
 
 export interface OptionsSelect extends OptionsBase {
     label: string
     options: string[]
-}
-
-export interface OptionsTextarea extends OptionsBase {
-    label: string
 }
 
 export interface OptionsSeparator extends OptionsBase {
@@ -113,45 +120,66 @@ export default function DynamicOptions<Data>({ data, optionsDefinition }: Readon
                 switch (option.type) {
                     case OptionsStructureType.INPUT:
                         const inputOption = option as OptionsInput
+                        const listId = `suggestions-${inputOption.label.toLowerCase().replace(" ", "-")}`
                         return (
-                            <div key={index} className="flex flex-col">
-                                <label>{ inputOption.label }</label>
-                                <input
-                                    type="text"
+                            <div className="space-y-2">
+                                <Label htmlFor="task-title-input">{ inputOption.label }</Label>
+                                <Input
+                                    id="task-title-input"
+                                    placeholder={ inputOption.placeholder }
                                     ref={el => {
                                         if (el && inputOption.keyString) {
                                             inputRefs.current[inputOption.keyString] = el;
                                         }
                                     }}
-                                    onChange={ e => updateValueInData(inputOption.keyString, e.target.value) }
+                                    onChange={e => updateValueInData(inputOption.keyString, e.target.value)}
+                                    list={listId}
                                 />
+                                <datalist id={listId}>
+                                    {
+                                        inputOption.suggestions?.map(suggestion => {
+                                            return <option key={suggestion} value={suggestion}>
+                                                {suggestion}
+                                            </option>
+                                        })
+                                    }
+                                </datalist>
                             </div>
                         )
                     case OptionsStructureType.SELECT:
                         const selectOption = option as OptionsSelect
                         return (
-                            <div key={index} className="flex flex-col">
-                                <label>{ selectOption.label }</label>
-                                <select
-                                    ref={el => {
-                                        if (el && selectOption.keyString) {
-                                            inputRefs.current[selectOption.keyString] = el;
-                                        }
-                                    }}
-                                    onChange={ e => updateValueInData(selectOption.keyString, e.target.value) }
+                            <div className="space-y-2">
+                                <Label>{ selectOption.label }</Label>
+                                <Select
+                                    defaultValue={getValueFromData(selectOption.keyString)}
+                                    onValueChange={newValue => updateValueInData(selectOption.keyString, newValue)}
                                 >
-                                    { selectOption.options.map((option, index) => {
-                                        return <option key={index} value={option}>{ option }</option>
-                                    }) }
-                                </select>
+                                    <SelectTrigger>
+                                        <SelectValue ref={el => {
+                                            if (el && selectOption.keyString) {
+                                                inputRefs.current[selectOption.keyString] = el;
+                                            }
+                                        }}/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            { selectOption.options.map(option => {
+                                                return <SelectItem key={option} value={option}>{option}</SelectItem>
+                                            })}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         )
                     case OptionsStructureType.TEXTAREA:
                         const textareaOption = option as OptionsTextarea
                         return (
-                            <div key={index} className="flex flex-col">
-                                <label>{ textareaOption.label }</label>
-                                <textarea
+                            <div className="space-y-2">
+                                <Label htmlFor="task-description-input">{ textareaOption.label }</Label>
+                                <Textarea
+                                    id="task-description-input"
+                                    placeholder={ textareaOption.placeholder }
                                     ref={el => {
                                         if (el && textareaOption.keyString) {
                                             inputRefs.current[textareaOption.keyString] = el;
@@ -163,7 +191,7 @@ export default function DynamicOptions<Data>({ data, optionsDefinition }: Readon
                         )
                     case OptionsStructureType.SEPARATOR:
                         return (
-                            <div key={index} className="border-b border-foreground"/>
+                            <Separator />
                         )
                 }
             }) }
