@@ -1,5 +1,3 @@
-drop policy "Enable all for for authenticated users" on "public"."role";
-
 set check_function_bodies = off;
 
 CREATE OR REPLACE FUNCTION public.create_process_model(belongs_to_param integer, name_param text, description_param text, created_by_param uuid)
@@ -29,17 +27,40 @@ BEGIN
 END;$function$
 ;
 
-create policy "Enable insert for authenticated users"
-    on "public"."process_model"
-    as permissive
-    for insert
-    to authenticated
-    with check (true);
+DO
+$$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_policies
+        WHERE schemaname = 'public'
+        AND tablename = 'process_model'
+    ) THEN
+        CREATE POLICY "Enable insert for authenticated users"
+            ON "public"."process_model"
+            AS PERMISSIVE
+            FOR INSERT
+            TO authenticated
+            WITH CHECK (true);
+    END IF;
+END
+$$;
 
-
-create policy "enable insert access for authenticated users"
-    on "public"."role"
-    as permissive
-    for insert
-    to authenticated
-    with check (true);
+DO
+$$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_policies
+        WHERE schemaname = 'public'
+        AND tablename = 'role'
+    ) THEN
+        CREATE POLICY "enable insert access for authenticated users"
+            ON "public"."role"
+            AS PERMISSIVE
+            FOR INSERT
+            TO authenticated
+            WITH CHECK (true);
+    END IF;
+END
+$$;

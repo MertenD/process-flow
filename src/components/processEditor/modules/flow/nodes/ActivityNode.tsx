@@ -11,7 +11,8 @@ import {
     OptionsSelect,
     OptionsSeparator,
     OptionsStructureType,
-    OptionsTextarea
+    OptionsTextarea,
+    setDefaultValues
 } from "@/components/processEditor/modules/flow/toolbars/DynamicOptions";
 
 export type ActivityNodeData = {
@@ -26,7 +27,7 @@ export type ActivityNodeData = {
     gamificationOptions?: PointsGamificationOptionsData | BadgeGamificationOptionsData
 }
 
-export function getActivityOptionsDefinition(nodeId: string, data: ActivityNodeData): OptionsDefinition {
+export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition {
     return {
         title: "Activity Options",
         nodeId: nodeId,
@@ -35,7 +36,6 @@ export function getActivityOptionsDefinition(nodeId: string, data: ActivityNodeD
                 type: OptionsStructureType.INPUT,
                 label: "Title",
                 placeholder: "Activity title",
-                keyString: "task"
             } as OptionsInput,
             {
                 type: OptionsStructureType.TEXTAREA,
@@ -49,30 +49,39 @@ export function getActivityOptionsDefinition(nodeId: string, data: ActivityNodeD
             {
                 type: OptionsStructureType.SELECT,
                 label: "Activity type",
-                options: Object.values(ActivityType),
                 defaultValue: ActivityType.TEXT_INPUT,
-                keyString: "activityType"
+                keyString: "activityType",
+                options: [
+                    {
+                        values: [ActivityType.TEXT_INPUT],
+                        dependentStructure: [
+                            {
+                                type: OptionsStructureType.INPUT,
+                                label: "Input regex",
+                                placeholder: "[0-9]+",
+                                suggestions: [
+                                    "[0-9]+",
+                                    "[a-zA-Z .,-_]+",
+                                    "[a-zA-Z .,-_0-9]+",
+                                    "[a-zA-Z]+"
+                                ],
+                                keyString: "inputRegex"
+                            } as OptionsInput
+                        ]
+                    },
+                    {
+                        values: [ActivityType.SINGLE_CHOICE, ActivityType.MULTIPLE_CHOICE],
+                        dependentOptions: [
+                            {
+                                type: OptionsStructureType.INPUT,
+                                label: "Choices",
+                                placeholder: "choice 1,choice 2,...",
+                                keyString: "choices"
+                            } as OptionsInput
+                        ]
+                    }
+                ]
             } as OptionsSelect,
-            {
-                type: OptionsStructureType.INPUT,
-                label: "Input regex",
-                placeholder: "[0-9]+",
-                suggestions: [
-                    "[0-9]+",
-                    "[a-zA-Z .,-_]+",
-                    "[a-zA-Z .,-_0-9]+",
-                    "[a-zA-Z]+"
-                ],
-                isHiding: data.activityType !== ActivityType.TEXT_INPUT,
-                keyString: "inputRegex"
-            } as OptionsInput,
-            {
-                type: OptionsStructureType.INPUT,
-                label: "Choices",
-                placeholder: "choice 1,choice 2,...",
-                isHiding: data.activityType !== ActivityType.SINGLE_CHOICE && data.activityType !== ActivityType.MULTIPLE_CHOICE,
-                keyString: "choices"
-            } as OptionsInput,
             {
                 type: OptionsStructureType.INPUT,
                 label: "Save input as",
@@ -88,15 +97,10 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
     const updateNodeData = useStore((state) => state.updateNodeData)
     
     useEffect(() => {
-        const optionsDefinition = getActivityOptionsDefinition(id, data)
-        const updatedData = { ...data }
-        optionsDefinition.structure.forEach(option => {
-            if (option.keyString) {
-                // @ts-ignore
-                updatedData[option.keyString] = data[option.keyString] || option.defaultValue
-            }
-        })
-        updateNodeData<ActivityNodeData>(id, updatedData)
+        const optionsDefinition = getActivityOptionsDefinition(id);
+        const updatedData = { ...data };
+        setDefaultValues(optionsDefinition.structure, updatedData);
+        updateNodeData<ActivityNodeData>(id, updatedData);
     }, [])
 
     return (

@@ -3,8 +3,6 @@ import {SupabaseClient} from "@supabase/supabase-js";
 import {NodeTypes} from "@/model/NodeTypes";
 import {GamificationType} from "@/model/GamificationType";
 
-// TODO Check if nodes got deleted and delete them from the database when saving
-
 // TODO Save viewport as well
 
 // TODO Track and cache changed nodes and edges ans only update those
@@ -59,6 +57,7 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             await supabase.from("activity_element").upsert({
                 flow_element_id: oldNewIdMapping.get(node.id),
                 task: node.data.task,
+                description: node.data.description,
                 activity_type: node.data.activityType,
                 choices: node.data.choices,
                 input_regex: node.data.inputRegex,

@@ -27,7 +27,7 @@ export default function OptionsToolbar() {
     let options = <></>
     switch (selectedNode.type) {
         case NodeTypes.ACTIVITY_NODE:
-            options = <DynamicOptions data={selectedNode.data} optionsDefinition={ getActivityOptionsDefinition(selectedNode.id, selectedNode.data) } />
+            options = <DynamicOptions optionsDefinition={ getActivityOptionsDefinition(selectedNode.id) } />
             break;
         default:
             options = <h2 className="text-2xl font-semibold">{ selectedNode.type }</h2>
