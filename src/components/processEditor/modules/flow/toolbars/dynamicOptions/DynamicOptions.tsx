@@ -19,7 +19,7 @@ import {
     OptionsTextarea,
     OptionsCheckbox,
     OptionsSeparator,
-    OptionsRow
+    OptionsRow, OptionsText
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
 
 export default function DynamicOptions({ optionsDefinition }: Readonly<{ optionsDefinition: OptionsDefinition }>) {
@@ -83,7 +83,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
 
     // Get value from data object based on keyString (e.g. "task.title" -> { task: { title: "value" } } -> "value")
     function getValueFromData(keyString: string | undefined): undefined | null | any {
-        if (!keyString) {
+        if (!keyString || !nodeData) {
             // TODO Show error? With a toast maybe
             return undefined;
         }
@@ -140,6 +140,13 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
     function renderOptions(structure: OptionsBase[]): React.ReactNode {
         return structure.map((option, index) => {
             switch (option.type) {
+                case OptionsStructureType.TEXT:
+                    const textOption = option as OptionsText
+                    return (
+                        <p className="text-sm">
+                            { textOption.text }
+                        </p>
+                    )
                 case OptionsStructureType.INPUT:
                     const inputOption = option as OptionsInput
                     const listId = `suggestions-${inputOption.label.toLowerCase().replace(" ", "-")}`

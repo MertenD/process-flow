@@ -1,4 +1,5 @@
 export enum OptionsStructureType {
+    TEXT = "text",
     INPUT = "input",
     SELECT = "select",
     TEXTAREA = "textarea",
@@ -27,6 +28,10 @@ export interface NestedOptionsBase extends OptionsBase {
 }
 
 export interface StructureOptionBase extends OptionsBase {}
+
+export interface OptionsText extends OptionsBase {
+    text: string
+}
 
 export interface OptionsInput extends OptionsBase {
     label: string
