@@ -34,7 +34,7 @@ export default function OptionsToolbar() {
             break;
     }
 
-    return <aside className="w-[300px] h-full p-3 border-l overflow-y-auto">
+    return <aside className="w-[300px] h-full p-3 border-l overflow-y-auto overflow-x-hidden">
         { options }
     </aside>
 }

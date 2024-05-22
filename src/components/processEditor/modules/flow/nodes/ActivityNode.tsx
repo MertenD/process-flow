@@ -36,6 +36,7 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                 type: OptionsStructureType.INPUT,
                 label: "Title",
                 placeholder: "Activity title",
+                keyString: "task"
             } as OptionsInput,
             {
                 type: OptionsStructureType.TEXTAREA,

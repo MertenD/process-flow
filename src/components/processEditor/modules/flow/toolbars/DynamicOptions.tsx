@@ -15,7 +15,8 @@ export enum OptionsStructureType {
     SELECT = "select",
     TEXTAREA = "textarea",
     CHECKBOX = "checkbox",
-    SEPARATOR = "separator"
+    SEPARATOR = "separator",
+    ROW = "row"
 }
 
 export interface OptionsDefinition {
@@ -61,6 +62,11 @@ export interface OptionsCheckbox extends NestedOptionsBase {
 }
 
 export interface OptionsSeparator extends StructureOptionBase {
+    orientation?: "horizontal" | "vertical"
+}
+
+export interface OptionsRow extends OptionsBase {
+    structure: OptionsBase[]
 }
 
 export default function DynamicOptions({ optionsDefinition }: Readonly<{ optionsDefinition: OptionsDefinition }>) {
@@ -294,8 +300,16 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                         { getDependentOptions(checkboxOption) }
                     </>
                 case OptionsStructureType.SEPARATOR:
+                    const separatorOption = option as OptionsSeparator
                     return (
-                        <Separator/>
+                        <Separator orientation={separatorOption.orientation} />
+                    )
+                case OptionsStructureType.ROW:
+                    const rowOption = option as OptionsRow
+                    return (
+                        <div className="flex flex-row space-x-4">
+                            { renderOptions(rowOption.structure) }
+                        </div>
                     )
             }
         })
