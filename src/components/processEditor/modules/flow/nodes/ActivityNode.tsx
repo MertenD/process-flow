@@ -11,9 +11,9 @@ import {
     OptionsSelect,
     OptionsSeparator,
     OptionsStructureType,
-    OptionsTextarea,
-    setDefaultValues
-} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
+    OptionsTextarea
+} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
+import {setDefaultValues} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
 
 export type ActivityNodeData = {
     backgroundColor?: string,
