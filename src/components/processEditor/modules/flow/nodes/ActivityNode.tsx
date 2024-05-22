@@ -13,7 +13,7 @@ import {
     OptionsStructureType,
     OptionsTextarea,
     setDefaultValues
-} from "@/components/processEditor/modules/flow/toolbars/DynamicOptions";
+} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
 
 export type ActivityNodeData = {
     backgroundColor?: string,

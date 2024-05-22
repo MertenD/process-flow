@@ -4,7 +4,7 @@ import React, {useState} from "react";
 import {Node, useOnSelectionChange} from "reactflow";
 import {getActivityOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/ActivityNode";
 import {NodeTypes} from "@/model/NodeTypes";
-import DynamicOptions from "@/components/processEditor/modules/flow/toolbars/DynamicOptions";
+import DynamicOptions from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
 
 export default function OptionsToolbar() {
 

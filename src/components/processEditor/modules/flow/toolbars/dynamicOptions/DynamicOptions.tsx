@@ -9,65 +9,18 @@ import {Textarea} from "@/components/ui/textarea";
 import {Separator} from "@/components/ui/separator";
 import {Checkbox} from "@/components/ui/checkbox";
 import {CheckedState} from "@radix-ui/react-checkbox";
-
-export enum OptionsStructureType {
-    INPUT = "input",
-    SELECT = "select",
-    TEXTAREA = "textarea",
-    CHECKBOX = "checkbox",
-    SEPARATOR = "separator",
-    ROW = "row"
-}
-
-export interface OptionsDefinition {
-    title: string,
-    nodeId: string,
-    structure: OptionsBase[]
-}
-
-interface OptionsBase {
-    type: OptionsStructureType
-    defaultValue?: any
-    keyString?: string
-}
-
-interface NestedOptionsBase extends OptionsBase {
-    options: {
-        values: any[],
-        dependentStructure?: OptionsBase[]
-    }[]
-}
-
-interface StructureOptionBase extends OptionsBase {}
-
-export interface OptionsInput extends OptionsBase {
-    label: string
-    placeholder: string
-    suggestions?: string[]
-}
-
-export interface OptionsTextarea extends OptionsBase {
-    label: string
-    placeholder: string
-}
-
-export interface OptionsSelect extends NestedOptionsBase {
-    label: string
-    defaultValue: string
-}
-
-export interface OptionsCheckbox extends NestedOptionsBase {
-    label: string
-    defaultValue: boolean
-}
-
-export interface OptionsSeparator extends StructureOptionBase {
-    orientation?: "horizontal" | "vertical"
-}
-
-export interface OptionsRow extends OptionsBase {
-    structure: OptionsBase[]
-}
+import {
+    OptionsDefinition,
+    OptionsStructureType,
+    OptionsBase,
+    NestedOptionsBase,
+    OptionsInput,
+    OptionsSelect,
+    OptionsTextarea,
+    OptionsCheckbox,
+    OptionsSeparator,
+    OptionsRow
+} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
 
 export default function DynamicOptions({ optionsDefinition }: Readonly<{ optionsDefinition: OptionsDefinition }>) {
 
