@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional'
 import {
     addEdge,
     applyEdgeChanges,
@@ -57,7 +57,7 @@ export const handleStyle = {
     height: 8
 }
 
-export const useStore = create<RFState>((set, get) => ({
+export const useStore = createWithEqualityFn<RFState>((set, get) => ({
     nodes: [],
     edges: [],
     nodeTypes: {

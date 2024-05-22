@@ -71,7 +71,7 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                     },
                     {
                         values: [ActivityType.SINGLE_CHOICE, ActivityType.MULTIPLE_CHOICE],
-                        dependentOptions: [
+                        dependentStructure: [
                             {
                                 type: OptionsStructureType.INPUT,
                                 label: "Choices",
