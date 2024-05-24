@@ -58,6 +58,7 @@ export interface OptionsSeparator extends StructureOptionBase {
     orientation?: "horizontal" | "vertical"
 }
 
+// TODO Label for row?
 export interface OptionsRow extends OptionsBase {
     structure: OptionsBase[]
 }

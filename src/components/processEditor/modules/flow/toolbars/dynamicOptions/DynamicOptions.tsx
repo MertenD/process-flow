@@ -10,16 +10,17 @@ import {Separator} from "@/components/ui/separator";
 import {Checkbox} from "@/components/ui/checkbox";
 import {CheckedState} from "@radix-ui/react-checkbox";
 import {
-    OptionsDefinition,
-    OptionsStructureType,
-    OptionsBase,
     NestedOptionsBase,
-    OptionsInput,
-    OptionsSelect,
-    OptionsTextarea,
+    OptionsBase,
     OptionsCheckbox,
+    OptionsDefinition,
+    OptionsInput,
+    OptionsRow,
+    OptionsSelect,
     OptionsSeparator,
-    OptionsRow, OptionsText
+    OptionsStructureType,
+    OptionsText,
+    OptionsTextarea
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
 
 export default function DynamicOptions({ optionsDefinition }: Readonly<{ optionsDefinition: OptionsDefinition }>) {
@@ -267,7 +268,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                 case OptionsStructureType.ROW:
                     const rowOption = option as OptionsRow
                     return (
-                        <div className="flex flex-row space-x-4">
+                        <div className="flex flex-row space-x-2 pt-4">
                             { renderOptions(rowOption.structure) }
                         </div>
                     )
@@ -291,17 +292,35 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
 
 export function setDefaultValues(structure: OptionsBase[], data: any) {
     structure.forEach(option => {
-        if (option.keyString) {
-            data[option.keyString] = data[option.keyString] || option.defaultValue;
+        // set nested data value to default value
+        if (option.keyString && !data[option.keyString]) {
+            let keys = option.keyString.split(".");
+
+            let temp: any = data;
+            for (let i = 0; i < keys.length; i++) {
+                let key = keys[i];
+
+                if (i === keys.length - 1) {
+                    temp[key] = option.defaultValue;
+                } else {
+                    temp[key] = { ...temp[key] };
+                }
+
+                temp = temp[key];
+            }
         }
         // Recursively set default values for dependent options
-        if ('options' in option) {
+        if (option.type === OptionsStructureType.SELECT) {
             const selectOption = option as NestedOptionsBase;
             selectOption.options.forEach(option => {
                 if (option.dependentStructure) {
                     setDefaultValues(option.dependentStructure, data);
                 }
             });
+        }
+        if (option.type === OptionsStructureType.ROW) {
+            const rowOption = option as OptionsRow;
+            setDefaultValues(rowOption.structure, data);
         }
     });
 }
