@@ -7,6 +7,8 @@ import {GamificationType} from "@/model/GamificationType";
 
 // TODO Track and cache changed nodes and edges ans only update those
 
+// TODO Remove InfoNode and make it an activity type of the activity node
+
 export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], processModelId: string, supabase: SupabaseClient<any, "public", any>, reactFlowInstance: ReactFlowInstance) {
 
     const existingNodes: string[] = []
@@ -38,7 +40,9 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
     await Promise.all(nodes.map(async (node) => {
 
         const nodeType = node.type as NodeTypes
-        if (nodeType === NodeTypes.CHALLENGE_NODE) {// TODO Implement logic for CHALLENGE_NODE
+        if (nodeType === NodeTypes.CHALLENGE_NODE) {
+            // TODO Implement logic for CHALLENGE_NODE
+            // TOD Fix challenge node
         } else if (nodeType === NodeTypes.ACTIVITY_NODE) {
             const outgoingEdge = edges.find(edge => edge.source === node.id)
             let targetNodeId = null
@@ -46,13 +50,7 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
                 targetNodeId = oldNewIdMapping.get(outgoingEdge.target)
             }
 
-            let gamificationOptionsId = null
-            if (node.data.gamificationOptions && node.data.gamificationType !== GamificationType.NONE) {
-                gamificationOptionsId = (await supabase.from("gamification_option").upsert(
-                    convertKeysToSnakeCaseWithId(oldNewIdMapping.get(node.id), node.data.gamificationOptions),
-                    { onConflict: "id"}
-                ).select()).data?.[0].id
-            }
+            const gamificationOptionsId = await saveGamificationOptions(node, oldNewIdMapping, supabase)
 
             await supabase.from("activity_element").upsert({
                 flow_element_id: oldNewIdMapping.get(node.id),
@@ -66,7 +64,29 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
                 gamification_type: node.data.gamificationType,
                 gamification_option_id: gamificationOptionsId
             }, {onConflict: "flow_element_id"})
-        } else if (nodeType === NodeTypes.GATEWAY_NODE) {// TODO Implement logic for GATEWAY_NODE
+        } else if (nodeType === NodeTypes.GATEWAY_NODE) {
+            const outgoingEdges = edges.filter(edge => edge.source === node.id)
+
+            const falseOutgoingEdge = outgoingEdges.find(edge => edge.sourceHandle === "False")
+            let falseTargetNodeId = null
+            if (falseOutgoingEdge) {
+                falseTargetNodeId = oldNewIdMapping.get(falseOutgoingEdge.target)
+            }
+
+            const trueOutgoingEdge = outgoingEdges.find(edge => edge.sourceHandle === "True")
+            let trueTargetNodeId = null
+            if (trueOutgoingEdge) {
+                trueTargetNodeId = oldNewIdMapping.get(trueOutgoingEdge.target)
+            }
+
+            await supabase.from("gateway_element").upsert({
+                flow_element_id: oldNewIdMapping.get(node.id),
+                comparison: node.data.comparison,
+                value1: node.data.value1,
+                value2: node.data.value2,
+                next_flow_element_false_id: falseTargetNodeId,
+                next_flow_element_true_id: trueTargetNodeId
+            }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.START_NODE) {
             const outgoingEdge = edges.find(edge => edge.source === node.id)
             let targetNodeId = null
@@ -82,8 +102,24 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             await supabase.from("end_element").upsert({
                 flow_element_id: oldNewIdMapping.get(node.id)
             }, {onConflict: "flow_element_id"})
-        } else if (nodeType === NodeTypes.INFO_NODE) {// TODO Implement logic for INFO_NODE
-        } else if (nodeType === NodeTypes.GAMIFICATION_EVENT_NODE) {// TODO Implement logic for GAMIFICATION_EVENT_NODE
+        } else if (nodeType === NodeTypes.INFO_NODE) {
+            // TODO Implement logic for INFO_NODE
+            // TODO Remove Info Node
+        } else if (nodeType === NodeTypes.GAMIFICATION_EVENT_NODE) {
+            const outgoingEdge = edges.find(edge => edge.source === node.id)
+            let targetNodeId = null
+            if (outgoingEdge) {
+                targetNodeId = oldNewIdMapping.get(outgoingEdge.target)
+            }
+
+            const gamificationOptionsId = await saveGamificationOptions(node, oldNewIdMapping, supabase)
+
+            await supabase.from("gamification_event_element").upsert({
+                flow_element_id: oldNewIdMapping.get(node.id),
+                next_flow_element_id: targetNodeId,
+                gamification_type: node.data.gamificationType,
+                gamification_option_id: gamificationOptionsId
+            }, {onConflict: "flow_element_id"})
         } else {
             const exhaustiveCheck: never = nodeType;
             throw new Error(`Unhandled nodeType case: ${exhaustiveCheck}`);
@@ -126,7 +162,9 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
             let nextFlowElementId = null
 
             const nodeType = node.type as NodeTypes
-            if (nodeType === NodeTypes.CHALLENGE_NODE) {// TODO Implement logic for CHALLENGE_NODE
+            if (nodeType === NodeTypes.CHALLENGE_NODE) {
+                // TODO Implement logic for CHALLENGE_NODE
+                // TODO fix challenge node resize
             } else if (nodeType === NodeTypes.ACTIVITY_NODE) {
                 const { data: activityElementData } = await supabase
                     .from("activity_element")
@@ -156,7 +194,33 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                     source: node.id.toString(),
                     target: nextFlowElementId?.toString()
                 } as Edge)
-            } else if (nodeType === NodeTypes.GATEWAY_NODE) {// TODO Implement logic for GATEWAY_NODE
+            } else if (nodeType === NodeTypes.GATEWAY_NODE) {
+                const { data } = await supabase
+                    .from("gateway_element")
+                    .select("*")
+                    .eq("flow_element_id", node.id)
+                    .single()
+                const falseFlowElementId = data?.next_flow_element_false_id
+
+                nodeData = {
+                    value1: data.value1,
+                    comparison: data.comparison,
+                    value2: data.value2
+                }
+
+                edges.push({
+                    id: `${node.id}-${falseFlowElementId}`,
+                    source: node.id.toString(),
+                    target: falseFlowElementId?.toString(),
+                    sourceHandle: "False"
+                })
+                const trueFlowElementId = data?.next_flow_element_true_id
+                edges.push({
+                    id: `${node.id}-${trueFlowElementId}`,
+                    source: node.id.toString(),
+                    target: trueFlowElementId?.toString(),
+                    sourceHandle: "True"
+                })
             } else if (nodeType === NodeTypes.START_NODE) {
                 const { data } = await supabase
                     .from("start_element")
@@ -171,8 +235,33 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                 } as Edge)
             } else if (nodeType === NodeTypes.END_NODE) {
                 // No data to load
-            } else if (nodeType === NodeTypes.INFO_NODE) {// TODO Implement logic for INFO_NODE
-            } else if (nodeType === NodeTypes.GAMIFICATION_EVENT_NODE) {// TODO Implement logic for GAMIFICATION_EVENT_NODE
+            } else if (nodeType === NodeTypes.INFO_NODE) {
+                // TODO Implement logic for INFO_NODE
+                // TODO Remove Info Node
+            } else if (nodeType === NodeTypes.GAMIFICATION_EVENT_NODE) {
+                const { data: gamificationEventElementData } = await supabase
+                    .from("gamification_event_element")
+                    .select("*")
+                    .eq("flow_element_id", node.id)
+                    .single()
+
+                const { data: gamificationOptions } = await supabase
+                    .from("gamification_option")
+                    .select("*")
+                    .eq("id", gamificationEventElementData?.gamification_option_id)
+                    .single()
+
+                nodeData = {
+                    gamificationType: gamificationEventElementData?.gamification_type,
+                    gamificationOptions: convertKeysFromSnakeToCamelCase(gamificationOptions)
+                }
+
+                nextFlowElementId = gamificationEventElementData?.next_flow_element_id
+                edges.push({
+                    id: `${node.id}-${nextFlowElementId}`,
+                    source: node.id.toString(),
+                    target: nextFlowElementId?.toString()
+                } as Edge)
             } else {
                 const exhaustiveCheck: never = nodeType;
                 throw new Error(`Unhandled nodeType case: ${exhaustiveCheck}`);
@@ -190,6 +279,17 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
 
         return {nodes: nodes, edges: edges}
     }
+}
+
+async function saveGamificationOptions(node: Node, oldNewIdMapping: Map<string, string>, supabase: SupabaseClient<any, "public", any>): Promise<string | null> {
+    let gamificationOptionsId: string | null = null
+    if (node.data.gamificationOptions && node.data.gamificationType !== GamificationType.NONE) {
+        gamificationOptionsId = (await supabase.from("gamification_option").upsert(
+            convertKeysToSnakeCaseWithId(oldNewIdMapping.get(node.id), node.data.gamificationOptions),
+            { onConflict: "id"}
+        ).select()).data?.[0].id
+    }
+    return gamificationOptionsId
 }
 
 function convertKeysToSnakeCaseWithId(id: string | undefined, obj: any): any {
