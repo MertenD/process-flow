@@ -186,6 +186,7 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
 
                 nodeData = {
                     task: activityElementData?.task,
+                    description: activityElementData?.description,
                     activityType: activityElementData?.activity_type,
                     choices: activityElementData?.choices,
                     inputRegex: activityElementData?.input_regex,
