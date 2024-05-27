@@ -5,6 +5,7 @@ import {Node, useOnSelectionChange} from "reactflow";
 import {getActivityOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/ActivityNode";
 import {NodeTypes} from "@/model/NodeTypes";
 import DynamicOptions from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
+import {getGatewayOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/GatewayNode";
 
 export default function OptionsToolbar() {
 
@@ -26,8 +27,12 @@ export default function OptionsToolbar() {
 
     let options = <></>
     switch (selectedNode.type) {
+        // TODO Add all nodes
         case NodeTypes.ACTIVITY_NODE:
             options = <DynamicOptions optionsDefinition={ getActivityOptionsDefinition(selectedNode.id) } />
+            break;
+        case NodeTypes.GATEWAY_NODE:
+            options = <DynamicOptions optionsDefinition={ getGatewayOptionsDefinition(selectedNode.id) } />
             break;
         default:
             options = <h2 className="text-2xl font-semibold">{ selectedNode.type }</h2>

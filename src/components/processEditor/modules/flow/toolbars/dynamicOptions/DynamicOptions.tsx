@@ -1,6 +1,10 @@
 "use client"
 
-import React, {useEffect, useRef} from "react";
+// TODO Is a keystring necessary? If there is none provided it crashes right now.
+
+// TODO Default value for select should be the first option?
+
+import React, {useEffect, useRef, useState} from "react";
 import useStore from "@/components/processEditor/store";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
@@ -18,17 +22,24 @@ import {
     OptionsRow,
     OptionsSelect,
     OptionsSelectWithCustom,
-    OptionsSeparator,
+    OptionsSeparator, OptionsStructureSpecialValues,
     OptionsStructureType,
     OptionsText,
     OptionsTextarea
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
+
+// TODO Bei den variablennamen auch den eignen variablen namen berücksichtigen? Extra flag in json? Eigener Input für variablenausgänge?
 
 export default function DynamicOptions({ optionsDefinition }: Readonly<{ optionsDefinition: OptionsDefinition }>) {
 
     const inputRefs = useRef<any>({});
     const updateNodeData = useStore((state) => state.updateNodeData)
     const nodeData = useStore((state) => state.getNodeById(optionsDefinition.nodeId)?.data)
+
+    const getAvailableVariableNames = useStore((state) => state.getAvailableVariableNames)
+    const [availableVariableNames, setAvailableVariableNames] = useState<string[]>([])
+    const nodes = useStore((state) => state.nodes)
+    const edges = useStore((state) => state.edges)
 
     useEffect(() => {
         function setValues(structure: OptionsBase[]) {
@@ -43,12 +54,14 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                             const dataValue = getValueFromData(option.keyString)
                             inputRefs.current[option.keyString].value = dataValue === null ? "" : dataValue;
                             const possibleSelectOptions = (option as OptionsSelectWithCustom).options.map(opt => opt.values).flat()
-                            if (possibleSelectOptions.includes(dataValue)) {
+                            const variableNames = getAvailableVariableNames(optionsDefinition.nodeId)
+                            if (possibleSelectOptions.includes(dataValue) || variableNames.includes(dataValue)) {
                                 inputRefs.current[`${option.keyString}-select`].value = dataValue
                             } else {
                                 inputRefs.current[`${option.keyString}-select`].value = "{custom}"
                                 inputRefs.current[option.keyString].classList.remove("hidden")
                             }
+
                         } else {
                             const dataValue = getValueFromData(option.keyString)
                             inputRefs.current[option.keyString].value = dataValue === null ? "" : dataValue;
@@ -73,7 +86,15 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
         }
 
         setValues(optionsDefinition.structure);
-    }, [getValueFromData, optionsDefinition.structure]);
+    }, [getValueFromData, optionsDefinition.structure, availableVariableNames]);
+
+    useEffect(() => {
+        setAvailableVariableNames(getAvailableVariableNames(optionsDefinition.nodeId))
+    }, [])
+
+    useEffect(() => {
+        setAvailableVariableNames(getAvailableVariableNames(optionsDefinition.nodeId))
+    }, [optionsDefinition.nodeId, nodes, edges, getAvailableVariableNames])
 
     // Update value in data object based on keyString (e.g. "task.title" -> { task: { title: "new value" } })
     function updateValueInData(keyString: string | undefined, newValue: any): any {
@@ -130,6 +151,10 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
 
     function getDependentOptions(options: NestedOptionsBase): React.ReactNode {
         return options.options?.map((option, index) => {
+            if (!option.dependentStructure) {
+                return <></>
+            }
+
             const dataValue = getValueFromData(options.keyString)
             const isHidden: boolean = !option.values.includes(dataValue || options.defaultValue)
 
@@ -221,7 +246,13 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                                     <SelectGroup>
                                         {selectOption.options.map(option => {
                                             return option.values.map(value => {
-                                                return <SelectItem key={value} value={value}>{value}</SelectItem>
+                                                if (value === OptionsStructureSpecialValues.AVAILABLE_VARIABLES) {
+                                                    return availableVariableNames.map((variable) => {
+                                                        return <SelectItem key={variable} value={variable}>{variable}</SelectItem>
+                                                    })
+                                                } else {
+                                                    return <SelectItem key={value} value={value}>{value}</SelectItem>
+                                                }
                                             })
                                         }).flat()}
                                     </SelectGroup>
@@ -238,12 +269,18 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                         <div className="space-y-2">
                             <Label>{selectWithCustomOption.label}</Label>
                             <Select
-                                defaultValue={possibleSelectOptions.includes(dataValue) ? dataValue : "{custom}"}
+                                defaultValue={(() => {
+                                    let variables = availableVariableNames
+                                    if (variables.length === 0) {
+                                        variables = getAvailableVariableNames(optionsDefinition.nodeId)
+                                    }
+                                    return (possibleSelectOptions.includes(dataValue) || variables.includes(dataValue)) ? dataValue : "{custom}"
+                                })()}
                                 onValueChange={newValue => {
                                     const customRef = inputRefs.current[`${selectWithCustomOption.keyString}`]
                                     if (customRef && newValue === "{custom}") {
                                         customRef.classList.remove("hidden")
-                                        updateValueInData(selectWithCustomOption.keyString, customRef.value)
+                                        updateValueInData(selectWithCustomOption.keyString, "")
                                     } else {
                                         customRef.classList.add("hidden")
                                         updateValueInData(selectWithCustomOption.keyString, newValue)
@@ -259,10 +296,16 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                                     }}/>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectGroup>
+                                    <SelectGroup >
                                         {selectWithCustomOption.options.map(option => {
                                             return option.values.map(value => {
-                                                return <SelectItem key={value} value={value}>{value}</SelectItem>
+                                                if (value === OptionsStructureSpecialValues.AVAILABLE_VARIABLES) {
+                                                    return availableVariableNames.map((variable) => {
+                                                        return <SelectItem key={variable} value={variable}>{variable}</SelectItem>
+                                                    })
+                                                } else {
+                                                    return <SelectItem key={value} value={value}>{value}</SelectItem>
+                                                }
                                             })
                                         }).flat()}
                                         <SelectItem value="{custom}">Custom</SelectItem>

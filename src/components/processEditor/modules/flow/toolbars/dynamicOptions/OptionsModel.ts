@@ -9,6 +9,10 @@ export enum OptionsStructureType {
     ROW = "row"
 }
 
+export enum OptionsStructureSpecialValues {
+    AVAILABLE_VARIABLES = "{availableVariables}"
+}
+
 export interface OptionsDefinition {
     title: string,
     nodeId: string,

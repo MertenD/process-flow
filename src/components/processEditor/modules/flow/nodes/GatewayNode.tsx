@@ -2,7 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
 import useStore, {handleStyle, selectedColor} from "../../../store";
 import {Comparisons} from "@/model/Comparisons";
-import ConditionOption from "../../form/ConditionOption";
+import {
+    OptionsDefinition,
+    OptionsSelect,
+    OptionsSelectWithCustom,
+    OptionsStructureSpecialValues,
+    OptionsStructureType
+} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
+import {setDefaultValues} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
+import {ActivityNodeData} from "@/components/processEditor/modules/flow/nodes/ActivityNode";
 
 export type GatewayNodeData = {
     backgroundColor?: string
@@ -11,33 +19,50 @@ export type GatewayNodeData = {
     value2?: string
 }
 
+export function getGatewayOptionsDefinition(nodeId: string): OptionsDefinition {
+    return {
+        title: "Gateway Options",
+        nodeId: nodeId,
+        structure: [
+            {
+                type: OptionsStructureType.SELECT_WITH_CUSTOM,
+                label: "Value 1",
+                keyString: "value1",
+                defaultValue: "Var 1",
+                options: [ { values:  [OptionsStructureSpecialValues.AVAILABLE_VARIABLES] } ]
+            } as OptionsSelectWithCustom,
+            {
+                type: OptionsStructureType.SELECT,
+                label: "Comparison",
+                keyString: "comparison",
+                defaultValue: Comparisons.EQUALS,
+                options: [ { values: Object.values(Comparisons) } ]
+            } as OptionsSelect,
+            {
+                type: OptionsStructureType.SELECT_WITH_CUSTOM,
+                label: "Value 2",
+                keyString: "value2",
+                defaultValue: "Var 2",
+                options: [ { values:  [OptionsStructureSpecialValues.AVAILABLE_VARIABLES] } ]
+            } as OptionsSelectWithCustom
+        ]
+    }
+}
+
 export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNodeData>) {
 
-    const nodes = useStore((state) => state.nodes)
-    const edges = useStore((state) => state.edges)
-    const getAvailableVariableNames = useStore((state) => state.getAvailableVariableNames)
     const updateNodeData = useStore((state) => state.updateNodeData);
-    const [availableVariableNames, setAvailableVariableNames] = useState<string[]>([])
-    const [value1, setValue1] = useState(data.value1 || "{" + getAvailableVariableNames(id)[0] + "}");
-    const [comparison, setComparison] = useState(data.comparison || Comparisons.EQUALS);
-    const [value2, setValue2] = useState(data.value2 || "{" + getAvailableVariableNames(id)[0] + "}");
 
     useEffect(() => {
-        setAvailableVariableNames(getAvailableVariableNames(id))
-    }, [id, nodes, edges])
-
-    useEffect(() => {
-        updateNodeData<GatewayNodeData>(id, {
-            backgroundColor: data.backgroundColor,
-            value1: value1,
-            comparison: comparison,
-            value2: value2
-        })
-    }, [id, value1, comparison, value2, updateNodeData])
+        const optionsDefinition = getGatewayOptionsDefinition(id);
+        const updatedData = { ...data };
+        setDefaultValues(optionsDefinition.structure, updatedData);
+        updateNodeData<ActivityNodeData>(id, updatedData);
+    }, [])
 
     return (
         <div style={{ backgroundColor: "transparent", position: "relative" }} >
-            <ConditionOption
+            {/*<ConditionOption
                 variables={ availableVariableNames }
                 value1={ value1 }
                 onValue1Changed={newValue => setValue1(newValue) }
@@ -50,7 +75,7 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
                     right: -310,
                     top: -5
                 }}
-            />
+            /> */}
             <div
                 style={{
                     width: 70,
