@@ -137,7 +137,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                 if (el && options.keyString) {
                     inputRefs.current[`${options.keyString}-${option.values[index]}`] = el;
                 }
-            }} className={isHidden ? "hidden" : ""} >
+            }} className={`${isHidden ? "hidden" : ""} space-y-4`} >
                 { renderOptions(option.dependentStructure || []) }
             </div>
         })
@@ -343,7 +343,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                 case OptionsStructureType.ROW:
                     const rowOption = option as OptionsRow
                     return (
-                        <div className="flex flex-row space-x-2 pt-4">
+                        <div className="flex flex-row space-x-2">
                             { renderOptions(rowOption.structure) }
                         </div>
                     )
