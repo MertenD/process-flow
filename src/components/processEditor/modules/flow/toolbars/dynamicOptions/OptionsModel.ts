@@ -2,6 +2,7 @@ export enum OptionsStructureType {
     TEXT = "text",
     INPUT = "input",
     SELECT = "select",
+    SELECT_WITH_CUSTOM = "Select with custom",
     TEXTAREA = "textarea",
     CHECKBOX = "checkbox",
     SEPARATOR = "separator",
@@ -48,6 +49,8 @@ export interface OptionsSelect extends NestedOptionsBase {
     label: string
     defaultValue: string
 }
+
+export interface OptionsSelectWithCustom extends OptionsSelect {}
 
 export interface OptionsCheckbox extends NestedOptionsBase {
     label: string

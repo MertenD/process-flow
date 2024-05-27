@@ -17,6 +17,7 @@ import {
     OptionsInput,
     OptionsRow,
     OptionsSelect,
+    OptionsSelectWithCustom,
     OptionsSeparator,
     OptionsStructureType,
     OptionsText,
@@ -31,25 +32,44 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
 
     useEffect(() => {
         function setValues(structure: OptionsBase[]) {
-            structure.forEach(option => {
-                if (option.keyString && inputRefs.current[option.keyString]) {
-                    if (option.type === OptionsStructureType.CHECKBOX) {
-                        inputRefs.current[option.keyString].checked = getValueFromData(option.keyString);
-                    } else {
-                        const dataValue = getValueFromData(option.keyString)
-                        inputRefs.current[option.keyString].value = dataValue === null ? "" : dataValue;
-                    }
-                }
-                // Rekursiver Aufruf für verschachtelte Optionen
-                if ('options' in option) {
-                    const selectOption = option as NestedOptionsBase;
-                    selectOption.options.forEach(option => {
-                        if (option.dependentStructure) {
-                            setValues(option.dependentStructure);
+
+            if (nodeData) {
+
+                structure.forEach(option => {
+                    if (option.keyString && inputRefs.current[option.keyString]) {
+                        if (option.type === OptionsStructureType.CHECKBOX) {
+                            inputRefs.current[option.keyString].checked = getValueFromData(option.keyString);
+                        } else if (option.type === OptionsStructureType.SELECT_WITH_CUSTOM) {
+                            const dataValue = getValueFromData(option.keyString)
+                            inputRefs.current[option.keyString].value = dataValue === null ? "" : dataValue;
+                            const possibleSelectOptions = (option as OptionsSelectWithCustom).options.map(opt => opt.values).flat()
+                            if (possibleSelectOptions.includes(dataValue)) {
+                                inputRefs.current[`${option.keyString}-select`].value = dataValue
+                            } else {
+                                inputRefs.current[`${option.keyString}-select`].value = "{custom}"
+                                inputRefs.current[option.keyString].classList.remove("hidden")
+                            }
+                        } else {
+                            const dataValue = getValueFromData(option.keyString)
+                            inputRefs.current[option.keyString].value = dataValue === null ? "" : dataValue;
                         }
-                    });
-                }
-            });
+                    }
+                    // Rekursiver Aufruf für verschachtelte Optionen
+                    if (option.type === OptionsStructureType.SELECT || option.type === OptionsStructureType.SELECT_WITH_CUSTOM) {
+                        const selectOption = option as NestedOptionsBase;
+                        selectOption.options.forEach(option => {
+                            if (option.dependentStructure) {
+                                setValues(option.dependentStructure);
+                            }
+                        });
+                    }
+                    if (option.type === OptionsStructureType.ROW) {
+                        const rowOption = option as OptionsRow;
+                        setValues(rowOption.structure);
+                    }
+                });
+
+            }
         }
 
         setValues(optionsDefinition.structure);
@@ -96,7 +116,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
             let key = keys[i];
 
             if (i === keys.length - 1) {
-                if (temp[key] === undefined) {
+                if (!key || !temp || !temp[key]) {
                     return null;
                 }
                 return temp[key];
@@ -210,6 +230,61 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                         </div>
                         { getDependentOptions(selectOption) }
                     </>
+                case OptionsStructureType.SELECT_WITH_CUSTOM:
+                    const selectWithCustomOption = option as OptionsSelect
+                    const dataValue = getValueFromData(option.keyString)
+                    const possibleSelectOptions = (option as OptionsSelectWithCustom).options.map(opt => opt.values).flat()
+                    return <>
+                        <div className="space-y-2">
+                            <Label>{selectWithCustomOption.label}</Label>
+                            <Select
+                                defaultValue={possibleSelectOptions.includes(dataValue) ? dataValue : "{custom}"}
+                                onValueChange={newValue => {
+                                    const customRef = inputRefs.current[`${selectWithCustomOption.keyString}`]
+                                    if (customRef && newValue === "{custom}") {
+                                        customRef.classList.remove("hidden")
+                                        updateValueInData(selectWithCustomOption.keyString, customRef.value)
+                                    } else {
+                                        customRef.classList.add("hidden")
+                                        updateValueInData(selectWithCustomOption.keyString, newValue)
+                                    }
+                                    toggleDependentOptionsVisibility(selectWithCustomOption, newValue)
+                                }}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue ref={el => {
+                                        if (el && selectWithCustomOption.keyString) {
+                                            inputRefs.current[`${selectWithCustomOption.keyString}-select`] = el;
+                                        }
+                                    }}/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {selectWithCustomOption.options.map(option => {
+                                            return option.values.map(value => {
+                                                return <SelectItem key={value} value={value}>{value}</SelectItem>
+                                            })
+                                        }).flat()}
+                                        <SelectItem value="{custom}">Custom</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <Input
+                                placeholder="Custom value"
+                                className="hidden"
+                                ref={el => {
+                                    if (el && selectWithCustomOption.keyString) {
+                                        inputRefs.current[`${selectWithCustomOption.keyString}`] = el;
+                                    }
+                                }}
+                                onChange={e => {
+                                    updateValueInData(selectWithCustomOption.keyString, e.target.value)
+                                    toggleDependentOptionsVisibility(selectWithCustomOption, e.target.value)
+                                }}
+                            />
+                        </div>
+                        { getDependentOptions(selectWithCustomOption) }
+                    </>
                 case OptionsStructureType.TEXTAREA:
                     const textareaOption = option as OptionsTextarea
                     return (
@@ -283,7 +358,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
     }
 
     return (
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 pb-4">
             <div className="font-bold text-lg">{ optionsDefinition.title }</div>
             { renderOptions(optionsDefinition.structure) }
         </div>
@@ -293,7 +368,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
 export function setDefaultValues(structure: OptionsBase[], data: any) {
     structure.forEach(option => {
         // set nested data value to default value
-        if (option.keyString && !data[option.keyString]) {
+        if (option.keyString) {
             let keys = option.keyString.split(".");
 
             let temp: any = data;
@@ -301,7 +376,7 @@ export function setDefaultValues(structure: OptionsBase[], data: any) {
                 let key = keys[i];
 
                 if (i === keys.length - 1) {
-                    temp[key] = option.defaultValue;
+                    temp[key] = temp[key] || option.defaultValue;
                 } else {
                     temp[key] = { ...temp[key] };
                 }
@@ -310,7 +385,7 @@ export function setDefaultValues(structure: OptionsBase[], data: any) {
             }
         }
         // Recursively set default values for dependent options
-        if (option.type === OptionsStructureType.SELECT) {
+        if (option.type === OptionsStructureType.SELECT || option.type === OptionsStructureType.SELECT_WITH_CUSTOM) {
             const selectOption = option as NestedOptionsBase;
             selectOption.options.forEach(option => {
                 if (option.dependentStructure) {

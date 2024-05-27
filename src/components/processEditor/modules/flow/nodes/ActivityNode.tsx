@@ -8,6 +8,7 @@ import {
     OptionsInput,
     OptionsRow,
     OptionsSelect,
+    OptionsSelectWithCustom,
     OptionsSeparator,
     OptionsStructureType,
     OptionsTextarea
@@ -145,7 +146,14 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                                         keyString: "gamificationOptions.pointsForSuccess"
                                     } as OptionsInput
                                 ]
-                            } as OptionsRow
+                            } as OptionsRow,
+                            {
+                                type: OptionsStructureType.SELECT_WITH_CUSTOM,
+                                label: "Value 1",
+                                defaultValue: "Test 1",
+                                keyString: "gamificationOptions.value1",
+                                options: [ { values: [ "Test 1", "Test 2", "Test 3" ] } ]
+                            } as OptionsSelectWithCustom
                         ]
                     },
                     {

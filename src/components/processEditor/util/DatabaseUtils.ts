@@ -9,6 +9,8 @@ import {GamificationType} from "@/model/GamificationType";
 
 // TODO Remove InfoNode and make it an activity type of the activity node
 
+// TODO Delete gamification options when node is deleted (maybe via cascading in the database)
+
 export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], processModelId: string, supabase: SupabaseClient<any, "public", any>, reactFlowInstance: ReactFlowInstance) {
 
     const existingNodes: string[] = []
@@ -172,11 +174,15 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                     .eq("flow_element_id", node.id)
                     .single()
 
-                const { data: gamificationOptions } = await supabase
-                    .from("gamification_option")
-                    .select("*")
-                    .eq("id", activityElementData?.gamification_option_id)
-                    .single()
+                let gamificationOptions = null
+                if (activityElementData?.gamification_option_id) {
+                    const { data } = await supabase
+                        .from("gamification_option")
+                        .select("*")
+                        .eq("id", activityElementData?.gamification_option_id)
+                        .single()
+                    gamificationOptions = data
+                }
 
                 nodeData = {
                     task: activityElementData?.task,
@@ -245,11 +251,15 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                     .eq("flow_element_id", node.id)
                     .single()
 
-                const { data: gamificationOptions } = await supabase
-                    .from("gamification_option")
-                    .select("*")
-                    .eq("id", gamificationEventElementData?.gamification_option_id)
-                    .single()
+                let gamificationOptions = null
+                if (gamificationEventElementData?.gamification_option_id) {
+                    const {data} = await supabase
+                        .from("gamification_option")
+                        .select("*")
+                        .eq("id", gamificationEventElementData?.gamification_option_id || "")
+                        .single()
+                    gamificationOptions = data
+                }
 
                 nodeData = {
                     gamificationType: gamificationEventElementData?.gamification_type,
