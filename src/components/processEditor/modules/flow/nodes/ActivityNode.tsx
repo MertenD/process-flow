@@ -9,7 +9,7 @@ import {
     OptionsRow,
     OptionsSelect,
     OptionsSelectWithCustom,
-    OptionsSeparator,
+    OptionsSeparator, OptionsStructureSpecialValues,
     OptionsStructureType,
     OptionsTextarea
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
@@ -100,6 +100,7 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                 type: OptionsStructureType.INPUT,
                 label: "Save input as",
                 placeholder: "input1",
+                isOutputVariableName: true,
                 keyString: "variableName"
             } as OptionsInput,
             {
@@ -152,7 +153,7 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                                 label: "Value 1",
                                 defaultValue: "Test 1",
                                 keyString: "gamificationOptions.value1",
-                                options: [ { values: [ "Test 1", "Test 2", "Test 3" ] } ]
+                                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_VARIABLES ] } ]
                             } as OptionsSelectWithCustom
                         ]
                     },

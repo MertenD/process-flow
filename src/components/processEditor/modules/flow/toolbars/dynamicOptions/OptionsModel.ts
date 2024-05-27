@@ -41,6 +41,7 @@ export interface OptionsText extends OptionsBase {
 export interface OptionsInput extends OptionsBase {
     label: string
     placeholder: string
+    isOutputVariableName?: boolean,
     suggestions?: string[]
 }
 

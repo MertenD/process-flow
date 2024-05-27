@@ -54,7 +54,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                             const dataValue = getValueFromData(option.keyString)
                             inputRefs.current[option.keyString].value = dataValue === null ? "" : dataValue;
                             const possibleSelectOptions = (option as OptionsSelectWithCustom).options.map(opt => opt.values).flat()
-                            const variableNames = getAvailableVariableNames(optionsDefinition.nodeId)
+                            const variableNames = getVariablesWithOwn(optionsDefinition.nodeId)
                             if (possibleSelectOptions.includes(dataValue) || variableNames.includes(dataValue)) {
                                 inputRefs.current[`${option.keyString}-select`].value = dataValue
                             } else {
@@ -89,11 +89,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
     }, [getValueFromData, optionsDefinition.structure, availableVariableNames]);
 
     useEffect(() => {
-        setAvailableVariableNames(getAvailableVariableNames(optionsDefinition.nodeId))
-    }, [])
-
-    useEffect(() => {
-        setAvailableVariableNames(getAvailableVariableNames(optionsDefinition.nodeId))
+        setAvailableVariableNames(getVariablesWithOwn(optionsDefinition.nodeId))
     }, [optionsDefinition.nodeId, nodes, edges, getAvailableVariableNames])
 
     // Update value in data object based on keyString (e.g. "task.title" -> { task: { title: "new value" } })
@@ -147,6 +143,14 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
         }
 
         return undefined;
+    }
+
+    function getVariablesWithOwn(nodeId: string) {
+        const ownVariableNameKeyStrings = optionsDefinition.structure.filter((option) =>
+            option.type === OptionsStructureType.INPUT && (option as OptionsInput).isOutputVariableName
+        ).map(option => option.keyString)
+        const ownVariableNames = ownVariableNameKeyStrings.map(keyString => getValueFromData(keyString)).filter(name => name !== null && name !== undefined) as string[]
+        return getAvailableVariableNames(nodeId, ownVariableNames)
     }
 
     function getDependentOptions(options: NestedOptionsBase): React.ReactNode {
@@ -272,7 +276,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                                 defaultValue={(() => {
                                     let variables = availableVariableNames
                                     if (variables.length === 0) {
-                                        variables = getAvailableVariableNames(optionsDefinition.nodeId)
+                                        variables = getVariablesWithOwn(optionsDefinition.nodeId)
                                     }
                                     return (possibleSelectOptions.includes(dataValue) || variables.includes(dataValue)) ? dataValue : "{custom}"
                                 })()}
