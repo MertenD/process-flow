@@ -68,7 +68,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                         }
                     }
                     // Rekursiver Aufruf für verschachtelte Optionen
-                    if (option.type === OptionsStructureType.SELECT || option.type === OptionsStructureType.SELECT_WITH_CUSTOM) {
+                    if (option.type === OptionsStructureType.SELECT || option.type === OptionsStructureType.SELECT_WITH_CUSTOM || option.type === OptionsStructureType.CHECKBOX) {
                         const selectOption = option as NestedOptionsBase;
                         selectOption.options.forEach(option => {
                             if (option.dependentStructure) {
@@ -353,7 +353,7 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                     const checkboxOption = option as OptionsCheckbox
                     return <>
                         <div className="flex flex-row items-center space-x-2 space-y-2">
-                            {<Checkbox
+                            <Checkbox
                                 id={`${checkboxOption.label}-checkbox`}
                                 ref={el => {
                                     if (el && checkboxOption.keyString) {
@@ -372,10 +372,11 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                                     updateValueInData(checkboxOption.keyString, newValue)
                                     toggleDependentOptionsVisibility(checkboxOption, newValue)
                                 }}
-                            />}
+                            />
                             <label
                                 htmlFor={`${checkboxOption.label}-checkbox`}
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                style={{ marginTop: 0 }}
                             >
                                 { checkboxOption.label }
                             </label>
@@ -432,7 +433,7 @@ export function setDefaultValues(structure: OptionsBase[], data: any) {
             }
         }
         // Recursively set default values for dependent options
-        if (option.type === OptionsStructureType.SELECT || option.type === OptionsStructureType.SELECT_WITH_CUSTOM) {
+        if (option.type === OptionsStructureType.SELECT || option.type === OptionsStructureType.SELECT_WITH_CUSTOM || option.type === OptionsStructureType.CHECKBOX) {
             const selectOption = option as NestedOptionsBase;
             selectOption.options.forEach(option => {
                 if (option.dependentStructure) {

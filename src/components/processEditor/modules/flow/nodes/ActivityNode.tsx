@@ -4,12 +4,14 @@ import useStore, {handleStyle, selectedColor} from "../../../store";
 import {GamificationType} from "@/model/GamificationType";
 import {ActivityType} from "@/model/ActivityType";
 import {
+    OptionsCheckbox,
     OptionsDefinition,
     OptionsInput,
     OptionsRow,
     OptionsSelect,
     OptionsSelectWithCustom,
-    OptionsSeparator, OptionsStructureSpecialValues,
+    OptionsSeparator,
+    OptionsStructureSpecialValues,
     OptionsStructureType,
     OptionsTextarea
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
@@ -149,12 +151,40 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                                 ]
                             } as OptionsRow,
                             {
-                                type: OptionsStructureType.SELECT_WITH_CUSTOM,
-                                label: "Value 1",
-                                defaultValue: "Test 1",
-                                keyString: "gamificationOptions.value1",
-                                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_VARIABLES ] } ]
-                            } as OptionsSelectWithCustom
+                                type: OptionsStructureType.SEPARATOR
+                            } as OptionsSeparator,
+                            {
+                                type: OptionsStructureType.CHECKBOX,
+                                defaultValue: false,
+                                label: "Gamification condition",
+                                keyString: "gamificationOptions.hasCondition",
+                                options: [
+                                    {
+                                        values: [true],
+                                        dependentStructure: [
+                                            {
+                                                type: OptionsStructureType.SELECT_WITH_CUSTOM,
+                                                label: "Value 1",
+                                                keyString: "gamificationOptions.value1",
+                                                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_VARIABLES ] } ]
+                                            } as OptionsSelectWithCustom,
+                                            {
+                                                type: OptionsStructureType.SELECT,
+                                                label: "Comparison",
+                                                keyString: "gamificationOptions.comparison",
+                                                defaultValue: Comparisons.EQUALS,
+                                                options: [ { values: Object.values(Comparisons) } ]
+                                            } as OptionsSelect,
+                                            {
+                                                type: OptionsStructureType.SELECT_WITH_CUSTOM,
+                                                label: "Value 2",
+                                                keyString: "gamificationOptions.value2",
+                                                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_VARIABLES ] } ]
+                                            } as OptionsSelectWithCustom
+                                        ]
+                                    }
+                                ]
+                            } as OptionsCheckbox,
                         ]
                     },
                     {

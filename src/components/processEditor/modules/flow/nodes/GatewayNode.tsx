@@ -28,7 +28,6 @@ export function getGatewayOptionsDefinition(nodeId: string): OptionsDefinition {
                 type: OptionsStructureType.SELECT_WITH_CUSTOM,
                 label: "Value 1",
                 keyString: "value1",
-                defaultValue: "Var 1",
                 options: [ { values:  [OptionsStructureSpecialValues.AVAILABLE_VARIABLES] } ]
             } as OptionsSelectWithCustom,
             {
@@ -42,7 +41,6 @@ export function getGatewayOptionsDefinition(nodeId: string): OptionsDefinition {
                 type: OptionsStructureType.SELECT_WITH_CUSTOM,
                 label: "Value 2",
                 keyString: "value2",
-                defaultValue: "Var 2",
                 options: [ { values:  [OptionsStructureSpecialValues.AVAILABLE_VARIABLES] } ]
             } as OptionsSelectWithCustom
         ]
