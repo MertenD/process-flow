@@ -13,7 +13,7 @@ import ReactFlow, {
     useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow'
 import useStore, {edgeStyle} from '../../store';
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import NodesToolbar from "./toolbars/NodesToolbar";

@@ -24,7 +24,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
-    "@reactflow/node-resizer": "^1.2.2",
+    "@reactflow/node-resizer": "^2.2.13",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "autoprefixer": "^10.4.17",
@@ -39,12 +39,12 @@
     "react": "^18",
     "react-dom": "^18",
     "react-resizable-panels": "^2.0.12",
-    "reactflow": "^11.10.4",
+    "reactflow": "^11.11.3",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "type-fest": "^4.8.2",
     "uuid": "^9.0.1",
-    "zustand": "^4.1.5"
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/node": "^20",
