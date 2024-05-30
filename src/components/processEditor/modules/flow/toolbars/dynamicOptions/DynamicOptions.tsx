@@ -8,7 +8,15 @@ import React, {useEffect, useRef, useState} from "react";
 import useStore from "@/components/processEditor/store";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {Separator} from "@/components/ui/separator";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -268,6 +276,17 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                     )
                 case OptionsStructureType.SELECT:
                     const selectOption = option as OptionsSelect
+
+                    const selectDefaultItems = selectOption.options.map(option => {
+                        return option.values.filter(value => value !== OptionsStructureSpecialValues.AVAILABLE_VARIABLES).map(value => {
+                            return <SelectItem key={value} value={value}>{value}</SelectItem>
+                        })
+                    }).flat()
+                    const selectVariableItems = selectOption.options.map(option => option.values).flat().includes(OptionsStructureSpecialValues.AVAILABLE_VARIABLES) ?
+                        availableVariableNames.map((variable) => {
+                            return <SelectItem key={variable} value={variable}>{variable}</SelectItem>
+                        }) : []
+
                     return <>
                         <div className="space-y-2">
                             <Label>{selectOption.label}</Label>
@@ -286,19 +305,14 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                                     }}/>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectGroup>
-                                        {selectOption.options.map(option => {
-                                            return option.values.map(value => {
-                                                if (value === OptionsStructureSpecialValues.AVAILABLE_VARIABLES) {
-                                                    return availableVariableNames.map((variable) => {
-                                                        return <SelectItem key={variable} value={variable}>{variable}</SelectItem>
-                                                    })
-                                                } else {
-                                                    return <SelectItem key={value} value={value}>{value}</SelectItem>
-                                                }
-                                            })
-                                        }).flat()}
-                                    </SelectGroup>
+                                    { selectDefaultItems.length !== 0 && <SelectGroup>
+                                        <SelectLabel>Standard values</SelectLabel>
+                                        { selectDefaultItems }
+                                    </SelectGroup> }
+                                    { selectVariableItems.length !== 0 && <SelectGroup>
+                                        <SelectLabel>Variables</SelectLabel>
+                                        { selectVariableItems }
+                                    </SelectGroup> }
                                 </SelectContent>
                             </Select>
                         </div>
@@ -308,6 +322,19 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                     const selectWithCustomOption = option as OptionsSelect
                     const dataValue = getValueFromData(option.keyString)
                     const possibleSelectOptions = (option as OptionsSelectWithCustom).options.map(opt => opt.values).flat()
+
+                    const defaultItems = selectWithCustomOption.options.map(option => {
+                        return option.values.filter(value => value !== OptionsStructureSpecialValues.AVAILABLE_VARIABLES).map(value => {
+                            return <SelectItem key={value} value={value}>{value}</SelectItem>
+                        })
+                    }).flat()
+                    const variableItems = selectWithCustomOption.options.map(option => option.values).flat().includes(OptionsStructureSpecialValues.AVAILABLE_VARIABLES) ?
+                        availableVariableNames.map((variable) => {
+                            return <SelectItem key={variable} value={variable}>{variable}</SelectItem>
+                        }) : []
+
+                    console.log("items", defaultItems, variableItems)
+
                     return <>
                         <div className="space-y-2">
                             <Label>{selectWithCustomOption.label}</Label>
@@ -339,20 +366,14 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                                     }}/>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectGroup >
-                                        {selectWithCustomOption.options.map(option => {
-                                            return option.values.map(value => {
-                                                if (value === OptionsStructureSpecialValues.AVAILABLE_VARIABLES) {
-                                                    return availableVariableNames.map((variable) => {
-                                                        return <SelectItem key={variable} value={variable}>{variable}</SelectItem>
-                                                    })
-                                                } else {
-                                                    return <SelectItem key={value} value={value}>{value}</SelectItem>
-                                                }
-                                            })
-                                        }).flat()}
-                                        <SelectItem value="{custom}">Custom</SelectItem>
-                                    </SelectGroup>
+                                    { defaultItems.length > 0 && <SelectGroup>
+                                        <SelectLabel>Standard values</SelectLabel>
+                                        { defaultItems }
+                                    </SelectGroup> }
+                                    { variableItems.length > 0 && <SelectGroup>
+                                        <SelectLabel>Variables</SelectLabel>
+                                        { variableItems }
+                                    </SelectGroup> }
                                 </SelectContent>
                             </Select>
                             <Input
