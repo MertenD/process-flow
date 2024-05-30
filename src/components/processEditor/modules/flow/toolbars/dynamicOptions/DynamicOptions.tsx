@@ -28,7 +28,7 @@ import {
     OptionsTextarea
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
 
-// TODO Bei den variablennamen auch den eignen variablen namen berücksichtigen? Extra flag in json? Eigener Input für variablenausgänge?
+// TODO Bei ändern der variablen namen wird aktuell jedes select was das ausgewählt hatte auf custom gesetzt, bei ändern des eignen wird aktuell nichts mehr selektiert. Wie mache ich das am besten?
 
 export default function DynamicOptions({ optionsDefinition }: Readonly<{ optionsDefinition: OptionsDefinition }>) {
 
@@ -38,7 +38,8 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
 
     const getAvailableVariableNames = useStore((state) => state.getAvailableVariableNames)
     const [availableVariableNames, setAvailableVariableNames] = useState<string[]>([])
-    const nodes = useStore((state) => state.nodes)
+    const [ownVariableNames, setOwnVariableNames] = useState<Map<string, string>>(new Map())
+
     const edges = useStore((state) => state.edges)
 
     useEffect(() => {
@@ -50,6 +51,14 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                     if (option.keyString && inputRefs.current[option.keyString]) {
                         if (option.type === OptionsStructureType.CHECKBOX) {
                             inputRefs.current[option.keyString].checked = getValueFromData(option.keyString);
+                        } else if (option.type === OptionsStructureType.VARIABLE_NAME_INPUT) {
+                            const dataValue = getValueFromData(option.keyString)
+                            inputRefs.current[option.keyString].value = dataValue === null ? "" : dataValue;
+                            setOwnVariableNames((old) => {
+                                const newMap = new Map(old)
+                                newMap.set(option.keyString!!, dataValue)
+                                return newMap
+                            })
                         } else if (option.type === OptionsStructureType.SELECT_WITH_CUSTOM) {
                             const dataValue = getValueFromData(option.keyString)
                             inputRefs.current[option.keyString].value = dataValue === null ? "" : dataValue;
@@ -86,11 +95,11 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
         }
 
         setValues(optionsDefinition.structure);
-    }, [getValueFromData, optionsDefinition.structure, availableVariableNames]);
+    }, [optionsDefinition.structure]);
 
     useEffect(() => {
         setAvailableVariableNames(getVariablesWithOwn(optionsDefinition.nodeId))
-    }, [optionsDefinition.nodeId, nodes, edges, getAvailableVariableNames])
+    }, [optionsDefinition.nodeId, edges, ownVariableNames])
 
     // Update value in data object based on keyString (e.g. "task.title" -> { task: { title: "new value" } })
     function updateValueInData(keyString: string | undefined, newValue: any): any {
@@ -146,11 +155,15 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
     }
 
     function getVariablesWithOwn(nodeId: string) {
-        const ownVariableNameKeyStrings = optionsDefinition.structure.filter((option) =>
-            option.type === OptionsStructureType.INPUT && (option as OptionsInput).isOutputVariableName
-        ).map(option => option.keyString)
-        const ownVariableNames = ownVariableNameKeyStrings.map(keyString => getValueFromData(keyString)).filter(name => name !== null && name !== undefined) as string[]
-        return getAvailableVariableNames(nodeId, ownVariableNames)
+        let ownVariableNamesList = Array.from(ownVariableNames.values())
+        // if it has not been set yet, get the variable names from the options definition
+        if (ownVariableNames.size === 0) {
+            const ownVariableNameKeyStrings = optionsDefinition.structure.filter((option) =>
+                option.type === OptionsStructureType.VARIABLE_NAME_INPUT
+            ).map(option => option.keyString)
+            ownVariableNamesList = ownVariableNameKeyStrings.map(keyString => getValueFromData(keyString)).filter(name => name !== null && name !== undefined) as string[]
+        }
+        return getAvailableVariableNames(nodeId, ownVariableNamesList)
     }
 
     function getDependentOptions(options: NestedOptionsBase): React.ReactNode {
@@ -225,6 +238,32 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                                     })
                                 }
                             </datalist>
+                        </div>
+                    )
+                case OptionsStructureType.VARIABLE_NAME_INPUT:
+                    const variableNameInputOption = option as OptionsInput
+                    return (
+                        <div className="space-y-2">
+                            <Label htmlFor={`${variableNameInputOption.label}-input`}>{variableNameInputOption.label}</Label>
+                            <Input
+                                id={`${variableNameInputOption.label}-input`}
+                                placeholder={variableNameInputOption.placeholder}
+                                ref={el => {
+                                    if (el && variableNameInputOption.keyString) {
+                                        inputRefs.current[variableNameInputOption.keyString] = el;
+                                    }
+                                }}
+                                onChange={e => {
+                                    updateValueInData(variableNameInputOption.keyString, e.target.value)
+                                    if (variableNameInputOption.keyString) {
+                                        setOwnVariableNames((old) => {
+                                            const newMap = new Map(old)
+                                            newMap.set(variableNameInputOption.keyString!!, e.target.value)
+                                            return newMap
+                                        })
+                                    }
+                                }}
+                            />
                         </div>
                     )
                 case OptionsStructureType.SELECT:

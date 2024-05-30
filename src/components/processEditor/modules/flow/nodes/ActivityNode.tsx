@@ -13,7 +13,7 @@ import {
     OptionsSeparator,
     OptionsStructureSpecialValues,
     OptionsStructureType,
-    OptionsTextarea
+    OptionsTextarea, OptionsVariableNameInput
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
 import {setDefaultValues} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
 import {PointsType} from "@/model/PointsType";
@@ -99,12 +99,11 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                 ]
             } as OptionsSelect,
             {
-                type: OptionsStructureType.INPUT,
+                type: OptionsStructureType.VARIABLE_NAME_INPUT,
                 label: "Save input as",
                 placeholder: "input1",
-                isOutputVariableName: true,
                 keyString: "variableName"
-            } as OptionsInput,
+            } as OptionsVariableNameInput,
             {
                 type: OptionsStructureType.SEPARATOR
             } as OptionsSeparator,

@@ -1,6 +1,7 @@
 export enum OptionsStructureType {
     TEXT = "text",
     INPUT = "input",
+    VARIABLE_NAME_INPUT = "VariableNameInput",
     SELECT = "select",
     SELECT_WITH_CUSTOM = "Select with custom",
     TEXTAREA = "textarea",
@@ -41,8 +42,12 @@ export interface OptionsText extends OptionsBase {
 export interface OptionsInput extends OptionsBase {
     label: string
     placeholder: string
-    isOutputVariableName?: boolean,
     suggestions?: string[]
+}
+
+export interface OptionsVariableNameInput extends OptionsBase {
+    label: string
+    placeholder: string
 }
 
 export interface OptionsTextarea extends OptionsBase {
