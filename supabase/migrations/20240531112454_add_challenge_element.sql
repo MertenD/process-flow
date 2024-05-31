@@ -86,3 +86,5 @@ create policy "enable all for authenticated users"
 
 
 CREATE TRIGGER delete_gamification_options_for_deleting_challenge_element AFTER DELETE ON public.activity_element FOR EACH STATEMENT EXECUTE FUNCTION delete_related_gamification_option_row();
+
+alter table "public"."activity_element" add column "info_text" text;
