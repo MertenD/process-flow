@@ -3,7 +3,6 @@ import {BpmnDto, mergeBpmnDto} from "@/model/Bpmn";
 import {v4 as uuidv4} from 'uuid';
 import {NodeTypes} from "@/model/NodeTypes";
 import {ActivityNodeData} from "../modules/flow/nodes/ActivityNode";
-import {InfoNodeData} from "../modules/flow/nodes/InfoNode";
 import {GatewayNodeData} from "../modules/flow/nodes/GatewayNode";
 import {ChallengeNodeData} from "../modules/flow/nodes/ChallengeNode";
 import {GamificationEventNodeData} from "../modules/flow/nodes/GamificationEventNode";
@@ -42,8 +41,6 @@ export const onExport = (
                                         return createEndNode(node, transformedBpmn.edges)
                                     case NodeTypes.ACTIVITY_NODE:
                                         return createActivityNode(node, transformedBpmn.edges)
-                                    case NodeTypes.INFO_NODE:
-                                        return createInfoNode(node, transformedBpmn.edges)
                                     case NodeTypes.GATEWAY_NODE:
                                         return createGatewayNode(node, transformedBpmn.edges)
                                     case NodeTypes.CHALLENGE_NODE:
@@ -244,20 +241,6 @@ export const onExport = (
                 }
             }
         ]
-    }
-
-    function createInfoNode(node: Node, edges: Edge[]): any {
-        const infoNodeData = node.data as InfoNodeData
-        return {
-            "task": {
-                id: "Id_" + node.id.replaceAll("-", ""),
-                name: infoNodeData.infoText,
-                children: [
-                    ...getIncomingEdgeChildren(edges, node),
-                    ...getOutgoingEdgeChildren(edges, node)
-                ]
-            }
-        }
     }
 
     function createGatewayNode(node: Node, edges: Edge[]): any {

@@ -20,7 +20,6 @@ import EndNode from "./modules/flow/nodes/EndNode";
 import ChallengeNode from "./modules/flow/nodes/ChallengeNode";
 import {NodeTypes} from "@/model/NodeTypes";
 import {PointsType} from "@/model/PointsType";
-import InfoNode from "./modules/flow/nodes/InfoNode";
 import GamificationEventNode from "./modules/flow/nodes/GamificationEventNode";
 
 export type RFState = {
@@ -66,7 +65,6 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
         endNode: EndNode,
         gatewayNode: GatewayNode,
         challengeNode: ChallengeNode,
-        infoNode: InfoNode,
         gamificationEventNode: GamificationEventNode
     },
     onNodesChange: (changes: NodeChange[]) => {

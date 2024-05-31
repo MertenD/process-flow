@@ -8,7 +8,6 @@ import {endNodeShapeStyle} from "../nodes/EndNode";
 import {activityShapeStyle} from "../nodes/ActivityNode";
 import {GatewayShapeStyle} from "../nodes/GatewayNode";
 import {NodeTypes} from "@/model/NodeTypes";
-import {infoNodeShapeStyle} from "../nodes/InfoNode";
 import {eventShapeStyle} from "../nodes/GamificationEventNode";
 
 export interface OnCanvasNodesToolbarProps {
@@ -74,10 +73,6 @@ export default function OnCanvasNodesToolbar(props: OnCanvasNodesToolbarProps) {
                 Gateway
                 <div style={{ ...GatewayShapeStyle, marginBottom: 15, marginTop: 5 }} onClick={() => {
                     handleNodeSelected(NodeTypes.GATEWAY_NODE)
-                }} />
-                Info
-                <div style={{ ...infoNodeShapeStyle, marginBottom: 15 }} onClick={() => {
-                    handleNodeSelected(NodeTypes.INFO_NODE)
                 }} />
                 Gam. Event
                 <div style={{ ...eventShapeStyle, marginBottom: 15}} onClick={() => {

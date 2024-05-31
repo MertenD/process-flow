@@ -5,7 +5,6 @@ import {GatewayShapeStyle} from "../nodes/GatewayNode";
 import {endNodeShapeStyle} from "../nodes/EndNode";
 import {NodeTypes} from "@/model/NodeTypes";
 import {challengeShapeStyle} from "../nodes/ChallengeNode";
-import {infoNodeShapeStyle} from "../nodes/InfoNode";
 import {eventShapeStyle} from "../nodes/GamificationEventNode";
 import useStore from "../../../store";
 
@@ -54,10 +53,6 @@ export default function NodesToolbar() {
                 Challenge
                 <div draggable style={{ ...challengeShapeStyle, marginBottom: 10 }} onDragStart={(event) => {
                     onDragStart(event, NodeTypes.CHALLENGE_NODE, { backgroundColor: "#eeffee"})
-                }} className="border-2 border-foreground" />
-                Info
-                <div draggable style={{ ...infoNodeShapeStyle, marginBottom: 10 }} onDragStart={(event) => {
-                    onDragStart(event, NodeTypes.INFO_NODE, {})
                 }} className="border-2 border-foreground" />
                 Gam. Event
                 <div draggable style={{ ...eventShapeStyle, marginBottom: 10}} onDragStart={(event) => {

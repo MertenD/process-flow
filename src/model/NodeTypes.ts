@@ -4,6 +4,5 @@ export enum NodeTypes {
     GATEWAY_NODE = "gatewayNode",
     START_NODE = "startNode",
     END_NODE = "endNode",
-    INFO_NODE = "infoNode",
     GAMIFICATION_EVENT_NODE = "gamificationEventNode"
 }

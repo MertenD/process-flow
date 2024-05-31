@@ -13,7 +13,8 @@ import {
     OptionsSeparator,
     OptionsStructureSpecialValues,
     OptionsStructureType,
-    OptionsTextarea, OptionsVariableNameInput
+    OptionsTextarea,
+    OptionsVariableNameInput
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
 import {setDefaultValues} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
 import {PointsType} from "@/model/PointsType";
@@ -28,6 +29,7 @@ export type ActivityNodeData = {
     activityType?: ActivityType
     choices?: string,
     inputRegex?: string,
+    infoText?: string,
     variableName?: string,
     gamificationType? : GamificationType
     gamificationOptions?: {
@@ -82,7 +84,13 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                                     "[a-zA-Z]+"
                                 ],
                                 keyString: "inputRegex"
-                            } as OptionsInput
+                            } as OptionsInput,
+                            {
+                                type: OptionsStructureType.VARIABLE_NAME_INPUT,
+                                label: "Save input as",
+                                placeholder: "input1",
+                                keyString: "variableName"
+                            } as OptionsVariableNameInput
                         ]
                     },
                     {
@@ -93,17 +101,28 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                                 label: "Choices",
                                 placeholder: "choice 1,choice 2,...",
                                 keyString: "choices"
-                            } as OptionsInput
+                            } as OptionsInput,
+                            {
+                                type: OptionsStructureType.VARIABLE_NAME_INPUT,
+                                label: "Save input as",
+                                placeholder: "input1",
+                                keyString: "variableName"
+                            } as OptionsVariableNameInput
+                        ]
+                    },
+                    {
+                        values: [ActivityType.INFO],
+                        dependentStructure: [
+                            {
+                                type: OptionsStructureType.TEXTAREA,
+                                label: "Info text",
+                                placeholder: "This is an info text",
+                                keyString: "infoText"
+                            }
                         ]
                     }
                 ]
             } as OptionsSelect,
-            {
-                type: OptionsStructureType.VARIABLE_NAME_INPUT,
-                label: "Save input as",
-                placeholder: "input1",
-                keyString: "variableName"
-            } as OptionsVariableNameInput,
             {
                 type: OptionsStructureType.SEPARATOR
             } as OptionsSeparator,

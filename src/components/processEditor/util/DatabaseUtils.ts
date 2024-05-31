@@ -72,6 +72,7 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
                 activity_type: node.data.activityType,
                 choices: node.data.choices,
                 input_regex: node.data.inputRegex,
+                info_text: node.data.infoText,
                 variable_name: node.data.variableName,
                 next_flow_element_id: targetNodeId,
                 gamification_type: node.data.gamificationType,
@@ -115,9 +116,6 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             await supabase.from("end_element").upsert({
                 flow_element_id: oldNewIdMapping.get(node.id)
             }, {onConflict: "flow_element_id"})
-        } else if (nodeType === NodeTypes.INFO_NODE) {
-            // TODO Implement logic for INFO_NODE
-            // TODO Remove Info Node
         } else if (nodeType === NodeTypes.GAMIFICATION_EVENT_NODE) {
             const outgoingEdge = edges.find(edge => edge.source === node.id)
             let targetNodeId = null
@@ -223,6 +221,7 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                     activityType: activityElementData?.activity_type,
                     choices: activityElementData?.choices,
                     inputRegex: activityElementData?.input_regex,
+                    infoText: activityElementData?.info_text,
                     variableName: activityElementData?.variable_name,
                     gamificationType: activityElementData?.gamification_type,
                     gamificationOptions: convertKeysFromSnakeToCamelCase(gamificationOptions)
@@ -275,9 +274,6 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                 } as Edge)
             } else if (nodeType === NodeTypes.END_NODE) {
                 // No data to load
-            } else if (nodeType === NodeTypes.INFO_NODE) {
-                // TODO Implement logic for INFO_NODE
-                // TODO Remove Info Node
             } else if (nodeType === NodeTypes.GAMIFICATION_EVENT_NODE) {
                 const { data: gamificationEventElementData } = await supabase
                     .from("gamification_event_element")
