@@ -38,6 +38,8 @@ import {
 
 // TODO Bei ändern der variablen namen wird aktuell jedes select was das ausgewählt hatte auf custom gesetzt, bei ändern des eignen wird aktuell nichts mehr selektiert. Wie mache ich das am besten?
 
+// TODO Beim normalen Text input noch mitgeben, was eingegeben werden soll? Zahlen, Text, ...
+
 export default function DynamicOptions({ optionsDefinition }: Readonly<{ optionsDefinition: OptionsDefinition }>) {
 
     const inputRefs = useRef<any>({});

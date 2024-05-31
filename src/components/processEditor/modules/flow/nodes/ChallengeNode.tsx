@@ -11,6 +11,22 @@ import GamificationOptions from "../../gamification/GamificationOptions";
 import {PointsGamificationOptionsData} from "../../gamification/PointsGamificationOptions";
 import {BadgeGamificationOptionsData} from "../../gamification/BadgeGamificationOptions";
 import NumberOption from "../../form/NumberOption";
+import {
+    OptionsCheckbox,
+    OptionsDefinition,
+    OptionsInput,
+    OptionsRow,
+    OptionsSelect,
+    OptionsSelectWithCustom,
+    OptionsSeparator,
+    OptionsStructureSpecialValues,
+    OptionsStructureType
+} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
+import {PointsType} from "@/model/PointsType";
+import {PointsApplicationMethod} from "@/model/PointsApplicationMethod";
+import {Comparisons} from "@/model/Comparisons";
+import {BadgeType} from "@/model/BadgeType";
+import {setDefaultValues} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
 
 export type ChallengeNodeData = {
     width?: number,
@@ -23,7 +39,128 @@ export type ChallengeNodeData = {
     gamificationOptions?: PointsGamificationOptionsData | BadgeGamificationOptionsData
 }
 
-// TODO Resize =>
+export function getChallengeOptionsDefinition(nodeId: string): OptionsDefinition {
+    return {
+        title: "Challenge Options",
+        nodeId: nodeId,
+        structure: [
+            {
+                type: OptionsStructureType.SELECT,
+                label: "Challenge type",
+                defaultValue: ChallengeType.TIME_CHALLENGE,
+                keyString: "challengeType",
+                options: [
+                    {
+                        values: [ ChallengeType.TIME_CHALLENGE ],
+                        dependentStructure: [
+                            {
+                                type: OptionsStructureType.INPUT,
+                                label: "Time in seconds",
+                                placeholder: "Seconds",
+                                keyString: "secondsToComplete"
+                            } as OptionsInput
+                        ]
+                    }
+                ]
+            } as OptionsSelect,
+            {
+                type: OptionsStructureType.SEPARATOR
+            } as OptionsSeparator,
+            {
+                type: OptionsStructureType.SELECT,
+                label: "Reward type",
+                defaultValue: GamificationType.NONE,
+                keyString: "rewardType",
+                options: [
+                    {
+                        values: [GamificationType.NONE],
+                        dependentStructure: []
+                    },
+                    {
+                        values: [GamificationType.POINTS],
+                        dependentStructure: [
+                            {
+                                type: OptionsStructureType.SELECT,
+                                label: "Points type",
+                                defaultValue: PointsType.EXPERIENCE,
+                                keyString: "gamificationOptions.pointType",
+                                options: [
+                                    { values: Object.values(PointsType) }
+                                ]
+                            } as OptionsSelect,
+                            {
+                                type: OptionsStructureType.ROW,
+                                structure: [
+                                    {
+                                        type: OptionsStructureType.SELECT,
+                                        label: "Effect",
+                                        defaultValue: PointsApplicationMethod.INCREMENT_BY,
+                                        keyString: "gamificationOptions.pointsApplicationMethod",
+                                        options: [
+                                            { values: Object.values(PointsApplicationMethod) }
+                                        ]
+                                    } as OptionsSelect,
+                                    {
+                                        type: OptionsStructureType.INPUT,
+                                        label: "Amount",
+                                        placeholder: "20",
+                                        keyString: "gamificationOptions.pointsForSuccess"
+                                    } as OptionsInput
+                                ]
+                            } as OptionsRow,
+                            {
+                                type: OptionsStructureType.SEPARATOR
+                            } as OptionsSeparator,
+                            {
+                                type: OptionsStructureType.CHECKBOX,
+                                defaultValue: false,
+                                label: "Gamification condition",
+                                keyString: "gamificationOptions.hasCondition",
+                                options: [
+                                    {
+                                        values: [true],
+                                        dependentStructure: [
+                                            {
+                                                type: OptionsStructureType.SELECT_WITH_CUSTOM,
+                                                label: "Value 1",
+                                                keyString: "gamificationOptions.value1",
+                                                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_VARIABLES ] } ]
+                                            } as OptionsSelectWithCustom,
+                                            {
+                                                type: OptionsStructureType.SELECT,
+                                                label: "Comparison",
+                                                keyString: "gamificationOptions.comparison",
+                                                defaultValue: Comparisons.EQUALS,
+                                                options: [ { values: Object.values(Comparisons) } ]
+                                            } as OptionsSelect,
+                                            {
+                                                type: OptionsStructureType.SELECT_WITH_CUSTOM,
+                                                label: "Value 2",
+                                                keyString: "gamificationOptions.value2",
+                                                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_VARIABLES ] } ]
+                                            } as OptionsSelectWithCustom
+                                        ]
+                                    }
+                                ]
+                            } as OptionsCheckbox,
+                        ]
+                    },
+                    {
+                        values: [GamificationType.BADGES],
+                        dependentStructure: [
+                            {
+                                type: OptionsStructureType.INPUT,
+                                label: "Badge type",
+                                keyString: "gamificationOptions.badgeType",
+                                suggestions: Object.values(BadgeType),
+                            } as OptionsInput
+                        ]
+                    }
+                ]
+            } as OptionsSelect
+        ]
+    }
+}
 
 export default memo(function ChallengeNode({ id, selected, data }: NodeProps<ChallengeNodeData>) {
 
@@ -32,7 +169,6 @@ export default memo(function ChallengeNode({ id, selected, data }: NodeProps<Cha
 
     const getChildren = useStore((state) => state.getChildren)
     const updateNodeParent = useStore((state) => state.updateNodeParent)
-    const updateNodeData = useStore((state) => state.updateNodeData)
     const getNodeById = useStore((state) => state.getNodeById)
     const [isResizing, setIsResizing] = useState(false)
     const [backgroundColor, setBackgroundColor] = useState(data.backgroundColor || "#eeffee")
@@ -55,6 +191,15 @@ export default memo(function ChallengeNode({ id, selected, data }: NodeProps<Cha
             gamificationOptions: gamificationOptions
         })
     }, [width, height, backgroundColor, isResizing, challengeType, secondsToComplete, rewardType, gamificationOptions])
+
+    const updateNodeData = useStore((state) => state.updateNodeData)
+
+    useEffect(() => {
+        const optionsDefinition = getChallengeOptionsDefinition(id);
+        const updatedData = { ...data };
+        setDefaultValues(optionsDefinition.structure, updatedData);
+        updateNodeData<ChallengeNodeData>(id, updatedData);
+    }, [])
 
     const onResizeStart = () => {
         setIsResizing(true)
@@ -95,42 +240,10 @@ export default memo(function ChallengeNode({ id, selected, data }: NodeProps<Cha
                 }}
             />
             <div style={{ ...challengeShapeStyle, width: width, height: height, backgroundColor: backgroundColor + "99" }} className="border-2 border-foreground" >
-                <OptionsContainer outline={true}>
-                    <DropdownOption
-                        title={ "Challenge type" }
-                        values={ Object.values(ChallengeType) }
-                        selectedValue={ challengeType }
-                        onValueChanged={ newValue => setChallengeType(newValue as ChallengeType) }
-                    />
-                    {
-                        (() => {
-                            switch (challengeType) {
-                                case ChallengeType.TIME_CHALLENGE:
-                                    return (
-                                        <NumberOption
-                                            title={ "Time in seconds" }
-                                            placeholder={ "Seconds" }
-                                            value={ secondsToComplete }
-                                            onValueChanged={ newValue => setSecondsToComplete(newValue) }
-                                        />
-                                    )
-                            }
-                        })()
-                    }
-                    <DropdownOption
-                        title={ "Reward type" }
-                        values={ Object.values(GamificationType) }
-                        selectedValue={ rewardType }
-                        onValueChanged={ newValue => setRewardType(newValue as GamificationType) }
-                    />
-                    <GamificationOptions
-                        parentNodeId={ id }
-                        gamificationType={ rewardType }
-                        gamificationOptions={ gamificationOptions }
-                        onChange={ gamificationOptions => setGamificationOptions(gamificationOptions) }
-                        withoutOptionalCondition={false}
-                    />
-                </OptionsContainer>
+                <div className="flex flex-col border-2 w-min p-2 rounded-md m-2 border-black">
+                    <span style={{ whiteSpace: 'nowrap' }}>{ data.challengeType }</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>{ data.rewardType }</span>
+                </div>
             </div>
         </>
     )

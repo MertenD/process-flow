@@ -60,17 +60,18 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
     }, [])
 
     return (
-        <div style={{ backgroundColor: "transparent", position: "relative" }} >
-            <div style={{
-                width: 270,
+        <div style={{ backgroundColor: "transparent", position: "relative" }}>
+            <span style={{
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
                 position: "fixed",
-                right: -290
+                left: 45
             }} >
-                { data.value1 && data.value2 && data.comparison && data.value1 + " " + data.comparison + " " + data.value2 }
-            </div>
+                <span className="w-max ">
+                    { data.value1 && data.value2 && data.comparison && data.value1 + " " + data.comparison + " " + data.value2 }
+                </span>
+            </span>
             <div
                 style={{
                     width: 70,
