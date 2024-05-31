@@ -333,8 +333,6 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                             return <SelectItem key={variable} value={variable}>{variable}</SelectItem>
                         }) : []
 
-                    console.log("items", defaultItems, variableItems)
-
                     return <>
                         <div className="space-y-2">
                             <Label>{selectWithCustomOption.label}</Label>

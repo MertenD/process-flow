@@ -27,8 +27,8 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             type: node.type,
             position_x: node.position.x,
             position_y: node.position.y,
-            width: node.width,
-            height: node.height,
+            width: node.data.width,
+            height: node.data.height,
             parent_flow_element_id: node.parentId || null,
             z_index: node.zIndex
         }, {onConflict: "id"}).select()
@@ -315,11 +315,13 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                 id: node.id.toString(),
                 type: node.type,
                 position: {x: node.position_x, y: node.position_y},
-                width: node.width || 50,
-                height: node.height || 50,
                 parentId: node.parent_flow_element_id?.toString() || undefined,
                 zIndex: node.z_index || undefined,
-                data: nodeData
+                data: {
+                    ...nodeData,
+                    width: node.width || 50,
+                    height: node.height || 50,
+                }
             } as Node)
         }))
 

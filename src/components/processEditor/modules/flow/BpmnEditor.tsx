@@ -208,8 +208,6 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
                     updateNodeParent(node, intersectingChallenges[0], getNodeById(node.parentId))
                 // If the node had a parent it will be removed
                 } else if (intersectingChallenges[0] === undefined && node.parentId !== undefined) {
-                    console.log("Remove parent")
-                    console.log(nodes)
                     updateNodeParent(node, undefined, getNodeById(node.parentId))
                 }
             })
