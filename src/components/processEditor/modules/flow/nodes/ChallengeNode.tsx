@@ -3,14 +3,10 @@ import {NodeProps} from 'reactflow';
 import {NodeResizer, ResizeDragEvent, ResizeParams} from '@reactflow/node-resizer';
 import '@reactflow/node-resizer/dist/style.css';
 import useStore, {selectedColor} from "../../../store";
-import OptionsContainer from "../../form/OptionsContainer";
-import DropdownOption from "../../form/DropdownOption";
 import {ChallengeType} from "@/model/ChallengeType";
 import {GamificationType} from "@/model/GamificationType";
-import GamificationOptions from "../../gamification/GamificationOptions";
 import {PointsGamificationOptionsData} from "../../gamification/PointsGamificationOptions";
 import {BadgeGamificationOptionsData} from "../../gamification/BadgeGamificationOptions";
-import NumberOption from "../../form/NumberOption";
 import {
     OptionsCheckbox,
     OptionsDefinition,
