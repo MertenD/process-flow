@@ -11,6 +11,7 @@ import {
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
 import {setDefaultValues} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
 import {ActivityNodeData} from "@/components/processEditor/modules/flow/nodes/ActivityNode";
+import {X} from "lucide-react";
 
 export type GatewayNodeData = {
     backgroundColor?: string
@@ -60,20 +61,16 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
 
     return (
         <div style={{ backgroundColor: "transparent", position: "relative" }} >
-            {/*<ConditionOption
-                variables={ availableVariableNames }
-                value1={ value1 }
-                onValue1Changed={newValue => setValue1(newValue) }
-                selectedComparison={ comparison }
-                onComparisonChanged={newComparison => setComparison(newComparison) }
-                value2={ value2 }
-                onValue2Changed={newValue => setValue2(newValue) }
-                conditionOptionsSpanStyle={{
-                    position: 'fixed',
-                    right: -310,
-                    top: -5
-                }}
-            /> */}
+            <div style={{
+                width: 270,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                position: "fixed",
+                right: -290
+            }} >
+                { data.value1 && data.value2 && data.comparison && data.value1 + " " + data.comparison + " " + data.value2 }
+            </div>
             <div
                 style={{
                     width: 70,
@@ -99,8 +96,7 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
                 backgroundColor: data.backgroundColor,
                 borderColor: selected ? selectedColor : undefined
             }} className="bg-background border-2 border-foreground" >
-                <hr style={{ backgroundColor: "black", border: "1px solid black", width: "70%", marginTop: 14 }}/>
-                <hr style={{ backgroundColor: "black", border: "1px solid black", width: "70%", marginTop: -10, transform: "rotateY(0deg) rotate(90deg)" }}/>
+                <X style={{ transform: "rotate(-45deg)" }} className="pt-1" />
             </div>
             <Handle style={handleStyle} type="target" position={Position.Left} id="a"/>
             <Handle style={handleStyle} type="source" position={Position.Top} id="True"/>
