@@ -11,6 +11,8 @@ import {GamificationType} from "@/model/GamificationType";
 
 // TODO Delete gamification options when node is deleted (maybe via cascading in the database)
 
+// TODO Beim speichern soll das updated by in der Datenbank des process_model auf den aktuellen User gesetzt werden
+
 export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], processModelId: string, supabase: SupabaseClient<any, "public", any>, reactFlowInstance: ReactFlowInstance) {
 
     const existingNodes: string[] = []

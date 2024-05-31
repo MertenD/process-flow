@@ -151,10 +151,6 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
                 yOffset = 200
                 zIndex = 0
                 break
-            case NodeTypes.INFO_NODE:
-                yOffset = 90
-                zIndex = 2
-                break
             case NodeTypes.GAMIFICATION_EVENT_NODE:
                 yOffset = 38
                 zIndex = 3
@@ -181,8 +177,6 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
     const onNodeDragStop = useCallback(() => {
         setIsDragging(false)
     }, [])
-
-    // TODO Start und Endknoten nie zu einer Challenge hinzufügen
 
     // Update which nodes belong to a challenge
     useEffect(() => {
