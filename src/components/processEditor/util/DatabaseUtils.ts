@@ -28,7 +28,9 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             position_x: node.position.x,
             position_y: node.position.y,
             width: node.width,
-            height: node.height
+            height: node.height,
+            parent_flow_element_id: node.parentId || null,
+            z_index: node.zIndex
         }, {onConflict: "id"}).select()
 
         const assignedId = insertedElement.data?.[0].id
@@ -43,8 +45,17 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
 
         const nodeType = node.type as NodeTypes
         if (nodeType === NodeTypes.CHALLENGE_NODE) {
-            // TODO Implement logic for CHALLENGE_NODE
-            // TOD Fix challenge node
+            const { data } = node
+            const gamificationOptionsId = await saveGamificationOptions(node, oldNewIdMapping, supabase)
+
+            await supabase.from("challenge_element").upsert({
+                flow_element_id: oldNewIdMapping.get(node.id),
+                background_color: data.backgroundColor,
+                challenge_type: data.challengeType,
+                seconds_to_complete: data.secondsToComplete,
+                reward_type: data.rewardType,
+                gamification_option_id: gamificationOptionsId
+            }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.ACTIVITY_NODE) {
             const outgoingEdge = edges.find(edge => edge.source === node.id)
             let targetNodeId = null
@@ -132,7 +143,8 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
     reactFlowInstance.setNodes(nodes.map(node => {
         return {
             ...node,
-            id: oldNewIdMapping.get(node.id)?.toString() ?? node.id
+            id: oldNewIdMapping.get(node.id)?.toString() ?? node.id,
+            parentId: node.parentId ? oldNewIdMapping.get(node.parentId)?.toString() : undefined
         } as Node
     }))
     reactFlowInstance.setEdges(edges.map(edge => {
@@ -152,7 +164,7 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
         .from("flow_element")
         .select("*")
         .eq("model_id", processModelId)
-        .returns<{ id: string, type: string, position_x: number, position_y: number, width: number, height: number }[]>()
+        .returns<{ id: string, type: string, position_x: number, position_y: number, width: number, height: number, parent_flow_element_id: string, z_index: number }[]>()
 
     if (databaseFlowElements) {
         const nodes: Node[] = []
@@ -165,8 +177,29 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
 
             const nodeType = node.type as NodeTypes
             if (nodeType === NodeTypes.CHALLENGE_NODE) {
-                // TODO Implement logic for CHALLENGE_NODE
-                // TODO fix challenge node resize
+                const { data: challengeElementData } = await supabase
+                    .from("challenge_element")
+                    .select("*")
+                    .eq("flow_element_id", node.id)
+                    .single()
+
+                let gamificationOptions = null
+                if (challengeElementData?.gamification_option_id) {
+                    const { data } = await supabase
+                        .from("gamification_option")
+                        .select("*")
+                        .eq("id", challengeElementData?.gamification_option_id)
+                        .single()
+                    gamificationOptions = data
+                }
+
+                nodeData = {
+                    backgroundColor: challengeElementData?.background_color,
+                    challengeType: challengeElementData?.challenge_type,
+                    secondsToComplete: challengeElementData?.seconds_to_complete,
+                    rewardType: challengeElementData?.reward_type,
+                    gamificationOptions: convertKeysFromSnakeToCamelCase(gamificationOptions)
+                }
             } else if (nodeType === NodeTypes.ACTIVITY_NODE) {
                 const { data: activityElementData } = await supabase
                     .from("activity_element")
@@ -284,6 +317,8 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                 position: {x: node.position_x, y: node.position_y},
                 width: node.width || 50,
                 height: node.height || 50,
+                parentId: node.parent_flow_element_id?.toString() || undefined,
+                zIndex: node.z_index || undefined,
                 data: nodeData
             } as Node)
         }))
@@ -294,7 +329,7 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
 
 async function saveGamificationOptions(node: Node, oldNewIdMapping: Map<string, string>, supabase: SupabaseClient<any, "public", any>): Promise<string | null> {
     let gamificationOptionsId: string | null = null
-    if (node.data.gamificationOptions && node.data.gamificationType !== GamificationType.NONE) {
+    if (node.data.gamificationOptions && node.data.gamificationType !== GamificationType.NONE && node.data.rewardType !== GamificationType.NONE) {
         gamificationOptionsId = (await supabase.from("gamification_option").upsert(
             convertKeysToSnakeCaseWithId(oldNewIdMapping.get(node.id), node.data.gamificationOptions),
             { onConflict: "id"}

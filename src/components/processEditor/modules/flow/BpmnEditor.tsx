@@ -13,7 +13,7 @@ import ReactFlow, {
     useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { shallow } from 'zustand/shallow'
+import {shallow} from 'zustand/shallow'
 import useStore, {edgeStyle} from '../../store';
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import NodesToolbar from "./toolbars/NodesToolbar";
@@ -67,6 +67,12 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
                 return
             }
             reactFlowInstance.setNodes(nodes)
+            // Run this to update the data of nodes that have a parent in the beginning (e.g. background color)
+            nodes.forEach((node) => {
+                if (node.parentId !== undefined) {
+                    updateNodeParent(node, getNodeById(node.parentId), getNodeById(node.parentId))
+                }
+            })
 
             if (edges === undefined) {
                 alert("Error loading edges from database")
@@ -188,20 +194,23 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
             ).forEach((node: Node) => {
                 const intersectingChallenges = reactFlowInstance.getIntersectingNodes(node)
                     .filter((node) => node.type === NodeTypes.CHALLENGE_NODE)
-                    .filter((node) => node.data.isResizing === false)
+                    .filter((node) => node.data.isResizing === undefined || node.data.isResizing === false)
                 // if the node already is part of a group and did not leave it, leave it as it is and don't change the parent
-                if (node.parentNode !== undefined && intersectingChallenges.map(node => node.id).includes(node.parentNode)) {
+                if (node.parentId !== undefined && intersectingChallenges.map(node => node.id).includes(node.parentId)) {
                     return
                 }
+
                 // If the node had no parent it will be added
-                if (intersectingChallenges[0] !== undefined && node.parentNode === undefined) {
+                if (intersectingChallenges[0] !== undefined && node.parentId === undefined) {
                     updateNodeParent(node, intersectingChallenges[0], undefined)
                 // If the node had a parent and was moved to another parent
-                } else if (intersectingChallenges[0] !== undefined && node.parentNode !== undefined && node.parentNode !== intersectingChallenges[0].id) {
-                    updateNodeParent(node, intersectingChallenges[0], getNodeById(node.parentNode))
+                } else if (intersectingChallenges[0] !== undefined && node.parentId !== undefined && node.parentId !== intersectingChallenges[0].id) {
+                    updateNodeParent(node, intersectingChallenges[0], getNodeById(node.parentId))
                 // If the node had a parent it will be removed
-                } else if (intersectingChallenges[0] === undefined && node.parentNode !== undefined) {
-                    updateNodeParent(node, undefined, getNodeById(node.parentNode))
+                } else if (intersectingChallenges[0] === undefined && node.parentId !== undefined) {
+                    console.log("Remove parent")
+                    console.log(nodes)
+                    updateNodeParent(node, undefined, getNodeById(node.parentId))
                 }
             })
         }

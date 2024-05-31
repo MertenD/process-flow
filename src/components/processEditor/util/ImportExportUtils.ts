@@ -81,8 +81,8 @@ export const onExport = (
                                                     children: [
                                                         {
                                                             "dc:Bounds": {
-                                                                x: node.parentNode !== undefined ? node.position.x + (getNodeById(node.parentNode)?.position.x || 0) : node.position.x,
-                                                                y: node.parentNode !== undefined ? node.position.y + (getNodeById(node.parentNode)?.position.y || 0) : node.position.y,
+                                                                x: node.parentId !== undefined ? node.position.x + (getNodeById(node.parentId)?.position.x || 0) : node.position.x,
+                                                                y: node.parentId !== undefined ? node.position.y + (getNodeById(node.parentId)?.position.y || 0) : node.position.y,
                                                                 width: node.type === NodeTypes.GAMIFICATION_EVENT_NODE ? 40 : node.width,
                                                                 height: node.type === NodeTypes.GAMIFICATION_EVENT_NODE ? 40 : node.height
                                                             }
@@ -101,8 +101,8 @@ export const onExport = (
                                                             children: [
                                                                 {
                                                                     "dc:Bounds": {
-                                                                        x: node.parentNode !== undefined ? node.position.x + 10 + (getNodeById(node.parentNode)?.position.x || 0) : node.position.x + 10,
-                                                                        y: node.parentNode !== undefined ? node.position.y - 150 + (getNodeById(node.parentNode)?.position.y || 0) : node.position.y - 150,
+                                                                        x: node.parentId !== undefined ? node.position.x + 10 + (getNodeById(node.parentId)?.position.x || 0) : node.position.x + 10,
+                                                                        y: node.parentId !== undefined ? node.position.y - 150 + (getNodeById(node.parentId)?.position.y || 0) : node.position.y - 150,
                                                                         width: 40,
                                                                         height: 60
                                                                     }
@@ -112,8 +112,8 @@ export const onExport = (
                                                                         children: [
                                                                             {
                                                                                 "dc:Bounds": {
-                                                                                    x: node.parentNode !== undefined ? node.position.x + 50 + (getNodeById(node.parentNode)?.position.x || 0) : node.position.x + 50,
-                                                                                    y: node.parentNode !== undefined ? node.position.y - 150 + (getNodeById(node.parentNode)?.position.y || 0) : node.position.y - 150,
+                                                                                    x: node.parentId !== undefined ? node.position.x + 50 + (getNodeById(node.parentId)?.position.x || 0) : node.position.x + 50,
+                                                                                    y: node.parentId !== undefined ? node.position.y - 150 + (getNodeById(node.parentId)?.position.y || 0) : node.position.y - 150,
                                                                                     width: 150,
                                                                                     height: 30
                                                                                 }
@@ -131,14 +131,14 @@ export const onExport = (
                                                             children: [
                                                                 {
                                                                     "di:waypoint": {
-                                                                        x: node.parentNode !== undefined ? node.position.x + 30 + (getNodeById(node.parentNode)?.position.x || 0) : node.position.x + 30,
-                                                                        y: node.parentNode !== undefined ? node.position.y - 90 + (getNodeById(node.parentNode)?.position.y || 0) : node.position.y - 90
+                                                                        x: node.parentId !== undefined ? node.position.x + 30 + (getNodeById(node.parentId)?.position.x || 0) : node.position.x + 30,
+                                                                        y: node.parentId !== undefined ? node.position.y - 90 + (getNodeById(node.parentId)?.position.y || 0) : node.position.y - 90
                                                                     }
                                                                 },
                                                                 {
                                                                     "di:waypoint": {
-                                                                        x: node.parentNode !== undefined ? node.position.x + 30 + (getNodeById(node.parentNode)?.position.x || 0) : node.position.x + 30,
-                                                                        y: node.parentNode !== undefined ? node.position.y + (getNodeById(node.parentNode)?.position.y || 0) : node.position.y
+                                                                        x: node.parentId !== undefined ? node.position.x + 30 + (getNodeById(node.parentId)?.position.x || 0) : node.position.x + 30,
+                                                                        y: node.parentId !== undefined ? node.position.y + (getNodeById(node.parentId)?.position.y || 0) : node.position.y
                                                                     }
                                                                 },
                                                             ]
@@ -415,7 +415,7 @@ function transformChallengesToRealBpmn(
         return mergeBpmnDto([substitutedIngoingEdges, substitutedOutgoingEdges])
     }))
 
-    const edgesOutsideOrInsideChallenges = edges.filter((edge) => getNodeById(edge.source)?.parentNode === getNodeById(edge.target)?.parentNode)
+    const edgesOutsideOrInsideChallenges = edges.filter((edge) => getNodeById(edge.source)?.parentId === getNodeById(edge.target)?.parentId)
 
     const transformedNodes = [...nodes.filter((node) => node.type as NodeTypes !== NodeTypes.CHALLENGE_NODE), ...transformedChallengeStartAndStop.nodes]
     const transformedEdges = [...edgesOutsideOrInsideChallenges, ...transformedChallengeStartAndStop.edges]

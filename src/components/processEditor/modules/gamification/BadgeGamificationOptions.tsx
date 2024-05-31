@@ -29,12 +29,12 @@ export default function BadgeGamificationOptions(props: BadgeGamificationOptions
     const [availableVariableNames, setAvailableVariableNames] = useState<string[]>([])
     const [badgeType, setBadgeType] = useState(props.gamificationOptions.badgeType || BadgeType.EXPLORER_BADGE)
     const [hasCondition, setHasCondition] = useState<boolean>(props.gamificationOptions.hasCondition || false)
-    const [value1, setValue1] = useState(props.gamificationOptions.value1 || "{" + getAvailableVariableNames(props.parentNodeId,  props.parentVariableName)[0] + "}");
+    const [value1, setValue1] = useState(props.gamificationOptions.value1 || "{" + getAvailableVariableNames(props.parentNodeId,  [props.parentVariableName])[0] + "}");
     const [comparison, setComparison] = useState(props.gamificationOptions.comparison || Comparisons.EQUALS);
-    const [value2, setValue2] = useState(props.gamificationOptions.value2 || "{" + getAvailableVariableNames(props.parentNodeId,  props.parentVariableName)[0] + "}");
+    const [value2, setValue2] = useState(props.gamificationOptions.value2 || "{" + getAvailableVariableNames(props.parentNodeId,  [props.parentVariableName])[0] + "}");
 
     useEffect(() => {
-        setAvailableVariableNames(getAvailableVariableNames(props.parentNodeId, props.parentVariableName))
+        setAvailableVariableNames(getAvailableVariableNames(props.parentNodeId, [props.parentVariableName]))
     }, [props.parentNodeId, props.parentVariableName, nodes, edges])
 
     useEffect(() => {

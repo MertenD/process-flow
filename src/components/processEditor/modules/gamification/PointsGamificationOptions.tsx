@@ -35,9 +35,9 @@ export default function PointsGamificationOptions(props: PointsGamificationOptio
     const [pointsForSuccess, setPointsForSuccess] = useState(props.gamificationOptions.pointsForSuccess || "0")
     const [availableVariableNames, setAvailableVariableNames] = useState<string[]>([])
     const [hasCondition, setHasCondition] = useState<boolean>(props.gamificationOptions.hasCondition || false)
-    const [value1, setValue1] = useState(props.gamificationOptions.value1 || "{" + getAvailableVariableNames(props.parentNodeId,  props.parentVariableName)[0] + "}");
+    const [value1, setValue1] = useState(props.gamificationOptions.value1 || "{" + getAvailableVariableNames(props.parentNodeId,  [props.parentVariableName])[0] + "}");
     const [comparison, setComparison] = useState(props.gamificationOptions.comparison || Comparisons.EQUALS);
-    const [value2, setValue2] = useState(props.gamificationOptions.value2 || "{" + getAvailableVariableNames(props.parentNodeId,  props.parentVariableName)[0] + "}");
+    const [value2, setValue2] = useState(props.gamificationOptions.value2 || "{" + getAvailableVariableNames(props.parentNodeId,  [props.parentVariableName])[0] + "}");
 
     useEffect(() => {
         props.onChange({
@@ -52,7 +52,7 @@ export default function PointsGamificationOptions(props: PointsGamificationOptio
     }, [pointType, pointsApplicationMethod, pointsForSuccess, hasCondition, value1, comparison, value2])
 
     useEffect(() => {
-        setAvailableVariableNames(getAvailableVariableNames(props.parentNodeId, props.parentVariableName))
+        setAvailableVariableNames(getAvailableVariableNames(props.parentNodeId, [props.parentVariableName]))
     }, [props.parentNodeId, props.parentVariableName, nodes, edges])
 
 

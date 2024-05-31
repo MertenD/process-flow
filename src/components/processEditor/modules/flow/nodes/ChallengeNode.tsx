@@ -1,6 +1,6 @@
 import React, {memo, useEffect, useState} from 'react';
 import {NodeProps} from 'reactflow';
-import {NodeResizer, ResizeDragEvent, ResizeEventParams} from '@reactflow/node-resizer';
+import {NodeResizer, ResizeDragEvent, ResizeParams} from '@reactflow/node-resizer';
 import '@reactflow/node-resizer/dist/style.css';
 import useStore, {selectedColor} from "../../../store";
 import OptionsContainer from "../../form/OptionsContainer";
@@ -64,7 +64,7 @@ export default memo(function ChallengeNode({ id, selected, data }: NodeProps<Cha
         })
     }
 
-    const onResize = (event: ResizeDragEvent, params: ResizeEventParams) => {
+    const onResize = (event: ResizeDragEvent, params: ResizeParams) => {
         setWidth(params.width)
         setHeight(params.height)
     }

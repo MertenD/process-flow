@@ -76,9 +76,9 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
             const children = get().getChildren(nodeId)
             set({
                 nodes: get().nodes.map((node) => {
-                    if (children.includes(node) && node.parentNode !== undefined) {
-                        const oldParentNode = get().getNodeById(node.parentNode) as Node
-                        node.parentNode = undefined
+                    if (children.includes(node) && node.parentId !== undefined) {
+                        const oldParentNode = get().getNodeById(node.parentId) as Node
+                        node.parentId = undefined
                         node.position = { x: node.position.x + oldParentNode.position.x, y: node.position.y + oldParentNode.position.y }
                         node.data = { ...node.data, backgroundColor: "white"}
                     }
@@ -147,7 +147,7 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
     },
     getChildren: (nodeId: string): Node[] => {
         return get().nodes.filter((node) =>
-            node.parentNode !== undefined && node.parentNode === nodeId
+            node.parentId !== undefined && node.parentId === nodeId
         )
     },
     // TODO EndNotes dürfen nicht zu einer Challenge gehören
@@ -156,14 +156,14 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
             nodes: get().nodes.map((node) => {
                 if (node.id === nodeToUpdate.id) {
                     if (newParent === undefined) {
-                        node.parentNode = undefined
+                        node.parentId = undefined
                         node.position = {
                             x: node.position.x + (oldParent !== undefined ? oldParent.position.x : 0),
                             y: node.position.y + (oldParent !== undefined ? oldParent.position.y : 0)
                         }
                         node.data = { ...node.data, backgroundColor: "white"}
                     } else {
-                        node.parentNode = newParent.id
+                        node.parentId = newParent.id
                         const xOffset = newParent.position.x - (oldParent !== undefined ? oldParent.position.x : 0)
                         const yOffset = newParent.position.y - (oldParent !== undefined ? oldParent.position.y : 0)
                         node.position = {

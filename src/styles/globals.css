@@ -100,3 +100,7 @@ main {
 .react-flow__minimap svg path {
   @apply fill-background;
 }
+
+.react-flow__attribution {
+  @apply hidden
+}
