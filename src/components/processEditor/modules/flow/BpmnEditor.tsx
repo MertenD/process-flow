@@ -23,7 +23,7 @@ import {NodeTypes} from "@/model/NodeTypes";
 import {createClient} from "@/utils/supabase/client";
 import {loadProcessModelFromDatabase} from "@/components/processEditor/util/DatabaseUtils";
 import SaveButton from "@/components/processEditor/modules/flow/toolbars/SaveButton";
-import CreateInstanceButton from "@/components/CreateInstanceButton";
+import CreateInstanceButton from "@/components/processEditor/modules/flow/toolbars/CreateInstanceButton";
 import "@/styles/globals.css";
 import OptionsToolbar from "@/components/processEditor/modules/flow/toolbars/OptionsToolbar";
 
@@ -273,7 +273,7 @@ export default function BpmnEditor({ processModelId }: Readonly<BpmnEditorProps>
                 <div className="w-full h-full flex flex-col">
                     <div className="w-full p-3 flex flex-row space-x-2 border-b">
                         <SaveButton processModelId={processModelId}/>
-                        <CreateInstanceButton/>
+                        <CreateInstanceButton processModelId={processModelId}/>
                     </div>
                     <div className="w-full h-full pl-2 bg-accent">
                         <DragAndDropFlow processModelId={processModelId}/>

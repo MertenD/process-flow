@@ -137,7 +137,9 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             const exhaustiveCheck: never = nodeType;
             throw new Error(`Unhandled nodeType case: ${exhaustiveCheck}`);
         }
-    }))
+    })).catch((error) => {
+        throw error
+    })
 
     // Update react flow if any new ids were assigned
     reactFlowInstance.setNodes(nodes.map(node => {
@@ -156,7 +158,11 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
     }))
 
     // Delete any nodes that are not existing nodes and have the process model id
-    await supabase.from("flow_element").delete().not("id", "in", `(${existingNodes.join(",")})`).eq("model_id", processModelId)
+    await supabase.from("flow_element").delete().not("id", "in", `(${existingNodes.join(",")})`).eq("model_id", processModelId).then(res => {
+        if (res.error) {
+            throw res.error
+        }
+    })
 }
 
 export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any, "public", any>, processModelId: string) {
@@ -321,7 +327,9 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                     height: node.height || 50,
                 }
             } as Node)
-        }))
+        })).catch((error) => {
+            throw error
+        })
 
         return {nodes: nodes, edges: edges}
     }
