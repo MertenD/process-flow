@@ -61,6 +61,16 @@ alter table "public"."process_instance" add column "completed_at" timestamp with
 
 alter table "public"."process_instance" add column "status" process_instance_status not null default 'Running'::process_instance_status;
 
+create extension if not exists "http" with schema "extensions";
+
+alter table "public"."flow_element" drop constraint "public_flow_element_model_id_fkey";
+
+alter table "public"."flow_element" add column "execution_url" text;
+
+alter table "public"."flow_element" add constraint "public_flow_element_model_id_fkey" FOREIGN KEY (model_id) REFERENCES process_model(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
+
+alter table "public"."flow_element" validate constraint "public_flow_element_model_id_fkey";
+
 set check_function_bodies = off;
 
 CREATE OR REPLACE FUNCTION public.create_process_instance(process_model_id_param bigint)
@@ -199,14 +209,6 @@ grant truncate on table "public"."process_instance" to "service_role";
 grant update on table "public"."process_instance" to "service_role";
 
 create policy "enable all for authenticated users"
-    on "public"."flow_element_instance"
-    as permissive
-    for all
-    to authenticated
-    using (true);
-
-
-create policy "enable all for authenticated users"
     on "public"."process_instance"
     as permissive
     for all
@@ -277,6 +279,7 @@ CREATE OR REPLACE FUNCTION public.execute_created_flow_element_instance()
 AS $function$
 DECLARE
     flow_element_instance_execution_mode execution_mode;
+    flow_element_instance_execution_url text;
     flow_element_type text;
 BEGIN
 
@@ -290,8 +293,16 @@ BEGIN
         RETURN OLD;
     END IF;
 
-    -- Check if the flow element that is referenced is automatic or manual
-    SELECT execution_mode INTO flow_element_instance_execution_mode
+    IF flow_element_type = 'endNode' THEN
+        UPDATE flow_element_instance
+        SET status = 'Completed', completed_at = now()
+        WHERE id = NEW.id;
+
+        RETURN OLD;
+    END IF;
+
+    -- Get execution mode and execution url from the flow element
+    SELECT execution_mode, execution_url INTO flow_element_instance_execution_mode, flow_element_instance_execution_url
     FROM flow_element
     WHERE id = NEW.instance_of;
 
@@ -307,10 +318,19 @@ BEGIN
             SET status = 'In Progress'
             WHERE id = NEW.id;
 
-            -- TODO API Call
+            -- TODO Fehler abfangen
+
+            PERFORM http_post(
+                    flow_element_instance_execution_url,
+                    '{ "responsePath": "http://10.105.11.42:3000/api/instance/complete", "flowElementInstanceId": "' || NEW.id || '", "data": {
+                    "testdata1": "value1",
+                    "testdata2": "value2"
+                } }',
+                    'application/json'
+                    );
         ELSE
             RAISE EXCEPTION 'Not implemented scenario, where execution mode is "%"', flow_element_instance_execution_mode;
-    END CASE;
+        END CASE;
 
     RETURN OLD;
 END;
@@ -322,3 +342,37 @@ AFTER INSERT ON public.flow_element_instance
 FOR EACH ROW
 WHEN (NEW.status = 'Created')
 EXECUTE FUNCTION execute_created_flow_element_instance();
+
+
+CREATE OR REPLACE FUNCTION public.complete_flow_element_instance(flow_element_instance_id_param bigint, output_data jsonb)
+    RETURNS boolean
+    LANGUAGE plpgsql
+AS $function$BEGIN
+
+    -- Check if flow element instance exists
+    IF NOT EXISTS (SELECT 1 FROM flow_element_instance WHERE id = flow_element_instance_id_param) THEN
+        RAISE EXCEPTION 'Flow element instance with id % does not exist', flow_element_instance_id_param;
+    END IF;
+
+    -- Set flow element instance as COMPLETED
+    UPDATE flow_element_instance
+    SET status = 'Completed', completed_at = now()
+    WHERE id = flow_element_instance_id_param;
+
+    -- TODO Store data
+
+    RETURN True;
+
+END;$function$
+;
+
+create policy "enable all for authenticated users who are part of the related "
+    on "public"."flow_element_instance"
+    as permissive
+    for all
+    to authenticated
+    using ((EXISTS ( SELECT 1
+                     FROM ((process_instance pi
+                         JOIN process_model pm ON ((pi.process_model_id = pm.id)))
+                         JOIN profile_role_team prt ON ((prt.team_id = pm.belongs_to)))
+                     WHERE ((pi.id = flow_element_instance.is_part_of) AND (prt.profile_id = auth.uid())))));

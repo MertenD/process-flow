@@ -12,6 +12,8 @@ export default async function EditorPage({ params }: Readonly<{ params: { teamId
         redirect("/login")
     }
 
+    // TODO Wenn ein neuer Prozess erstellt wurde, auf die monitoring seite gewechselt wird und dann wieder auf die editor seite, dann wird der Prozess in der Prozessliste nicht angezeigt
+
     return <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={15}>
             <ProcessList teamId={params.teamId} userId={userData.user.id} />

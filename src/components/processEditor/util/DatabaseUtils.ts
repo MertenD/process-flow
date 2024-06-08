@@ -26,6 +26,14 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
         // TODO Make it more robust
         const executionMode = node.type === NodeTypes.ACTIVITY_NODE ? "Manual" : "Automatic"
 
+        // TODO URL soll in die node/options definition und nicht hier hardcoded sein
+        let executionUrl = undefined
+        if (node.type === NodeTypes.ACTIVITY_NODE) {
+            executionUrl = `${process.env.APP_URL || window.location.origin}/api/instance/activity`
+        } else if (node.type === NodeTypes.GAMIFICATION_EVENT_NODE) {
+            executionUrl = `${process.env.APP_URL || window.location.origin}/api/instance/event`
+        }
+
         const insertedElement = await supabase.from("flow_element").upsert({
             id: id,
             model_id: processModelId,
@@ -36,7 +44,8 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             height: node.data.height,
             parent_flow_element_id: node.parentId || null,
             z_index: node.zIndex,
-            execution_mode: executionMode
+            execution_mode: executionMode,
+            execution_url: executionUrl
         }, {onConflict: "id"}).select()
 
         const assignedId = insertedElement.data?.[0].id
