@@ -3,7 +3,7 @@
 import {createClient} from "@/utils/supabase/server";
 import {cookies} from "next/headers";
 
-export default async function(processModelId: string): Promise<number> {
+export default async function(processModelId: string): Promise<{processInstanceId: number}> {
 
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
@@ -11,11 +11,13 @@ export default async function(processModelId: string): Promise<number> {
     let { data, error } = await supabase
         .rpc('create_process_instance', {
             process_model_id_param: processModelId
-        })
+        }).single<number>()
 
-    if (error) {
-        throw Error(error.message)
+    if (error || !data) {
+        throw Error(error?.message || "Error creating process instance")
     }
 
-    return data
+    return {
+        processInstanceId: data,
+    }
 }

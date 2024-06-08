@@ -321,6 +321,11 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                         { getDependentOptions(selectOption) }
                     </>
                 case OptionsStructureType.SELECT_WITH_CUSTOM:
+
+                    // TODO Custom wird in der Drop down Liste nciht mehr angezeigt.
+
+                    // TODO Custom values in DB mit {} oder so abspeichern, damit man da unterscheiden kann
+
                     const selectWithCustomOption = option as OptionsSelect
                     const dataValue = getValueFromData(option.keyString)
                     const possibleSelectOptions = (option as OptionsSelectWithCustom).options.map(opt => opt.values).flat()

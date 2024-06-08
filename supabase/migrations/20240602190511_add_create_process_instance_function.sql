@@ -17,6 +17,21 @@ create table "public"."process_instance" (
                                              "process_model_id" bigint not null
 );
 
+create type "public"."execution_mode" as enum ('Manual', 'Automatic');
+
+alter table "public"."flow_element_instance" alter column "status" drop default;
+
+alter type "public"."flow_element_instance_status" rename to "flow_element_instance_status__old_version_to_be_dropped";
+
+create type "public"."flow_element_instance_status" as enum ('Created', 'Todo', 'In Progress', 'Completed');
+
+create type "public"."process_instance_status" as enum ('Running', 'Completed', 'Error');
+
+alter table "public"."flow_element_instance" alter column status type "public"."flow_element_instance_status" using status::text::"public"."flow_element_instance_status";
+
+alter table "public"."flow_element_instance" alter column "status" set default 'Created'::flow_element_instance_status;
+
+alter table "public"."flow_element" add column "execution_mode" execution_mode not null;
 
 alter table "public"."process_instance" enable row level security;
 
@@ -40,6 +55,12 @@ alter table "public"."process_instance" add constraint "public_process_instance_
 
 alter table "public"."process_instance" validate constraint "public_process_instance_process_model_id_fkey";
 
+alter table "public"."flow_element_instance" add column "completed_at" timestamp with time zone;
+
+alter table "public"."process_instance" add column "completed_at" timestamp with time zone;
+
+alter table "public"."process_instance" add column "status" process_instance_status not null default 'Running'::process_instance_status;
+
 set check_function_bodies = off;
 
 CREATE OR REPLACE FUNCTION public.create_process_instance(process_model_id_param bigint)
@@ -48,12 +69,12 @@ CREATE OR REPLACE FUNCTION public.create_process_instance(process_model_id_param
 AS $function$DECLARE
     process_instance_id int8;
     start_element_count INT;
-    start_element_id int8;
+    start_flow_element_id int8;
     end_element_count INT;
 BEGIN
 
     -- Check if the process model has exactly one start element
-    SELECT COUNT(*), id INTO start_element_count, start_element_id
+    SELECT COUNT(*), id INTO start_element_count, start_flow_element_id
     FROM flow_element
     WHERE type = 'startNode' AND model_id = process_model_id_param
     GROUP BY flow_element.id;
@@ -78,7 +99,15 @@ BEGIN
 
     -- Create start element instance
     INSERT INTO flow_element_instance (instance_of, is_part_of)
-    VALUES (start_element_id, process_instance_id);
+    VALUES (start_flow_element_id, process_instance_id);
+
+    -- Set data objects
+    -- TODO
+
+    -- Set start element instance to DONE
+    UPDATE flow_element_instance
+    SET status = 'Completed', completed_at = now()
+    WHERE instance_of = start_flow_element_id AND is_part_of = process_instance_id;
 
     -- Return success
     RETURN process_instance_id;
@@ -183,3 +212,113 @@ create policy "enable all for authenticated users"
     for all
     to authenticated
     using (true);
+
+CREATE OR REPLACE FUNCTION public.create_next_flow_element_instance()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS $function$DECLARE
+    current_flow_element_type text;
+    next_flow_element_id int8;
+BEGIN
+
+    -- check if instance is indeed done
+    IF NEW.status != 'Completed' THEN
+        RAISE EXCEPTION 'Previous flow element instance is not completed yet. Current status: %', NEW.status;
+    END IF;
+
+    -- Get the type of the flow element that that the flow element instance that triggered this function is an instance of
+    SELECT type INTO current_flow_element_type
+    FROM flow_element
+    WHERE id = NEW.instance_of;
+
+    -- Get the next flow element id. It is different for each flow element type
+    CASE
+        WHEN current_flow_element_type = 'startNode' THEN
+            SELECT start_element.next_flow_element_id INTO next_flow_element_id
+            FROM start_element
+            WHERE flow_element_id = NEW.instance_of;
+        WHEN current_flow_element_type = 'activityNode' THEN
+            SELECT activity_element.next_flow_element_id INTO next_flow_element_id
+            FROM activity_element
+            WHERE flow_element_id = NEW.instance_of;
+        WHEN current_flow_element_type = 'gamificationEventNode' THEN
+            SELECT gamification_event_element.next_flow_element_id INTO next_flow_element_id
+            FROM gamification_event_element
+            WHERE flow_element_id = NEW.instance_of;
+        WHEN current_flow_element_type = 'endNode' THEN
+
+            -- Don't get the next element id from the end node, instead set the process instance as completed
+            UPDATE process_instance
+            SET status = 'Completed', completed_at = now()
+            WHERE id = NEW.is_part_of;
+
+            RETURN OLD;
+        ELSE
+            RAISE EXCEPTION 'Getting the next flow element id for the node type "%" is not implemented', current_flow_element_type;
+    END CASE;
+
+    -- Create a new instance of the next flow element
+    INSERT INTO flow_element_instance (instance_of, is_part_of)
+    VALUES (next_flow_element_id, NEW.is_part_of);
+
+    RETURN OLD;
+END;$function$
+;
+
+CREATE TRIGGER create_next_flow_element_instance_on_previous_completed
+AFTER UPDATE ON public.flow_element_instance
+FOR EACH ROW
+WHEN (OLD.status IS NOT NULL AND OLD.status != 'Completed' AND NEW.status = 'Completed')
+EXECUTE FUNCTION create_next_flow_element_instance();
+
+CREATE OR REPLACE FUNCTION public.execute_created_flow_element_instance()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS $function$
+DECLARE
+    flow_element_instance_execution_mode execution_mode;
+    flow_element_type text;
+BEGIN
+
+    -- Get the type of the flow element that is referenced
+    SELECT type INTO flow_element_type
+    FROM flow_element
+    WHERE id = NEW.instance_of;
+
+    -- If the type is 'startNode' or the status is not 'Created', then do nothing and return
+    IF flow_element_type = 'startNode' OR NEW.status != 'Created' THEN
+        RETURN OLD;
+    END IF;
+
+    -- Check if the flow element that is referenced is automatic or manual
+    SELECT execution_mode INTO flow_element_instance_execution_mode
+    FROM flow_element
+    WHERE id = NEW.instance_of;
+
+    CASE
+        -- Set status of instance to TO DO so a user can see it in their worklist
+        WHEN flow_element_instance_execution_mode = 'Manual' THEN
+            UPDATE flow_element_instance
+            SET status = 'Todo'
+            WHERE id = NEW.id;
+        -- Execute instance and call the provided api url if it is automatic
+        WHEN flow_element_instance_execution_mode = 'Automatic' THEN
+            UPDATE flow_element_instance
+            SET status = 'In Progress'
+            WHERE id = NEW.id;
+
+            -- TODO API Call
+        ELSE
+            RAISE EXCEPTION 'Not implemented scenario, where execution mode is "%"', flow_element_instance_execution_mode;
+    END CASE;
+
+    RETURN OLD;
+END;
+$function$;
+
+
+CREATE TRIGGER execute_flow_element_instance_on_creation
+AFTER INSERT ON public.flow_element_instance
+FOR EACH ROW
+WHEN (NEW.status = 'Created')
+EXECUTE FUNCTION execute_created_flow_element_instance();

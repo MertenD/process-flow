@@ -23,6 +23,9 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
 
         const id = node.id.toString().includes("-") ? undefined : node.id
 
+        // TODO Make it more robust
+        const executionMode = node.type === NodeTypes.ACTIVITY_NODE ? "Manual" : "Automatic"
+
         const insertedElement = await supabase.from("flow_element").upsert({
             id: id,
             model_id: processModelId,
@@ -32,7 +35,8 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             width: node.data.width,
             height: node.data.height,
             parent_flow_element_id: node.parentId || null,
-            z_index: node.zIndex
+            z_index: node.zIndex,
+            execution_mode: executionMode
         }, {onConflict: "id"}).select()
 
         const assignedId = insertedElement.data?.[0].id
