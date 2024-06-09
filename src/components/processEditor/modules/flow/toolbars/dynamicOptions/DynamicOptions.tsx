@@ -379,6 +379,10 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                                         <SelectLabel>Variables</SelectLabel>
                                         { variableItems }
                                     </SelectGroup> }
+                                    <SelectGroup>
+                                        <SelectLabel>Custom</SelectLabel>
+                                        <SelectItem value="{custom}">Custom value</SelectItem>
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                             <Input

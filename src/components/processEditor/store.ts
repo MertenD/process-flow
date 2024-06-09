@@ -178,6 +178,7 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
     getAvailableVariableNames: (ownNodeId: string, ownVariableNames: string[] | undefined = undefined): string[] => {
         // Get all available variable names from all previous nodes that are no decision nodes
         // also add the points type names
+        // TODO Wenn ich dynamisch nodes mit beliebigen Variablen erlaube, dann muss ich hier auch die Variablen der Nodes berücksichtigen und nicht nur über node.data.variableName gehen
         return Array.from(new Set(
             get().getPreviousNodes(ownNodeId)
                 .filter((node) => node.type !== NodeTypes.GATEWAY_NODE)
@@ -185,6 +186,7 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
                 .concat(ownVariableNames)
                 .filter(name => name !== undefined && name !== "")
                 .concat(Object.values(PointsType))
+                .map((name) => `{${name}}`)
         ))
     }
 }));
