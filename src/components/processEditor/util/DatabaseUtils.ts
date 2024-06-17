@@ -13,6 +13,8 @@ import {GamificationType} from "@/model/GamificationType";
 
 // TODO Beim speichern soll das updated by in der Datenbank des process_model auf den aktuellen User gesetzt werden
 
+// TODO Möglicherweise schmeiße ich die spezifischen nodes in der datenbank raus, weil ich es besser finde data in dem flow_element zu speichern. Ich muss mir nur überlegen, wie ich das mit den mehreren ausgängen bei dem gateway mache.
+
 export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], processModelId: string, supabase: SupabaseClient<any, "public", any>, reactFlowInstance: ReactFlowInstance) {
 
     const existingNodes: string[] = []
@@ -45,7 +47,8 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             parent_flow_element_id: node.parentId || null,
             z_index: node.zIndex,
             execution_mode: executionMode,
-            execution_url: executionUrl
+            execution_url: executionUrl,
+            data: node.data || {}
         }, {onConflict: "id"}).select()
 
         const assignedId = insertedElement.data?.[0].id

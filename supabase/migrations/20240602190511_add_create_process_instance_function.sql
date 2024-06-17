@@ -220,7 +220,10 @@ CREATE OR REPLACE FUNCTION public.create_next_flow_element_instance()
     LANGUAGE plpgsql
 AS $function$DECLARE
     current_flow_element_type text;
+    current_flow_element_data jsonb;
     next_flow_element_id int8;
+    gateway_flow_element_next_true_id int8;
+    gateway_flow_element_next_false_id int8;
 BEGIN
 
     -- check if instance is indeed done
@@ -247,6 +250,67 @@ BEGIN
             SELECT gamification_event_element.next_flow_element_id INTO next_flow_element_id
             FROM gamification_event_element
             WHERE flow_element_id = NEW.instance_of;
+        WHEN current_flow_element_type = 'gatewayNode' THEN
+
+            -- Get gateway data
+            SELECT data INTO current_flow_element_data
+            FROM flow_element
+            WHERE id = NEW.instance_of;
+
+            -- Get the next flow element id from the gateway flow element
+            SELECT next_flow_element_true_id, next_flow_element_false_id INTO gateway_flow_element_next_true_id, gateway_flow_element_next_false_id
+            FROM gateway_element
+            WHERE flow_element_id = NEW.instance_of;
+
+            -- Replace variables in the data object with the actual values
+            current_flow_element_data := replace_with_variable_values(current_flow_element_data, NEW.is_part_of);
+
+            -- Evaluate the gateway expression
+            SELECT CASE
+                WHEN current_flow_element_data->>'comparison' = '==' THEN
+                    CASE
+                        WHEN current_flow_element_data->>'value1' = current_flow_element_data->>'value2' THEN
+                            gateway_flow_element_next_true_id
+                        ELSE
+                            gateway_flow_element_next_false_id
+                        END
+                WHEN current_flow_element_data->>'comparison' = '!=' THEN
+                    CASE
+                        WHEN current_flow_element_data->>'value1' != current_flow_element_data->>'value2' THEN
+                            gateway_flow_element_next_true_id
+                        ELSE
+                            gateway_flow_element_next_false_id
+                    END
+                WHEN current_flow_element_data->>'comparison' = '>' THEN
+                    CASE
+                        WHEN current_flow_element_data->>'value1' > current_flow_element_data->>'value2' THEN
+                            gateway_flow_element_next_true_id
+                        ELSE
+                            gateway_flow_element_next_false_id
+                    END
+                WHEN current_flow_element_data->>'comparison' = '<' THEN
+                    CASE
+                        WHEN current_flow_element_data->>'value1' < current_flow_element_data->>'value2' THEN
+                            gateway_flow_element_next_true_id
+                        ELSE
+                            gateway_flow_element_next_false_id
+                    END
+                WHEN current_flow_element_data->>'comparison' = '>=' THEN
+                    CASE
+                        WHEN current_flow_element_data->>'value1' >= current_flow_element_data->>'value2' THEN
+                            gateway_flow_element_next_true_id
+                        ELSE
+                            gateway_flow_element_next_false_id
+                    END
+                WHEN current_flow_element_data->>'comparison' = '<=' THEN
+                    CASE
+                        WHEN current_flow_element_data->>'value1' <= current_flow_element_data->>'value2' THEN
+                            gateway_flow_element_next_true_id
+                        ELSE
+                            gateway_flow_element_next_false_id
+                    END
+            End INTO next_flow_element_id;
+
         WHEN current_flow_element_type = 'endNode' THEN
 
             -- Don't get the next element id from the end node, instead set the process instance as completed
@@ -258,6 +322,11 @@ BEGIN
         ELSE
             RAISE EXCEPTION 'Getting the next flow element id for the node type "%" is not implemented', current_flow_element_type;
     END CASE;
+
+    -- Check if the next flow element id is not null
+    IF next_flow_element_id IS NULL THEN
+        RAISE EXCEPTION 'Next flow element id is null';
+    END IF;
 
     -- Create a new instance of the next flow element
     INSERT INTO flow_element_instance (instance_of, is_part_of)
@@ -280,6 +349,7 @@ AS $function$
 DECLARE
     flow_element_instance_execution_mode execution_mode;
     flow_element_instance_execution_url text;
+    flow_element_data jsonb;
     flow_element_type text;
 BEGIN
 
@@ -319,6 +389,15 @@ BEGIN
             WHERE id = NEW.id;
 
             -- TODO Fehler abfangen
+
+            -- flow_element has a data column, which is a jsonb. This object is sent to the execution url
+            SELECT data INTO flow_element_data
+            FROM flow_element
+            WHERE id = NEW.instance_of;
+
+            -- Go through each value in the data object and replace any string with "{content}" with the content without the brackets
+            -- The new values can be located in the data_object_instance table. The name col of the row is the value withoud the brackets
+            flow_element_data := replace_bracketed_values(flow_element_data, NEW.is_part_of);
 
             PERFORM http_post(
                     flow_element_instance_execution_url,

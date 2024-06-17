@@ -40,6 +40,8 @@ import {
 
 // TODO Beim normalen Text input noch mitgeben, was eingegeben werden soll? Zahlen, Text, ...
 
+// TODO Durch die { } in den Variablennamen wird auch ein leerer Variablenname angezeigt, das sollte nicht sein
+
 export default function DynamicOptions({ optionsDefinition }: Readonly<{ optionsDefinition: OptionsDefinition }>) {
 
     const inputRefs = useRef<any>({});

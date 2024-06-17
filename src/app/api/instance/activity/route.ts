@@ -29,8 +29,7 @@ export async function POST(req: Request) {
                 body: JSON.stringify({
                     flowElementInstanceId: flowElementInstanceId,
                     data: {
-                        "outputValue1": "value1",
-                        "outputValue2": "value2"
+                        [data.variableName]: "3"
                     }
                 })
             })
