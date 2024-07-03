@@ -15,6 +15,8 @@ import {GamificationType} from "@/model/GamificationType";
 
 // TODO Möglicherweise schmeiße ich die spezifischen nodes in der datenbank raus, weil ich es besser finde data in dem flow_element zu speichern. Ich muss mir nur überlegen, wie ich das mit den mehreren ausgängen bei dem gateway mache.
 
+// TODO Laden der Prozesse auf Serverseite ausgführen und dann an die client Komponente BPMNEditor übergeben
+
 export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], processModelId: string, supabase: SupabaseClient<any, "public", any>, reactFlowInstance: ReactFlowInstance) {
 
     const existingNodes: string[] = []
@@ -31,7 +33,7 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
         // TODO URL soll in die node/options definition und nicht hier hardcoded sein
         let executionUrl = undefined
         if (node.type === NodeTypes.ACTIVITY_NODE) {
-            executionUrl = `${process.env.APP_URL || window.location.origin}/api/instance/activity`
+            executionUrl = `${process.env.APP_URL || window.location.origin}/instance/task/activity`
         } else if (node.type === NodeTypes.GAMIFICATION_EVENT_NODE) {
             executionUrl = `${process.env.APP_URL || window.location.origin}/api/instance/event`
         }

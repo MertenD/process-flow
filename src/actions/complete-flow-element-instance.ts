@@ -3,7 +3,7 @@
 import {createClient} from "@/utils/supabase/server";
 import {cookies} from "next/headers";
 
-export default async function(flowElementInstanceId: string, outputData: any): Promise<boolean> {
+export default async function(flowElementInstanceId: number, outputData: any): Promise<boolean> {
 
     const cookieStore = cookies()
     const supabase = createClient(cookieStore, process.env.SUPABASE_SERVICE_KEY)

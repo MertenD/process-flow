@@ -1,47 +1,43 @@
+"use client"
+
 import "@/styles/processList.css";
-import {createClient} from '@/utils/supabase/server';
-import {redirect} from "next/navigation";
 import CreateProcessButton from "@/components/processList/CreateProcessButton";
-import React from "react";
+import React, {useState} from "react";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {ProcessModel} from "@/types/database.types";
+import Link from "next/link";
+import {useParams} from "next/navigation";
 
 export interface ProcessListProps {
     userId: string;
     teamId: string;
-    selectedProcessId?: string;
+    processes: ProcessModel[] | null;
 }
 
-export default async function ProcessList({ userId, teamId, selectedProcessId }: Readonly<ProcessListProps>) {
+export default function ProcessList({ userId, teamId, processes }: Readonly<ProcessListProps>) {
 
-    // TODO Add specific type for processes
-    const supabase = createClient();
-    const { data: processes } = await supabase
-        .from("process_model")
-        .select("*")
-        .eq("belongs_to", teamId)
-
-    async function handleProcessClick(processId: string) {
-        "use server"
-
-        redirect(`/${teamId}/editor/${processId}`)
-    }
+    const params = useParams<{ processModelId: string }>()
+    const [selectedProcessId, setSelectedProcessId] = useState<string | null>(params.processModelId)
 
     return (
         <section className="processList flex flex-col h-full">
             <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">
                 { processes?.map((process, index) => {
-                    return <button
+                    return <Link
                         key={`${process.id}`}
                         className="w-full"
-                        formAction={handleProcessClick.bind(null, process.id)}
+                        href={`/${teamId}/editor/${process.id}`}
+                        onClick={() => {
+                            setSelectedProcessId(process.id.toString())
+                        }}
                     >
-                        <Card className={`${selectedProcessId?.toString() === process.id.toString() ? "bg-accent" : ""}`}>
+                        <Card className={`${selectedProcessId === process.id.toString() ? "bg-accent" : ""}`}>
                             <CardHeader>
                                 <CardTitle>{ process.name }</CardTitle>
                                 <CardDescription>{ process.description }</CardDescription>
                             </CardHeader>
                         </Card>
-                    </button>
+                    </Link>
                 }) }
             </form>
             <CreateProcessButton teamId={teamId} userId={userId} />

@@ -22,9 +22,9 @@ export default async function(creatorId: string, teamName: string): Promise<numb
             team_name: teamName
         })
 
-    if (error) {
+    if (error || !data) {
         console.error("error", error)
-        throw Error(error.message)
+        throw Error(error?.message)
     }
 
     return data

@@ -1,8 +1,6 @@
 import BpmnEditor from "@/components/processEditor/modules/flow/BpmnEditor";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
-import {ResizableHandle, ResizablePanel, ResizablePanelGroup} from "@/components/ui/resizable";
-import ProcessList from "@/components/processList/ProcessList";
 import React from "react";
 
 // TODO Generell middleware um zu überprüfen, ob man auf gewisse Routen zugriff hat
@@ -25,15 +23,7 @@ export default async function EditorProcessPage({ params }: Readonly<{ params: {
         redirect(`/${params.teamId}/editor`)
     }
 
-    return <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={15}>
-            <ProcessList teamId={params.teamId} selectedProcessId={params.processModelId} userId={userData.user.id} />
-        </ResizablePanel>
-        <ResizableHandle />
-        <ResizablePanel defaultSize={85}>
-            <div className="w-full h-full">
-                <BpmnEditor processModelId={params.processModelId}/> : <div>Select a process model to edit</div>
-            </div>
-        </ResizablePanel>
-    </ResizablePanelGroup>
+    return <div className="w-full h-full">
+        <BpmnEditor processModelId={params.processModelId}/> : <div>Select a process model to edit</div>
+    </div>
 }

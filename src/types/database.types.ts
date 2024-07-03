@@ -10,7 +10,7 @@ export type Database = MergeDeep<
     {
         public: {
             Views: {
-                movies_view: {
+                manual_task: {
                     Row: {
                         // id is a primary key in public.movies, so it must be `not null`
                         id: number
@@ -29,3 +29,9 @@ export type Views<T extends keyof Database['public']['Views']> =
     Database['public']['Views'][T]['Row']
 
 export type Profile = Tables<'profiles'>
+
+export type ManualTask = Views<'manual_task'>
+
+export type ProcessModel = Tables<'process_model'>
+
+export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T]

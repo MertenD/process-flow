@@ -3,7 +3,7 @@
 import {createClient} from "@/utils/supabase/server";
 import {cookies} from "next/headers";
 
-export default async function(processModelId: string): Promise<{processInstanceId: number}> {
+export default async function(processModelId: number): Promise<{processInstanceId: number}> {
 
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
