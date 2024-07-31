@@ -19,7 +19,7 @@ import {Textarea} from "@/components/ui/textarea";
 
 export interface CreateProcessButtonProps {
     userId: string
-    teamId: string
+    teamId: number
 }
 
 export default function CreateProcessButton({ userId, teamId }: Readonly<CreateProcessButtonProps>) {

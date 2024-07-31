@@ -2,22 +2,66 @@
 
 import "@/styles/processList.css";
 import CreateProcessButton from "@/components/processList/CreateProcessButton";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {ProcessModel} from "@/types/database.types";
 import Link from "next/link";
-import {useParams} from "next/navigation";
+import {useParams, usePathname} from "next/navigation";
+import {createClient} from "@/utils/supabase/client";
+import getProcessModels from "@/actions/get-process-models";
+import {toast} from "@/components/ui/use-toast";
 
 export interface ProcessListProps {
     userId: string;
-    teamId: string;
-    processes: ProcessModel[] | null;
+    teamId: number;
 }
 
-export default function ProcessList({ userId, teamId, processes }: Readonly<ProcessListProps>) {
+export default function ProcessList({ userId, teamId }: Readonly<ProcessListProps>) {
 
     const params = useParams<{ processModelId: string }>()
+    const pathName = usePathname()
+    const supabase = createClient()
+    const [processes, setProcesses] = useState<ProcessModel[]>([])
     const [selectedProcessId, setSelectedProcessId] = useState<string | null>(params.processModelId)
+
+    useEffect(() => {
+        getProcessModels(teamId).then(setProcesses).catch((error) => {
+            console.error("Error fetching processes", error)
+        })
+    }, [teamId])
+
+    useEffect(() => {
+        setSelectedProcessId(params.processModelId)
+    }, [params])
+
+    useEffect(() => {
+        const updateSubscription = supabase
+            .channel("process_model_insertion")
+            .on("postgres_changes", {
+                event: "*",
+                schema: "public",
+                table: "process_model"
+            }, (payload) => {
+                if (payload.eventType === "INSERT") {
+                    getProcessModels(teamId).then(setProcesses).catch((error) => {
+                        console.error("Error fetching processes", error)
+                    })
+                    
+                    if ((payload.new as ProcessModel).created_by === userId) {
+                        toast({
+                            variant: "success",
+                            title: "Process created",
+                            description: "The process model was created successfully."
+                        })
+                    }
+                }
+            })
+            .subscribe()
+
+        return () => {
+            updateSubscription.unsubscribe().then()
+        }
+    }, [supabase, teamId, userId]);
 
     return (
         <section className="processList flex flex-col h-full">

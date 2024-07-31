@@ -3,7 +3,7 @@
 import {createClient} from "@/utils/supabase/server";
 import {cookies} from "next/headers";
 
-export default async function(teamId: string, name: string, description: string, creatorId: string): Promise<number> {
+export default async function(teamId: number, name: string, description: string, creatorId: string): Promise<number> {
 
     if (!name) {
         throw new Error("Invalid form data, requires name as string")
@@ -24,8 +24,8 @@ export default async function(teamId: string, name: string, description: string,
             created_by_param: creatorId
         })
 
-    if (error) {
-        throw Error(error.message)
+    if (error || !data) {
+        throw Error(error?.message || "Error creating process model.")
     }
 
     return data
