@@ -7,6 +7,7 @@ import {z} from "zod"
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import React from "react";
 
 export interface SingleChoiceTaskProps {
     task: string
@@ -18,9 +19,7 @@ export interface SingleChoiceTaskProps {
 }
 
 const FormSchema = z.object({
-    choice: z.string().min(1, {
-        message: "Please select a choice"
-    }),
+    choice: z.string().min(1, "Please select a choice")
 });
 
 export default function SingleChoiceTask({ task, description, choices, variableName, responsePath, flowElementInstanceId }: Readonly<SingleChoiceTaskProps>) {
@@ -61,7 +60,7 @@ export default function SingleChoiceTask({ task, description, choices, variableN
                     <FormField
                         control={form.control}
                         name="choice"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                             <FormItem className="space-y-3">
                                 <FormControl>
                                     <RadioGroup
@@ -81,7 +80,7 @@ export default function SingleChoiceTask({ task, description, choices, variableN
                                         })}
                                     </RadioGroup>
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage>{fieldState.error?.message}</FormMessage>
                             </FormItem>
                         )}
                     />

@@ -33,10 +33,11 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
         let taskUrl = task.execution_url
         taskUrl += "?"
         if (task.data) {
+            // TODO URL encode values and keys in task.data to prevent errors in the URL query string (e.g. if a value contains a "+")
             taskUrl += Object.entries(task.data).map(([key, value]) => `${key}=${value}`).join("&")
         }
         // TODO Nicht host hardcoden
-        taskUrl += `&responsePath=${encodeURIComponent("http://10.105.11.42:3000/api/instance/complete")}`
+        taskUrl += `&responsePath=${encodeURIComponent("http://localhost:3000/api/instance/complete")}`
         taskUrl += `&flowElementInstanceId=${task.id}`
         return taskUrl
     }

@@ -401,7 +401,7 @@ BEGIN
 
             PERFORM http_post(
                     flow_element_instance_execution_url,
-                    '{ "responsePath": "http://10.105.11.42:3000/api/instance/complete", "flowElementInstanceId": "' || NEW.id || '", "data": {
+                    '{ "responsePath": "http://localhost:3000/api/instance/complete", "flowElementInstanceId": "' || NEW.id || '", "data": {
                     "testdata1": "value1",
                     "testdata2": "value2"
                 } }',
