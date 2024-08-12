@@ -17,6 +17,31 @@ create table "public"."process_instance" (
                                              "process_model_id" bigint not null
 );
 
+CREATE OR REPLACE FUNCTION public.replace_with_variable_values(data jsonb, process_instance_id bigint)
+    RETURNS jsonb
+    LANGUAGE plpgsql
+AS $function$DECLARE
+    key text;
+    value_ text;
+    new_value text;
+BEGIN
+    FOR key, value_ IN SELECT * FROM jsonb_each_text(data) LOOP
+            IF value_ LIKE '{%}' THEN
+                SELECT doi.value INTO new_value
+                FROM data_object_instance doi
+                WHERE doi.is_part_of = process_instance_id AND doi.name = substring(value_, 2, length(value_) - 2);
+
+                IF new_value IS NOT NULL THEN
+                    new_value := trim(both '"' from new_value);
+                    data := jsonb_set(data, array[key], to_jsonb(new_value));
+                END IF;
+            END IF;
+        END LOOP;
+
+    RETURN data;
+END;$function$
+;
+
 create type "public"."execution_mode" as enum ('Manual', 'Automatic');
 
 alter table "public"."flow_element_instance" alter column "status" drop default;
@@ -363,7 +388,7 @@ BEGIN
         RETURN OLD;
     END IF;
 
-    IF flow_element_type = 'endNode' THEN
+    IF flow_element_type = 'endNode' OR flow_element_type = 'gatewayNode' THEN
         UPDATE flow_element_instance
         SET status = 'Completed', completed_at = now()
         WHERE id = NEW.id;
@@ -397,7 +422,7 @@ BEGIN
 
             -- Go through each value in the data object and replace any string with "{content}" with the content without the brackets
             -- The new values can be located in the data_object_instance table. The name col of the row is the value withoud the brackets
-            flow_element_data := replace_bracketed_values(flow_element_data, NEW.is_part_of);
+            flow_element_data := replace_with_variable_values(flow_element_data, NEW.is_part_of);
 
             PERFORM http_post(
                     flow_element_instance_execution_url,
