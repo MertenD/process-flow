@@ -31,6 +31,7 @@ export type Views<T extends keyof Database['public']['Views']> =
 export type Profile = Tables<'profiles'>
 
 export type ManualTask = Views<'manual_task'>
+export type ManualTaskWithTitleAndDescription = MergeDeep<ManualTask, { name: string, description: string }>
 
 export type ProcessModel = Tables<'process_model'>
 

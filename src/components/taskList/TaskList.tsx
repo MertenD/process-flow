@@ -3,7 +3,7 @@
 import "@/styles/processList.css";
 import {useParams, usePathname} from "next/navigation";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ManualTask} from "@/types/database.types";
+import {ManualTaskWithTitleAndDescription} from "@/types/database.types";
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import {createClient} from "@/utils/supabase/client";
@@ -20,7 +20,7 @@ export default function TaskList({ teamId }: Readonly<TaskListProps>) {
     const pathName = usePathname()
     const supabase = createClient()
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(params.taskId)
-    const [tasks, setTasks] = useState<ManualTask[]>([])
+    const [tasks, setTasks] = useState<ManualTaskWithTitleAndDescription[]>([])
 
     useEffect(() => {
         getTasks(teamId).then(setTasks).catch((error) => {
@@ -63,7 +63,7 @@ export default function TaskList({ teamId }: Readonly<TaskListProps>) {
 
     return <section className="processList flex flex-col h-full">
         <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">
-            { tasks?.filter((task: ManualTask) => task.status === "Todo").map((task: ManualTask, index: number) => {
+            { tasks?.filter((task: ManualTaskWithTitleAndDescription) => task.status === "Todo").map((task: ManualTaskWithTitleAndDescription, index: number) => {
                 return <Link
                         key={`${task.id}`}
                         className="w-full"
@@ -75,8 +75,8 @@ export default function TaskList({ teamId }: Readonly<TaskListProps>) {
                     <Card className={`${selectedTaskId?.toString() === task.id.toString() ? "bg-accent" : ""}`}>
                         <CardHeader>
                             { /* // TODO Title for task in view */ }
-                            <CardTitle>{ task.id }</CardTitle>
-                            <CardDescription>{ task.status }</CardDescription>
+                            <CardTitle>{ task.name }</CardTitle>
+                            <CardDescription>{ task.description }</CardDescription>
                         </CardHeader>
                     </Card>
                 </Link>
