@@ -27,7 +27,7 @@ function ProcessModelStatisticsDetail({ data }: { data: ModelStatisticsData }) {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Instanz-Status</CardTitle>
+            <CardTitle>Instanzen-Status</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>

@@ -41,11 +41,21 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
 
         const trendDataFromDb: TrendData = {};
 
+        // Erstelle eine Liste aller Daten zwischen from und to
+        const dateList: string[] = [];
+        for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+            dateList.push(d.toISOString().split("T")[0]);
+        }
+
         for (const model of processModels ?? []) {
             const modelName = model.name;
             if (!trendDataFromDb[modelName]) {
                 trendDataFromDb[modelName] = [];
             }
+
+            dateList.forEach(date => {
+                trendDataFromDb[modelName].push({ date, started: 0, completed: 0 });
+            });
 
             for (const instance of model.process_instance ?? []) {
 
