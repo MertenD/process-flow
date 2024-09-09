@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import {Enums} from "@/types/database.types";
+import { ProcessModelInstanceState } from "@/types/database.types";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 
@@ -13,7 +13,7 @@ export interface ModelStatisticsData {
   id: number;
   name: string;
   instancesAmount: number;
-  instanceStates: { name: Enums<"process_instance_status">; amount: number }[];
+  instanceStates: { name: ProcessModelInstanceState; amount: number }[];
   stepForStepProgress: { step: string; amountInProgress: number; amountCompleted: number, amountBlocked: number }[];
 }
 
@@ -40,7 +40,7 @@ function ProcessModelStatisticsDetail({ data }: { data: ModelStatisticsData }) {
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="amount"
-                  label={({ name, percent }: { name: Enums<"process_instance_status">, percent: number }) => {
+                  label={({ name, percent }: { name: ProcessModelInstanceState, percent: number }) => {
                       let showName = name.toString()
                       if (name === "Completed") {
                           showName = "Fertig"

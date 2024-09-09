@@ -3,7 +3,13 @@ import GeneralMonitoringStatistics, {TrendData} from "@/components/GeneralMonito
 import React from "react";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
-import {FlowElement, FlowElementInstance, ProcessInstance, ProcessModel} from "@/types/database.types";
+import {
+    FlowElement,
+    FlowElementInstance,
+    ProcessInstance,
+    ProcessModel,
+    ProcessModelInstanceState
+} from "@/types/database.types";
 
 type ProcessInstanceWithFlowElements = Omit<ProcessInstance, 'flow_element_instance'> & {
     flow_element_instance: (FlowElementInstance & { flow_element: (FlowElement & { name: string }) })[]
@@ -84,7 +90,7 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
                     acc[state] += 1;
                 //}
                 return acc;
-            }, {} as { [key: string]: number });
+            }, {} as { [key: string]: number })
 
             const stepForStepProgress = model.process_instance.reduce((acc, instance) => {
                 //if (new Date(instance.created_at) >= from && new Date(instance.created_at) <= to
@@ -130,7 +136,10 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
                 id: model.id,
                 name: model.name,
                 instancesAmount: model.process_instance.length,
-                instanceStates: Object.entries(instanceStates).map(([name, amount]) => ({ name, amount })),
+                instanceStates: Object.entries(instanceStates).map(([name, amount]) => {
+                    const typedName: ProcessModelInstanceState = name as ProcessModelInstanceState;
+                    return ({ name: typedName, amount })
+                }),
                 stepForStepProgress: Object.entries(stepForStepProgress).map(([step, amounts]) => ({ step, ...amounts }))
             };
         });

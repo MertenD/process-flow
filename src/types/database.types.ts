@@ -41,3 +41,5 @@ export type FlowElement = Tables<"flow_element">
 export type FlowElementInstance = Tables<"flow_element_instance">
 
 export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T]
+
+export type ProcessModelInstanceState = Enums<"process_instance_status">
