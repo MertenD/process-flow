@@ -59,7 +59,7 @@ export default function TeamSwitcher({ className, ownTeams, otherTeams, selected
                         aria-label="Select a team"
                         className={cn("w-[200px] justify-between", className)}
                     >
-                        <div className={`mr-2 h-5 w-5 rounded-full bg-gradient-to-br ${selectedTeam.colorSchema.from} ${selectedTeam.colorSchema.to}`} />
+                        <div className={`mr-2 h-5 w-5 rounded-full shrink-0 bg-gradient-to-br ${selectedTeam.colorSchema.from} ${selectedTeam.colorSchema.to}`} />
                         {selectedTeam.label}
                         <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
                     </Button>
