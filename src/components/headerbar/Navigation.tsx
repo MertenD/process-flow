@@ -24,6 +24,12 @@ export default function Navigation({ className, selectedTeamId } : Readonly<Navi
         className={cn("flex items-center space-x-4 lg:space-x-6", className)}
     >
         <Link
+            href={tasksPath}
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(tasksPath) ? "text-primary" : "text-muted-foreground"}`}
+        >
+            Tasks
+        </Link>
+        <Link
             href={editorPath}
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(editorPath) ? "text-primary" : "text-muted-foreground"}`}
         >
@@ -40,12 +46,6 @@ export default function Navigation({ className, selectedTeamId } : Readonly<Navi
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(teamPath) ? "text-primary" : "text-muted-foreground"}`}
         >
             Team
-        </Link>
-        <Link
-            href={tasksPath}
-            className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(tasksPath) ? "text-primary" : "text-muted-foreground"}`}
-        >
-            Tasks
         </Link>
         <Link
             href={statsPath}

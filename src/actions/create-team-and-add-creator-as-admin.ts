@@ -3,7 +3,7 @@
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
 
-export default async function(creatorId: string, teamName: string): Promise<number> {
+export default async function(creatorId: string, teamName: string, colorScheme: { from: string, to: string }): Promise<number> {
 
     if (!creatorId || !teamName) {
         throw new Error("Invalid form data, requires creatorId as string and teamName as string")
@@ -19,7 +19,8 @@ export default async function(creatorId: string, teamName: string): Promise<numb
     let { data, error } = await supabase
         .rpc('create_team_and_add_creator_as_admin', {
             creator_profile_id: creatorId,
-            team_name: teamName
+            team_name: teamName,
+            color_scheme: colorScheme
         })
 
     if (error || !data) {

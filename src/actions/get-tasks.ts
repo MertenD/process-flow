@@ -15,8 +15,6 @@ export default async function(teamId: string): Promise<ManualTaskWithTitleAndDes
         .eq("belongs_to", teamId)
         .returns<ManualTaskWithTitleAndDescription[]>()
 
-    console.log("tasks", tasks)
-
     if (tasksError || !tasks) {
         throw Error(tasksError.message)
     }

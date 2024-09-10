@@ -1,5 +1,5 @@
-import ProcessModelsStatistics, {ModelStatisticsData} from "@/components/ProcessModelsStatistics";
-import GeneralMonitoringStatistics, {TrendData} from "@/components/GeneralMonitoringStatistics";
+import ProcessModelsStatistics, {ModelStatisticsData} from "@/components/monitoring/ProcessModelsStatistics";
+import GeneralMonitoringStatistics, {TrendData} from "@/components/monitoring/GeneralMonitoringStatistics";
 import React from "react";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
@@ -11,8 +11,10 @@ import {
     ProcessModelInstanceState
 } from "@/types/database.types";
 
+export type FlowElementInstanceWithFlowElement = FlowElementInstance & { flow_element: FlowElement & { name: string } };
+
 type ProcessInstanceWithFlowElements = Omit<ProcessInstance, 'flow_element_instance'> & {
-    flow_element_instance: (FlowElementInstance & { flow_element: (FlowElement & { name: string }) })[]
+    flow_element_instance: (FlowElementInstanceWithFlowElement)[]
 };
 
 type ProcessModelWithInstances = ProcessModel & {
@@ -166,6 +168,8 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
 
     const modelData = createModelData(processModels, dateAgo, new Date());
 
+    const tasksData: FlowElementInstanceWithFlowElement[] = processModels?.map(model => model.process_instance).flat().map(instance => instance.flow_element_instance).flat() || [];
+
     return <div className="flex flex-col p-8 space-y-8">
         <h1 className="text-3xl font-bold">Prozess-Monitoring Dashboard</h1>
         <GeneralMonitoringStatistics
@@ -175,6 +179,6 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
             totalInProgress={totalInProgress}
             trendData={trendData}
         />
-        <ProcessModelsStatistics modelData={modelData}/>
+        <ProcessModelsStatistics modelData={modelData} tasksData={tasksData}/>
     </div>
 }

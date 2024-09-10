@@ -16,8 +16,6 @@ import {Profile} from "@/types/database.types";
 import {redirect} from "next/navigation";
 import Link from "next/link";
 
-// TODO pass profile information or user information via props
-
 export async function UserNav() {
 
     const cookieStore = cookies()
@@ -30,7 +28,7 @@ export async function UserNav() {
     const {data: profile} = await supabase
         .from('profiles')
         .select('id, username, email')
-        .eq('id', user?.id)
+        .eq('id', user?.id || "")
         .single<Profile>()
 
     const signOut = async () => {
@@ -69,9 +67,6 @@ export async function UserNav() {
                     <DropdownMenuItem>
                         Settings
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        New Team
-                    </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItemWithServerAction action={signOut}>
@@ -82,7 +77,7 @@ export async function UserNav() {
     ) : (
         <Button>
             <Link
-                href="/login"
+                href="/authenticate"
                 className="btn-primary"
             >
                 Sign in

@@ -6,6 +6,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { ProcessModelInstanceState } from "@/types/database.types";
+import AllTasksTable from "@/components/monitoring/AllTasksTable";
+import {FlowElementInstanceWithFlowElement} from "@/app/[teamId]/monitoring/page";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 
@@ -18,10 +20,11 @@ export interface ModelStatisticsData {
 }
 
 export interface ProcessModelsStatisticsProps {
-  modelData: ModelStatisticsData[]
+    modelData: ModelStatisticsData[]
+    tasksData: FlowElementInstanceWithFlowElement[]
 }
 
-function ProcessModelStatisticsDetail({ data }: { data: ModelStatisticsData }) {
+function ProcessModelStatisticsDetail({ data, tasksData }: { data: ModelStatisticsData, tasksData: FlowElementInstanceWithFlowElement[] }) {
   return (
     <div className="space-y-6 mt-4">
       <div className="grid gap-4 md:grid-cols-2">
@@ -81,11 +84,21 @@ function ProcessModelStatisticsDetail({ data }: { data: ModelStatisticsData }) {
           </CardContent>
         </Card>
       </div>
+        <Card className="grid-cols-2 w-full">
+            <CardHeader>
+                <CardTitle>Alle Aufgaben</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <AllTasksTable data={tasksData.filter(task =>
+                    data.id === task.flow_element.model_id
+                )} />
+            </CardContent>
+        </Card>
     </div>
   )
 }
 
-export default function ProcessModelsStatistics({ modelData }: ProcessModelsStatisticsProps) {
+export default function ProcessModelsStatistics({ modelData, tasksData }: ProcessModelsStatisticsProps) {
   const [openModells, setOpenModells] = useState<number[]>([])
 
   const toggleModell = (id: number) => {
@@ -127,7 +140,7 @@ export default function ProcessModelsStatistics({ modelData }: ProcessModelsStat
                   </div>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <ProcessModelStatisticsDetail data={data} />
+                  <ProcessModelStatisticsDetail data={data} tasksData={tasksData} />
                 </CollapsibleContent>
               </Collapsible>
             ))}

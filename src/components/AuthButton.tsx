@@ -3,6 +3,7 @@ import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
 import Link from "next/link";
 import {Profile} from "@/types/database.types";
+import {Button} from "@/components/ui/button";
 
 export default async function AuthButton() {
 
@@ -16,7 +17,7 @@ export default async function AuthButton() {
     const {data} = await supabase
         .from('profiles')
         .select('id, username')
-        .eq('id', user?.id)
+        .eq('id', user?.id || "")
         .single<Profile>()
 
     const signOut = async () => {
@@ -32,14 +33,12 @@ export default async function AuthButton() {
         <div className="flex items-center gap-4">
             Hey, {data?.username}!
             <form action={signOut}>
-                <button className="btn-secondary">
-                    Sign out
-                </button>
+                <Button variant="outline">Abmelden</Button>
             </form>
         </div>
     ) : (
         <Link
-            href="/login"
+            href="/authenticate"
             className="btn-primary"
         >
             Sign in
