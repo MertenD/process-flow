@@ -1,7 +1,5 @@
+import {TeamDashboard} from "@/components/team/TeamDashboard";
+
 export default function TeamPage() {
-    return (
-        <div>
-            Team Page
-        </div>
-    )
+    return <TeamDashboard />
 }

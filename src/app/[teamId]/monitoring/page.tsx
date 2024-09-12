@@ -170,7 +170,7 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
 
     const tasksData: FlowElementInstanceWithFlowElement[] = processModels?.map(model => model.process_instance).flat().map(instance => instance.flow_element_instance).flat() || [];
 
-    return <div className="flex flex-col p-8 space-y-8">
+    return <div className="container mx-auto p-4 flex flex-col space-y-6">
         <h1 className="text-3xl font-bold">Prozess-Monitoring Dashboard</h1>
         <GeneralMonitoringStatistics
             totalCompleted={totalCompleted}
