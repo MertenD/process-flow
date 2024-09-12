@@ -17,7 +17,7 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
     const supabase = createClient()
     const {data: userData, error} = await supabase.auth.getUser()
     if (error || !userData.user) {
-        redirect("/login")
+        redirect("/authenticate")
     }
 
     const {data: tasks, error: tasksError} = await supabase

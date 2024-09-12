@@ -5,7 +5,7 @@ import {ResizableHandle, ResizablePanel, ResizablePanelGroup} from "@/components
 import ProcessList from "@/components/processList/ProcessList";
 import {ProcessModel} from "@/types/database.types";
 
-export default async function EditorLayout({ children, params }: Readonly<{ children: React.ReactNode, params: { teamId: string } }>) {
+export default async function EditorLayout({ children, params }: Readonly<{ children: React.ReactNode, params: { teamId: number } }>) {
 
     // TODO Check if user has permission for this process model
 
@@ -13,7 +13,7 @@ export default async function EditorLayout({ children, params }: Readonly<{ chil
 
     const {data: userData, error} = await supabase.auth.getUser()
     if (error || !userData.user) {
-        redirect("/login")
+        redirect("/authenticate")
     }
 
     const { data: processes } = await supabase
@@ -26,7 +26,7 @@ export default async function EditorLayout({ children, params }: Readonly<{ chil
         <main className="h-[calc(100vh-64px)] overflow-y-hidden">
             <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel defaultSize={15}>
-                    <ProcessList teamId={params.teamId} userId={userData.user.id} processes={processes} />
+                    <ProcessList teamId={params.teamId} userId={userData.user.id} /*processes={processes}*/ /> {/* TODO Was ist hier mit den Processes passiert? */}
                 </ResizablePanel>
                 <ResizableHandle />
                 <ResizablePanel defaultSize={85}>

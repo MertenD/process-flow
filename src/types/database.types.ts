@@ -30,6 +30,8 @@ export type Views<T extends keyof Database['public']['Views']> =
 
 export type Profile = Tables<'profiles'>
 
+export type ProfilesWithRoles = Views<'profiles_with_roles'>
+
 export type ManualTask = Views<'manual_task'>
 export type ManualTaskWithTitleAndDescription = MergeDeep<ManualTask, { name: string, description: string }>
 
@@ -44,3 +46,5 @@ export type FlowElementInstance = Tables<"flow_element_instance">
 export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T]
 
 export type ProcessModelInstanceState = Enums<"process_instance_status">
+
+export type Role = Tables<"role">

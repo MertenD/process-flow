@@ -9,7 +9,7 @@ export default async function TasksLayout({ children, params }: Readonly<{ child
     const supabase = createClient()
     const {data: userData, error} = await supabase.auth.getUser()
     if (error || !userData.user) {
-        redirect("/login")
+        redirect("/authenticate")
     }
 
     return <ResizablePanelGroup direction="horizontal">

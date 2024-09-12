@@ -26,7 +26,7 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
     const supabase = createClient()
     const {data: userData, error} = await supabase.auth.getUser()
     if (error || !userData.user) {
-        redirect("/login")
+        redirect("/authenticate")
     }
 
     const { data: processModels } = await supabase

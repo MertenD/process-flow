@@ -10,7 +10,7 @@ export default async function EditorProcessPage({ params }: Readonly<{ params: {
     const supabase = createClient()
     const {data: userData, error} = await supabase.auth.getUser()
     if (error || !userData.user) {
-        redirect("/login")
+        redirect("/authenticate")
     }
 
     const { data: processModel } = await supabase
