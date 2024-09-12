@@ -74,7 +74,7 @@ CREATE TABLE public.invitation (
 );
 
 -- Accept invite function that adds the user to the team and deletes the invitation
-CREATE OR REPLACE FUNCTION public.accept_invite(invitation_id_param bigint, profile_id_param bigint)
+CREATE OR REPLACE FUNCTION public.accept_invite(invitation_id_param bigint, profile_id_param uuid)
     RETURNS void
     LANGUAGE plpgsql
 AS $function$BEGIN
@@ -259,3 +259,39 @@ create policy "Enable read access for all users"
     for select
     to authenticated
     using (true);
+
+CREATE UNIQUE INDEX profile_team_pkey ON public.profile_team USING btree (id);
+
+alter table "public"."profile_team" add constraint "profile_team_pkey" PRIMARY KEY using index "profile_team_pkey";
+
+set check_function_bodies = off;
+
+CREATE OR REPLACE FUNCTION public.accept_invite(invitation_id_param bigint, profile_id_param uuid)
+    RETURNS void
+    LANGUAGE plpgsql
+AS $function$BEGIN
+    -- Check if the invitation exists
+    IF NOT EXISTS (SELECT 1 FROM invitation WHERE id = invitation_id_param) THEN
+        RAISE EXCEPTION 'Invitation with id % does not exist.', invitation_id_param;
+    END IF;
+
+    -- Check if the profile is already in the team
+    IF EXISTS (SELECT 1 FROM profile_team WHERE profile_id = profile_id_param AND team_id = (SELECT team_id FROM invitation WHERE id = invitation_id_param)) THEN
+        RAISE EXCEPTION 'Profile with id % is already in the team.', profile_id_param;
+    END IF;
+
+    -- Check if the given profile has the same email as the invitation
+    IF NOT EXISTS (SELECT 1 FROM profiles WHERE id = profile_id_param AND email = (SELECT email FROM invitation WHERE id = invitation_id_param)) THEN
+        RAISE EXCEPTION 'Profile with id % does not have the same email as the invitation.', profile_id_param;
+    END IF;
+
+    INSERT INTO profile_team (profile_id, team_id)
+    SELECT profile_id_param, team_id
+    FROM invitation
+    WHERE id = invitation_id_param;
+
+    DELETE FROM invitation
+    WHERE id = invitation_id_param;
+END;$function$
+;
+

@@ -632,14 +632,14 @@ export type Database = {
             referencedColumns: ["profile_id"]
           },
           {
-            foreignKeyName: "public_profile_role_team_role_fkey"
+            foreignKeyName: "public_profile_role_team_role_id_fkey"
             columns: ["role_id"]
             isOneToOne: false
             referencedRelation: "profiles_with_roles"
             referencedColumns: ["role_id"]
           },
           {
-            foreignKeyName: "public_profile_role_team_role_fkey"
+            foreignKeyName: "public_profile_role_team_role_id_fkey"
             columns: ["role_id"]
             isOneToOne: false
             referencedRelation: "role"
@@ -943,7 +943,7 @@ export type Database = {
       accept_invite: {
         Args: {
           invitation_id_param: number
-          profile_id_param: number
+          profile_id_param: string
         }
         Returns: undefined
       }
@@ -1019,23 +1019,14 @@ export type Database = {
         }
         Returns: Json
       }
-      update_profiles_roles_in_team:
-        | {
-            Args: {
-              team_id_param: number
-              profile_id_param: number
-              role_ids_param: number[]
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              team_id_param: number
-              profile_id_param: string
-              role_ids_param: number[]
-            }
-            Returns: undefined
-          }
+      update_profiles_roles_in_team: {
+        Args: {
+          team_id_param: number
+          profile_id_param: string
+          role_ids_param: number[]
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       comparisons: "==" | "!=" | ">" | ">=" | "<" | "<="

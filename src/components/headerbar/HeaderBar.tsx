@@ -20,7 +20,7 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
     }
 
     const { data: teams } = await supabase
-        .from('profile_role_team')
+        .from('profile_team')
         .select('profileId:profile_id, teamId:team_id, team ( name, colorSchemeFrom: color_scheme->from, colorSchemeTo: color_scheme->to )')
         .eq('profile_id', userData.user?.id || "")
         .returns<{ profileId : string, teamId: string, team: { name: string, colorSchemeFrom: string, colorSchemeTo: string } }[]>()

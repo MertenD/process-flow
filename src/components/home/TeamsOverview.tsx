@@ -1,6 +1,6 @@
 'use client'
 
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
@@ -13,32 +13,101 @@ import createTeamAndAddCreatorAsAdmin from "@/actions/create-team-and-add-creato
 import {toast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
 import {teamColorSchemes} from "@/model/colors";
+import {InvitationWithTeam} from "@/types/database.types";
+import acceptInvite from "@/actions/accept-invite";
+import {createClient} from "@/utils/supabase/client";
+import getTeams from "@/actions/get-teams";
+import getInvitations from "@/actions/get-invitations";
 
 export interface TeamsOverviewProps {
   userId: string
-  teams: TeamInfo[]
-  invitations: string[] // TODO: Define type for invitations
+  userEmail: string
+  initialTeams: TeamInfo[]
+  initialInvitations: InvitationWithTeam[]
 }
 
-export function TeamsOverview({ userId, teams, invitations }: TeamsOverviewProps) {
+export function TeamsOverview({ userId, userEmail, initialTeams, initialInvitations }: TeamsOverviewProps) {
+
+  const supabase = createClient()
+
   const [newTeamName, setNewTeamName] = useState<string>("")
   const [selectedColorScheme, setSelectedColorScheme] = useState(teamColorSchemes[0])
 
+  const [teams, setTeams] = useState<TeamInfo[]>(initialTeams)
+  const [invitations, setInvitations] = useState<InvitationWithTeam[]>(initialInvitations)
+
   const router = useRouter()
 
+  useEffect(() => {
+    const subscription = supabase
+        .channel("teams_overview_teams_update")
+        .on("postgres_changes", {
+            event: "*",
+            schema: "public",
+            table: "profile_team",
+            filter: `profile_id=eq.${userId}`
+        }, () => {
+            getTeams(userId).then(setTeams)
+        })
+        .subscribe()
+
+    return () => {
+      subscription.unsubscribe().then()
+    }
+  }, [supabase, userId]);
+
+  useEffect(() => {
+      const subscription = supabase
+          .channel("teams_overview_invitations_update")
+          .on("postgres_changes", {
+              event: "*",
+              schema: "public",
+              table: "invitation",
+              filter: `email=eq.${userEmail}`
+          }, () => {
+              getInvitations(userEmail).then(setInvitations)
+          })
+          .subscribe()
+
+      return () => {
+        subscription.unsubscribe().then()
+      }
+  }, [supabase, userEmail]);
+
+  function onAcceptInvite(invitation: InvitationWithTeam) {
+    acceptInvite(invitation, userId).then(() => {
+      toast({
+        variant: "success",
+        title: "Einladung angenommen!",
+        description: `Sie sind jetzt Mitglied von "${invitation.team.name}".`,
+      })
+    }).catch((error) => {
+      // deutsch
+      toast({
+        variant: "destructive",
+        title: "Es ist ein Fehler aufgetreten!",
+        description: `Die Einladung konnte nicht angenommen werden: ${error.message}`
+      })
+    })
+  }
+
+  function onDeclineInvite(invitation: InvitationWithTeam) {
+    console.log("Decline invite", invitation)
+  }
+
   const renderCard = (item: any, isTeam: boolean = true) => (
-    <Card 
-      key={item.teamId}
+    <Card
+      key={item.team.id}
       className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-102 bg-gradient-to-br ${item.team.colorSchemeFrom} ${item.team.colorSchemeTo}`}
     >
       <CardContent className="flex flex-col items-center justify-center h-32 p-4">
-        <h3 className="text-lg font-semibold text-white mb-2">{isTeam ? item.team.name : item}</h3>
+        <h3 className="text-lg font-semibold text-white mb-2">{item.team.name}</h3>
         {!isTeam && (
           <div className="flex space-x-2">
-            <Button size="sm" variant="secondary" onClick={() => console.log("Accept invite", item)}>
+            <Button size="sm" variant="secondary" onClick={() => onAcceptInvite(item)}>
               <CheckIcon className="w-4 h-4 mr-1" /> Annehmen
             </Button>
-            <Button size="sm" variant="secondary" onClick={() => console.log("Decline invite", item)}>
+            <Button size="sm" variant="secondary" onClick={() => onDeclineInvite(item)}>
               <XIcon className="w-4 h-4 mr-1" /> Ablehnen
             </Button>
           </div>

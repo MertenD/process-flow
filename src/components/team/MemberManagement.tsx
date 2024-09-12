@@ -90,10 +90,9 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
         .on("postgres_changes", {
           event: "*",
           schema: "public",
-          table: "profile_role_team",
+          table: "profile_team",
           filter: `team_id=eq.${teamId}`
-        }, (payload) => {
-            console.log("Profile role team changes", payload)
+        }, () => {
             getMembers(teamId).then((members: Member[]) =>
                 setMembers(members || [])
             )

@@ -5,6 +5,9 @@ import {TeamsOverview} from "@/components/home/TeamsOverview";
 import AuthButton from "@/components/AuthButton";
 import Link from "next/link";
 import {TeamInfo} from "@/model/TeamInfo";
+import {InvitationWithTeam} from "@/types/database.types";
+import getTeams from "@/actions/get-teams";
+import getInvitations from "@/actions/get-invitations";
 
 export default async function Home() {
 
@@ -14,13 +17,8 @@ export default async function Home() {
         redirect("/authenticate")
     }
 
-    const { data: teams } = await supabase
-        .from('profile_role_team')
-        .select('profileId:profile_id, teamId:team_id, team ( ' +
-            'name, colorSchemeFrom: color_scheme->from, colorSchemeTo: color_scheme->to ' +
-        ')')
-        .eq('profile_id', userData.user?.id)
-        .returns<TeamInfo[]>()
+    const teams: TeamInfo[] = await getTeams(userData.user.id)
+    const invitations: InvitationWithTeam[] = await getInvitations(userData.user.email || "")
 
     return <div>
         <div className="min-h-screen bg-gray-100 py-8">
@@ -35,7 +33,11 @@ export default async function Home() {
                             <h2 className="text-2xl font-bold text-gray-900">Team Dashboard</h2>
                             <AuthButton />
                         </div>
-                        <TeamsOverview userId={userData.user.id} teams={teams || []} invitations={[]} />
+                        <TeamsOverview
+                            userId={userData.user.id}
+                            userEmail={userData.user.email || ""}
+                            initialTeams={teams || []}
+                            initialInvitations={invitations || []} />
                     </div>
                 ) : (
                     <Link href={"/authenticate"}>Sign in</Link>
