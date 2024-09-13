@@ -97,6 +97,16 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
                 setMembers(members || [])
             )
         })
+        .on("postgres_changes", {
+            event: "*",
+            schema: "public",
+            table: "profile_role_team",
+            filter: `team_id=eq.${teamId}`
+            }, () => {
+                getMembers(teamId).then((members: Member[]) =>
+                    setMembers(members || [])
+                )
+        })
         .subscribe()
 
     return () => {
@@ -111,6 +121,9 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
   }, [teamId]);
 
   const filteredMembers = useMemo(() => {
+    if (roleFilter === 'none') {
+      return members.filter(member => member.roles.length === 0)
+    }
     return members.filter(member =>
         (member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             member.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
@@ -170,6 +183,7 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Alle Rollen</SelectItem>
+                <SelectItem value="none">Keine Rolle</SelectItem>
                 {roles.map((role) => (
                     <SelectItem key={role.id} value={role.id.toString()}>{role.name}</SelectItem>
                 ))}
@@ -247,7 +261,10 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
                           }}>Bestätigen</Button>
                         </DialogContent>
                       </Dialog>
-                      <Button variant="destructive" onClick={() => removeMember(member.id)}>Entfernen</Button>
+                      { !member.roles.map(role => role.name).includes("owner") &&
+                          <Button variant="destructive" onClick={() => removeMember(member.id)}>
+                              Entfernen
+                      </Button> }
                     </TableCell>
                   </TableRow>
               ))}

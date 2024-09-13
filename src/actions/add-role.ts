@@ -5,6 +5,10 @@ import {cookies} from "next/headers";
 
 export default async function(roleName: string, teamId: number, color: string): Promise<number> {
 
+    if (roleName === "owner" || roleName === "all" || roleName === "none") {
+        throw new Error("Role name cannot be 'owner'")
+    }
+
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
 

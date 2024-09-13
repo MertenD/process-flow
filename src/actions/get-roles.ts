@@ -19,5 +19,5 @@ export default async function(teamId: number): Promise<Role[]> {
         throw Error(tasksError.message)
     }
 
-    return roles
+    return roles.filter(role => role.name !== "owner")
 }
