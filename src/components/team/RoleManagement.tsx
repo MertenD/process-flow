@@ -57,8 +57,6 @@ export default function RoleManagement({ teamId }: Readonly<RoleManagementProps>
             })
             .subscribe()
 
-        console.log("Role subscription started")
-
         return () => {
             subscription.unsubscribe().then()
         }

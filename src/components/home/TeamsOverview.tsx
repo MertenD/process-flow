@@ -18,6 +18,7 @@ import acceptInvite from "@/actions/accept-invite";
 import {createClient} from "@/utils/supabase/client";
 import getTeams from "@/actions/get-teams";
 import getInvitations from "@/actions/get-invitations";
+import declineInvite from "@/actions/decline-invite";
 
 export interface TeamsOverviewProps {
   userId: string
@@ -92,7 +93,19 @@ export function TeamsOverview({ userId, userEmail, initialTeams, initialInvitati
   }
 
   function onDeclineInvite(invitation: InvitationWithTeam) {
-    console.log("Decline invite", invitation)
+    declineInvite(invitation, userId).then(() => {
+        toast({
+            variant: "success",
+            title: "Einladung abgelehnt!",
+            description: `Die Einladung für "${invitation.team.name}" wurde abgelehnt.`,
+        })
+    }).catch((error) => {
+        toast({
+            variant: "destructive",
+            title: "Es ist ein Fehler aufgetreten!",
+            description: `Die Einladung konnte nicht abgelehnt werden. Bitte versuche es erneut: ${error.message}`
+        })
+    })
   }
 
   const renderCard = (item: any, isTeam: boolean = true) => (
