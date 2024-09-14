@@ -52,6 +52,8 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
   const [isEditRoleDialogOpen, setIsEditRoleDialogOpen] = useState<boolean>(false)
 
   const [roles, setRoles] = useState<Role[]>([])
+
+  const [editRolesMemberId, setEditRolesMemberId] = useState<string>("")
   const [editRoles, setEditRoles] = useState<MemberRole[]>([])
 
   useEffect(() => {
@@ -141,6 +143,8 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
   }
 
   function updateRoles(memberId: string, roles: MemberRole[]) {
+      console.log("Members", members)
+    console.log("Updating", memberId, roles, members.find(member => member.id === memberId)?.name)
     updateProfileRolesInTeam(teamId, memberId, roles.map(role => role.id)).then(() => {
         toast({
             title: "Rollen aktualisiert",
@@ -222,6 +226,7 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
                         </DialogHeader>
                         <DialogTrigger asChild>
                           <Button variant="outline" className="mr-2" onClick={() => {
+                            setEditRolesMemberId(member.id)
                             setEditRoles(member.roles)
                           }}>Rollen bearbeiten</Button>
                         </DialogTrigger>
@@ -255,8 +260,9 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
                             ))}
                           </div>
                           <Button onClick={() => {
-                            updateRoles(member.id, editRoles)
+                            updateRoles(editRolesMemberId, editRoles)
                             setEditRoles([])
+                            setEditRolesMemberId("")
                             setIsEditRoleDialogOpen(false)
                           }}>Bestätigen</Button>
                         </DialogContent>
