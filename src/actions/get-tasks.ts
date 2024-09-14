@@ -11,14 +11,14 @@ export default async function(teamId: number, userId: string): Promise<ManualTas
 
     // TODO Convert into rpc function call
 
-    const { data: userRoles, error: userRolesError } = await supabase
-        .from("profiles_with_roles")
-        .select(`roleName: role_name`)
+    const { data: userRoleIds, error: userRolesError } = await supabase
+        .from("profile_role_team")
+        .select(`roleId: role_id`)
         .eq("profile_id", userId)
         .eq("team_id", teamId)
-        .returns<{ roleName: string }[]>()
+        .returns<{ roleId: number }[]>()
 
-    if (userRolesError || !userRoles) {
+    if (userRolesError || !userRoleIds) {
         throw Error(userRolesError?.message)
     }
 
@@ -26,7 +26,7 @@ export default async function(teamId: number, userId: string): Promise<ManualTas
         .from("manual_task")
         .select(`*, name: data->task, description: data->description`)
         .eq("belongs_to", teamId)
-        .filter("assigned_role", "in", `(${userRoles.map(role => `"${role.roleName}"`).join(",")})`)
+        .filter("assigned_role", "in", `(${userRoleIds.map(role => `"${role.roleId}"`).join(",")})`)
         .returns<ManualTaskWithTitleAndDescription[]>()
 
     if (tasksError || !tasks) {

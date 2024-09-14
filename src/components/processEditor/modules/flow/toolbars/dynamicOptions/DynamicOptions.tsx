@@ -315,7 +315,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                     const selectRoleItems = flattenOptions
                         .includes(OptionsStructureSpecialValues.AVAILABLE_ROLES) ?
                             availableRoles.map((role) => {
-                                return <SelectItem key={role.id} value={role.name}>
+                                return <SelectItem key={role.id} value={role.id.toString()}>
                                     <Badge style={{ backgroundColor: role.color }}>{role.name}</Badge>
                                 </SelectItem>
                             }) : []

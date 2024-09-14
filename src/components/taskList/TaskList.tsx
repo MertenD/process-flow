@@ -98,6 +98,7 @@ export default function TaskList({ teamId, userId }: Readonly<TaskListProps>) {
     return <section className="processList flex flex-col h-full">
         <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">
             { tasks?.filter((task: ManualTaskWithTitleAndDescription) => task.status === "Todo").map((task: ManualTaskWithTitleAndDescription, index: number) => {
+                const role = roles.find(role => role.id.toString() === task.assigned_role)
                 return <Link
                         key={`${task.id}`}
                         className="w-full"
@@ -112,8 +113,8 @@ export default function TaskList({ teamId, userId }: Readonly<TaskListProps>) {
                                 <div className="w-full flex flex-row justify-between">
                                     { task.name }
                                     <Badge
-                                        style={{ backgroundColor: roles.find(role => role.name === task.assigned_role)?.color }}
-                                    >{ task.assigned_role }</Badge>
+                                        style={{ backgroundColor: role?.color }}
+                                    >{ role?.name }</Badge>
                                 </div>
                             </CardTitle>
                             <CardDescription>{ task.description }</CardDescription>
