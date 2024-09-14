@@ -3,12 +3,14 @@
 import "@/styles/processList.css";
 import {useParams, usePathname} from "next/navigation";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ManualTaskWithTitleAndDescription} from "@/types/database.types";
+import {ManualTaskWithTitleAndDescription, Role} from "@/types/database.types";
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import {createClient} from "@/utils/supabase/client";
 import {toast} from "@/components/ui/use-toast";
 import getTasks from "@/actions/get-tasks";
+import {Badge} from "@/components/ui/badge";
+import getRoles from "@/actions/get-roles";
 
 export interface TaskListProps {
     teamId: number;
@@ -22,6 +24,27 @@ export default function TaskList({ teamId, userId }: Readonly<TaskListProps>) {
     const supabase = createClient()
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(params.taskId)
     const [tasks, setTasks] = useState<ManualTaskWithTitleAndDescription[]>([])
+    const [roles, setRoles] = useState<Role[]>([])
+
+    useEffect(() => {
+        getRoles(teamId).then(setRoles)
+
+        const subscription = supabase
+            .channel("flow_element_instance_update_role")
+            .on("postgres_changes", {
+                event: "*",
+                schema: "public",
+                table: "role",
+                filter: `belongs_to=eq.${teamId}`
+            }, () => {
+                getRoles(teamId).then(setRoles)
+            })
+            .subscribe()
+
+        return () => {
+            subscription.unsubscribe().then()
+        }
+    }, [teamId]);
 
     useEffect(() => {
         getTasks(teamId, userId).then(setTasks).catch((error) => {
@@ -85,8 +108,14 @@ export default function TaskList({ teamId, userId }: Readonly<TaskListProps>) {
                     >
                     <Card className={`${selectedTaskId?.toString() === task.id.toString() ? "bg-accent" : ""}`}>
                         <CardHeader>
-                            { /* // TODO Title for task in view */ }
-                            <CardTitle>{ task.name }</CardTitle>
+                            <CardTitle>
+                                <div className="w-full flex flex-row justify-between">
+                                    { task.name }
+                                    <Badge
+                                        style={{ backgroundColor: roles.find(role => role.name === task.assigned_role)?.color }}
+                                    >{ task.assigned_role }</Badge>
+                                </div>
+                            </CardTitle>
                             <CardDescription>{ task.description }</CardDescription>
                         </CardHeader>
                     </Card>

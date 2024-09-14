@@ -13,11 +13,11 @@ export default async function TasksLayout({ children, params }: Readonly<{ child
     }
 
     return <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={15}>
+        <ResizablePanel defaultSize={20}>
             <TaskList teamId={params.teamId} userId={userData.user.id} />
         </ResizablePanel>
         <ResizableHandle />
-        <ResizablePanel defaultSize={85}>
+        <ResizablePanel defaultSize={80}>
             { children }
         </ResizablePanel>
     </ResizablePanelGroup>
