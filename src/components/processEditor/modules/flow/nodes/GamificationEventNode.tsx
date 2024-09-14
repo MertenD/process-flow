@@ -2,8 +2,6 @@ import {Handle, NodeProps, Position} from "reactflow";
 import useStore, {handleStyle, selectedColor} from "../../../store";
 import React, {useEffect} from "react";
 import {GamificationType} from "@/model/GamificationType";
-import {PointsGamificationOptionsData} from "../../gamification/PointsGamificationOptions";
-import {BadgeGamificationOptionsData} from "../../gamification/BadgeGamificationOptions";
 import {
     OptionsCheckbox,
     OptionsDefinition,
@@ -24,7 +22,16 @@ import {setDefaultValues} from "@/components/processEditor/modules/flow/toolbars
 export type GamificationEventNodeData = {
     backgroundColor?: string
     gamificationType? : GamificationType
-    gamificationOptions?: PointsGamificationOptionsData | BadgeGamificationOptionsData
+    gamificationOptions?: {
+        pointType?: PointsType,
+        pointsApplicationMethod?: PointsType,
+        pointsForSuccess?: string,
+        hasCondition?: boolean
+        value1?: string,
+        comparison?: Comparisons,
+        value2?: string,
+        badgeType?: BadgeType,
+    }
 }
 
 export function getGamificationEventOptionsDefinition(nodeId: string): OptionsDefinition {

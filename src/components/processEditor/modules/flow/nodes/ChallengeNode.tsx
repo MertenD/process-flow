@@ -5,8 +5,6 @@ import '@reactflow/node-resizer/dist/style.css';
 import useStore, {selectedColor} from "../../../store";
 import {ChallengeType} from "@/model/ChallengeType";
 import {GamificationType} from "@/model/GamificationType";
-import {PointsGamificationOptionsData} from "../../gamification/PointsGamificationOptions";
-import {BadgeGamificationOptionsData} from "../../gamification/BadgeGamificationOptions";
 import {
     OptionsCheckbox,
     OptionsDefinition,
@@ -32,7 +30,16 @@ export type ChallengeNodeData = {
     challengeType?: ChallengeType
     secondsToComplete?: number
     rewardType?: GamificationType
-    gamificationOptions?: PointsGamificationOptionsData | BadgeGamificationOptionsData
+    gamificationOptions?: {
+        pointType?: PointsType,
+        pointsApplicationMethod?: PointsType,
+        pointsForSuccess?: string,
+        hasCondition?: boolean
+        value1?: string,
+        comparison?: Comparisons,
+        value2?: string,
+        badgeType?: BadgeType,
+    }
 }
 
 export function getChallengeOptionsDefinition(nodeId: string): OptionsDefinition {
