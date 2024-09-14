@@ -2,6 +2,7 @@ import {Edge, Node, ReactFlowInstance} from "reactflow";
 import {SupabaseClient} from "@supabase/supabase-js";
 import {NodeTypes} from "@/model/NodeTypes";
 import {GamificationType} from "@/model/GamificationType";
+import {next} from "sucrase/dist/types/parser/tokenizer";
 
 // TODO Save viewport as well
 
@@ -183,6 +184,8 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
     })
 }
 
+// TODO Update loading of nodeData in rest of flow elements and remove unnecesarry node data in database
+
 export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any, "public", any>, processModelId: string) {
     const { data: databaseFlowElements, error } = await supabase
         .from("flow_element")
@@ -227,33 +230,18 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
             } else if (nodeType === NodeTypes.ACTIVITY_NODE) {
                 const { data: activityElementData } = await supabase
                     .from("activity_element")
-                    .select("*")
+                    .select("next_flow_element_id")
                     .eq("flow_element_id", node.id)
                     .single()
-
-                let gamificationOptions = null
-                if (activityElementData?.gamification_option_id) {
-                    const { data } = await supabase
-                        .from("gamification_option")
-                        .select("*")
-                        .eq("id", activityElementData?.gamification_option_id)
-                        .single()
-                    gamificationOptions = data
-                }
-
-                nodeData = {
-                    task: activityElementData?.task,
-                    description: activityElementData?.description,
-                    activityType: activityElementData?.activity_type,
-                    choices: activityElementData?.choices,
-                    inputRegex: activityElementData?.input_regex,
-                    infoText: activityElementData?.info_text,
-                    variableName: activityElementData?.variable_name,
-                    gamificationType: activityElementData?.gamification_type,
-                    gamificationOptions: convertKeysFromSnakeToCamelCase(gamificationOptions)
-                }
-
                 nextFlowElementId = activityElementData?.next_flow_element_id
+
+                const { data: flowElementData } = await supabase
+                    .from("flow_element")
+                    .select("data")
+                    .eq("id", node.id)
+                    .single()
+                nodeData = flowElementData?.data
+
                 edges.push({
                     id: `${node.id}-${nextFlowElementId}`,
                     source: node.id.toString(),
