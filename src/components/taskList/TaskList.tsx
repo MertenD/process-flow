@@ -11,10 +11,11 @@ import {toast} from "@/components/ui/use-toast";
 import getTasks from "@/actions/get-tasks";
 
 export interface TaskListProps {
-    teamId: string;
+    teamId: number;
+    userId: string
 }
 
-export default function TaskList({ teamId }: Readonly<TaskListProps>) {
+export default function TaskList({ teamId, userId }: Readonly<TaskListProps>) {
 
     const params = useParams<{ taskId: string }>()
     const pathName = usePathname()
@@ -23,10 +24,10 @@ export default function TaskList({ teamId }: Readonly<TaskListProps>) {
     const [tasks, setTasks] = useState<ManualTaskWithTitleAndDescription[]>([])
 
     useEffect(() => {
-        getTasks(teamId).then(setTasks).catch((error) => {
+        getTasks(teamId, userId).then(setTasks).catch((error) => {
             console.error("Error fetching tasks", error)
         })
-    }, [teamId]);
+    }, [teamId, userId]);
 
     useEffect(() => {
         setSelectedTaskId(params.taskId)
@@ -38,10 +39,10 @@ export default function TaskList({ teamId }: Readonly<TaskListProps>) {
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "flow_element_instance"
+                table: "flow_element_instance" // TODO hier eine bessere Tabelle wählen und ggf. die Bedingung anpassen
             }, (payload) => {
 
-                getTasks(teamId).then(setTasks).catch((error) => {
+                getTasks(teamId, userId).then(setTasks).catch((error) => {
                     console.error("Error fetching tasks", error)
                 })
 
@@ -54,12 +55,22 @@ export default function TaskList({ teamId }: Readonly<TaskListProps>) {
                     })
                 }
             })
+            .on("postgres_changes", {
+                event: "*",
+                schema: "public",
+                table: "profile_role_team",
+                filter: `profile_id=eq.${userId}`
+            }, () => {
+                getTasks(teamId, userId).then(setTasks).catch((error) => {
+                    console.error("Error fetching tasks", error)
+                })
+            })
             .subscribe()
 
         return () => {
             updateSubscription.unsubscribe().then()
         }
-    }, [pathName, supabase, teamId]);
+    }, [pathName, supabase, teamId, userId]);
 
     return <section className="processList flex flex-col h-full">
         <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">

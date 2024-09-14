@@ -874,6 +874,7 @@ export type Database = {
     Views: {
       manual_task: {
         Row: {
+          assigned_role: string | null
           belongs_to: number | null
           completed_at: string | null
           created_at: string | null
