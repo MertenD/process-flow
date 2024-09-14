@@ -7,11 +7,12 @@ export enum OptionsStructureType {
     TEXTAREA = "textarea",
     CHECKBOX = "checkbox",
     SEPARATOR = "separator",
-    ROW = "row"
+    ROW = "row",
 }
 
 export enum OptionsStructureSpecialValues {
-    AVAILABLE_VARIABLES = "{availableVariables}"
+    AVAILABLE_VARIABLES = "{availableVariables}",
+    AVAILABLE_ROLES = "{availableRoles}",
 }
 
 export interface OptionsDefinition {

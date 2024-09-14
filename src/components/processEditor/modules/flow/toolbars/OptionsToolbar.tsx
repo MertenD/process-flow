@@ -11,7 +11,11 @@ import {
 } from "@/components/processEditor/modules/flow/nodes/GamificationEventNode";
 import {getChallengeOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/ChallengeNode";
 
-export default function OptionsToolbar() {
+export interface OptionsToolbarProps {
+    teamId: number
+}
+
+export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
 
     const [selectedNode, setSelectedNode] = useState<Node | undefined>(undefined);
 
@@ -33,16 +37,16 @@ export default function OptionsToolbar() {
     switch (selectedNode.type) {
         // TODO Add all nodes
         case NodeTypes.ACTIVITY_NODE:
-            options = <DynamicOptions optionsDefinition={ getActivityOptionsDefinition(selectedNode.id) } />
+            options = <DynamicOptions optionsDefinition={ getActivityOptionsDefinition(selectedNode.id) } teamId={teamId} />
             break
         case NodeTypes.GATEWAY_NODE:
-            options = <DynamicOptions optionsDefinition={ getGatewayOptionsDefinition(selectedNode.id) } />
+            options = <DynamicOptions optionsDefinition={ getGatewayOptionsDefinition(selectedNode.id) } teamId={teamId} />
             break
         case NodeTypes.GAMIFICATION_EVENT_NODE:
-            options = <DynamicOptions optionsDefinition={ getGamificationEventOptionsDefinition(selectedNode.id) } />
+            options = <DynamicOptions optionsDefinition={ getGamificationEventOptionsDefinition(selectedNode.id) } teamId={teamId} />
             break
         case NodeTypes.CHALLENGE_NODE:
-            options = <DynamicOptions optionsDefinition={ getChallengeOptionsDefinition(selectedNode.id) } />
+            options = <DynamicOptions optionsDefinition={ getChallengeOptionsDefinition(selectedNode.id) } teamId={teamId}/>
             break
         default:
             options = <h2 className="text-2xl font-semibold">{ selectedNode.type }</h2>

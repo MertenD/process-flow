@@ -264,9 +264,10 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
 
 export interface BpmnEditorProps {
     processModelId: string
+    teamId: number
 }
 
-export default function BpmnEditor({ processModelId }: Readonly<BpmnEditorProps>) {
+export default function BpmnEditor({ processModelId, teamId }: Readonly<BpmnEditorProps>) {
     return (
         <ReactFlowProvider>
             <div className="flex flex-row w-full h-full">
@@ -279,7 +280,7 @@ export default function BpmnEditor({ processModelId }: Readonly<BpmnEditorProps>
                         <DragAndDropFlow processModelId={processModelId}/>
                     </div>
                 </div>
-                <OptionsToolbar />
+                <OptionsToolbar teamId={teamId} />
             </div>
         </ReactFlowProvider>
     )

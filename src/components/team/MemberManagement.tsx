@@ -206,12 +206,12 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
                     <TableCell>{member.email}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {member.roles.map(role => (
+                        {member.roles.map(memberRole => (
                             <Badge
-                                key={role.id}
-                                style={{backgroundColor: getRoleColor(role.id), color: '#ffffff'}}
+                                key={memberRole.id}
+                                style={{backgroundColor: getRoleColor(memberRole.id), color: '#ffffff'}}
                             >
-                              {role.name}
+                              {memberRole.name}
                             </Badge>
                         ))}
                       </div>

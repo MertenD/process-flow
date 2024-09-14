@@ -35,6 +35,10 @@ import {
     OptionsText,
     OptionsTextarea
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
+import {Role} from "@/types/database.types";
+import {createClient} from "@/utils/supabase/client";
+import getRoles from "@/actions/get-roles";
+import {Badge} from "@/components/ui/badge";
 
 // TODO Bei ändern der variablen namen wird aktuell jedes select was das ausgewählt hatte auf custom gesetzt, bei ändern des eignen wird aktuell nichts mehr selektiert. Wie mache ich das am besten?
 
@@ -42,7 +46,7 @@ import {
 
 // TODO Durch die { } in den Variablennamen wird auch ein leerer Variablenname angezeigt, das sollte nicht sein
 
-export default function DynamicOptions({ optionsDefinition }: Readonly<{ optionsDefinition: OptionsDefinition }>) {
+export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{ optionsDefinition: OptionsDefinition, teamId: number }>) {
 
     const inputRefs = useRef<any>({});
     const updateNodeData = useStore((state) => state.updateNodeData)
@@ -52,7 +56,18 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
     const [availableVariableNames, setAvailableVariableNames] = useState<string[]>([])
     const [ownVariableNames, setOwnVariableNames] = useState<Map<string, string>>(new Map())
 
+    const [availableRoles, setAvailableRoles] = useState<Role[]>([])
+
     const edges = useStore((state) => state.edges)
+
+    useEffect(() => {
+        getRoles(teamId).then(roles => {
+            setAvailableRoles(roles)
+        })
+    }, [teamId]);
+
+    // TODO Live update of available roles. What happens to some that are already selected and are not available anymore?
+
 
     useEffect(() => {
         function setValues(structure: OptionsBase[]) {
@@ -282,14 +297,28 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                     const selectOption = option as OptionsSelect
 
                     const selectDefaultItems = selectOption.options.map(option => {
-                        return option.values.filter(value => value !== OptionsStructureSpecialValues.AVAILABLE_VARIABLES).map(value => {
+                        return option.values.filter(value =>
+                            value !== OptionsStructureSpecialValues.AVAILABLE_VARIABLES &&
+                            value !== OptionsStructureSpecialValues.AVAILABLE_ROLES
+                        ).map(value => {
                             return <SelectItem key={value} value={value}>{value}</SelectItem>
                         })
                     }).flat()
-                    const selectVariableItems = selectOption.options.map(option => option.values).flat().includes(OptionsStructureSpecialValues.AVAILABLE_VARIABLES) ?
-                        availableVariableNames.map((variable) => {
-                            return <SelectItem key={variable} value={variable}>{variable}</SelectItem>
-                        }) : []
+
+                    const flattenOptions = selectOption.options.map(option => option.values).flat()
+
+                    const selectVariableItems = flattenOptions
+                        .includes(OptionsStructureSpecialValues.AVAILABLE_VARIABLES) ?
+                            availableVariableNames.map((variable) => {
+                                return <SelectItem key={variable} value={variable}>{variable}</SelectItem>
+                            }) : []
+                    const selectRoleItems = flattenOptions
+                        .includes(OptionsStructureSpecialValues.AVAILABLE_ROLES) ?
+                            availableRoles.map((role) => {
+                                return <SelectItem key={role.id} value={role.name}>
+                                    <Badge style={{ backgroundColor: role.color }}>{role.name}</Badge>
+                                </SelectItem>
+                            }) : []
 
                     return <>
                         <div className="space-y-2">
@@ -316,6 +345,10 @@ export default function DynamicOptions({ optionsDefinition }: Readonly<{ options
                                     { selectVariableItems.length !== 0 && <SelectGroup>
                                         <SelectLabel>Variables</SelectLabel>
                                         { selectVariableItems }
+                                    </SelectGroup> }
+                                    { selectRoleItems.length !== 0 && <SelectGroup>
+                                        <SelectLabel>Roles</SelectLabel>
+                                        { selectRoleItems }
                                     </SelectGroup> }
                                 </SelectContent>
                             </Select>

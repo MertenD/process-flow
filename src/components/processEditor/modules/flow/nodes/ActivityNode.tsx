@@ -31,6 +31,7 @@ export type ActivityNodeData = {
     inputRegex?: string,
     infoText?: string,
     variableName?: string,
+    assignedRole?: string,
     gamificationType? : GamificationType
     gamificationOptions?: {
         pointType?: PointsType,
@@ -123,6 +124,16 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                     }
                 ]
             } as OptionsSelect,
+            {
+                type: OptionsStructureType.SEPARATOR
+            } as OptionsSeparator,
+            {
+                type: OptionsStructureType.SELECT,
+                label: "Assigned role",
+                defaultValue: "",
+                keyString: "assignedRole",
+                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_ROLES ] } ]
+            },
             {
                 type: OptionsStructureType.SEPARATOR
             } as OptionsSeparator,
