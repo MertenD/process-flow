@@ -3,6 +3,7 @@ import {SupabaseClient} from "@supabase/supabase-js";
 import {NodeTypes} from "@/model/NodeTypes";
 import {GamificationType} from "@/model/GamificationType";
 import {next} from "sucrase/dist/types/parser/tokenizer";
+import {StartNodeData} from "@/components/processEditor/modules/flow/nodes/StartNode";
 
 // TODO Save viewport as well
 
@@ -18,7 +19,7 @@ import {next} from "sucrase/dist/types/parser/tokenizer";
 
 // TODO Laden der Prozesse auf Serverseite ausgführen und dann an die client Komponente BPMNEditor übergeben
 
-export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], processModelId: string, supabase: SupabaseClient<any, "public", any>, reactFlowInstance: ReactFlowInstance) {
+export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], processModelId: number, supabase: SupabaseClient<any, "public", any>, reactFlowInstance: ReactFlowInstance) {
 
     const existingNodes: string[] = []
     const oldNewIdMapping = new Map<string, string>()
@@ -186,7 +187,7 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
 
 // TODO Update loading of nodeData in rest of flow elements and remove unnecesarry node data in database
 
-export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any, "public", any>, processModelId: string) {
+export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any, "public", any>, processModelId: number) {
     const { data: databaseFlowElements, error } = await supabase
         .from("flow_element")
         .select("*")
@@ -275,12 +276,20 @@ export async function loadProcessModelFromDatabase(supabase: SupabaseClient<any,
                     sourceHandle: "True"
                 })
             } else if (nodeType === NodeTypes.START_NODE) {
-                const { data } = await supabase
+                const { data: startElementData } = await supabase
                     .from("start_element")
                     .select("*")
                     .eq("flow_element_id", node.id)
                     .single()
-                nextFlowElementId = data?.next_flow_element_id
+                nextFlowElementId = startElementData?.next_flow_element_id
+
+                const { data: flowElementData } = await supabase
+                    .from("flow_element")
+                    .select("data")
+                    .eq("id", node.id)
+                    .single()
+                nodeData = flowElementData?.data
+
                 edges.push({
                     id: `${node.id}-${nextFlowElementId}`,
                     source: node.id.toString(),

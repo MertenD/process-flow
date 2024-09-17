@@ -4,15 +4,17 @@ export async function POST(req: Request) {
     try {
         const body = await req.json()
         const {
-            processModelId
-            // TODO Inputs
+            processModelId,
+            inputs
         } = body
 
         if (!processModelId) {
             return new Response("Invalid form data, requires processModelId as string", {status: 400})
         }
 
-        const { processInstanceId} = await createProcessInstance(processModelId)
+        console.log("Creating process instance with inputs", inputs)
+
+        const { processInstanceId} = await createProcessInstance(processModelId, inputs)
 
         return new Response(`Process Instance with id '${processInstanceId}' created`, {status: 200})
     } catch (error: any) {

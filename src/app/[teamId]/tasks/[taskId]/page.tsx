@@ -1,6 +1,6 @@
 import {createClient} from "@/utils/supabase/server";
 import React from "react";
-import {ManualTask} from "@/types/database.types";
+import {ManualTaskWithOutputs} from "@/types/database.types";
 import TaskFrame from "@/app/[teamId]/tasks/[taskId]/TaskFrame";
 import {redirect} from "next/navigation";
 
@@ -22,19 +22,22 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
 
     const {data: tasks, error: tasksError} = await supabase
         .from("manual_task")
-        .select(`*`)
+        .select(`*, outputs: data->outputs`)
         .eq("belongs_to", params.teamId)
-        .returns<ManualTask[]>()
+        .returns<ManualTaskWithOutputs[]>()
 
     const task = tasks?.find(task => task.id.toString() === params.taskId)
 
-    function buildTaskUrl(task: ManualTask | undefined): string | null {
+    function buildTaskUrl(task: ManualTaskWithOutputs | undefined): string | null {
         if (task == null) return null
         let taskUrl = task.execution_url
         taskUrl += "?"
         if (task.data) {
             // TODO URL encode values and keys in task.data to prevent errors in the URL query string (e.g. if a value contains a "+")
-            taskUrl += Object.entries(task.data).map(([key, value]) => `${key}=${value}`).join("&")
+            taskUrl += Object.entries(task.data)
+                .filter(([key, value]) => key !== "gamificationOptions" && key !== "gamificationType" && key !== "outputs")
+                .concat(Object.entries((task.outputs) || {}))
+                .map(([key, value]) => `${key}=${value}`).join("&")
         }
         // TODO Nicht host hardcoden
         taskUrl += `&responsePath=${encodeURIComponent("http://localhost:3000/api/instance/complete")}`

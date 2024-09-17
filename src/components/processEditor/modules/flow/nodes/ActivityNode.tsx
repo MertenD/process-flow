@@ -30,7 +30,6 @@ export type ActivityNodeData = {
     choices?: string,
     inputRegex?: string,
     infoText?: string,
-    variableName?: string,
     assignedRole?: string,
     gamificationType? : GamificationType
     gamificationOptions?: {
@@ -42,6 +41,9 @@ export type ActivityNodeData = {
         comparison?: Comparisons,
         value2?: string,
         badgeType?: BadgeType,
+    }
+    outputs?: {
+        [key: string]: string
     }
 }
 
@@ -90,7 +92,7 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                                 type: OptionsStructureType.VARIABLE_NAME_INPUT,
                                 label: "Save input as",
                                 placeholder: "input1",
-                                keyString: "variableName"
+                                keyString: "outputs.userInputVariableName"
                             } as OptionsVariableNameInput
                         ]
                     },
@@ -107,7 +109,7 @@ export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition 
                                 type: OptionsStructureType.VARIABLE_NAME_INPUT,
                                 label: "Save input as",
                                 placeholder: "input1",
-                                keyString: "variableName"
+                                keyString: "outputs.userInputVariableName"
                             } as OptionsVariableNameInput
                         ]
                     },

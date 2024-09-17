@@ -11,7 +11,7 @@ export interface ActivitySearchParams {
     infoText: string
     description: string
     activityType: ActivityType
-    variableName: string
+    userInputVariableName: string
     responsePath: string
     flowElementInstanceId: string
     inputRegex: string
@@ -27,7 +27,7 @@ export default async function Page({ searchParams }: { searchParams: ActivitySea
             description={searchParams.description}
             inputRegex={searchParams.inputRegex}
             flowElementInstanceId={searchParams.flowElementInstanceId}
-            variableName={searchParams.variableName}
+            userInputVariableName={searchParams.userInputVariableName}
             responsePath={searchParams.responsePath}
         />
     } else if (searchParams.activityType === ActivityType.SINGLE_CHOICE) {
@@ -35,7 +35,7 @@ export default async function Page({ searchParams }: { searchParams: ActivitySea
             task={searchParams.task}
             description={searchParams.description}
             choices={searchParams.choices.split(",").map(choice => choice.trim())}
-            variableName={searchParams.variableName}
+            userInputVariableName={searchParams.userInputVariableName}
             responsePath={searchParams.responsePath}
             flowElementInstanceId={searchParams.flowElementInstanceId}
         />
@@ -44,7 +44,7 @@ export default async function Page({ searchParams }: { searchParams: ActivitySea
             task={searchParams.task}
             description={searchParams.description}
             choices={searchParams.choices.split(",").map(choice => choice.trim())}
-            variableName={searchParams.variableName}
+            userInputVariableName={searchParams.userInputVariableName}
             responsePath={searchParams.responsePath}
             flowElementInstanceId={searchParams.flowElementInstanceId}
         />

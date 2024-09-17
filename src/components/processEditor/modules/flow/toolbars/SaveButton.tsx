@@ -9,7 +9,7 @@ import {createClient} from "@/utils/supabase/client";
 import {toast} from "@/components/ui/use-toast";
 
 export interface SaveButtonProps {
-    processModelId: string
+    processModelId: number
 }
 
 export default function SaveButton({ processModelId }: Readonly<SaveButtonProps>) {

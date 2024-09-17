@@ -10,6 +10,7 @@ import {
     getGamificationEventOptionsDefinition
 } from "@/components/processEditor/modules/flow/nodes/GamificationEventNode";
 import {getChallengeOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/ChallengeNode";
+import {getStartOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/StartNode";
 
 export interface OptionsToolbarProps {
     teamId: number
@@ -47,6 +48,9 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
             break
         case NodeTypes.CHALLENGE_NODE:
             options = <DynamicOptions optionsDefinition={ getChallengeOptionsDefinition(selectedNode.id) } teamId={teamId}/>
+            break
+        case NodeTypes.START_NODE:
+            options = <DynamicOptions optionsDefinition={ getStartOptionsDefinition(selectedNode.id) } teamId={teamId} />
             break
         default:
             options = <h2 className="text-2xl font-semibold">{ selectedNode.type }</h2>

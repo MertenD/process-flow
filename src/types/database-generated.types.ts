@@ -773,7 +773,7 @@ export type Database = {
         }
         Insert: {
           belongs_to: number
-          color: string
+          color?: string
           created_at?: string
           id?: number
           name: string
@@ -980,6 +980,7 @@ export type Database = {
       create_process_instance: {
         Args: {
           process_model_id_param: number
+          inputs_param: Json
         }
         Returns: number
       }
@@ -1012,13 +1013,6 @@ export type Database = {
           role_id: number
         }
         Returns: undefined
-      }
-      replace_with_variable_values: {
-        Args: {
-          data: Json
-          process_instance_id: number
-        }
-        Returns: Json
       }
       update_profiles_roles_in_team: {
         Args: {

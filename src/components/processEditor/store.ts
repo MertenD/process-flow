@@ -182,7 +182,7 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
         return Array.from(new Set(
             get().getPreviousNodes(ownNodeId)
                 .filter((node) => node.type !== NodeTypes.GATEWAY_NODE)
-                .map((node) => node.data.variableName)
+                .flatMap((node) => Object.values(node.data.outputs || {}))
                 .concat(ownVariableNames)
                 .filter(name => name !== undefined && name !== "")
                 .concat(Object.values(PointsType))

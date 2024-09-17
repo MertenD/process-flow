@@ -13,22 +13,23 @@ export interface SingleChoiceTaskProps {
     task: string
     description: string
     choices: string[]
-    variableName: string
     responsePath: string
     flowElementInstanceId: string
+    userInputVariableName: string
 }
 
 const FormSchema = z.object({
     choice: z.string().min(1, "Please select a choice")
 });
 
-export default function SingleChoiceTask({ task, description, choices, variableName, responsePath, flowElementInstanceId }: Readonly<SingleChoiceTaskProps>) {
+export default function SingleChoiceTask({ task, description, choices, responsePath, flowElementInstanceId, userInputVariableName }: Readonly<SingleChoiceTaskProps>) {
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
     })
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
+        console.log("Submitting", userInputVariableName, data.choice)
         fetch(responsePath, {
             method: "POST",
             headers: {
@@ -37,7 +38,7 @@ export default function SingleChoiceTask({ task, description, choices, variableN
             body: JSON.stringify({
                 flowElementInstanceId,
                 data: {
-                    [variableName]: data.choice
+                    [userInputVariableName]: data.choice
                 }
             })
         }).then(() => {

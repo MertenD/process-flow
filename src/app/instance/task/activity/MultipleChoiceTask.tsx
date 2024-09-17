@@ -13,9 +13,9 @@ export interface SingleChoiceTaskProps {
     task: string
     description: string
     choices: string[]
-    variableName: string
     responsePath: string
     flowElementInstanceId: string
+    userInputVariableName: string
 }
 
 const FormSchema = z.object({
@@ -24,7 +24,7 @@ const FormSchema = z.object({
     }),
 })
 
-export default function MultipleChoiceTask({ task, description, choices, variableName, responsePath, flowElementInstanceId }: Readonly<SingleChoiceTaskProps>) {
+export default function MultipleChoiceTask({ task, description, choices, responsePath, flowElementInstanceId, userInputVariableName }: Readonly<SingleChoiceTaskProps>) {
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -39,7 +39,7 @@ export default function MultipleChoiceTask({ task, description, choices, variabl
             body: JSON.stringify({
                 flowElementInstanceId,
                 data: {
-                    [variableName]: data.choices
+                    [userInputVariableName]: data.choices
                 }
             })
         }).then(() => {

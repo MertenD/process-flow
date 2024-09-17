@@ -66,9 +66,6 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
         })
     }, [teamId]);
 
-    // TODO Live update of available roles. What happens to some that are already selected and are not available anymore?
-
-
     useEffect(() => {
         function setValues(structure: OptionsBase[]) {
 

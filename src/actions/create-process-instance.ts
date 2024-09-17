@@ -3,14 +3,20 @@
 import {createClient} from "@/utils/supabase/server";
 import {cookies} from "next/headers";
 
-export default async function(processModelId: number): Promise<{processInstanceId: number}> {
+type InputsType = {
+    [key: string]: string
+};
+
+export default async function(processModelId: number, inputs: InputsType): Promise<{processInstanceId: number}> {
 
     const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    // TODO Den Key vom User bei der Anfrage verwenden wenn es über die API aufgerufen wird
+    const supabase = createClient(cookieStore, process.env.SUPABASE_SERVICE_KEY)
 
     let { data, error } = await supabase
         .rpc('create_process_instance', {
-            process_model_id_param: processModelId
+            process_model_id_param: processModelId,
+            inputs_param: inputs
         }).single<number>()
 
     if (error || !data) {

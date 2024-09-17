@@ -40,7 +40,7 @@ const selector = (state: any) => ({
 });
 
 export interface DragAndDropFlowProps {
-    processModelId: string
+    processModelId: number
 }
 
 function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
@@ -105,8 +105,8 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
             y: event.clientY - reactFlowBounds.top,
         });
 
-        addNodeAtPosition(position, nodeType, processModelId, nodeData)
-    }, [addNodeAtPosition, processModelId, reactFlowInstance]);
+        addNodeAtPosition(position, nodeType, nodeData)
+    }, [addNodeAtPosition, reactFlowInstance]);
 
     const onConnectStart = useCallback((event: any, node: OnConnectStartParams) => {
         connectStartParams.current = node;
@@ -127,7 +127,7 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
         [reactFlowInstance.project]
     );
 
-    function addNodeAtPosition(position: {x: number, y: number}, nodeType: NodeTypes, modelId: string, data: any = {}): string {
+    function addNodeAtPosition(position: {x: number, y: number}, nodeType: NodeTypes, data: any = {}): string {
         let yOffset = 0
         let zIndex = 0
         switch(nodeType) {
@@ -263,7 +263,7 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
 }
 
 export interface BpmnEditorProps {
-    processModelId: string
+    processModelId: number
     teamId: number
 }
 
