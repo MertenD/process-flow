@@ -1,7 +1,7 @@
 "use client"
 
 import {Button} from "@/components/ui/button"
-import React, {useEffect} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {GitBranchPlus} from "lucide-react";
 import {toast} from "@/components/ui/use-toast";
 import {
@@ -12,7 +12,6 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog";
-import {createClient} from "@/utils/supabase/client";
 import getProcessInputVariableNames from "@/actions/get-process-input-variable-names";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
@@ -27,7 +26,13 @@ export default function CreateInstanceButton({ processModelId }: Readonly<Create
 
     const [showCreateInstanceDialog, setShowCreateInstanceDialog] = React.useState<boolean>(false)
     const [inputVariableNames, setInputVariableNames] = React.useState<string[]>([])
+
+    const [origin, setOrigin] = useState<string>("")
     const createInstancePath = "/api/instance/create"
+
+    useEffect(() => {
+        setOrigin(window.location.origin)
+    }, []);
 
     function handleCreateInstance(inputs: {[key: string]: string}) {
         fetch (createInstancePath, {
@@ -82,7 +87,7 @@ export default function CreateInstanceButton({ processModelId }: Readonly<Create
                 <div className="pt-8 space-y-2">
                     <Separator/>
                     <h2 className="text-md font-semibold">You can also send a request to this URL to create a new instance:</h2>
-                    <CopyableUrlField url={`${window.location.host}${createInstancePath}`}/>
+                    <CopyableUrlField url={`${origin}${createInstancePath}`}/>
                 </div>
             </div>
             <DialogFooter>

@@ -14,9 +14,13 @@ export default async function(processModelId: number): Promise<string[]> {
         .eq("model_id", processModelId)
         .single<{ inputVariableNames: { [key: string]: string }}>()
 
-    if (error || !data) {
-        throw Error(error?.message || "Error fetching process model")
+    console.log(data)
+
+    if (!data) return []
+
+    if (error) {
+        throw Error("Error fetching process model")
     }
 
-    return Object.values(data.inputVariableNames)
+    return Object.values(data.inputVariableNames || {})
 }
