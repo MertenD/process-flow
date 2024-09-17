@@ -30,15 +30,17 @@ import {
     OptionsRow,
     OptionsSelect,
     OptionsSelectWithCustom,
-    OptionsSeparator, OptionsStructureSpecialValues,
+    OptionsSeparator,
+    OptionsStructureSpecialValues,
     OptionsStructureType,
     OptionsText,
     OptionsTextarea
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
 import {Role} from "@/types/database.types";
-import {createClient} from "@/utils/supabase/client";
 import getRoles from "@/actions/get-roles";
 import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Trash, Trash2} from "lucide-react";
 
 // TODO Bei ändern der variablen namen wird aktuell jedes select was das ausgewählt hatte auf custom gesetzt, bei ändern des eignen wird aktuell nichts mehr selektiert. Wie mache ich das am besten?
 
@@ -60,6 +62,46 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
 
     const edges = useStore((state) => state.edges)
 
+    const [variableNamesInput, setVariableNamesInput] = useState<string[]>([]);
+
+    const addVariableNameInput = () => {
+        setVariableNamesInput([...variableNamesInput, ""]);
+    };
+
+    const removeVariableNameInput = (indexToRemove: number, keyString: string) => {
+        const newVariableNames = [...variableNamesInput];
+        newVariableNames.splice(indexToRemove, 1);
+        setVariableNamesInput(newVariableNames);
+
+        const localKeyString = keyString.split(".")[1]
+        const newOutputs: { [key: string]: string } = {};
+        Object.keys(nodeData.outputs).forEach((key, index) => {
+            const splitKey = key.split("-")
+
+            if (key === `${localKeyString}-${indexToRemove}`) {
+                return;
+            }
+
+            if (key.startsWith(`${localKeyString}-`) && parseInt(splitKey[1]) > indexToRemove) {
+                newOutputs[`${localKeyString}-${index - 1}`] = nodeData.outputs[key];
+                return;
+            }
+
+            if (key !== `${localKeyString}-${indexToRemove}`) {
+                newOutputs[key] = nodeData.outputs[key];
+            }
+        });
+
+        updateNodeData(optionsDefinition.nodeId, { ...nodeData, outputs: newOutputs });
+    }
+
+    const updateVariableName = (index: number, value: string, keyString: string) => {
+        const newVariableNames = [...variableNamesInput];
+        newVariableNames[index] = value;
+        setVariableNamesInput(newVariableNames);
+        updateValueInData(`${keyString}-${index}`, value);
+    };
+
     useEffect(() => {
         getRoles(teamId).then(roles => {
             setAvailableRoles(roles)
@@ -72,7 +114,13 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
             if (nodeData) {
 
                 structure.forEach(option => {
-                    if (option.keyString && inputRefs.current[option.keyString]) {
+                    if (option.keyString && option.type === OptionsStructureType.MULTIPLE_VARIABLE_NAME_INPUT) {
+                        const dataValues = getValuesFromDataForMultipleVariableNames(option.keyString)
+                        console.log("DataValues", dataValues)
+                        if (dataValues) {
+                            setVariableNamesInput(dataValues)
+                        }
+                    } else if (option.keyString && inputRefs.current[option.keyString]) {
                         if (option.type === OptionsStructureType.CHECKBOX) {
                             inputRefs.current[option.keyString].checked = getValueFromData(option.keyString);
                         } else if (option.type === OptionsStructureType.VARIABLE_NAME_INPUT) {
@@ -94,7 +142,6 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                                 inputRefs.current[`${option.keyString}-select`].value = "{custom}"
                                 inputRefs.current[option.keyString].classList.remove("hidden")
                             }
-
                         } else {
                             const dataValue = getValueFromData(option.keyString)
                             inputRefs.current[option.keyString].value = dataValue === null ? "" : dataValue;
@@ -176,6 +223,12 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
         }
 
         return undefined;
+    }
+
+    function getValuesFromDataForMultipleVariableNames(keyString: string): string[] {
+        const splitKeyString = keyString.split(".")[1]
+        const keys = Object.keys(nodeData.outputs || {}).filter(key => key.startsWith(`${splitKeyString}-`))
+        return keys.map(key => nodeData.outputs[key])
     }
 
     function getVariablesWithOwn(nodeId: string) {
@@ -290,6 +343,26 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                             />
                         </div>
                     )
+                case OptionsStructureType.MULTIPLE_VARIABLE_NAME_INPUT:
+                    const multipleVariableNameInputOption = option as OptionsInput;
+                    return (
+                        <div className="space-y-2">
+                            <Label>{multipleVariableNameInputOption.label}</Label>
+                            {variableNamesInput.map((name, idx) => (
+                                <div key={idx} className="flex flex-row space-x-2">
+                                    <Input
+                                        placeholder={multipleVariableNameInputOption.placeholder}
+                                        value={name}
+                                        onChange={(e) => updateVariableName(idx, e.target.value, option.keyString || "")}
+                                    />
+                                    <Button variant="outline" size="icon" onClick={() => removeVariableNameInput(idx, option.keyString || "")}>
+                                        <Trash2 />
+                                    </Button>
+                                </div>
+                            ))}
+                            <Button className="w-full" onClick={addVariableNameInput}>Add Variable</Button>
+                        </div>
+                    );
                 case OptionsStructureType.SELECT:
                     const selectOption = option as OptionsSelect
 

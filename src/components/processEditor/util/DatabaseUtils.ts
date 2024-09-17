@@ -40,6 +40,11 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
             executionUrl = `${process.env.APP_URL || window.location.origin}/api/instance/event`
         }
 
+        console.log("Node", node)
+        if (node.type === NodeTypes.START_NODE) {
+            console.log("Output", node.data.outputs)
+        }
+
         const insertedElement = await supabase.from("flow_element").upsert({
             id: id,
             model_id: processModelId,

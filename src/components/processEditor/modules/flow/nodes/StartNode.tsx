@@ -5,6 +5,7 @@ import {Handle, NodeProps, Position} from 'reactflow';
 import {handleStyle, selectedColor} from "../../../store";
 import {
     OptionsDefinition,
+    OptionsMultipleVariableNameInput,
     OptionsStructureType,
     OptionsVariableNameInput
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
@@ -22,21 +23,13 @@ export function getStartOptionsDefinition(nodeId: string): OptionsDefinition {
     return {
         title: "Start Options",
         nodeId: nodeId,
-        // TODO Ich brauche eine OptionsStructureTyoe die es ermöglicht beliebig viele Variablen zu speichern
-        // Der Keystring ist dann immer outputs.[IRGENDWAS] und der Value ist der Variablenname der vom Benutzer eingegeben wird
         structure: [
             {
-                type: OptionsStructureType.VARIABLE_NAME_INPUT,
-                label: "Input Variable Name",
+                type: OptionsStructureType.MULTIPLE_VARIABLE_NAME_INPUT,
+                label: "Input Variable Names",
                 placeholder: "Enter a variable name",
-                keyString: "outputs.inputVariableName",
-            } as OptionsVariableNameInput,
-            {
-                type: OptionsStructureType.VARIABLE_NAME_INPUT,
-                label: "Another Input Variable Name",
-                placeholder: "Enter a variable name",
-                keyString: "outputs.inputVariableName2",
-            } as OptionsVariableNameInput
+                keyString: "outputs.inputVariableNames",
+            } as OptionsMultipleVariableNameInput
         ]
     }
 }
