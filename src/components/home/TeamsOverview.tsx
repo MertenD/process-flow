@@ -1,12 +1,12 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {ScrollArea} from "@/components/ui/scroll-area"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
-import {CheckIcon, PlusCircleIcon, XIcon} from 'lucide-react'
+import {CheckIcon, PlusCircleIcon, TrashIcon, XIcon} from 'lucide-react'
 import {TeamInfo} from "@/model/TeamInfo";
 import Link from 'next/link'
 import createTeamAndAddCreatorAsAdmin from "@/actions/create-team-and-add-creator-as-admin";
@@ -19,6 +19,14 @@ import {createClient} from "@/utils/supabase/client";
 import getTeams from "@/actions/get-teams";
 import getInvitations from "@/actions/get-invitations";
 import declineInvite from "@/actions/decline-invite";
+import {ConfirmationDialog} from "@/components/ConfirmationDialog";
+import removeProfileFromTeam from "@/actions/remove-profile-from-team";
+
+type ConfirmDialogState = {
+    isOpen: boolean
+    teamName: string | null
+    teamId: string | null
+}
 
 export interface TeamsOverviewProps {
   userId: string
@@ -36,6 +44,8 @@ export function TeamsOverview({ userId, userEmail, initialTeams, initialInvitati
 
   const [teams, setTeams] = useState<TeamInfo[]>(initialTeams)
   const [invitations, setInvitations] = useState<InvitationWithTeam[]>(initialInvitations)
+
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState>({ isOpen: false, teamName: null, teamId: null })
 
   const router = useRouter()
 
@@ -108,26 +118,79 @@ export function TeamsOverview({ userId, userEmail, initialTeams, initialInvitati
     })
   }
 
-  const renderCard = (item: any, isTeam: boolean = true) => (
-    <Card
-      key={item.team.id}
-      className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-102 bg-gradient-to-br ${item.team.colorSchemeFrom} ${item.team.colorSchemeTo}`}
-    >
-      <CardContent className="flex flex-col items-center justify-center h-32 p-4">
-        <h3 className="text-lg font-semibold text-white mb-2">{item.team.name}</h3>
-        {!isTeam && (
-          <div className="flex space-x-2">
-            <Button size="sm" variant="secondary" onClick={() => onAcceptInvite(item)}>
-              <CheckIcon className="w-4 h-4 mr-1" /> Annehmen
-            </Button>
-            <Button size="sm" variant="secondary" onClick={() => onDeclineInvite(item)}>
-              <XIcon className="w-4 h-4 mr-1" /> Ablehnen
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  )
+    function onDeleteTeamClicked(team: TeamInfo) {
+        setConfirmDialog({ isOpen: true, teamName: team.team.name, teamId: team.teamId })
+    }
+
+    const confirmDeleteTeam = async () => {
+        if (!confirmDialog.teamId) {
+            toast({
+                title: "Fehler beim Löschen des Teams",
+                description: `Das Team konnte nicht entfernt werden.`,
+                variant: "destructive"
+            })
+            setConfirmDialog({ isOpen: false, teamName: null, teamId: null })
+            return
+        }
+        try {
+            const { error } = await supabase
+                .from('team')
+                .delete()
+                .eq('id', confirmDialog.teamId);
+
+            if (error) throw error;
+
+            toast({
+                title: "Team gelöscht",
+                description: `Das Team "${confirmDialog.teamName}" wurde erfolgreich gelöscht.`,
+                variant: "success"
+            })
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Fehler beim Löschen des Teams",
+                description: `Das Team "${confirmDialog.teamName}" konnte nicht gelöscht werden.`
+            });
+        }
+        setConfirmDialog({ isOpen: false, teamName: null, teamId: null })
+    }
+
+  const renderCard = (item: any, isTeam: boolean = true) => {
+      const isUserOwnerOfTeam = userId === item.team.createdBy
+      return <Card
+          key={item.team.id}
+          className={` relative cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-102 bg-gradient-to-br ${item.team.colorSchemeFrom} ${item.team.colorSchemeTo}`}
+      >
+          <CardContent className="flex flex-col items-center justify-center h-32 p-4">
+              <h3 className="text-lg font-semibold text-white mb-2">{item.team.name}</h3>
+              {isTeam && isUserOwnerOfTeam && (
+                  <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                          onDeleteTeamClicked(item)
+                      }}
+                      className="absolute top-2 right-2 text-white hover:bg-white/20"
+                  >
+                      <TrashIcon className="w-4 h-4"/>
+                      <span className="sr-only">Löschen</span>
+                  </Button>
+              )}
+              {!isTeam && (
+                  <div className="flex space-x-2">
+                      <Button size="sm" variant="secondary" onClick={() => onAcceptInvite(item)}>
+                          <CheckIcon className="w-4 h-4 mr-1"/> Annehmen
+                      </Button>
+                      <Button size="sm" variant="secondary" onClick={() => onDeclineInvite(item)}>
+                          <XIcon className="w-4 h-4 mr-1"/> Ablehnen
+                      </Button>
+                  </div>
+              )}
+          </CardContent>
+      </Card>
+  }
 
   return <div className="space-y-6">
     <Card>
@@ -225,5 +288,13 @@ export function TeamsOverview({ userId, userEmail, initialTeams, initialInvitati
             </div>
           </CardContent>
         </Card>
+      <ConfirmationDialog
+          isOpen={confirmDialog.isOpen}
+          onClose={() => setConfirmDialog({ isOpen: false, teamName: null, teamId: null })}
+          onConfirm={confirmDeleteTeam}
+          title={`Team "${confirmDialog.teamName}" wirklich löschen?`}
+          description={`Möchten Sie das Team "${confirmDialog.teamName}" wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden. Alle Daten, die mit diesem Team verknüpft sind, werden ebenfalls gelöscht.`}
+          confirmLabel="Team löschen"
+      />
     </div>
 }

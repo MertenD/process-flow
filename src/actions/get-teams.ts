@@ -11,7 +11,7 @@ export default async function(userId: string): Promise<TeamInfo[]> {
 
     const { data: teams, error } = await supabase
         .from('profile_team')
-        .select('profileId:profile_id, teamId:team_id, team ( ' +
+        .select('profileId:profile_id, teamId:team_id, team ( createdBy: created_by, ' +
             'name, colorSchemeFrom: color_scheme->from, colorSchemeTo: color_scheme->to ' +
             ')')
         .eq('profile_id', userId)

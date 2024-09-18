@@ -17,6 +17,7 @@ import getMembers from "@/actions/get-members";
 import {Checkbox} from "@/components/ui/checkbox";
 import updateProfileRolesInTeam from "@/actions/update-profile-roles-in-team";
 import {toast} from "@/components/ui/use-toast";
+import removeProfileFromTeam from "@/actions/remove-profile-from-team";
 
 type MemberRole = {
   id: number
@@ -138,7 +139,28 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
   }
 
   const confirmRemoveMember = () => {
-    setMembers(members.filter(member => member.id !== confirmDialog.id))
+    if (!confirmDialog.id) {
+        toast({
+            title: "Fehler beim Entfernen des Mitglieds",
+            description: `Das Mitglied konnte nicht entfernt werden.`,
+            variant: "destructive"
+        })
+        setConfirmDialog({ isOpen: false, type: null, id: null })
+        return
+    }
+    removeProfileFromTeam(teamId, confirmDialog.id).then(() => {
+        toast({
+            title: "Mitglied entfernt",
+            description: "Das Mitglied wurde erfolgreich entfernt.",
+            variant: "success"
+        })
+    }).catch((error) => {
+        toast({
+            title: "Fehler beim Entfernen des Mitglieds",
+            description: `Das Mitglied konnte nicht entfernt werden: ${error.message}`,
+            variant: "destructive"
+        })
+    })
     setConfirmDialog({ isOpen: false, type: null, id: null })
   }
 

@@ -529,7 +529,7 @@ export type Database = {
         Row: {
           belongs_to: number
           created_at: string
-          created_by: string
+          created_by: string | null
           description: string | null
           id: number
           name: string
@@ -539,7 +539,7 @@ export type Database = {
         Insert: {
           belongs_to: number
           created_at?: string
-          created_by: string
+          created_by?: string | null
           description?: string | null
           id?: number
           name: string
@@ -549,7 +549,7 @@ export type Database = {
         Update: {
           belongs_to?: number
           created_at?: string
-          created_by?: string
+          created_by?: string | null
           description?: string | null
           id?: number
           name?: string
@@ -618,14 +618,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "public_profile_role_team_profile_fkey"
+            foreignKeyName: "public_profile_role_team_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "public_profile_role_team_profile_fkey"
+            foreignKeyName: "public_profile_role_team_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles_with_roles"
@@ -646,7 +646,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "public_profile_role_team_team_fkey"
+            foreignKeyName: "public_profile_role_team_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "team"
@@ -675,21 +675,21 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "profile_team_profile_id_fkey"
+            foreignKeyName: "public_profile_team_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "profile_team_profile_id_fkey"
+            foreignKeyName: "public_profile_team_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles_with_roles"
             referencedColumns: ["profile_id"]
           },
           {
-            foreignKeyName: "profile_team_team_id_fkey"
+            foreignKeyName: "public_profile_team_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "team"
@@ -773,7 +773,7 @@ export type Database = {
         }
         Insert: {
           belongs_to: number
-          color?: string
+          color: string
           created_at?: string
           id?: number
           name: string
@@ -924,7 +924,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "profile_team_team_id_fkey"
+            foreignKeyName: "public_profile_team_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "team"
@@ -1003,7 +1003,7 @@ export type Database = {
       }
       remove_profile_from_team: {
         Args: {
-          profile_id_param: number
+          profile_id_param: string
           team_id_param: number
         }
         Returns: undefined
@@ -1013,6 +1013,13 @@ export type Database = {
           role_id: number
         }
         Returns: undefined
+      }
+      replace_with_variable_values: {
+        Args: {
+          data: Json
+          process_instance_id: number
+        }
+        Returns: Json
       }
       update_profiles_roles_in_team: {
         Args: {

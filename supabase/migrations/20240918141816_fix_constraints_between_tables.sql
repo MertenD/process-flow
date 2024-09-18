@@ -68,3 +68,19 @@ create policy "enable delete for authenticated"
     for delete
     to authenticated
     using (true);
+
+drop function if exists "public"."remove_profile_from_team"(profile_id_param bigint, team_id_param bigint);
+
+set check_function_bodies = off;
+
+CREATE OR REPLACE FUNCTION public.remove_profile_from_team(profile_id_param uuid, team_id_param bigint)
+    RETURNS void
+    LANGUAGE plpgsql
+AS $function$BEGIN
+    DELETE FROM profile_team
+    WHERE profile_id = profile_id_param AND team_id = team_id_param;
+
+    DELETE FROM profile_role_team
+    WHERE profile_id = profile_id_param AND team_id = team_id_param;
+END;$function$
+;
