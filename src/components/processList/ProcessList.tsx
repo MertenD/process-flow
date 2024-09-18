@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {ProcessModel} from "@/types/database.types";
 import Link from "next/link";
-import {useParams, usePathname} from "next/navigation";
+import {useParams, usePathname, useRouter} from "next/navigation";
 import {createClient} from "@/utils/supabase/client";
 import getProcessModels from "@/actions/get-process-models";
 import {toast} from "@/components/ui/use-toast";
@@ -20,6 +20,7 @@ export default function ProcessList({ userId, teamId }: Readonly<ProcessListProp
 
     const params = useParams<{ processModelId: string }>()
     const pathName = usePathname()
+    const router = useRouter();
     const supabase = createClient()
     const [processes, setProcesses] = useState<ProcessModel[]>([])
     const [selectedProcessId, setSelectedProcessId] = useState<string | null>(params.processModelId)
@@ -46,13 +47,28 @@ export default function ProcessList({ userId, teamId }: Readonly<ProcessListProp
                     getProcessModels(teamId).then(setProcesses).catch((error) => {
                         console.error("Error fetching processes", error)
                     })
-                    
+
                     if ((payload.new as ProcessModel).created_by === userId) {
                         toast({
                             variant: "success",
                             title: "Process created",
                             description: "The process model was created successfully."
                         })
+                    }
+                } else if (payload.eventType === "DELETE") {
+                    getProcessModels(teamId).then(setProcesses).catch((error) => {
+                        console.error("Error fetching processes", error)
+                    })
+
+                    console.log(pathName, `/${teamId}/editor/${payload.old.id}`)
+
+                    if (pathName === `/${teamId}/editor/${payload.old.id}`) {
+                        toast({
+                            variant: "success",
+                            title: `Process "${processes.find(p => p.id === payload.old.id)?.name}" deleted`,
+                            description: "The process model was deleted successfully."
+                        })
+                        router.push(`/${teamId}/editor`)
                     }
                 }
             })
@@ -61,7 +77,7 @@ export default function ProcessList({ userId, teamId }: Readonly<ProcessListProp
         return () => {
             updateSubscription.unsubscribe().then()
         }
-    }, [supabase, teamId, userId]);
+    }, [pathName, processes, router, supabase, teamId, userId]);
 
     return (
         <section className="processList flex flex-col h-full">

@@ -26,6 +26,7 @@ import SaveButton from "@/components/processEditor/modules/flow/toolbars/SaveBut
 import CreateInstanceButton from "@/components/processEditor/modules/flow/toolbars/CreateInstanceButton";
 import "@/styles/globals.css";
 import OptionsToolbar from "@/components/processEditor/modules/flow/toolbars/OptionsToolbar";
+import DeleteProcessButton from "@/components/processEditor/modules/flow/toolbars/DeleteProcessButton";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,
@@ -264,10 +265,11 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
 
 export interface BpmnEditorProps {
     processModelId: number
+    processModelName: string
     teamId: number
 }
 
-export default function BpmnEditor({ processModelId, teamId }: Readonly<BpmnEditorProps>) {
+export default function BpmnEditor({ processModelId, processModelName, teamId }: Readonly<BpmnEditorProps>) {
     return (
         <ReactFlowProvider>
             <div className="flex flex-row w-full h-full">
@@ -275,6 +277,7 @@ export default function BpmnEditor({ processModelId, teamId }: Readonly<BpmnEdit
                     <div className="w-full p-3 flex flex-row space-x-2 border-b">
                         <SaveButton processModelId={processModelId}/>
                         <CreateInstanceButton processModelId={processModelId}/>
+                        <DeleteProcessButton processModelId={processModelId} processModelName={processModelName} />
                     </div>
                     <div className="w-full h-full pl-2 bg-accent">
                         <DragAndDropFlow processModelId={processModelId}/>
