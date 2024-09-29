@@ -23,9 +23,9 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
 
     const { data: teams } = await supabase
         .from('profile_team')
-        .select('profileId:profile_id, teamId:team_id, team ( name, colorSchemeFrom: color_scheme->from, colorSchemeTo: color_scheme->to )')
+        .select('profileId:profile_id, teamId:team_id, team ( name, createdBy: created_by, colorSchemeFrom: color_scheme->from, colorSchemeTo: color_scheme->to )')
         .eq('profile_id', userData.user?.id || "")
-        .returns<{ profileId : string, teamId: string, team: { name: string, colorSchemeFrom: string, colorSchemeTo: string } }[]>()
+        .returns<{ profileId : string, teamId: string, team: { name: string, createdBy: string, colorSchemeFrom: string, colorSchemeTo: string } }[]>()
 
     const allowedPages = await getAllowedPages(selectedTeamId, userData.user.id)
 
@@ -34,13 +34,13 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
             <div className="border-b">
                 <div className="flex h-16 items-center px-4">
                     <HomeButton />
-                    { userData.user && <TeamSwitcher ownTeams={teams?.filter(team => team.profileId === userData.user.id).map(team => {
+                    { userData.user && <TeamSwitcher ownTeams={teams?.filter(team => team.team.createdBy === userData.user.id).map(team => {
                         return {
                             label: team.team.name,
                             value: team.teamId,
                             colorSchema: { from: team.team.colorSchemeFrom, to: team.team.colorSchemeTo }
                         }
-                    }) ?? []} otherTeams={teams?.filter(team => team.profileId !== userData.user.id).map(team => {
+                    }) ?? []} otherTeams={teams?.filter(team => team.team.createdBy !== userData.user.id).map(team => {
                         return {
                             label: team.team.name,
                             value: team.teamId,
