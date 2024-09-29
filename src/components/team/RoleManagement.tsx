@@ -19,7 +19,7 @@ export interface RoleManagementProps {
     teamId: number
 }
 
-export default function RoleManagement({ teamId }: Readonly<RoleManagementProps>) {
+export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) {
 
     const supabase = createClient()
 
@@ -29,7 +29,10 @@ export default function RoleManagement({ teamId }: Readonly<RoleManagementProps>
 
     const [isCreateRoleDialogOpen, setIsCreateRoleDialogOpen] = useState(false)
     const [isUpdateRoleDialogOpen, setIsUpdateRoleDialogOpen] = useState(false)
-    const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean, id: number | null }>({ isOpen: false, id: null })
+    const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean, id: number | null }>({
+        isOpen: false,
+        id: null
+    })
 
     const [roles, setRoles] = useState<Role[]>([])
 
@@ -82,7 +85,7 @@ export default function RoleManagement({ teamId }: Readonly<RoleManagementProps>
     }
 
     const deleteRole = (id: number) => {
-        setConfirmDialog({ isOpen: true, id })
+        setConfirmDialog({isOpen: true, id})
     }
 
     const confirmDeleteRole = () => {
@@ -100,7 +103,7 @@ export default function RoleManagement({ teamId }: Readonly<RoleManagementProps>
                 variant: 'destructive'
             })
         })
-        setConfirmDialog({ isOpen: false, id: null })
+        setConfirmDialog({isOpen: false, id: null})
     }
 
     useEffect(() => {
@@ -267,7 +270,7 @@ export default function RoleManagement({ teamId }: Readonly<RoleManagementProps>
 
         <ConfirmationDialog
             isOpen={confirmDialog.isOpen}
-            onClose={() => setConfirmDialog({ isOpen: false, id: null })}
+            onClose={() => setConfirmDialog({isOpen: false, id: null})}
             onConfirm={confirmDeleteRole}
             title={'Rolle löschen'}
             description={`Sind Sie sicher, dass Sie die Rolle löschen möchten? Diese Aktion kann nicht rückgängig 

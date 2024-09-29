@@ -16,7 +16,7 @@ export interface ProcessListProps {
     teamId: number;
 }
 
-export default function ProcessList({ userId, teamId }: Readonly<ProcessListProps>) {
+export default function ProcessList({userId, teamId}: Readonly<ProcessListProps>) {
 
     const params = useParams<{ processModelId: string }>()
     const pathName = usePathname()
@@ -82,7 +82,7 @@ export default function ProcessList({ userId, teamId }: Readonly<ProcessListProp
     return (
         <section className="processList flex flex-col h-full">
             <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">
-                { processes?.map((process, index) => {
+                {processes?.map((process, index) => {
                     return <Link
                         key={`${process.id}`}
                         className="w-full"
@@ -93,14 +93,14 @@ export default function ProcessList({ userId, teamId }: Readonly<ProcessListProp
                     >
                         <Card className={`${selectedProcessId === process.id.toString() ? "bg-accent" : ""}`}>
                             <CardHeader>
-                                <CardTitle>{ process.name }</CardTitle>
-                                <CardDescription>{ process.description }</CardDescription>
+                                <CardTitle>{process.name}</CardTitle>
+                                <CardDescription>{process.description}</CardDescription>
                             </CardHeader>
                         </Card>
                     </Link>
-                }) }
+                })}
             </form>
-            <CreateProcessButton teamId={teamId} userId={userId} />
+            <CreateProcessButton teamId={teamId} userId={userId}/>
         </section>
     );
 }

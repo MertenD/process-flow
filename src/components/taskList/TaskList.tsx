@@ -17,7 +17,7 @@ export interface TaskListProps {
     userId: string
 }
 
-export default function TaskList({ teamId, userId }: Readonly<TaskListProps>) {
+export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
 
     const params = useParams<{ taskId: string }>()
     const pathName = usePathname()
@@ -97,31 +97,31 @@ export default function TaskList({ teamId, userId }: Readonly<TaskListProps>) {
 
     return <section className="processList flex flex-col h-full">
         <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">
-            { tasks?.filter((task: ManualTaskWithTitleAndDescription) => task.status === "Todo").map((task: ManualTaskWithTitleAndDescription, index: number) => {
+            {tasks?.filter((task: ManualTaskWithTitleAndDescription) => task.status === "Todo").map((task: ManualTaskWithTitleAndDescription, index: number) => {
                 const role = roles.find(role => role.id.toString() === task.assigned_role)
                 return <Link
-                        key={`${task.id}`}
-                        className="w-full"
-                        href={`/${teamId}/tasks/${task.id}`}
-                        onClick={() => {
-                            setSelectedTaskId(task.id.toString())
-                        }}
-                    >
+                    key={`${task.id}`}
+                    className="w-full"
+                    href={`/${teamId}/tasks/${task.id}`}
+                    onClick={() => {
+                        setSelectedTaskId(task.id.toString())
+                    }}
+                >
                     <Card className={`${selectedTaskId?.toString() === task.id.toString() ? "bg-accent" : ""}`}>
                         <CardHeader>
                             <CardTitle>
                                 <div className="w-full flex flex-row justify-between">
-                                    { task.name }
+                                    {task.name}
                                     <Badge
-                                        style={{ backgroundColor: role?.color }}
-                                    >{ role?.name }</Badge>
+                                        style={{backgroundColor: role?.color}}
+                                    >{role?.name}</Badge>
                                 </div>
                             </CardTitle>
-                            <CardDescription>{ task.description }</CardDescription>
+                            <CardDescription>{task.description}</CardDescription>
                         </CardHeader>
                     </Card>
                 </Link>
-            }) }
+            })}
         </form>
     </section>
 }

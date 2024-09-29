@@ -11,7 +11,7 @@ export interface InviteMemberProps {
     teamId: number
 }
 
-export default function InviteMember({ teamId }: InviteMemberProps) {
+export default function InviteMember({teamId}: InviteMemberProps) {
 
     function onInviteMember(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()

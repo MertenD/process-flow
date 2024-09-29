@@ -22,7 +22,7 @@ export interface CreateProcessButtonProps {
     teamId: number
 }
 
-export default function CreateProcessButton({ userId, teamId }: Readonly<CreateProcessButtonProps>) {
+export default function CreateProcessButton({userId, teamId}: Readonly<CreateProcessButtonProps>) {
 
     const router = useRouter()
     const [showCreateProcessDialog, setShowCreateProcessDialog] = React.useState(false)
@@ -42,11 +42,11 @@ export default function CreateProcessButton({ userId, teamId }: Readonly<CreateP
                 <div className="space-y-4 py-2 pb-4">
                     <div className="space-y-2">
                         <Label htmlFor="process-name">Process name</Label>
-                        <Input id="process-name" placeholder="process name" />
+                        <Input id="process-name" placeholder="process name"/>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="process-description">Process description</Label>
-                        <Textarea id="process-description" placeholder="process description" />
+                        <Textarea id="process-description" placeholder="process description"/>
                     </div>
                 </div>
             </div>
