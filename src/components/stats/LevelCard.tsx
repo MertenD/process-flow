@@ -23,10 +23,10 @@ export default function LevelCard({ experience, experiencePerLevel }: LevelCardP
                 experience={experience}
                 experiencePerLevel={experiencePerLevel}
                 setLevel={setLevel}
-                color="bg-green-500"
+                color="bg-green-600"
             />
             <div className="text-sm text-muted-foreground mt-2">
-                {experience} / {experiencePerLevel * (Math.ceil(experience / experiencePerLevel))} XP
+                {experience} / {experiencePerLevel * (Math.ceil(experience / experiencePerLevel))} XP für das nächste Level
             </div>
         </CardContent>
     </Card>
