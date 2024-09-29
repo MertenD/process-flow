@@ -165,8 +165,6 @@ export function MemberManagement({ teamId }: MemberManagementProps) {
   }
 
   function updateRoles(memberId: string, roles: MemberRole[]) {
-      console.log("Members", members)
-    console.log("Updating", memberId, roles, members.find(member => member.id === memberId)?.name)
     updateProfileRolesInTeam(teamId, memberId, roles.map(role => role.id)).then(() => {
         toast({
             title: "Rollen aktualisiert",

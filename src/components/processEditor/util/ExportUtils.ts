@@ -1,3 +1,5 @@
+"use client"
+
 import {Edge, Node} from "reactflow";
 import {BpmnDto, mergeBpmnDto} from "@/model/Bpmn";
 import {v4 as uuidv4} from 'uuid';

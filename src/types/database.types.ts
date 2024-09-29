@@ -3,8 +3,6 @@ import { Database as DatabaseGenerated } from './database-generated.types'
 
 export type { Json } from './database-generated.types'
 
-// Example
-// Override the type for a specific column in a view:
 export type Database = MergeDeep<
     DatabaseGenerated,
     {
@@ -20,7 +18,6 @@ export type Database = MergeDeep<
         }
     }
 >
-// End of example
 
 export type Tables<T extends keyof Database['public']['Tables']> =
     Database['public']['Tables'][T]['Row']

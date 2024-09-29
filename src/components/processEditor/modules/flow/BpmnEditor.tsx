@@ -20,13 +20,13 @@ import NodesToolbar from "./toolbars/NodesToolbar";
 import {v4 as uuidv4} from 'uuid';
 import OnCanvasNodesToolbar from "./toolbars/OnCanvasNodesSelector";
 import {NodeTypes} from "@/model/NodeTypes";
-import {createClient} from "@/utils/supabase/client";
-import {loadProcessModelFromDatabase} from "@/components/processEditor/util/DatabaseUtils";
 import SaveButton from "@/components/processEditor/modules/flow/toolbars/SaveButton";
 import CreateInstanceButton from "@/components/processEditor/modules/flow/toolbars/CreateInstanceButton";
 import "@/styles/globals.css";
 import OptionsToolbar from "@/components/processEditor/modules/flow/toolbars/OptionsToolbar";
 import DeleteProcessButton from "@/components/processEditor/modules/flow/toolbars/DeleteProcessButton";
+import loadProcessModelFromDatabase from "@/actions/load-process-model-from-database";
+import ExportButton from "@/components/processEditor/modules/flow/toolbars/ExportButton";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,
@@ -55,10 +55,8 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
     const [lastEventPosition, setLastEventPosition] = React.useState<{x: number, y: number}>({x: 0, y: 0})
     const [isDragging, setIsDragging] = useState(false)
 
-    const supabase = createClient()
-
     useEffect(() => {
-        loadProcessModelFromDatabase(supabase, processModelId).then((value: { nodes: Node[], edges: Edge[] } | undefined) => {
+        loadProcessModelFromDatabase(processModelId).then((value: { nodes: Node[], edges: Edge[] } | undefined) => {
             const nodes = value?.nodes
             const edges = value?.edges
 
@@ -82,7 +80,7 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
             }
             reactFlowInstance.setEdges(edges)
         })
-    }, [processModelId, supabase, reactFlowInstance]);
+    }, [getNodeById, processModelId, reactFlowInstance, updateNodeParent]);
 
     const onDragOver = useCallback((event: any) => {
         event.preventDefault();
@@ -277,6 +275,7 @@ export default function BpmnEditor({ processModelId, processModelName, teamId }:
                     <div className="w-full p-3 flex flex-row space-x-2 border-b">
                         <SaveButton processModelId={processModelId}/>
                         <CreateInstanceButton processModelId={processModelId}/>
+                        <ExportButton />
                         <DeleteProcessButton processModelId={processModelId} processModelName={processModelName} />
                     </div>
                     <div className="w-full h-full pl-2 bg-accent">
