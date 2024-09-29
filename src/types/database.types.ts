@@ -46,6 +46,8 @@ export type Enums<T extends keyof Database['public']['Enums']> = Database['publi
 export type ProcessModelInstanceState = Enums<"process_instance_status">
 
 export type Role = Tables<"role">
+export type RoleWithAllowedPages = MergeDeep<Role, { allowed_pages: Page[] }>
+export type Page = Enums<"page">
 
 export type Team = Tables<"team">
 

@@ -8,24 +8,27 @@ import {Input} from "@/components/ui/input";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import React, {useEffect, useState} from "react";
 import {ConfirmationDialog} from "@/components/ConfirmationDialog";
-import {Role} from "@/types/database.types";
+import {Page, RoleWithAllowedPages} from "@/types/database.types";
 import addRole from "@/actions/add-role";
 import removeRole from "@/actions/remove-role";
 import {toast} from "@/components/ui/use-toast";
 import {createClient} from "@/utils/supabase/client";
 import getRoles from "@/actions/get-roles";
+import {Checkbox} from "@/components/ui/checkbox";
 
 export interface RoleManagementProps {
     teamId: number
 }
 
-export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) {
+const availablePages: Page[] = ["Editor", "Tasks", "Monitoring", "Team", "Stats"]
 
+export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) {
     const supabase = createClient()
 
     const [newRoleName, setNewRoleName] = useState<string>('')
-    const [editingRole, setEditingRole] = useState<Role | null>(null)
+    const [editingRole, setEditingRole] = useState<RoleWithAllowedPages | null>(null)
     const [newRoleColor, setNewRoleColor] = useState<string>('#000000')
+    const [newRolePages, setNewRolePages] = useState<Page[]>([])
 
     const [isCreateRoleDialogOpen, setIsCreateRoleDialogOpen] = useState(false)
     const [isUpdateRoleDialogOpen, setIsUpdateRoleDialogOpen] = useState(false)
@@ -34,11 +37,12 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
         id: null
     })
 
-    const [roles, setRoles] = useState<Role[]>([])
+    const [roles, setRoles] = useState<RoleWithAllowedPages[]>([])
 
     useEffect(() => {
-        getRoles(teamId).then((roles: Role[]) => {
+        getRoles(teamId).then((roles: RoleWithAllowedPages[]) => {
             setRoles(roles || [])
+            console.log(roles)
         }).catch((error) => {
             console.error("Error fetching roles", error)
         })
@@ -54,7 +58,7 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                 filter: `belongs_to=eq.${teamId}`
             }, () => {
                 console.log("Role updated")
-                getRoles(teamId).then((roles: Role[]) => {
+                getRoles(teamId).then((roles: RoleWithAllowedPages[]) => {
                     setRoles(roles || [])
                 })
             })
@@ -71,7 +75,10 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
             .from('role')
             .update({
                 name: editingRole.name,
-                color: editingRole.color
+                color: editingRole.color,
+                pages: {
+                    allowed_pages: editingRole.allowed_pages
+                }
             })
             .eq('id', editingRole.id)
             .then(() => {
@@ -107,10 +114,38 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
     }
 
     useEffect(() => {
-        if (!isUpdateRoleDialogOpen) (
+        if (!isUpdateRoleDialogOpen) {
             setEditingRole(null)
-        )
+        }
     }, [isUpdateRoleDialogOpen]);
+
+    const PageCheckboxes = ({ value, onChange }: { value: Page[], onChange: (value: Page[]) => void }) => {
+        return (
+            <div className="grid grid-cols-2 gap-2">
+                {availablePages.map((page) => (
+                    <div key={page} className="flex items-center space-x-2">
+                        <Checkbox
+                            id={`page-${page}`}
+                            checked={value.includes(page)}
+                            onCheckedChange={(checked) => {
+                                if (checked) {
+                                    onChange([...value, page])
+                                } else {
+                                    onChange(value.filter((p) => p !== page))
+                                }
+                            }}
+                        />
+                        <label
+                            htmlFor={`page-${page}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                            {page}
+                        </label>
+                    </div>
+                ))}
+            </div>
+        )
+    }
 
     return <Card>
         <CardHeader>
@@ -149,7 +184,13 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                                 <span>{newRoleColor}</span>
                             </div>
                         </div>
-
+                        <div className="space-y-2">
+                            <Label>Erlaubte Seiten</Label>
+                            <PageCheckboxes
+                                value={newRolePages}
+                                onChange={setNewRolePages}
+                            />
+                        </div>
                         <Button onClick={() => {
                             if (!newRoleName) {
                                 toast({
@@ -159,7 +200,7 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                                 })
                                 return
                             }
-                            addRole(newRoleName, teamId, newRoleColor).then(newRoleId => {
+                            addRole(newRoleName, teamId, newRoleColor, newRolePages).then(newRoleId => {
                                 toast({
                                     title: 'Rolle hinzugefügt',
                                     description: `Die Rolle ${newRoleName} wurde erfolgreich hinzugefügt.`,
@@ -173,6 +214,7 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                                 })
                             })
                             setNewRoleName('')
+                            setNewRolePages([])
                             setIsCreateRoleDialogOpen(false)
                         }}>Hinzufügen</Button>
                     </div>
@@ -183,11 +225,12 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                     <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Farbe</TableHead>
+                        <TableHead>Erlaubte Seiten</TableHead>
                         <TableHead className="text-right">Aktionen</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {roles.map((role) => (
+                    {roles.map((role: RoleWithAllowedPages) => (
                         <TableRow key={role.id}>
                             <TableCell>{role.name}</TableCell>
                             <TableCell>
@@ -198,6 +241,9 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                                     ></div>
                                     <span>{role.color}</span>
                                 </div>
+                            </TableCell>
+                            <TableCell>
+                                { role.allowed_pages.join(", ") || "Keine" }
                             </TableCell>
                             <TableCell className="text-right">
                                 <Dialog open={isUpdateRoleDialogOpen} onOpenChange={setIsUpdateRoleDialogOpen}>
@@ -244,6 +290,19 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                                                     />
                                                     <span>{editingRole?.color || role.color}</span>
                                                 </div>
+                                            </div>
+                                            <div className="space-y-2 space-x-2">
+                                                <Label>Erlaubte Seiten</Label>
+                                                <PageCheckboxes
+                                                    value={editingRole?.allowed_pages || role.allowed_pages || []}
+                                                    onChange={(newPages) => {
+                                                        if (!editingRole) {
+                                                            setEditingRole({...role, allowed_pages: newPages})
+                                                        } else {
+                                                            setEditingRole({...editingRole, allowed_pages: newPages})
+                                                        }
+                                                    }}
+                                                />
                                             </div>
                                             <Button onClick={() => {
                                                 if (editingRole && editingRole.name === "") {
