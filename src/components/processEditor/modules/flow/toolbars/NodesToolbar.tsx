@@ -1,18 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {activityShapeStyle} from "../nodes/ActivityNode";
-import {startNodeShapeStyle} from "../nodes/StartNode";
-import {GatewayShapeStyle} from "../nodes/GatewayNode";
-import {endNodeShapeStyle} from "../nodes/EndNode";
-import {NodeTypes} from "@/model/NodeTypes";
-import {challengeShapeStyle} from "../nodes/ChallengeNode";
-import {eventShapeStyle} from "../nodes/GamificationEventNode";
-import useStore from "../../../store";
+"use client"
+
+import React, { useEffect, useState } from 'react'
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { activityShapeStyle } from "../nodes/ActivityNode"
+import { startNodeShapeStyle } from "../nodes/StartNode"
+import { GatewayShapeStyle } from "../nodes/GatewayNode"
+import { endNodeShapeStyle } from "../nodes/EndNode"
+import { NodeTypes } from "@/model/NodeTypes"
+import { challengeShapeStyle } from "../nodes/ChallengeNode"
+import { eventShapeStyle } from "../nodes/GamificationEventNode"
+import useStore from "../../../store"
 
 export default function NodesToolbar() {
-    const onDragStart = (event: any, nodeType: String, nodeData: any) => {
-        event.dataTransfer.setData('application/reactflow', JSON.stringify({ nodeType, nodeData }));
-        event.dataTransfer.effectAllowed = 'move';
-    };
+    const onDragStart = (event: React.DragEvent, nodeType: string, nodeData: any) => {
+        event.dataTransfer.setData('application/reactflow', JSON.stringify({ nodeType, nodeData }))
+        event.dataTransfer.effectAllowed = 'move'
+    }
 
     const nodes = useStore((state) => state.nodes)
     const [isStartAlreadyPlaced, setIsStartAlreadyPlaced] = useState<boolean>(false)
@@ -21,44 +26,71 @@ export default function NodesToolbar() {
         setIsStartAlreadyPlaced(nodes.filter(node => node.type === NodeTypes.START_NODE).length !== 0)
     }, [nodes])
 
+    const NodeItem = ({ label, style, nodeType, nodeData = {}, disabled = false, isMarginBottomDisabled = false }: {
+        label: string,
+        style: any,
+        nodeType: string,
+        nodeData?: any,
+        disabled?: boolean,
+        isMarginBottomDisabled?: boolean
+    }) => (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <div className={`flex flex-col items-center ${isMarginBottomDisabled ? "" : "mb-4"}`}>
+                        <div
+                            draggable={!disabled}
+                            style={{ ...style, opacity: disabled ? 0.5 : 1 }}
+                            className="border-2 border-primary cursor-move"
+                            onDragStart={(event) => !disabled && onDragStart(event, nodeType, nodeData)}
+                        />
+                    </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{disabled ? `Already placed ${label}` : `${label}`}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    )
+
     return (
-        <aside>
-            <div style={{
-                padding: 16,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: 'center',
-                justifyContent: 'center',
-            }} className="bg-background">
-                Start
-                <div draggable={!isStartAlreadyPlaced}
-                    style={{ ...startNodeShapeStyle, marginBottom: 10, borderColor: isStartAlreadyPlaced ? "lightgray" : undefined }}
-                    className="border-2 border-foreground"
-                    onDragStart={(event) =>
-                        onDragStart(event, NodeTypes.START_NODE, {})
-                    }
+        <Card className="w-20">
+            <CardContent className="p-4">
+                <NodeItem
+                    label="Start"
+                    style={startNodeShapeStyle}
+                    nodeType={NodeTypes.START_NODE}
+                    disabled={isStartAlreadyPlaced}
                 />
-                End
-                <div draggable style={{ ...endNodeShapeStyle,  marginBottom: 10 }} onDragStart={(event) =>
-                    onDragStart(event, NodeTypes.END_NODE, {})
-                } className="border-2 border-foreground" />
-                Activity
-                <div draggable style={{ ...activityShapeStyle, marginBottom: 10 }} onDragStart={(event) =>
-                    onDragStart(event, NodeTypes.ACTIVITY_NODE, {})
-                } className="border-2 border-foreground" />
-                Gateway
-                <div draggable style={{ ...GatewayShapeStyle, marginBottom: 15, marginTop: 5 }} onDragStart={(event) =>
-                    onDragStart(event, NodeTypes.GATEWAY_NODE, {})
-                } className="border-2 border-foreground" />
-                Challenge
-                <div draggable style={{ ...challengeShapeStyle, marginBottom: 10 }} onDragStart={(event) => {
-                    onDragStart(event, NodeTypes.CHALLENGE_NODE, { backgroundColor: "#eeffee"})
-                }} className="border-2 border-foreground" />
-                Gam. Event
-                <div draggable style={{ ...eventShapeStyle, marginBottom: 10}} onDragStart={(event) => {
-                    onDragStart(event, NodeTypes.GAMIFICATION_EVENT_NODE, {})
-                }} className="border-2 border-foreground" />
-            </div>
-        </aside>
-    );
-};
+                <NodeItem
+                    label="End"
+                    style={endNodeShapeStyle}
+                    nodeType={NodeTypes.END_NODE}
+                />
+                <NodeItem
+                    label="Activity"
+                    style={activityShapeStyle}
+                    nodeType={NodeTypes.ACTIVITY_NODE}
+                />
+                <NodeItem
+                    label="Gateway"
+                    style={GatewayShapeStyle}
+                    nodeType={NodeTypes.GATEWAY_NODE}
+                />
+                <Separator className="my-4" />
+                <NodeItem
+                    label="Challenge"
+                    style={challengeShapeStyle}
+                    nodeType={NodeTypes.CHALLENGE_NODE}
+                    nodeData={{ backgroundColor: "#eeffee" }}
+                />
+                <NodeItem
+                    label="Gam. Event"
+                    style={eventShapeStyle}
+                    nodeType={NodeTypes.GAMIFICATION_EVENT_NODE}
+                    isMarginBottomDisabled={true}
+                />
+            </CardContent>
+        </Card>
+    )
+}

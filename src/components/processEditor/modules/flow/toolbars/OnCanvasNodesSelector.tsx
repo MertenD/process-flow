@@ -1,84 +1,111 @@
 "use client"
 
-import * as React from 'react';
-import {useEffect, useState} from 'react';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import {endNodeShapeStyle} from "../nodes/EndNode";
-import {activityShapeStyle} from "../nodes/ActivityNode";
-import {GatewayShapeStyle} from "../nodes/GatewayNode";
-import {NodeTypes} from "@/model/NodeTypes";
-import {eventShapeStyle} from "../nodes/GamificationEventNode";
+import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { endNodeShapeStyle } from "../nodes/EndNode"
+import { activityShapeStyle } from "../nodes/ActivityNode"
+import { GatewayShapeStyle } from "../nodes/GatewayNode"
+import { NodeTypes } from "@/model/NodeTypes"
+import { eventShapeStyle } from "../nodes/GamificationEventNode"
 
 export interface OnCanvasNodesToolbarProps {
-    open: boolean;
-    position: {x: number, y: number}
-    onClose: (nodeType: NodeTypes | null) => void;
+    open: boolean
+    position: { x: number; y: number }
+    onClose: (nodeType: NodeTypes | null) => void
 }
 
 export default function OnCanvasNodesToolbar(props: OnCanvasNodesToolbarProps) {
-    const { onClose, open, position } = props;
-    // Change width and height when adding new elements to toolbar
-    const width = 160
-    const height = 500
+    const { onClose, open, position } = props
+    const width = 240
+    const height = 350
 
-    const [windowWidth, setWindowWidth] = useState(0);
-    const [windowHeight, setWindowHeight] = useState(0);
+    const [windowWidth, setWindowWidth] = useState(0)
+    const [windowHeight, setWindowHeight] = useState(0)
 
     useEffect(() => {
-        setWindowWidth(window.innerWidth);
-        setWindowHeight(window.innerHeight);
-        const handleResize = () => {
-            setWindowWidth(window.innerWidth);
-            setWindowHeight(window.innerHeight);
-        };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+        const updateWindowDimensions = () => {
+            setWindowWidth(window.innerWidth)
+            setWindowHeight(window.innerHeight)
+        }
+
+        updateWindowDimensions()
+        window.addEventListener('resize', updateWindowDimensions)
+
+        return () => window.removeEventListener('resize', updateWindowDimensions)
+    }, [])
 
     const handleClose = () => {
         onClose(null)
     }
 
     const handleNodeSelected = (nodeType: NodeTypes) => {
-        onClose(nodeType);
-    };
+        onClose(nodeType)
+    }
+
+    const NodeItem = ({ label, style, nodeType }: { label: string, style: any, nodeType: NodeTypes }) => (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        variant="outline"
+                        className="w-full mb-4 p-0 h-auto hover:bg-secondary"
+                        onClick={() => handleNodeSelected(nodeType)}
+                    >
+                        <div className="flex flex-col items-center py-3">
+                            <span className="text-sm mb-2">{label}</span>
+                            <div style={{ ...style }} className="border-2 border-primary" />
+                        </div>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Add {label} node</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    )
 
     return (
-        <Dialog PaperProps={{
-            sx: {
-                position: "fixed",
-                m: 0,
-                left: Math.min(position.x, windowWidth - width - 16),
-                top: Math.min(position.y, windowHeight - height - 16)
-            }
-        }} onClose={handleClose} open={open}>
-            <DialogTitle>Select Node</DialogTitle>
-            <div style={{
-                paddingBottom: 16,
-                background: "white",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}>
-                End
-                <div style={{ ...endNodeShapeStyle,  marginBottom: 10 }} onClick={() => {
-                    handleNodeSelected(NodeTypes.END_NODE)
-                }}/>
-                Activity
-                <div style={{ ...activityShapeStyle, marginBottom: 10 }} onClick={() => {
-                    handleNodeSelected(NodeTypes.ACTIVITY_NODE)
-                }}/>
-                Gateway
-                <div style={{ ...GatewayShapeStyle, marginBottom: 15, marginTop: 5 }} onClick={() => {
-                    handleNodeSelected(NodeTypes.GATEWAY_NODE)
-                }} />
-                Gam. Event
-                <div style={{ ...eventShapeStyle, marginBottom: 15}} onClick={() => {
-                    handleNodeSelected(NodeTypes.GAMIFICATION_EVENT_NODE)
-                }} />
-            </div>
+        <Dialog open={open} onOpenChange={handleClose}>
+            <DialogContent
+                className="p-0 shadow-lg"
+                style={{
+                    position: "fixed",
+                    margin: 0,
+                    left: Math.max(Math.min(position.x, windowWidth - width), width),
+                    top: Math.max(Math.min(position.y, windowHeight - height), height),
+                    width: width,
+                    maxWidth: 'none',
+                }}
+            >
+                <DialogHeader className="p-4 pb-2">
+                    <DialogTitle>Select Node</DialogTitle>
+                </DialogHeader>
+                <div className="p-4 bg-background flex flex-col items-stretch justify-center">
+                    <NodeItem
+                        label="End"
+                        style={endNodeShapeStyle}
+                        nodeType={NodeTypes.END_NODE}
+                    />
+                    <NodeItem
+                        label="Activity"
+                        style={activityShapeStyle}
+                        nodeType={NodeTypes.ACTIVITY_NODE}
+                    />
+                    <NodeItem
+                        label="Gateway"
+                        style={GatewayShapeStyle}
+                        nodeType={NodeTypes.GATEWAY_NODE}
+                    />
+                    <NodeItem
+                        label="Gam. Event"
+                        style={eventShapeStyle}
+                        nodeType={NodeTypes.GAMIFICATION_EVENT_NODE}
+                    />
+                </div>
+            </DialogContent>
         </Dialog>
-    );
+    )
 }

@@ -117,9 +117,7 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
             const targetIsChallengeNode = event.target.parentElement.classList.contains("react-flow__node-challengeNode")
 
             if ((targetIsPane || targetIsChallengeNode) && connectStartParams.current?.handleType === "source" && reactFlowWrapper.current !== null) {
-                // @ts-ignore
-                const { top, left } = reactFlowWrapper.current.getBoundingClientRect();
-                setLastEventPosition({ x: event.clientX - left, y: event.clientY - top })
+                setLastEventPosition({ x: event.clientX, y: event.clientY })
                 setOpenOnCanvasNodeSelector(true)
             }
         },
@@ -131,27 +129,27 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
         let zIndex = 0
         switch(nodeType) {
             case NodeTypes.START_NODE:
-                yOffset = 21
+                yOffset = 15
                 zIndex = 6
                 break
             case NodeTypes.END_NODE:
-                yOffset = 21
+                yOffset = 15
                 zIndex = 5
                 break
             case NodeTypes.ACTIVITY_NODE:
-                yOffset = 121
+                yOffset = 25
                 zIndex = 1
                 break
             case NodeTypes.GATEWAY_NODE:
-                yOffset = 18
+                yOffset = 15
                 zIndex = 4
                 break
             case NodeTypes.CHALLENGE_NODE:
-                yOffset = 200
+                yOffset = 198
                 zIndex = 0
                 break
             case NodeTypes.GAMIFICATION_EVENT_NODE:
-                yOffset = 38
+                yOffset = 25
                 zIndex = 3
         }
 
