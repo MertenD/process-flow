@@ -274,7 +274,7 @@ export default function BpmnEditor({ processModelId, processModelName, teamId }:
                         <SaveButton processModelId={processModelId}/>
                         <CreateInstanceButton processModelId={processModelId}/>
                         <ExportButton />
-                        <DeleteProcessButton processModelId={processModelId} processModelName={processModelName} />
+                        <DeleteProcessButton  teamId={teamId} processModelId={processModelId} processModelName={processModelName} />
                     </div>
                     <div className="w-full h-full pl-2 bg-accent">
                         <DragAndDropFlow processModelId={processModelId}/>

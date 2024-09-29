@@ -22,7 +22,7 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 interface TeamSwitcherProps extends PopoverTriggerProps {
     ownTeams: Team[]
     otherTeams: Team[]
-    selectedTeamId?: string
+    selectedTeamId?: number
 }
 
 export default function TeamSwitcher({ className, ownTeams, otherTeams, selectedTeamId }: Readonly<TeamSwitcherProps>) {

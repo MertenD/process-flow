@@ -5,9 +5,11 @@ import {UserNav} from "@/components/headerbar/UserNav";
 import {ThemeModeToggle} from "@/components/ui/ThemeModeToggle";
 import {createClient} from "@/utils/supabase/server";
 import HomeButton from "@/components/headerbar/HomeButton";
+import getAllowedPages from "@/actions/get-allowed-pages";
+import {redirect} from "next/navigation";
 
 export interface HeaderBarProps {
-    selectedTeamId: string
+    selectedTeamId: number
 }
 
 export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarProps>) {
@@ -15,8 +17,8 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
     const supabase = createClient()
 
     const {data: userData, error} = await supabase.auth.getUser()
-    if (error || !userData.user) {
-        // TODO hide teamswitcher or something or redirect to login
+    if (error || !userData.user || !userData.user?.id) {
+        redirect("/authenticate")
     }
 
     const { data: teams } = await supabase
@@ -24,6 +26,8 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
         .select('profileId:profile_id, teamId:team_id, team ( name, colorSchemeFrom: color_scheme->from, colorSchemeTo: color_scheme->to )')
         .eq('profile_id', userData.user?.id || "")
         .returns<{ profileId : string, teamId: string, team: { name: string, colorSchemeFrom: string, colorSchemeTo: string } }[]>()
+
+    const allowedPages = await getAllowedPages(selectedTeamId, userData.user.id)
 
     return (
         <section className="navigationBar">
@@ -43,7 +47,10 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
                             colorSchema: { from: team.team.colorSchemeFrom, to: team.team.colorSchemeTo }
                         }
                     }) ?? []} selectedTeamId={selectedTeamId} /> }
-                    { userData.user && <Navigation className="mx-6" selectedTeamId={selectedTeamId} /> }
+                    <Navigation
+                        allowedPages={allowedPages}
+                        className="mx-6" selectedTeamId={selectedTeamId}
+                    />
                     <div className="ml-auto flex items-center space-x-4">
                         <UserNav/>
                         <ThemeModeToggle />
