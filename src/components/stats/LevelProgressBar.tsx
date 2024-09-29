@@ -7,10 +7,11 @@ export interface LevelProgressBarProps {
     experience: number,
     experiencePerLevel: number,
     color: string,
-    setLevel: (newLevel: number) => void
+    setLevel?: (newLevel: number) => void
+    className?: string
 }
 
-export function LevelProgressBar({ color, experience, experiencePerLevel, setLevel }: LevelProgressBarProps) {
+export function LevelProgressBar({ color, experience, experiencePerLevel, setLevel, className }: LevelProgressBarProps) {
 
     const [oldExperience, setOldExperience] = useState(experience)
     const [showingExperience, setShowingExperience] = useState(0)
@@ -24,7 +25,9 @@ export function LevelProgressBar({ color, experience, experiencePerLevel, setLev
                 // TODO Irgendeine Animation bei einem Level Up
                 setShowingExperience(100)
                 setTimeout(() => {
-                    setLevel(Math.floor(experience / experiencePerLevel) + 1)
+                    if (setLevel) {
+                        setLevel(Math.floor(experience / experiencePerLevel) + 1)
+                    }
                     setDisableEasing(true)
                     setShowingExperience(0)
                 }, 1000)
@@ -33,7 +36,9 @@ export function LevelProgressBar({ color, experience, experiencePerLevel, setLev
                     setShowingExperience(experience % experiencePerLevel)
                 }, 1100)
             } else {
-                setLevel(Math.floor(experience / experiencePerLevel) + 1)
+                if (setLevel) {
+                    setLevel(Math.floor(experience / experiencePerLevel) + 1)
+                }
                 setShowingExperience(experience % experiencePerLevel)
             }
         }
@@ -43,7 +48,7 @@ export function LevelProgressBar({ color, experience, experiencePerLevel, setLev
         <Progress
             isEasingDisabled={disableEasing}
             value={showingExperience}
-            className="w-full"
+            className={`w-full ${className || ""}`}
             indicatorColor={color}
         />
     </>

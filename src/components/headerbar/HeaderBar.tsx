@@ -7,6 +7,10 @@ import {createClient} from "@/utils/supabase/server";
 import HomeButton from "@/components/headerbar/HomeButton";
 import getAllowedPages from "@/actions/get-allowed-pages";
 import {redirect} from "next/navigation";
+import {UserStats} from "@/model/UserStats";
+import MiniatureLevelCard from "@/components/stats/MiniatureLevelCard";
+import getUserStatistics from "@/actions/get-user-statistics";
+import {Page} from "@/types/database.types";
 
 export interface HeaderBarProps {
     selectedTeamId: number
@@ -27,12 +31,15 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
         .eq('profile_id', userData.user?.id || "")
         .returns<{ profileId : string, teamId: string, team: { name: string, createdBy: string, colorSchemeFrom: string, colorSchemeTo: string } }[]>()
 
-    const allowedPages = await getAllowedPages(selectedTeamId, userData.user.id)
+    const allowedPages: Page[] = await getAllowedPages(selectedTeamId, userData.user.id)
+
+    const userStats: UserStats = await getUserStatistics(userData.user.id, selectedTeamId)
 
     return (
         <section className="navigationBar">
             <div className="border-b">
                 <div className="flex h-16 items-center px-4">
+
                     <HomeButton />
                     { userData.user && <TeamSwitcher ownTeams={teams?.filter(team => team.team.createdBy === userData.user.id).map(team => {
                         return {
@@ -51,7 +58,8 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
                         allowedPages={allowedPages}
                         className="mx-6" selectedTeamId={selectedTeamId}
                     />
-                    <div className="ml-auto flex items-center space-x-4">
+                    <div className="ml-auto flex items-center space-x-6">
+                        <MiniatureLevelCard experience={userStats.experience} experiencePerLevel={userStats.experiencePerLevel} />
                         <UserNav/>
                         <ThemeModeToggle />
                     </div>
