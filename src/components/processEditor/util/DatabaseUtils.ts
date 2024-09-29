@@ -35,6 +35,7 @@ export async function saveProcessModelToDatabase(nodes: Node[], edges: Edge[], p
         // TODO URL soll in die node/options definition und nicht hier hardcoded sein
         let executionUrl = undefined
         if (node.type === NodeTypes.ACTIVITY_NODE) {
+            console.log("APP_URL", process.env.APP_URL)
             executionUrl = `${process.env.APP_URL || window.location.origin}/instance/task/activity`
         } else if (node.type === NodeTypes.GAMIFICATION_EVENT_NODE) {
             executionUrl = `${process.env.APP_URL || window.location.origin}/api/instance/event`

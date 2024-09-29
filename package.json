@@ -1,6 +1,11 @@
 {
   "name": "process-flow",
   "version": "0.1.0",
+  "contributors": [
+    {
+      "name": "Merten Dieckmann"
+    }
+  ],
   "private": true,
   "scripts": {
     "dev": "next dev",
