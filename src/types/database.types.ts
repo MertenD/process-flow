@@ -53,3 +53,5 @@ export type Team = Tables<"team">
 
 export type Invitation = Tables<"invitation">
 export type InvitationWithTeam = MergeDeep<Invitation, { team: Team }>
+
+export type Statistics = Tables<"statistics">

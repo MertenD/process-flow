@@ -58,3 +58,16 @@ grant trigger on table "public"."statistics" to "service_role";
 grant truncate on table "public"."statistics" to "service_role";
 
 grant update on table "public"."statistics" to "service_role";
+
+alter table "public"."statistics" add column "profile_id" uuid not null;
+
+alter table "public"."statistics" add constraint "public_statistics_profile_id_fkey" FOREIGN KEY (profile_id) REFERENCES profiles(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
+
+alter table "public"."statistics" validate constraint "public_statistics_profile_id_fkey";
+
+create policy "Enable all for authenticated"
+    on "public"."statistics"
+    as permissive
+    for all
+    to authenticated
+    using (true);

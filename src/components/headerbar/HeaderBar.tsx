@@ -7,9 +7,7 @@ import {createClient} from "@/utils/supabase/server";
 import HomeButton from "@/components/headerbar/HomeButton";
 import getAllowedPages from "@/actions/get-allowed-pages";
 import {redirect} from "next/navigation";
-import {UserStats} from "@/model/UserStats";
 import MiniatureLevelCard from "@/components/stats/MiniatureLevelCard";
-import getUserStatistics from "@/actions/get-user-statistics";
 import {Page} from "@/types/database.types";
 
 export interface HeaderBarProps {
@@ -32,8 +30,6 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
         .returns<{ profileId : string, teamId: string, team: { name: string, createdBy: string, colorSchemeFrom: string, colorSchemeTo: string } }[]>()
 
     const allowedPages: Page[] = await getAllowedPages(selectedTeamId, userData.user.id)
-
-    const userStats: UserStats = await getUserStatistics(userData.user.id, selectedTeamId)
 
     return (
         <section className="navigationBar">
@@ -59,7 +55,7 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
                         className="mx-6" selectedTeamId={selectedTeamId}
                     />
                     <div className="ml-auto flex items-center space-x-6">
-                        <MiniatureLevelCard experience={userStats.experience} experiencePerLevel={userStats.experiencePerLevel} />
+                        <MiniatureLevelCard userId={userData.user.id} teamId={selectedTeamId} />
                         <UserNav/>
                         <ThemeModeToggle />
                     </div>

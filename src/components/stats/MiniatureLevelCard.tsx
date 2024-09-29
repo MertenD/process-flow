@@ -1,25 +1,65 @@
 "use client"
 
 import {LevelProgressBar} from "@/components/stats/LevelProgressBar";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {UserStats} from "@/model/UserStats";
+import getUserStatistics from "@/actions/get-user-statistics";
+import {User} from "@supabase/auth-js";
+import {createClient} from "@/utils/supabase/client";
+import getProcessModels from "@/actions/get-process-models";
+import {ProcessModel} from "@/types/database.types";
+import {toast} from "@/components/ui/use-toast";
 
-export interface MiniatureLevelBarProps {
-    experience: number
-    experiencePerLevel: number
+export interface MiniatureLevelCardProps {
+    userId: string,
+    teamId: number
 }
 
-export default function MiniatureLevelCard({ experience, experiencePerLevel }: MiniatureLevelBarProps) {
+export default function MiniatureLevelCard({ userId, teamId }: MiniatureLevelCardProps) {
 
-    const [level, setLevel] = useState<number>(Math.floor(experience / experiencePerLevel) + 1)
+    const [userStats, setUserStats] = useState<UserStats | undefined>(undefined)
+    const [level, setLevel] = useState<number>(1)
+    const [pointsToReachNextLevel, setPointsToReachNextLevel] = useState<number>(100)
 
-    return <div className="w-32 flex flex-col space-y-1">
+    const supabase = createClient()
+
+    useEffect(() => {
+        getUserStatistics(userId, teamId).then(setUserStats)
+    }, [teamId, userId]);
+    
+    useEffect(() => {
+        const updateSubscription = supabase
+            .channel("miniature_level_card_update")
+            .on("postgres_changes", {
+                event: "*",
+                schema: "public",
+                table: "statistics",
+                filter: `profile_id=eq.${userId}`
+            }, (payload) => {
+                getUserStatistics(userId, teamId).then(setUserStats)
+            })
+            .subscribe()
+
+        return () => {
+            updateSubscription.unsubscribe().then()
+        }
+
+    }, [supabase, userId, teamId]);
+
+    useEffect(() => {
+        if (userStats) {
+            setPointsToReachNextLevel(userStats.experiencePerLevel * (Math.floor(userStats.experience / userStats.experiencePerLevel) + 1))
+        }
+    }, [level]);
+
+    return userStats && <div className="w-32 flex flex-col space-y-1">
         <div className="flex flex-row justify-between">
             <p className="text-xs font-semibold">Level { level }</p>
-            <p className="text-xs font-semibold">{ experience } / { experiencePerLevel * (Math.floor(experience / experiencePerLevel) + 1) } XP</p>
+            <p className="text-xs font-semibold">{ userStats.experience } / { pointsToReachNextLevel } XP</p>
         </div>
         <LevelProgressBar
-            experience={experience}
-            experiencePerLevel={experiencePerLevel}
+            experience={userStats.experience}
+            experiencePerLevel={userStats.experiencePerLevel}
             color="bg-green-600"
             setLevel={setLevel}
             className="h-2"
