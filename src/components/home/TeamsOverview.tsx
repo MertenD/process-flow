@@ -199,39 +199,6 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
     return <div className="space-y-6">
         <Card>
             <CardHeader>
-                <CardTitle>Ihre Teams</CardTitle>
-                <CardDescription>Klicken Sie auf ein Team, um es auszuwählen und zur Hauptanwendung zu
-                    gelangen.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ScrollArea className="h-[300px]">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {teams.map((team: TeamInfo) => {
-                            return <Link key={team.teamId + "-link"} href={`/${team.teamId}/tasks`}>
-                                {renderCard(team)}
-                            </Link>
-                        })}
-                    </div>
-                </ScrollArea>
-            </CardContent>
-        </Card>
-
-        <Card>
-            <CardHeader>
-                <CardTitle>Ausstehende Einladungen</CardTitle>
-                <CardDescription>Nehmen Sie Einladungen an oder lehnen Sie sie ab.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ScrollArea className="h-[200px]">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {invitations.map((invitation) => renderCard(invitation, false))}
-                    </div>
-                </ScrollArea>
-            </CardContent>
-        </Card>
-
-        <Card>
-            <CardHeader>
                 <CardTitle>Neues Team erstellen</CardTitle>
                 <CardDescription>Geben Sie einen Namen für Ihr neues Team ein und wählen Sie ein
                     Farbschema.</CardDescription>
@@ -296,6 +263,40 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
                 </div>
             </CardContent>
         </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Ihre Teams</CardTitle>
+                <CardDescription>Klicken Sie auf ein Team, um es auszuwählen und zur Hauptanwendung zu
+                    gelangen.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ScrollArea className="h-[300px]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {teams.map((team: TeamInfo) => {
+                            return <Link key={team.teamId + "-link"} href={`/${team.teamId}/tasks`}>
+                                {renderCard(team)}
+                            </Link>
+                        })}
+                    </div>
+                </ScrollArea>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Ausstehende Einladungen</CardTitle>
+                <CardDescription>Nehmen Sie Einladungen an oder lehnen Sie sie ab.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ScrollArea className="h-[200px]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {invitations.map((invitation) => renderCard(invitation, false))}
+                    </div>
+                </ScrollArea>
+            </CardContent>
+        </Card>
+
         <ConfirmationDialog
             isOpen={confirmDialog.isOpen}
             onClose={() => setConfirmDialog({isOpen: false, teamName: null, teamId: null})}

@@ -29,3 +29,7 @@ AS $function$BEGIN
     WHERE profile_id = profile_id_param AND team_id = team_id_param;
 END;$function$
 ;
+
+drop function if exists "public"."add_role"(name_param text, color_param text, belongs_to_param bigint);
+
+alter table "public"."role" add column "pages" jsonb not null default '{"allowed_pages": []}'::jsonb;
