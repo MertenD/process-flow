@@ -12,31 +12,28 @@ const fontSans = FontSans({
 })
 
 export const metadata: Metadata = {
-  title: "ProcessFlow",
-  description: "ProcessFlow is a tool for managing your workflows and processes.",
+    title: "ProcessFlow",
+    description: "ProcessFlow is a tool for managing your workflows and processes.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
-      )}>
-          <ThemeProvider
-              attribute="class"
-              defaultTheme="light"
-              enableSystem
-              disableTransitionOnChange
-          >
-            <Toaster />
-            { children }
-          </ThemeProvider>
-      </body>
-    </html>
-  );
+export default async function RootLayout({children,}: Readonly<{ children: React.ReactNode; }>) {
+
+    return (
+        <html lang="en">
+            <body className={cn(
+                "min-h-screen bg-background font-sans antialiased",
+                fontSans.variable
+            )}>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme={"system"}
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <Toaster/>
+                    {children}
+                </ThemeProvider>
+            </body>
+        </html>
+    );
 }

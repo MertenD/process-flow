@@ -27,7 +27,7 @@ export async function UserNav() {
 
     const {data: profile} = await supabase
         .from('profiles')
-        .select('id, username, email')
+        .select('id, username, email, avatar')
         .eq('id', user?.id || "")
         .single<Profile>()
 
@@ -40,12 +40,14 @@ export async function UserNav() {
         return redirect('/')
     }
 
+    console.log(profile)
+
     return profile ? (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                        <AvatarImage src="/avatars/01.png" alt="@shadcn" />
+                        <AvatarImage src={profile.avatar || ""} alt="@shadcn" />
                         <AvatarFallback>{ profile.username.slice(0,2).toUpperCase() }</AvatarFallback>
                     </Avatar>
                 </Button>

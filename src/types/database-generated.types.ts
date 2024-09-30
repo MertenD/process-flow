@@ -716,28 +716,37 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar: string | null
           created_at: string
           created_by: string | null
           email: string
           id: string
+          is_dark_mode_enabled: boolean
+          language: string
           updated_at: string | null
           updated_by: string | null
           username: string
         }
         Insert: {
+          avatar?: string | null
           created_at?: string
           created_by?: string | null
           email: string
           id?: string
+          is_dark_mode_enabled?: boolean
+          language?: string
           updated_at?: string | null
           updated_by?: string | null
           username: string
         }
         Update: {
+          avatar?: string | null
           created_at?: string
           created_by?: string | null
           email?: string
           id?: string
+          is_dark_mode_enabled?: boolean
+          language?: string
           updated_at?: string | null
           updated_by?: string | null
           username?: string
