@@ -2,7 +2,6 @@ import React from 'react';
 import Navigation from "@/components/headerbar/Navigation";
 import TeamSwitcher from "@/components/headerbar/TeamSwitcher";
 import {UserNav} from "@/components/headerbar/UserNav";
-import {ThemeModeToggle} from "@/components/ui/ThemeModeToggle";
 import {createClient} from "@/utils/supabase/server";
 import HomeButton from "@/components/headerbar/HomeButton";
 import getAllowedPages from "@/actions/get-allowed-pages";
@@ -57,7 +56,6 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
                     <div className="ml-auto flex items-center space-x-6">
                         <MiniatureLevelCard userId={userData.user.id} teamId={selectedTeamId} />
                         <UserNav/>
-                        <ThemeModeToggle />
                     </div>
                 </div>
             </div>
