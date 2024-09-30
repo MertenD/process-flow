@@ -9,8 +9,6 @@ import { startNodeShapeStyle } from "../nodes/StartNode"
 import { GatewayShapeStyle } from "../nodes/GatewayNode"
 import { endNodeShapeStyle } from "../nodes/EndNode"
 import { NodeTypes } from "@/model/NodeTypes"
-import { challengeShapeStyle } from "../nodes/ChallengeNode"
-import { eventShapeStyle } from "../nodes/GamificationEventNode"
 import useStore from "../../../store"
 
 export default function NodesToolbar() {
@@ -76,19 +74,6 @@ export default function NodesToolbar() {
                     label="Gateway"
                     style={GatewayShapeStyle}
                     nodeType={NodeTypes.GATEWAY_NODE}
-                />
-                <Separator className="my-4" />
-                <NodeItem
-                    label="Challenge"
-                    style={challengeShapeStyle}
-                    nodeType={NodeTypes.CHALLENGE_NODE}
-                    nodeData={{ backgroundColor: "#eeffee" }}
-                />
-                <NodeItem
-                    label="Gam. Event"
-                    style={eventShapeStyle}
-                    nodeType={NodeTypes.GAMIFICATION_EVENT_NODE}
-                    isMarginBottomDisabled={true}
                 />
             </CardContent>
         </Card>

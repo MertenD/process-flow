@@ -9,7 +9,6 @@ import { endNodeShapeStyle } from "../nodes/EndNode"
 import { activityShapeStyle } from "../nodes/ActivityNode"
 import { GatewayShapeStyle } from "../nodes/GatewayNode"
 import { NodeTypes } from "@/model/NodeTypes"
-import { eventShapeStyle } from "../nodes/GamificationEventNode"
 
 export interface OnCanvasNodesToolbarProps {
     open: boolean
@@ -98,11 +97,6 @@ export default function OnCanvasNodesToolbar(props: OnCanvasNodesToolbarProps) {
                         label="Gateway"
                         style={GatewayShapeStyle}
                         nodeType={NodeTypes.GATEWAY_NODE}
-                    />
-                    <NodeItem
-                        label="Gam. Event"
-                        style={eventShapeStyle}
-                        nodeType={NodeTypes.GAMIFICATION_EVENT_NODE}
                     />
                 </div>
             </DialogContent>

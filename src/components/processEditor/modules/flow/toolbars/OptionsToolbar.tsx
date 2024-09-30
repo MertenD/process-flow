@@ -6,10 +6,6 @@ import {getActivityOptionsDefinition} from "@/components/processEditor/modules/f
 import {NodeTypes} from "@/model/NodeTypes";
 import DynamicOptions from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
 import {getGatewayOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/GatewayNode";
-import {
-    getGamificationEventOptionsDefinition
-} from "@/components/processEditor/modules/flow/nodes/GamificationEventNode";
-import {getChallengeOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/ChallengeNode";
 import {getStartOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/StartNode";
 
 export interface OptionsToolbarProps {
@@ -42,12 +38,6 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
             break
         case NodeTypes.GATEWAY_NODE:
             options = <DynamicOptions optionsDefinition={ getGatewayOptionsDefinition(selectedNode.id) } teamId={teamId} />
-            break
-        case NodeTypes.GAMIFICATION_EVENT_NODE:
-            options = <DynamicOptions optionsDefinition={ getGamificationEventOptionsDefinition(selectedNode.id) } teamId={teamId} />
-            break
-        case NodeTypes.CHALLENGE_NODE:
-            options = <DynamicOptions optionsDefinition={ getChallengeOptionsDefinition(selectedNode.id) } teamId={teamId}/>
             break
         case NodeTypes.START_NODE:
             options = <DynamicOptions optionsDefinition={ getStartOptionsDefinition(selectedNode.id) } teamId={teamId} />

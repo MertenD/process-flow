@@ -6,8 +6,6 @@ import {v4 as uuidv4} from 'uuid';
 import {NodeTypes} from "@/model/NodeTypes";
 import {ActivityNodeData} from "../modules/flow/nodes/ActivityNode";
 import {GatewayNodeData} from "../modules/flow/nodes/GatewayNode";
-import {ChallengeNodeData} from "../modules/flow/nodes/ChallengeNode";
-import {GamificationEventNodeData} from "../modules/flow/nodes/GamificationEventNode";
 
 export const onExport = (
     nodes: Node[],
@@ -45,10 +43,6 @@ export const onExport = (
                                         return createActivityNode(node, transformedBpmn.edges)
                                     case NodeTypes.GATEWAY_NODE:
                                         return createGatewayNode(node, transformedBpmn.edges)
-                                    case NodeTypes.CHALLENGE_NODE:
-                                        return createChallengeNode(node, transformedBpmn.edges)
-                                    case NodeTypes.GAMIFICATION_EVENT_NODE:
-                                        return createGamificationEventNode(node, transformedBpmn.edges)
                                 }
                             }),
                             ...transformedBpmn.edges.map((edge: Edge) => {
@@ -277,108 +271,6 @@ export const onExport = (
                 }
             }
         })
-    }
-
-    function createChallengeNode(node: Node, edges: Edge[]): any {
-        const challengeNodeData = node.data as ChallengeNodeData
-        const propertyId = "Property_" + node.id.replaceAll("-", "")
-        const inputDataAssociationId = "DataInputAssociation_" + node.id.replaceAll("-", "")
-        const dataObjectReferenceId = "DataObjectReference_" + node.id.replaceAll("-", "")
-        const dataObjectId = "DataObject_" + node.id.replaceAll("-", "")
-
-        return [
-            {
-                "intermediateThrowEvent": {
-                    id: "Id_" + node.id.replaceAll("-", ""),
-                    name: challengeNodeData.challengeType,
-                    children: [
-                        {
-                            "property": {
-                                id: propertyId,
-                            }
-                        },
-                        {
-                            "dataInputAssociation": {
-                                id: inputDataAssociationId,
-                                sourceRef: dataObjectReferenceId,
-                                children: [
-                                    {
-                                        "targetRef": {
-                                            children: propertyId
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        ...getIncomingEdgeChildren(edges, node),
-                        ...getOutgoingEdgeChildren(edges, node),
-                    ]
-                }
-            },
-            {
-                "dataObjectReference": {
-                    id: dataObjectReferenceId,
-                    name: JSON.stringify(challengeNodeData),
-                    dataObjectRef: dataObjectId
-                }
-            },
-            {
-                "dataObject": {
-                    id: dataObjectId
-                }
-            }
-        ]
-    }
-
-    function createGamificationEventNode(node: Node, edges: Edge[]): any {
-        const gamificationEventNodeData = node.data as GamificationEventNodeData
-        const propertyId = "Property_" + node.id.replaceAll("-", "")
-        const inputDataAssociationId = "DataInputAssociation_" + node.id.replaceAll("-", "")
-        const dataObjectReferenceId = "DataObjectReference_" + node.id.replaceAll("-", "")
-        const dataObjectId = "DataObject_" + node.id.replaceAll("-", "")
-
-        return [
-            {
-                "intermediateThrowEvent": {
-                    id: "Id_" + node.id.replaceAll("-", ""),
-                    name: gamificationEventNodeData.gamificationType,
-                    children: [
-                        {
-                            "property": {
-                                id: propertyId,
-                            }
-                        },
-                        {
-                            "dataInputAssociation": {
-                                id: inputDataAssociationId,
-                                sourceRef: dataObjectReferenceId,
-                                children: [
-                                    {
-                                        "targetRef": {
-                                            children: propertyId
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        ...getIncomingEdgeChildren(edges, node),
-                        ...getOutgoingEdgeChildren(edges, node),
-                    ]
-                }
-            },
-            {
-                "dataObjectReference": {
-                    id: dataObjectReferenceId,
-                    name: JSON.stringify(gamificationEventNodeData),
-                    dataObjectRef: dataObjectId
-                }
-            },
-            {
-                "dataObject": {
-                    id: dataObjectId
-                }
-            }
-        ]
     }
 }
 

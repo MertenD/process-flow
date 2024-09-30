@@ -17,10 +17,8 @@ import ActivityNode from "./modules/flow/nodes/ActivityNode";
 import StartNode from "./modules/flow/nodes/StartNode";
 import GatewayNode from "./modules/flow/nodes/GatewayNode";
 import EndNode from "./modules/flow/nodes/EndNode";
-import ChallengeNode from "./modules/flow/nodes/ChallengeNode";
 import {NodeTypes} from "@/model/NodeTypes";
 import {PointsType} from "@/model/PointsType";
-import GamificationEventNode from "./modules/flow/nodes/GamificationEventNode";
 
 export type RFState = {
     nodes: Node[];
@@ -63,9 +61,7 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
         activityNode: ActivityNode,
         startNode: StartNode,
         endNode: EndNode,
-        gatewayNode: GatewayNode,
-        challengeNode: ChallengeNode,
-        gamificationEventNode: GamificationEventNode
+        gatewayNode: GatewayNode
     },
     onNodesChange: (changes: NodeChange[]) => {
         // Ungroup group if the deleted node is a group so the children are not deleted with the group
