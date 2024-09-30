@@ -12,10 +12,10 @@ export default async function(userId: string, teamId: number): Promise<UserStats
 
     const { data: stats, error } = await supabase
         .from("statistics")
-        .select("*, profile_team ( profile_id, team_id )")
+        .select("*, badgeNames: badges->badges, profile_team ( profile_id, team_id )")
         .eq("profile_team.profile_id", userId)
         .eq("profile_team.team_id", teamId)
-        .single<Statistics & { profile_team: { profile_id: string, team_id: number } }>()
+        .single<Statistics & { badgeNames: string[], profile_team: { profile_id: string, team_id: number } }>()
 
     if (error) {
         throw error
@@ -25,12 +25,10 @@ export default async function(userId: string, teamId: number): Promise<UserStats
         throw new Error("No statistics found")
     }
 
-    // TODO Add Badges
-
     return {
         experience: stats.experience,
         experiencePerLevel: 100,
         coins: stats.coins,
-        badges: []
+        badges: stats.badgeNames
     } as UserStats
 }

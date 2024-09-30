@@ -185,7 +185,19 @@ BEGIN
 
         WHEN gamification_type = 'Badges' THEN
 
-            -- TODO IMPLEMENT BADGES
+            -- Check if badge name is given
+            IF gamification_options_replaced->>'badgeType' IS NULL THEN
+                RAISE EXCEPTION 'Badge type is missing.';
+            END IF;
+
+            -- Add badge to users statistics if it does not exists yet
+            -- badges column is a jsonb ({ "badges": ["type1", "type2"] }). This array should be appended with the badge type if it does not already exists in there
+            UPDATE statistics
+            SET badges = jsonb_set(badges, '{badges}', (badges->'badges') || jsonb_build_array(gamification_options_replaced->>'badgeType'), true)
+            FROM profile_team
+            WHERE statistics.belongs_to = profile_team.id
+            AND profile_team.team_id = team_id_param
+            AND statistics.profile_id = profile_id_param;
 
         ELSE
             RAISE EXCEPTION 'Gamification type % is not implemented.', gamification_type;

@@ -61,12 +61,11 @@ export async function UserNav() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                        Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        Settings
-                    </DropdownMenuItem>
+                    <Link href={"/settings"}>
+                        <DropdownMenuItem>
+                            Settings
+                        </DropdownMenuItem>
+                    </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItemWithServerAction action={signOut}>

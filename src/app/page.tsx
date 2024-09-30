@@ -21,16 +21,16 @@ export default async function Home() {
     const invitations: InvitationWithTeam[] = await getInvitations(userData.user.email || "")
 
     return <div>
-        <div className="min-h-screen bg-gray-100 py-8">
+        <div className="min-h-screen py-8">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">ProcessFlow</h1>
-                    <p className="text-xl text-gray-600">Die Engine für gamifizierte Businessprozesse</p>
+                    <h1 className="text-4xl font-bold text-primary mb-2">ProcessFlow</h1>
+                    <p className="text-xl">Die Engine für gamifizierte Businessprozesse</p>
                 </div>
                 { userData ? (
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-bold text-gray-900">Team Dashboard</h2>
+                            <h2 className="text-2xl font-bold">Team Dashboard</h2>
                             <AuthButton />
                         </div>
                         <TeamsOverview

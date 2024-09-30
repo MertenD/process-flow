@@ -853,6 +853,7 @@ export type Database = {
       }
       statistics: {
         Row: {
+          badges: Json
           belongs_to: number
           coins: number | null
           created_at: string
@@ -861,6 +862,7 @@ export type Database = {
           profile_id: string
         }
         Insert: {
+          badges?: Json
           belongs_to: number
           coins?: number | null
           created_at?: string
@@ -869,6 +871,7 @@ export type Database = {
           profile_id: string
         }
         Update: {
+          badges?: Json
           belongs_to?: number
           coins?: number | null
           created_at?: string
@@ -1033,21 +1036,13 @@ export type Database = {
         }
         Returns: number
       }
-      apply_gamification:
-        | {
-            Args: {
-              profile_id_param: number
-              flow_element_instance_id_param: number
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              profile_id_param: string
-              flow_element_instance_id_param: number
-            }
-            Returns: undefined
-          }
+      apply_gamification: {
+        Args: {
+          profile_id_param: string
+          flow_element_instance_id_param: number
+        }
+        Returns: undefined
+      }
       complete_flow_element_instance: {
         Args: {
           flow_element_instance_id_param: number
