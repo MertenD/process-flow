@@ -6,17 +6,11 @@ import {redirect} from "next/navigation";
 
 // TODO Generell middleware um zu überprüfen, ob man auf gewisse Routen zugriff hat
 
-// TODO Ändern vom Prozess modell hat aktuell auswirkungen auf die tasks, da die tasks anhand des prozess modells erstellt werden
-
 export default async function SelectedTasksPage({ params }: Readonly<{ params: { taskId: string, teamId: string } }>) {
-
-    // TODO Live Update der tasks, wenn sich eine task in der db updated. Dadurch möchte ich erkennen, sobald eine Aufgabe abgeschlossen worden ist und sie schließen, falls die offen ist. Gerne auhc mit schöner Asbchluss animation
-
-    // TODO Completed tasks handeln
 
     const supabase = createClient()
     const {data: userData, error} = await supabase.auth.getUser()
-    if (error || !userData.user) {
+    if (error || !userData.user || !userData.user.id) {
         redirect("/authenticate")
     }
 
@@ -28,7 +22,7 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
 
     const task = tasks?.find(task => task.id.toString() === params.taskId)
 
-    function buildTaskUrl(task: ManualTaskWithOutputs | undefined): string | null {
+    function buildTaskUrl(task: ManualTaskWithOutputs | undefined, userId: string): string | null {
         if (task == null) return null
         let taskUrl = task.execution_url
         taskUrl += "?"
@@ -39,13 +33,13 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
                 .concat(Object.entries((task.outputs) || {}))
                 .map(([key, value]) => `${key}=${value}`).join("&")
         }
-        // TODO Nicht host hardcoden
-        taskUrl += `&responsePath=${encodeURIComponent("http://localhost:3000/api/instance/complete")}`
+        taskUrl += `&responsePath=${encodeURIComponent(`${process.env.APP_URL}/api/instance/complete`)}`
         taskUrl += `&flowElementInstanceId=${task.id}`
+        taskUrl += `&userId=${userId}`
         return taskUrl
     }
 
-    const taskUrl = buildTaskUrl(task)
+    const taskUrl = buildTaskUrl(task, userData.user.id)
 
     return tasks && <>
         { task && taskUrl ? (

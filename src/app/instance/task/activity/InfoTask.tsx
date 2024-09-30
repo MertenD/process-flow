@@ -10,9 +10,10 @@ export interface InfoTaskProps {
     infoText: string
     responsePath: string
     flowElementInstanceId: string
+    userId: string
 }
 
-export default function InfoTask({ task, description, infoText, flowElementInstanceId, responsePath }: Readonly<InfoTaskProps>) {
+export default function InfoTask({ task, description, infoText, flowElementInstanceId, responsePath, userId }: Readonly<InfoTaskProps>) {
 
     function onFinish() {
         fetch(responsePath, {
@@ -22,7 +23,8 @@ export default function InfoTask({ task, description, infoText, flowElementInsta
             },
             body: JSON.stringify({
                 flowElementInstanceId,
-                data: {}
+                data: {},
+                completedBy: userId
             })
         }).then(() => {
             console.log("Submitted")

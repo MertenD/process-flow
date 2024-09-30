@@ -122,6 +122,7 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
                     </Card>
                 </Link>
             })}
+            { tasks.length === 0 && <p className="text-center">No tasks available</p> }
         </form>
     </section>
 }

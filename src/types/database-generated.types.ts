@@ -276,6 +276,7 @@ export type Database = {
       flow_element_instance: {
         Row: {
           completed_at: string | null
+          completed_by: string | null
           created_at: string
           id: number
           instance_of: number
@@ -284,6 +285,7 @@ export type Database = {
         }
         Insert: {
           completed_at?: string | null
+          completed_by?: string | null
           created_at?: string
           id?: number
           instance_of: number
@@ -292,6 +294,7 @@ export type Database = {
         }
         Update: {
           completed_at?: string | null
+          completed_by?: string | null
           created_at?: string
           id?: number
           instance_of?: number
@@ -299,6 +302,20 @@ export type Database = {
           status?: Database["public"]["Enums"]["flow_element_instance_status"]
         }
         Relationships: [
+          {
+            foreignKeyName: "public_flow_element_instance_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_flow_element_instance_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_with_roles"
+            referencedColumns: ["profile_id"]
+          },
           {
             foreignKeyName: "public_flow_element_instance_instance_of_fkey"
             columns: ["instance_of"]
@@ -841,6 +858,7 @@ export type Database = {
           created_at: string
           experience: number | null
           id: number
+          profile_id: string
         }
         Insert: {
           belongs_to: number
@@ -848,6 +866,7 @@ export type Database = {
           created_at?: string
           experience?: number | null
           id?: number
+          profile_id: string
         }
         Update: {
           belongs_to?: number
@@ -855,6 +874,7 @@ export type Database = {
           created_at?: string
           experience?: number | null
           id?: number
+          profile_id?: string
         }
         Relationships: [
           {
@@ -863,6 +883,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profile_team"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_statistics_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_statistics_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_with_roles"
+            referencedColumns: ["profile_id"]
           },
         ]
       }
@@ -999,10 +1033,26 @@ export type Database = {
         }
         Returns: number
       }
+      apply_gamification:
+        | {
+            Args: {
+              profile_id_param: number
+              flow_element_instance_id_param: number
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              profile_id_param: string
+              flow_element_instance_id_param: number
+            }
+            Returns: undefined
+          }
       complete_flow_element_instance: {
         Args: {
           flow_element_instance_id_param: number
           output_data: Json
+          completed_by_param: string
         }
         Returns: boolean
       }

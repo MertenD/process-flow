@@ -15,6 +15,7 @@ export interface ActivitySearchParams {
     responsePath: string
     flowElementInstanceId: string
     inputRegex: string
+    userId: string
 }
 
 
@@ -29,6 +30,7 @@ export default async function Page({ searchParams }: { searchParams: ActivitySea
             flowElementInstanceId={searchParams.flowElementInstanceId}
             userInputVariableName={searchParams.userInputVariableName}
             responsePath={searchParams.responsePath}
+            userId={searchParams.userId}
         />
     } else if (searchParams.activityType === ActivityType.SINGLE_CHOICE) {
         activityContent = <SingleChoiceTask
@@ -38,6 +40,7 @@ export default async function Page({ searchParams }: { searchParams: ActivitySea
             userInputVariableName={searchParams.userInputVariableName}
             responsePath={searchParams.responsePath}
             flowElementInstanceId={searchParams.flowElementInstanceId}
+            userId={searchParams.userId}
         />
     } else if (searchParams.activityType === ActivityType.MULTIPLE_CHOICE) {
         activityContent = <MultipleChoiceTask
@@ -47,6 +50,7 @@ export default async function Page({ searchParams }: { searchParams: ActivitySea
             userInputVariableName={searchParams.userInputVariableName}
             responsePath={searchParams.responsePath}
             flowElementInstanceId={searchParams.flowElementInstanceId}
+            userId={searchParams.userId}
         />
     } else if (searchParams.activityType === ActivityType.INFO) {
         activityContent = <InfoTask
@@ -55,6 +59,7 @@ export default async function Page({ searchParams }: { searchParams: ActivitySea
             infoText={searchParams.infoText}
             responsePath={searchParams.responsePath}
             flowElementInstanceId={searchParams.flowElementInstanceId}
+            userId={searchParams.userId}
         />
     }
 

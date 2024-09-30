@@ -16,9 +16,10 @@ export interface TextInputTaskProps {
     responsePath: string
     flowElementInstanceId: string,
     userInputVariableName: string
+    userId: string
 }
 
-export default function TextInputTask({ task, description, inputRegex, responsePath, flowElementInstanceId, userInputVariableName }: Readonly<TextInputTaskProps>) {
+export default function TextInputTask({ task, description, inputRegex, responsePath, flowElementInstanceId, userInputVariableName, userId }: Readonly<TextInputTaskProps>) {
 
     // TODO Regex ist scheinbar undefiniert. Es soll übergeben werden
     const FormSchema = z.object({
@@ -41,7 +42,8 @@ export default function TextInputTask({ task, description, inputRegex, responseP
                 flowElementInstanceId,
                 data: {
                     [userInputVariableName]: data.textInput
-                }
+                },
+                completedBy: userId
             })
         }).then(() => {
             console.log("Submitted")

@@ -35,10 +35,6 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
 
         const id = node.id.toString().includes("-") ? undefined : node.id.toString()
 
-        if (!id) {
-            return
-        }
-
         // TODO Make it more robust
         const executionMode = node.type === NodeTypes.ACTIVITY_NODE ? "Manual" : "Automatic"
 

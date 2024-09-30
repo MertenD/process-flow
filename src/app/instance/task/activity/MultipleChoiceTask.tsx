@@ -16,6 +16,7 @@ export interface SingleChoiceTaskProps {
     responsePath: string
     flowElementInstanceId: string
     userInputVariableName: string
+    userId: string
 }
 
 const FormSchema = z.object({
@@ -24,7 +25,7 @@ const FormSchema = z.object({
     }),
 })
 
-export default function MultipleChoiceTask({ task, description, choices, responsePath, flowElementInstanceId, userInputVariableName }: Readonly<SingleChoiceTaskProps>) {
+export default function MultipleChoiceTask({ task, description, choices, responsePath, flowElementInstanceId, userInputVariableName, userId }: Readonly<SingleChoiceTaskProps>) {
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -40,7 +41,8 @@ export default function MultipleChoiceTask({ task, description, choices, respons
                 flowElementInstanceId,
                 data: {
                     [userInputVariableName]: data.choices
-                }
+                },
+                completedBy: userId
             })
         }).then(() => {
             console.log("Submitted")
