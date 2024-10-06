@@ -199,24 +199,51 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
             </CardContent>
         </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>Ihre Teams</CardTitle>
-                <CardDescription>Klicken Sie auf ein Team, um es auszuwählen und zur Hauptanwendung zu
-                    gelangen.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ScrollArea className="h-[300px]">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {teams.map((team: TeamInfo) => {
-                            return <Link key={team.teamId + "-link"} href={`/${team.teamId}/stats`}>
-                                {renderCard(team)}
-                            </Link>
-                        })}
-                    </div>
-                </ScrollArea>
-            </CardContent>
-        </Card>
+        <div className="grid md:grid-cols-2 w-full gap-4">
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Ihre Teams</CardTitle>
+                    <CardDescription>
+                        Die Teams, die Sie selbst erstellt haben.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ScrollArea className="h-[300px]">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {teams.filter((team: TeamInfo) => team.team.createdBy === userId).map((team: TeamInfo) => {
+                                return <Link key={team.teamId + "-link"} href={`/${team.teamId}/stats`}>
+                                    {renderCard(team)}
+                                </Link>
+                            })}
+                        </div>
+                    </ScrollArea>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>
+                        Beigetretene Teams
+                    </CardTitle>
+                    <CardDescription>
+                        Die Teams, denen Sie beigetreten sind, aber nicht erstellt haben.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ScrollArea className="h-[300px]">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {teams.filter((team: TeamInfo) => team.team.createdBy !== userId).map((team: TeamInfo) => {
+                                return <Link key={team.teamId + "-link"} href={`/${team.teamId}/stats`}>
+                                    {renderCard(team)}
+                                </Link>
+                            })}
+                        </div>
+                    </ScrollArea>
+                </CardContent>
+            </Card>
+
+        </div>
 
         <Card>
             <CardHeader>
