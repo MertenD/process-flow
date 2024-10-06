@@ -51,11 +51,11 @@ export default function Navigation({ className, allowedPages, selectedTeamId } :
         >
             Team
         </Link> }
-        { allowedPages.includes("Stats") && <Link
+        <Link
             href={statsPath}
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(statsPath) ? "text-primary" : "text-muted-foreground"}`}
         >
             Stats
-        </Link> }
+        </Link>
     </nav>
 }

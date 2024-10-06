@@ -20,7 +20,7 @@ export interface RoleManagementProps {
     teamId: number
 }
 
-const availablePages: Page[] = ["Editor", "Tasks", "Monitoring", "Team", "Stats"]
+const availablePages: Page[] = ["Editor", "Tasks", "Monitoring", "Team"]
 
 export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) {
     const supabase = createClient()

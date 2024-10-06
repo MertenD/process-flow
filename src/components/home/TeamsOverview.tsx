@@ -274,7 +274,7 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
                 <ScrollArea className="h-[300px]">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {teams.map((team: TeamInfo) => {
-                            return <Link key={team.teamId + "-link"} href={`/${team.teamId}/tasks`}>
+                            return <Link key={team.teamId + "-link"} href={`/${team.teamId}/stats`}>
                                 {renderCard(team)}
                             </Link>
                         })}
