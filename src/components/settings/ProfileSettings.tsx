@@ -1,6 +1,6 @@
 "use client"
 
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
@@ -9,6 +9,7 @@ import React, {useRef, useState} from "react";
 import updateProfileSettings from "@/actions/update-profile-settings";
 import {toast} from "@/components/ui/use-toast";
 import {Profile} from "@/types/database.types";
+import {CardActionArea, CardActions} from "@mui/material";
 
 export interface ProfileSettingsProps {
     profile: Profile
@@ -60,7 +61,7 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
         fileInputRef.current?.click()
     }
 
-    return <Card>
+    return <Card className="w-full">
         <CardHeader>
             <CardTitle>Persönliche Informationen</CardTitle>
             <CardDescription>Verwalten Sie Ihre Profilinformationen</CardDescription>
@@ -83,7 +84,7 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="username">Benutzername</Label>
+                    <Label htmlFor="username" className="text-base">Benutzername</Label>
                     <Input
                         id="username"
                         value={username}
@@ -91,7 +92,7 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="email">E-Mail</Label>
+                    <Label htmlFor="email" className="text-base">E-Mail</Label>
                     <Input
                         id="email"
                         type="email"

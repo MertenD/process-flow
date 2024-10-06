@@ -28,7 +28,7 @@ export function SettingsDashboard({ userId }: Readonly<SettingsDashboardProps>) 
                     setProfile(data)
                 }
             })
-    }, []);
+    }, [supabase, userId]);
 
     useEffect(() => {
         if (!profile) return
@@ -51,21 +51,13 @@ export function SettingsDashboard({ userId }: Readonly<SettingsDashboardProps>) 
         return () => {
             subscription.unsubscribe().then()
         }
-    }, [profile]);
+    }, [profile, supabase]);
 
     return profile ? (
-        <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="profile">Profileinstellungen</TabsTrigger>
-                <TabsTrigger value="general">Anzeigeeinstellungen</TabsTrigger>
-            </TabsList>
-            <TabsContent value="profile">
-                <ProfileSettings profile={profile}/>
-            </TabsContent>
-            <TabsContent value="general">
-                <AppearanceSettings profile={profile} />
-            </TabsContent>
-        </Tabs>
+        <div className="grid md:grid-cols-2 w-full gap-4">
+            <ProfileSettings profile={profile}/>
+            <AppearanceSettings profile={profile} />
+        </div>
     ) : <div className="w-full h-full flex flex-col justify-center items-center">
         <LoadingSpinner/>
     </div>

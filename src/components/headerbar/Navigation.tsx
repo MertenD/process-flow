@@ -23,6 +23,7 @@ export default function Navigation({ className, allowedPages, selectedTeamId } :
     const teamPath = `/${selectedTeamId}/team`
     const tasksPath = `/${selectedTeamId}/tasks`
     const statsPath = `/${selectedTeamId}/stats`
+    const settingsPath = `/${selectedTeamId}/settings`
 
     return <nav
         className={cn("flex items-center space-x-4 lg:space-x-6", className)}
@@ -56,6 +57,12 @@ export default function Navigation({ className, allowedPages, selectedTeamId } :
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(statsPath) ? "text-primary" : "text-muted-foreground"}`}
         >
             Stats
+        </Link>
+        <Link
+            href={settingsPath}
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(settingsPath) ? "text-primary" : "text-muted-foreground"}`}
+        >
+            Settings
         </Link>
     </nav>
 }

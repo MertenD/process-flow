@@ -5,7 +5,7 @@ import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Switch} from "@/components/ui/switch";
 import {Button} from "@/components/ui/button";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useState} from "react";
 import {Profile} from "@/types/database.types";
 import updateAppearanceSettings from "@/actions/update-appearance-settings";
 import {toast} from "@/components/ui/use-toast";
@@ -32,6 +32,7 @@ export default function AppearanceSettings({ profile }: Readonly<AppearanceSetti
             })
             setTheme(darkMode ? 'dark' : 'light')
         }).catch((error) => {
+            console.error(error)
             toast({
                 title: 'Fehler beim Aktualisieren der Einstellungen',
                 description: 'Ihre Einstellungen konnten nicht aktualisiert werden',
