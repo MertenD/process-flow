@@ -2,7 +2,7 @@
 
 import ReactFlow, {
     Background,
-    BackgroundVariant,
+    BackgroundVariant, Connection,
     Controls,
     Edge,
     MiniMap,
@@ -14,7 +14,6 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import {shallow} from 'zustand/shallow'
-import useStore, {edgeStyle} from '../../store';
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import NodesToolbar from "./toolbars/NodesToolbar";
 import {v4 as uuidv4} from 'uuid';
@@ -27,6 +26,10 @@ import OptionsToolbar from "@/components/processEditor/modules/flow/toolbars/Opt
 import DeleteProcessButton from "@/components/processEditor/modules/flow/toolbars/DeleteProcessButton";
 import loadProcessModelFromDatabase from "@/actions/load-process-model-from-database";
 import ExportButton from "@/components/processEditor/modules/flow/toolbars/ExportButton";
+import UndoButton from "@/components/processEditor/modules/flow/toolbars/UndoButton";
+import useUndoRedo from "@/components/processEditor/modules/flow/hooks/useUndoRedo";
+import RedoButton from "@/components/processEditor/modules/flow/toolbars/RedoButton";
+import useStore, {edgeStyle} from "@/components/processEditor/stores/store";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,
@@ -45,6 +48,8 @@ export interface DragAndDropFlowProps {
 }
 
 function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
+    const { takeSnapshot } = useUndoRedo();
+
     const { nodes, edges, onNodesChange, onEdgesChange, onConnect, nodeTypes, getNodeById, updateNodeParent } = useStore(selector, shallow);
 
     const connectStartParams = useRef<OnConnectStartParams | null>(null);
@@ -127,6 +132,9 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
     function addNodeAtPosition(position: {x: number, y: number}, nodeType: NodeTypes, data: any = {}): string {
         let yOffset = 0
         let zIndex = 0
+
+        takeSnapshot()
+
         switch(nodeType) {
             case NodeTypes.START_NODE:
                 yOffset = 15
@@ -211,12 +219,24 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
+            onConnect={(connection: Connection ) => {
+                takeSnapshot()
+                onConnect(connection)
+            }}
             onConnectStart={onConnectStart}
             onConnectEnd={onConnectEnd}
             onDragOver={onDragOver}
-            onNodeDragStart={onNodeDragStart}
+            onNodeDragStart={() => {
+                takeSnapshot()
+                onNodeDragStart()
+            }}
             onNodeDragStop={onNodeDragStop}
+            onNodesDelete={() => {
+                takeSnapshot()
+            }}
+            onEdgesDelete={() => {
+                takeSnapshot()
+            }}
             onDrop={onDrop}
             nodeTypes={nodeTypes}
             selectNodesOnDrag={false}
@@ -273,8 +293,13 @@ export default function BpmnEditor({ processModelId, processModelName, teamId }:
                     <div className="w-full p-3 flex flex-row space-x-2 border-b">
                         <SaveButton processModelId={processModelId}/>
                         <CreateInstanceButton processModelId={processModelId}/>
-                        <ExportButton />
-                        <DeleteProcessButton  teamId={teamId} processModelId={processModelId} processModelName={processModelName} />
+                        <ExportButton/>
+                        <div className="h-full w-1 bg-secondary rounded-2xl"/>
+                        <UndoButton/>
+                        <RedoButton/>
+                        <div className="h-full w-1 bg-secondary rounded-2xl"/>
+                        <DeleteProcessButton teamId={teamId} processModelId={processModelId}
+                                             processModelName={processModelName}/>
                     </div>
                     <div className="w-full h-full pl-2 bg-accent">
                         <DragAndDropFlow processModelId={processModelId}/>

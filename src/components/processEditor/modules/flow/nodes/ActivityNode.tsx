@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
-import useStore, {handleStyle, selectedColor} from "../../../store";
+import useStore, {handleStyle, selectedColor} from "../../../stores/store";
 import {GamificationType} from "@/model/GamificationType";
 import {ActivityType} from "@/model/ActivityType";
 import {

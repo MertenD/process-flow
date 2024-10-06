@@ -42,6 +42,7 @@
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@tanstack/react-table": "^8.20.5",
+    "@xyflow/react": "^12.3.1",
     "autoprefixer": "^10.4.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

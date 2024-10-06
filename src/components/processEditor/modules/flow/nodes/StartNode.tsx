@@ -2,14 +2,14 @@
 
 import React, {useEffect} from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
-import {handleStyle, selectedColor} from "../../../store";
+import {handleStyle, selectedColor} from "../../../stores/store";
 import {
     OptionsDefinition,
     OptionsMultipleVariableNameInput,
     OptionsStructureType,
     OptionsVariableNameInput
 } from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
-import useStore from "@/components/processEditor/store";
+import useStore from "@/components/processEditor/stores/store";
 import {setDefaultValues} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
 
 export type StartNodeData = {

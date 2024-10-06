@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
-import useStore, {handleStyle, selectedColor} from "../../../store";
+import useStore, {handleStyle, selectedColor} from "../../../stores/store";
 import {Comparisons} from "@/model/Comparisons";
 import {
     OptionsDefinition,
