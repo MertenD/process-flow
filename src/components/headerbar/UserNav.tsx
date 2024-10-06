@@ -40,8 +40,6 @@ export async function UserNav() {
         return redirect('/')
     }
 
-    console.log(profile)
-
     return profile ? (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

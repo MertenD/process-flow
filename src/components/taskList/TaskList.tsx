@@ -44,7 +44,7 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
         return () => {
             subscription.unsubscribe().then()
         }
-    }, [teamId]);
+    }, [supabase, teamId]);
 
     useEffect(() => {
         getTasks(teamId, userId).then(setTasks).catch((error) => {

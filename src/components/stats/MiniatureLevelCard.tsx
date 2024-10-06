@@ -4,11 +4,7 @@ import {LevelProgressBar} from "@/components/stats/LevelProgressBar";
 import React, {useEffect, useState} from "react";
 import {UserStats} from "@/model/UserStats";
 import getUserStatistics from "@/actions/get-user-statistics";
-import {User} from "@supabase/auth-js";
 import {createClient} from "@/utils/supabase/client";
-import getProcessModels from "@/actions/get-process-models";
-import {ProcessModel} from "@/types/database.types";
-import {toast} from "@/components/ui/use-toast";
 
 export interface MiniatureLevelCardProps {
     userId: string,
@@ -24,7 +20,9 @@ export default function MiniatureLevelCard({ userId, teamId }: MiniatureLevelCar
     const supabase = createClient()
 
     useEffect(() => {
-        getUserStatistics(userId, teamId).then(setUserStats)
+        getUserStatistics(userId, teamId).then(setUserStats).catch((error) => {
+            console.error("Error fetching user statistics", error)
+        })
     }, [teamId, userId]);
     
     useEffect(() => {
@@ -50,7 +48,7 @@ export default function MiniatureLevelCard({ userId, teamId }: MiniatureLevelCar
         if (userStats) {
             setPointsToReachNextLevel(userStats.experiencePerLevel * (Math.floor(userStats.experience / userStats.experiencePerLevel) + 1))
         }
-    }, [level]);
+    }, [level, userStats]);
 
     return userStats && <div className="w-32 flex flex-col space-y-1">
         <div className="flex flex-row justify-between">
