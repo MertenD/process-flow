@@ -22,6 +22,5 @@ export default function EndNode({ id, selected, data}: NodeProps<EndNodeData>) {
 export const endNodeShapeStyle = {
     width: 30,
     height: 30,
-    backgroundColor: "white",
     borderRadius: "50%",
 }
