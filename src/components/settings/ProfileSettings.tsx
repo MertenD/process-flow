@@ -5,7 +5,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import updateProfileSettings from "@/actions/update-profile-settings";
 import {toast} from "@/components/ui/use-toast";
 import {Profile} from "@/types/database.types";
@@ -29,8 +29,14 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
                 description: 'Ihre Profilinformationen wurden erfolgreich aktualisiert',
                 variant: 'success'
             })
-        }).catch((error) => {
-            console.error(error)
+        }).catch((error: Error) => {
+            if (error.message.includes("Body exceeded 1 MB limit.")) {
+                return toast({
+                    title: 'Fehler beim Aktualisieren des Profils',
+                    description: 'Das Profilbild ist zu groß. Bitte wählen Sie ein Bild mit weniger als 1 MB aus',
+                    variant: 'destructive'
+                })
+            }
             toast({
                 title: 'Fehler beim Aktualisieren des Profils',
                 description: 'Ihre Profilinformationen konnten nicht aktualisiert werden',
