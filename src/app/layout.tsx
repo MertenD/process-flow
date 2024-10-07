@@ -5,6 +5,8 @@ import {cn} from "@/lib/utils"
 import {ThemeProvider} from "@/components/ui/ThemeProvider";
 import React from "react";
 import {Toaster} from "@/components/ui/toaster";
+import {getLocale, getMessages} from "next-intl/server";
+import {NextIntlClientProvider} from "next-intl";
 
 const fontSans = FontSans({
     subsets: ["latin"],
@@ -18,21 +20,26 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({children,}: Readonly<{ children: React.ReactNode; }>) {
 
+    const locale = await getLocale();
+    const messages = await getMessages()
+
     return (
-        <html lang="en">
+        <html lang={locale}>
             <body className={cn(
                 "min-h-screen bg-background font-sans antialiased",
                 fontSans.variable
             )}>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme={"system"}
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <Toaster/>
-                    {children}
-                </ThemeProvider>
+                <NextIntlClientProvider messages={messages}>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme={"system"}
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        <Toaster/>
+                        {children}
+                    </ThemeProvider>
+                </NextIntlClientProvider>
             </body>
         </html>
     );
