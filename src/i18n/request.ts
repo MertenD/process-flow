@@ -14,12 +14,12 @@ export default getRequestConfig(async () => {
     const {data: userData, error: userError} = await supabase.auth.getUser()
     if (userError || !userData.user || !userData.user.id) {
         return {
-            defaultLocale,
+            locale: defaultLocale,
             messages: (await import(`../../messages/${defaultLocale}.json`)).default
         }
     }
 
-    const { data: profile, error: profileError } = await supabase
+    const {data: profile, error: profileError} = await supabase
         .from("profiles")
         .select("*")
         .eq("id", userData.user.id)
