@@ -1,6 +1,6 @@
 import {cookies, headers} from 'next/headers'
 import {createClient} from '@/utils/supabase/server'
-import {redirect} from 'next/navigation'
+import {redirect, RedirectType} from 'next/navigation'
 import {AlertCircle, LogIn, UserPlus} from "lucide-react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -12,6 +12,13 @@ import {Profile} from "@/types/database.types";
 export default async function Login (
     { searchParams }: Readonly<{ searchParams: { message: string } }>
 ) {
+
+    const cookieStore = cookies()
+    const supabase = createClient()
+    const {data: user, error} = await supabase.auth.getUser()
+    if (user.user) {
+        return redirect('/', RedirectType.replace)
+    }
 
     const signIn = async (formData: FormData) => {
         'use server'
@@ -27,10 +34,10 @@ export default async function Login (
         })
 
         if (error) {
-            return redirect('/authenticate?message=Could not authenticate user')
+            return redirect('/authenticate?message=Could not authenticate user', RedirectType.replace)
         }
 
-        return redirect('/')
+        return redirect('/', RedirectType.replace)
     }
 
     const signUp = async (formData: FormData) => {
@@ -45,7 +52,7 @@ export default async function Login (
         const supabase = createClient(cookieStore)
 
         if (password !== passwordConfirm) {
-            return redirect(`/authenticate?message=Passwörter stimmen nicht überein`)
+            return redirect(`/authenticate?message=Passwörter stimmen nicht überein`, RedirectType.replace)
         }
 
         const checkUsernameUniqueRequest = await supabase
@@ -55,7 +62,7 @@ export default async function Login (
             .maybeSingle<Profile>()
 
         if (checkUsernameUniqueRequest.data) {
-            return redirect(`/authenticate?message=Benutzername ist bereits vergeben`)
+            return redirect(`/authenticate?message=Benutzername ist bereits vergeben`, RedirectType.replace)
         }
 
         const {error} = await supabase.auth.signUp({
@@ -69,9 +76,9 @@ export default async function Login (
         if (error) {
 
             if (error.message === "User already registered") {
-                return redirect(`/authenticate?message=Email is already taken`)
+                return redirect(`/authenticate?message=Email is already taken`, RedirectType.replace)
             }
-            return redirect(`/authenticate?message=${error.message}`)
+            return redirect(`/authenticate?message=${error.message}`, RedirectType.replace)
         }
 
         const user = await supabase.auth.getUser().then((response) => response.data.user)
@@ -84,7 +91,7 @@ export default async function Login (
                 email: user?.email
             } as Profile])
 
-        return redirect('/')
+        return redirect('/', RedirectType.replace)
     }
 
     return <div className="w-screen h-screen flex flex-col justify-center items-center">
