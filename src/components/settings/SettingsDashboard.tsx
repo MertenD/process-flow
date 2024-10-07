@@ -38,7 +38,8 @@ export function SettingsDashboard({ userId }: Readonly<SettingsDashboardProps>) 
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "profiles"
+                table: "profiles",
+                filter: `id=eq.${profile.id}`
             }, (payload) => {
                 setProfile({
                     avatar: profile.avatar,
