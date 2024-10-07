@@ -47,8 +47,7 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "profile_team",
-                filter: `profile_id=eq.${userId}`
+                table: "profile_team"
             }, () => {
                 getTeams(userId).then(setTeams).catch((error) => {
                     console.error("Error loading teams in TeamsOverview", error.message)
@@ -67,8 +66,7 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "invitation",
-                filter: `email=eq.${userEmail}`
+                table: "invitation"
             }, () => {
                 toast({
                     variant: "destructive",
