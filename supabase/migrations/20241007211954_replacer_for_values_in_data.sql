@@ -28,3 +28,39 @@ BEGIN
     RETURN data;
 END;$function$
 ;
+
+create or replace function get_manual_tasks_with_replaced_data(team_id bigint, user_role_ids bigint[]) returns jsonb
+    language plpgsql
+as
+$$
+DECLARE
+    tasks jsonb;
+BEGIN
+    -- Fetch the manual tasks with replaced data
+    SELECT jsonb_agg(t)
+    INTO tasks
+    FROM (
+             SELECT
+                 *,
+                 replaced_data->'task' AS name,
+                 replaced_data->'description' AS description,
+                 replaced_data AS data,
+                 data->'outputs' AS outputs
+             FROM manual_task,
+                  LATERAL replace_with_variable_values(data, is_part_of) AS replaced_data
+             WHERE belongs_to = team_id AND assigned_role::bigint = ANY(user_role_ids)
+         ) t;
+
+    RETURN tasks;
+END;
+$$;
+
+alter function get_manual_tasks_with_replaced_data(bigint, bigint[]) owner to postgres;
+
+grant execute on function get_manual_tasks_with_replaced_data(bigint, bigint[]) to anon;
+
+grant execute on function get_manual_tasks_with_replaced_data(bigint, bigint[]) to authenticated;
+
+grant execute on function get_manual_tasks_with_replaced_data(bigint, bigint[]) to service_role;
+
+

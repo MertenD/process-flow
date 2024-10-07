@@ -32,6 +32,7 @@ export type ProfilesWithRoles = Views<'profiles_with_roles'>
 export type ManualTask = Views<'manual_task'>
 export type ManualTaskWithOutputs = MergeDeep<ManualTask, { outputs: { [key: string]: string } }>
 export type ManualTaskWithTitleAndDescription = MergeDeep<ManualTask, { name: string, description: string }>
+export type ManualTaskWithTitleDescriptionAndOutputs = MergeDeep<ManualTaskWithTitleAndDescription, { outputs: { [key: string]: string } }>
 
 export type ProcessModel = Tables<'process_model'>
 

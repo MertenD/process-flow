@@ -6,7 +6,7 @@ import {usePathname, useRouter} from "next/navigation";
 
 export interface TaskFrameProps {
     taskId: string
-    teamId: string
+    teamId: number
     taskUrl: string
 }
 

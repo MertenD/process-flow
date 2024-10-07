@@ -1,10 +1,10 @@
 "use server"
 
-import {ManualTaskWithTitleAndDescription} from "@/types/database.types";
+import {ManualTaskWithTitleDescriptionAndOutputs} from "@/types/database.types";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
 
-export default async function(teamId: number, userId: string): Promise<ManualTaskWithTitleAndDescription[]> {
+export default async function(teamId: number, userId: string): Promise<ManualTaskWithTitleDescriptionAndOutputs[]> {
 
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
@@ -22,16 +22,17 @@ export default async function(teamId: number, userId: string): Promise<ManualTas
         throw Error(userRolesError?.message)
     }
 
-    const {data: tasks, error: tasksError} = await supabase
-        .from("manual_task")
-        .select(`*, name: data->task, description: data->description`)
-        .eq("belongs_to", teamId)
-        .filter("assigned_role", "in", `(${userRoleIds.map(role => `"${role.roleId}"`).join(",")})`)
-        .returns<ManualTaskWithTitleAndDescription[]>()
+    const roleIds = userRoleIds.map(role => role.roleId);
 
-    if (tasksError) {
-        throw Error(tasksError?.message)
+    const {data, error} = await supabase
+        .rpc('get_manual_tasks_with_replaced_data', {
+            team_id: teamId,
+            user_role_ids: roleIds
+        })
+
+    if (error) {
+        throw Error(`Error loading manual tasks: ${error.message}`);
     }
 
-    return tasks || []
+    return data as ManualTaskWithTitleDescriptionAndOutputs[];
 }
