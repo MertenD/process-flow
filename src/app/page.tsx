@@ -35,13 +35,13 @@ export default async function Home() {
         <div className="min-h-screen py-8">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-primary mb-2">ProcessFlow</h1>
+                    <h1 className="text-4xl font-bold text-primary mb-2">{t("title")}</h1>
                     <p className="text-xl">{t("titleDescription")}</p>
                 </div>
                 { userData ? (
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-bold">Team Dashboard</h2>
+                            <h2 className="text-2xl font-bold">{t("teamDashboardTitle")}</h2>
                             <div className="flex items-center gap-4">
                                 Hey{ profile ? `, ${profile.username}` : "" }!
                                 <UserNav/>

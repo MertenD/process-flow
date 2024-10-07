@@ -4,8 +4,11 @@ import {redirect} from "next/navigation";
 import {SettingsDashboard} from "@/components/settings/SettingsDashboard";
 import OwnerTeamSettings from "@/components/settings/team/OwnerTeamSettings";
 import MemberTeamSettings from "@/components/settings/team/MemberTeamSettings";
+import {getTranslations} from "next-intl/server";
 
 export default async function SettingsPage({ params }: Readonly<{ params: { teamId: number }}>) {
+
+    const t = await getTranslations("settings")
 
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
@@ -25,9 +28,9 @@ export default async function SettingsPage({ params }: Readonly<{ params: { team
     const isUserOwner = userRoles?.some(role => role.role.name === "owner")
 
     return <div className="container mx-auto p-4 flex flex-col space-y-6">
-        <h1 className="text-3xl font-bold">Allgemeine Einstellungen</h1>
+        <h1 className="text-3xl font-bold">{t("generalSettings")}</h1>
         <SettingsDashboard userId={userData.user.id}/>
-        <h1 className="text-3xl font-bold">Team Einstellungen</h1>
+        <h1 className="text-3xl font-bold">{t("teamSettings")}</h1>
         { isUserOwner ?
             <OwnerTeamSettings teamId={params.teamId} />
             :

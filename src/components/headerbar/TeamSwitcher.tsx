@@ -8,6 +8,7 @@ import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandL
 import {Dialog,} from "@/components/ui/dialog";
 import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
 import {Check, ChevronsUpDown} from "lucide-react";
+import {useTranslations} from "next-intl";
 
 export type Team = {
     label: string;
@@ -26,13 +27,16 @@ interface TeamSwitcherProps extends PopoverTriggerProps {
 }
 
 export default function TeamSwitcher({ className, ownTeams, otherTeams, selectedTeamId }: Readonly<TeamSwitcherProps>) {
+
+    const t = useTranslations("Header.TeamSwitcher");
+
     const groups = [
         {
-            label: "Your Teams",
+            label: t("ownTeams"),
             teams: ownTeams
         },
         {
-            label: "Other Teams",
+            label: t("otherTeams"),
             teams: otherTeams
         }
     ]
@@ -42,10 +46,6 @@ export default function TeamSwitcher({ className, ownTeams, otherTeams, selected
     const [selectedTeam, setSelectedTeam] = React.useState<Team>(
         [...ownTeams, ...otherTeams].find(team => team.value.toString() === selectedTeamId?.toString()) || ownTeams[0] // TODO ownTeams[0] ist hier suboptimal, aber es darf eigentlich nicht eintreten
     );
-
-    useEffect(() => {
-        console.log("Selected team", selectedTeam)
-    }, [selectedTeam]);
 
     return (
         <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
@@ -66,8 +66,8 @@ export default function TeamSwitcher({ className, ownTeams, otherTeams, selected
                 <PopoverContent className="w-[200px] p-0">
                     <Command>
                         <CommandList>
-                            <CommandInput placeholder="Search team..." />
-                            <CommandEmpty>No team found.</CommandEmpty>
+                            <CommandInput placeholder={t("search")} />
+                            <CommandEmpty>{t("noTeamsFound")}</CommandEmpty>
                             {groups.map((group) => (
                                 <CommandGroup key={group.label} heading={group.label}>
                                     {group.teams.map((team) => (
