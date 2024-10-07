@@ -5,6 +5,7 @@ import React from "react";
 import {cn} from "@/lib/utils";
 import { usePathname } from 'next/navigation'
 import {Page} from "@/types/database.types";
+import {useTranslations} from "next-intl";
 
 export interface NavigationProps extends React.HTMLAttributes<HTMLElement> {
     className?: string;
@@ -14,7 +15,7 @@ export interface NavigationProps extends React.HTMLAttributes<HTMLElement> {
 
 export default function Navigation({ className, allowedPages, selectedTeamId } : Readonly<NavigationProps>) {
 
-    // TODO Owner soll alles sehen können
+    const t = useTranslations("Header.nav")
 
     const pathname = usePathname()
 
@@ -23,6 +24,7 @@ export default function Navigation({ className, allowedPages, selectedTeamId } :
     const teamPath = `/${selectedTeamId}/team`
     const tasksPath = `/${selectedTeamId}/tasks`
     const statsPath = `/${selectedTeamId}/stats`
+    const settingsPath = `/${selectedTeamId}/settings`
 
     return <nav
         className={cn("flex items-center space-x-4 lg:space-x-6", className)}
@@ -31,7 +33,7 @@ export default function Navigation({ className, allowedPages, selectedTeamId } :
             href={tasksPath}
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(tasksPath) ? "text-primary" : "text-muted-foreground"}`}
         >
-            Tasks
+            {t("tasks")}
         </Link> }
         { allowedPages.includes("Editor") && <Link
             href={editorPath}
@@ -43,19 +45,25 @@ export default function Navigation({ className, allowedPages, selectedTeamId } :
             href={monitoringPath}
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(monitoringPath) ? "text-primary" : "text-muted-foreground"}`}
         >
-            Monitoring
+            {t("monitoring")}
         </Link> }
         { allowedPages.includes("Team") && <Link
             href={teamPath}
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(teamPath) ? "text-primary" : "text-muted-foreground"}`}
         >
-            Team
+            {t("team")}
         </Link> }
-        { allowedPages.includes("Stats") && <Link
+        <Link
             href={statsPath}
             className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(statsPath) ? "text-primary" : "text-muted-foreground"}`}
         >
-            Stats
-        </Link> }
+            {t("stats")}
+        </Link>
+        <Link
+            href={settingsPath}
+            className={`text-sm font-medium transition-colors hover:text-primary ${pathname.startsWith(settingsPath) ? "text-primary" : "text-muted-foreground"}`}
+        >
+            {t("settings")}
+        </Link>
     </nav>
 }

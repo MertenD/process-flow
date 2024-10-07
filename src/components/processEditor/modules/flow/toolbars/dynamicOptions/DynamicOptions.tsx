@@ -5,7 +5,7 @@
 // TODO Default value for select should be the first option?
 
 import React, {useEffect, useRef, useState} from "react";
-import useStore from "@/components/processEditor/store";
+import useStore from "@/components/processEditor/stores/store";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {

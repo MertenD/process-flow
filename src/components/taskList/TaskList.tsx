@@ -34,8 +34,7 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "role",
-                filter: `belongs_to=eq.${teamId}`
+                table: "role"
             }, () => {
                 getRoles(teamId).then(setRoles)
             })
@@ -44,7 +43,7 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
         return () => {
             subscription.unsubscribe().then()
         }
-    }, [teamId]);
+    }, [supabase, teamId]);
 
     useEffect(() => {
         getTasks(teamId, userId).then(setTasks).catch((error) => {
@@ -81,8 +80,7 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "profile_role_team",
-                filter: `profile_id=eq.${userId}`
+                table: "profile_role_team"
             }, () => {
                 getTasks(teamId, userId).then(setTasks).catch((error) => {
                     console.error("Error fetching tasks", error)

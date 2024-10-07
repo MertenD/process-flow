@@ -1,6 +1,6 @@
 "use client"
 
-import useStore from "@/components/processEditor/store";
+import useStore from "@/components/processEditor/stores/store";
 import {shallow} from "zustand/shallow";
 import {FileDown} from "lucide-react";
 import {Button} from "@/components/ui/button";

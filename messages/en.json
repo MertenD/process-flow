@@ -1,0 +1,82 @@
+{
+  "Homepage": {
+    "title": "ProcessFlow",
+    "titleDescription": "The engine for gamified business processes",
+    "teamDashboardTitle": "Team Dashboard",
+    "createTeamTitle": "Create New Team",
+    "createTeamDescription": "Enter a name for your new team and select a color scheme.",
+    "teamNamePlaceholder": "Team Name",
+    "colors": {
+      "blue": "Blue",
+      "green": "Green",
+      "yellow": "Yellow",
+      "red": "Red",
+      "pink": "Pink"
+    },
+    "createButton": "Create",
+    "yourTeamsTitle": "Your Teams",
+    "yourTeamsDescription": "The teams you have created.",
+    "joinedTeamsTitle": "Joined Teams",
+    "joinedTeamsDescription": "The teams you have joined but did not create.",
+    "pendingInvitationsTitle": "Pending Invitations",
+    "pendingInvitationsDescription": "Accept or decline invitations.",
+    "acceptButton": "Accept",
+    "declineButton": "Decline",
+    "toasts": {
+      "inviteAcceptedTitle": "Invitation Accepted!",
+      "inviteAcceptedDescription": "You are now a member of \"{name}\".",
+      "inviteAcceptedErrorTitle": "Error Accepting Invitation!",
+      "inviteAcceptedErrorDescription": "An error occurred while accepting the invitation.",
+      "inviteDeclinedTitle": "Invitation Declined!",
+      "inviteDeclinedDescription": "You have declined the invitation to \"{name}\".",
+      "inviteDeclinedErrorTitle": "Error Declining Invitation!",
+      "inviteDeclinedErrorDescription": "An error occurred while declining the invitation.",
+      "teamCreatedTitle": "Team Created!",
+      "teamCreatedDescription": "The team \"{name}\" was successfully created.",
+      "teamCreatedErrorTitle": "Error Creating Team!",
+      "teamCreatedErrorDescription": "An error occurred while creating the team."
+    }
+  },
+  "Header": {
+    "TeamSwitcher": {
+      "search": "Search...",
+      "noTeamsFound": "No teams found",
+      "ownTeams": "Your Teams",
+      "otherTeams": "Other Teams"
+    },
+    "nav": {
+      "editor": "Editor",
+      "team": "Team",
+      "stats": "Statistics",
+      "settings": "Settings",
+      "monitoring": "Monitoring",
+      "tasks": "Tasks"
+    },
+    "userNav": {
+      "settings": "Settings",
+      "logout": "Logout",
+      "login": "Sign in"
+    }
+  },
+  "settings": {
+    "generalSettings": "General Settings",
+    "teamSettings": "Team Settings",
+    "profileSettings": {
+      "title": "Personal Settings",
+      "description": "Manage your profile information.",
+      "changeProfilePicture": "Change Profile Picture",
+      "username": "Username",
+      "email": "Email",
+      "saveChanges": "Save Changes",
+      "toasts": {
+        "profileUpdatedTitle": "Profile Updated!",
+        "profileUpdatedDescription": "Your profile information has been successfully updated.",
+        "profileUpdatedErrorTitle": "Error Updating Profile!",
+        "profileUpdatedErrorDescription": "An error occurred while updating your profile information.",
+        "profileUpdatedPictureTooLargeTitle": "Picture Too Large!",
+        "profileUpdatedPictureTooLargeDescription": "The picture you are trying to upload is too large. Please choose a picture smaller than 1 MB."
+      }
+    }
+  }
+
+}

@@ -20,7 +20,7 @@ export interface RoleManagementProps {
     teamId: number
 }
 
-const availablePages: Page[] = ["Editor", "Tasks", "Monitoring", "Team", "Stats"]
+const availablePages: Page[] = ["Editor", "Tasks", "Monitoring", "Team"]
 
 export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) {
     const supabase = createClient()
@@ -54,8 +54,7 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "role",
-                filter: `belongs_to=eq.${teamId}`
+                table: "role"
             }, () => {
                 console.log("Role updated")
                 getRoles(teamId).then((roles: RoleWithAllowedPages[]) => {

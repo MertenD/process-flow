@@ -15,8 +15,11 @@ import {createClient} from "@/utils/supabase/server";
 import {Profile} from "@/types/database.types";
 import {redirect} from "next/navigation";
 import Link from "next/link";
+import {getTranslations} from "next-intl/server";
 
 export async function UserNav() {
+
+    const t = await getTranslations("Header.userNav")
 
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
@@ -39,8 +42,6 @@ export async function UserNav() {
         await supabase.auth.signOut()
         return redirect('/')
     }
-
-    console.log(profile)
 
     return profile ? (
         <DropdownMenu>
@@ -65,13 +66,13 @@ export async function UserNav() {
                 <DropdownMenuGroup>
                     <Link href={"/settings"}>
                         <DropdownMenuItem>
-                            Settings
+                            {t("settings")}
                         </DropdownMenuItem>
                     </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItemWithServerAction action={signOut}>
-                    Log out
+                    {t("logout")}
                 </DropdownMenuItemWithServerAction>
             </DropdownMenuContent>
         </DropdownMenu>
@@ -81,7 +82,7 @@ export async function UserNav() {
                 href="/authenticate"
                 className="btn-primary"
             >
-                Sign in
+                {t("login")}
             </Link>
         </Button>
     );

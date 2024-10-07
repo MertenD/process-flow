@@ -1,0 +1,81 @@
+{
+  "Homepage": {
+    "title": "ProcessFlow",
+    "titleDescription": "Die Engine für gamifizierte Businessprozesse",
+    "teamDashboardTitle": "Team Dashboard",
+    "createTeamTitle": "Neues Team erstellen",
+    "createTeamDescription": "Geben Sie einen Namen für Ihr neues Team ein und wählen Sie ein Farbschema.",
+    "teamNamePlaceholder": "Team Name",
+    "colors": {
+      "blue": "Blau",
+      "green": "Grün",
+      "yellow": "Gelb",
+      "red": "Rot",
+      "pink": "Rosa"
+    },
+    "createButton": "Erstellen",
+    "yourTeamsTitle": "Ihre Teams",
+    "yourTeamsDescription": "Die Teams, die Sie selbst erstellt haben.",
+    "joinedTeamsTitle": "Beigetretene Teams",
+    "joinedTeamsDescription": "Die Teams, denen Sie beigetreten sind, aber nicht erstellt haben.",
+    "pendingInvitationsTitle": "Ausstehende Einladungen",
+    "pendingInvitationsDescription": "Nehmen Sie Einladungen an oder lehnen Sie sie ab.",
+    "acceptButton": "Annehmen",
+    "declineButton": "Ablehnen",
+    "toasts": {
+      "inviteAcceptedTitle": "Einladung angenommen!",
+      "inviteAcceptedDescription": "Sie sind jetzt Mitglied von \"{name}\".",
+      "inviteAcceptedErrorTitle": "Fehler beim Annehmen der Einladung!",
+      "inviteAcceptedErrorDescription": "Es ist ein Fehler aufgetreten, als Sie die Einladung angenommen haben.",
+      "inviteDeclinedTitle": "Einladung abgelehnt!",
+      "inviteDeclinedDescription": "Sie haben die Einladung zu \"{name}\" abgelehnt.",
+      "inviteDeclinedErrorTitle": "Fehler beim Ablehnen der Einladung!",
+      "inviteDeclinedErrorDescription": "Es ist ein Fehler aufgetreten, als Sie die Einladung abgelehnt haben.",
+      "teamCreatedTitle": "Team erstellt!",
+      "teamCreatedDescription": "Das Team \"{name}\" wurde erfolgreich erstellt.",
+      "teamCreatedErrorTitle": "Fehler beim Erstellen des Teams!",
+      "teamCreatedErrorDescription": "Es ist ein Fehler aufgetreten, als das Team erstellt wurde."
+    }
+  },
+  "Header": {
+    "TeamSwitcher": {
+      "search": "Suche...",
+      "noTeamsFound": "Keine Teams gefunden",
+      "ownTeams": "Ihre Teams",
+      "otherTeams": "Andere Teams"
+    },
+    "nav": {
+      "editor": "Editor",
+      "team": "Team",
+      "stats": "Statistiken",
+      "settings": "Einstellungen",
+      "monitoring": "Monitoring",
+      "tasks": "Aufgaben"
+    },
+    "userNav": {
+      "settings": "Einstellungen",
+      "logout": "Abmelden",
+      "login": "Anmelden"
+    }
+  },
+  "settings": {
+    "generalSettings": "Allgemeine Einstellungen",
+    "teamSettings": "Team Einstellungen",
+    "profileSettings": {
+      "title": "Persönlische Einstellungen",
+      "description": "Verwalten Sie Ihre Profilinformationen.",
+      "changeProfilePicture": "Profilbild ändern",
+      "username": "Benutzername",
+      "email": "E-Mail",
+      "saveChanges": "Änderungen speichern",
+      "toasts": {
+        "profileUpdatedTitle": "Profil aktualisiert!",
+        "profileUpdatedDescription": "Ihre Profilinformationen wurden erfolgreich aktualisiert.",
+        "profileUpdatedErrorTitle": "Fehler beim Aktualisieren des Profils!",
+        "profileUpdatedErrorDescription": "Es ist ein Fehler aufgetreten, als Ihre Profilinformationen aktualisiert wurden.",
+        "profileUpdatedPictureTooLargeTitle": "Bild zu groß!",
+        "profileUpdatedPictureTooLargeDescription": "Das Bild, das Sie hochladen möchten, ist zu groß. Bitte wählen Sie ein Bild, das kleiner als 1 MB ist."
+      }
+    }
+  }
+}

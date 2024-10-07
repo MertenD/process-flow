@@ -10,6 +10,7 @@ import {useParams, usePathname, useRouter} from "next/navigation";
 import {createClient} from "@/utils/supabase/client";
 import getProcessModels from "@/actions/get-process-models";
 import {toast} from "@/components/ui/use-toast";
+import {useUndoRedoStore} from "@/components/processEditor/stores/UndoRedoStore";
 
 export interface ProcessListProps {
     userId: string;
@@ -24,6 +25,7 @@ export default function ProcessList({userId, teamId}: Readonly<ProcessListProps>
     const supabase = createClient()
     const [processes, setProcesses] = useState<ProcessModel[]>([])
     const [selectedProcessId, setSelectedProcessId] = useState<string | null>(params.processModelId)
+    const { setPast, setFuture } = useUndoRedoStore()
 
     useEffect(() => {
         getProcessModels(teamId).then(setProcesses).catch((error) => {
@@ -32,8 +34,12 @@ export default function ProcessList({userId, teamId}: Readonly<ProcessListProps>
     }, [teamId])
 
     useEffect(() => {
+        if (params.processModelId !== selectedProcessId) {
+            setPast([])
+            setFuture([])
+        }
         setSelectedProcessId(params.processModelId)
-    }, [params])
+    }, [params, selectedProcessId])
 
     useEffect(() => {
         const updateSubscription = supabase

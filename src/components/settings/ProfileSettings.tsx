@@ -1,20 +1,24 @@
 "use client"
 
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import updateProfileSettings from "@/actions/update-profile-settings";
 import {toast} from "@/components/ui/use-toast";
 import {Profile} from "@/types/database.types";
+import {CardActionArea, CardActions} from "@mui/material";
+import {useTranslations} from "next-intl";
 
 export interface ProfileSettingsProps {
     profile: Profile
 }
 
 export default function ProfileSettings({ profile }: Readonly<ProfileSettingsProps>) {
+
+    const t = useTranslations("settings.profileSettings")
 
     const [username, setUsername] = useState(profile.username)
     const [email] = useState(profile.email)
@@ -25,15 +29,21 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
         e.preventDefault()
         updateProfileSettings(profile.id, username, avatarSrc).then(() => {
             toast({
-                title: 'Profil aktualisiert',
-                description: 'Ihre Profilinformationen wurden erfolgreich aktualisiert',
+                title: t("toasts.profileUpdatedTitle"),
+                description: t("toasts.profileUpdatedDescription"),
                 variant: 'success'
             })
-        }).catch((error) => {
-            console.error(error)
+        }).catch((error: Error) => {
+            if (error.message.includes("Body exceeded 1 MB limit.")) {
+                return toast({
+                    title: t("toasts.profileUpdatedPictureTooLargeTitle"),
+                    description: t("toasts.profileUpdatedPictureTooLargeDescription"),
+                    variant: 'destructive'
+                })
+            }
             toast({
-                title: 'Fehler beim Aktualisieren des Profils',
-                description: 'Ihre Profilinformationen konnten nicht aktualisiert werden',
+                title: t("toasts.profileUpdatedErrorTitle"),
+                description: t("toasts.profileUpdatedErrorDescription"),
                 variant: 'destructive'
             })
         })
@@ -54,10 +64,10 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
         fileInputRef.current?.click()
     }
 
-    return <Card>
+    return <Card className="w-full">
         <CardHeader>
-            <CardTitle>Persönliche Informationen</CardTitle>
-            <CardDescription>Verwalten Sie Ihre Profilinformationen</CardDescription>
+            <CardTitle>{t("title")}</CardTitle>
+            <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
             <form onSubmit={handleProfileSubmit} className="space-y-6">
@@ -66,7 +76,7 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
                         <AvatarImage src={avatarSrc} alt="Profilbild"/>
                         <AvatarFallback>{ username.slice(0,2).toUpperCase() }</AvatarFallback>
                     </Avatar>
-                    <Button type="button" onClick={triggerFileInput}>Profilbild ändern</Button>
+                    <Button type="button" onClick={triggerFileInput}>{t("changeProfilePicture")}</Button>
                     <input
                         type="file"
                         ref={fileInputRef}
@@ -77,7 +87,7 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="username">Benutzername</Label>
+                    <Label htmlFor="username" className="text-base">{t("username")}</Label>
                     <Input
                         id="username"
                         value={username}
@@ -85,7 +95,7 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="email">E-Mail</Label>
+                    <Label htmlFor="email" className="text-base">{t("email")}</Label>
                     <Input
                         id="email"
                         type="email"
@@ -94,7 +104,7 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
                         className="bg-muted"
                     />
                 </div>
-                <Button type="submit">Änderungen speichern</Button>
+                <Button type="submit">{t("saveChanges")}</Button>
             </form>
         </CardContent>
     </Card>

@@ -6,27 +6,19 @@ import {Input} from "@/components/ui/input"
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card"
 import {ScrollArea} from "@/components/ui/scroll-area"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
-import {CheckIcon, PlusCircleIcon, TrashIcon, XIcon} from 'lucide-react'
+import {CheckIcon, PlusCircleIcon, XIcon} from 'lucide-react'
 import {TeamInfo} from "@/model/TeamInfo";
 import Link from 'next/link'
 import createTeamAndAddCreatorAsAdmin from "@/actions/create-team-and-add-creator-as-admin";
 import {toast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
-import {teamColorSchemes} from "@/model/colors";
 import {InvitationWithTeam} from "@/types/database.types";
 import acceptInvite from "@/actions/accept-invite";
 import {createClient} from "@/utils/supabase/client";
 import getTeams from "@/actions/get-teams";
 import getInvitations from "@/actions/get-invitations";
 import declineInvite from "@/actions/decline-invite";
-import {ConfirmationDialog} from "@/components/ConfirmationDialog";
-import removeProfileFromTeam from "@/actions/remove-profile-from-team";
-
-type ConfirmDialogState = {
-    isOpen: boolean
-    teamName: string | null
-    teamId: string | null
-}
+import {useTranslations} from "next-intl";
 
 export interface TeamsOverviewProps {
     userId: string
@@ -37,19 +29,23 @@ export interface TeamsOverviewProps {
 
 export function TeamsOverview({userId, userEmail, initialTeams, initialInvitations}: TeamsOverviewProps) {
 
+    const t = useTranslations("Homepage")
+
     const supabase = createClient()
+
+    const teamColorSchemes = [
+        { name: t("colors.blue"), from: 'from-blue-400', to: 'to-indigo-500' },
+        { name: t("colors.green"), from: 'from-green-400', to: 'to-teal-500' },
+        { name: t("colors.yellow"), from: 'from-yellow-400', to: 'to-orange-500' },
+        { name: t("colors.pink"), from: 'from-pink-400', to: 'to-purple-500' },
+        { name: t("colors.red"), from: 'from-red-400', to: 'to-rose-500' },
+    ]
 
     const [newTeamName, setNewTeamName] = useState<string>("")
     const [selectedColorScheme, setSelectedColorScheme] = useState(teamColorSchemes[0])
 
     const [teams, setTeams] = useState<TeamInfo[]>(initialTeams)
     const [invitations, setInvitations] = useState<InvitationWithTeam[]>(initialInvitations)
-
-    const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState>({
-        isOpen: false,
-        teamName: null,
-        teamId: null
-    })
 
     const router = useRouter()
 
@@ -59,10 +55,11 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "profile_team",
-                filter: `profile_id=eq.${userId}`
+                table: "profile_team"
             }, () => {
-                getTeams(userId).then(setTeams)
+                getTeams(userId).then(setTeams).catch((error) => {
+                    console.error("Error loading teams in TeamsOverview", error.message)
+                })
             })
             .subscribe()
 
@@ -77,10 +74,11 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "invitation",
-                filter: `email=eq.${userEmail}`
+                table: "invitation"
             }, () => {
-                getInvitations(userEmail).then(setInvitations)
+                getInvitations(userEmail).then(setInvitations).catch((error) => {
+                    console.error("Error loading invitations in TeamsOverview", error.message)
+                })
             })
             .subscribe()
 
@@ -93,15 +91,15 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
         acceptInvite(invitation, userId).then(() => {
             toast({
                 variant: "success",
-                title: "Einladung angenommen!",
-                description: `Sie sind jetzt Mitglied von "${invitation.team.name}".`,
+                title: t("toasts.inviteAcceptedTitle"),
+                description: t("toasts.inviteAcceptedDescription", { name: invitation.team.name })
             })
         }).catch((error) => {
-            // deutsch
+            console.error("Error accepting invitation", error)
             toast({
                 variant: "destructive",
-                title: "Es ist ein Fehler aufgetreten!",
-                description: `Die Einladung konnte nicht angenommen werden: ${error.message}`
+                title: t("toasts.inviteAcceptedErrorTitle"),
+                description: t("toasts.inviteAcceptedErrorDescription")
             })
         })
     }
@@ -110,85 +108,33 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
         declineInvite(invitation, userId).then(() => {
             toast({
                 variant: "success",
-                title: "Einladung abgelehnt!",
-                description: `Die Einladung für "${invitation.team.name}" wurde abgelehnt.`,
+                title: t("toasts.inviteDeclinedTitle"),
+                description: t("toasts.inviteDeclinedDescription", { name: invitation.team.name })
             })
         }).catch((error) => {
+            console.error("Error declining invitation", error)
             toast({
                 variant: "destructive",
-                title: "Es ist ein Fehler aufgetreten!",
-                description: `Die Einladung konnte nicht abgelehnt werden. Bitte versuche es erneut: ${error.message}`
+                title: t("toasts.inviteDeclinedErrorTitle"),
+                description: t("toasts.inviteDeclinedErrorDescription")
             })
         })
     }
 
-    function onDeleteTeamClicked(team: TeamInfo) {
-        setConfirmDialog({isOpen: true, teamName: team.team.name, teamId: team.teamId})
-    }
-
-    const confirmDeleteTeam = async () => {
-        if (!confirmDialog.teamId) {
-            toast({
-                title: "Fehler beim Löschen des Teams",
-                description: `Das Team konnte nicht entfernt werden.`,
-                variant: "destructive"
-            })
-            setConfirmDialog({isOpen: false, teamName: null, teamId: null})
-            return
-        }
-        try {
-            const {error} = await supabase
-                .from('team')
-                .delete()
-                .eq('id', confirmDialog.teamId);
-
-            if (error) throw error;
-
-            toast({
-                title: "Team gelöscht",
-                description: `Das Team "${confirmDialog.teamName}" wurde erfolgreich gelöscht.`,
-                variant: "success"
-            })
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Fehler beim Löschen des Teams",
-                description: `Das Team "${confirmDialog.teamName}" konnte nicht gelöscht werden.`
-            });
-        }
-        setConfirmDialog({isOpen: false, teamName: null, teamId: null})
-    }
-
     const renderCard = (item: any, isTeam: boolean = true) => {
-        const isUserOwnerOfTeam = userId === item.team.createdBy
         return <Card
             key={item.team.id}
             className={` relative cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-102 bg-gradient-to-br ${item.team.colorSchemeFrom} ${item.team.colorSchemeTo}`}
         >
             <CardContent className="flex flex-col items-center justify-center h-32 p-4">
                 <h3 className="text-lg font-semibold text-white mb-2">{item.team.name}</h3>
-                {isTeam && isUserOwnerOfTeam && (
-                    <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
-                            onDeleteTeamClicked(item)
-                        }}
-                        className="absolute top-2 right-2 text-white hover:bg-white/20"
-                    >
-                        <TrashIcon className="w-4 h-4"/>
-                        <span className="sr-only">Löschen</span>
-                    </Button>
-                )}
                 {!isTeam && (
                     <div className="flex space-x-2">
                         <Button size="sm" variant="secondary" onClick={() => onAcceptInvite(item)}>
-                            <CheckIcon className="w-4 h-4 mr-1"/> Annehmen
+                            <CheckIcon className="w-4 h-4 mr-1"/> {t("acceptButton")}
                         </Button>
                         <Button size="sm" variant="secondary" onClick={() => onDeclineInvite(item)}>
-                            <XIcon className="w-4 h-4 mr-1"/> Ablehnen
+                            <XIcon className="w-4 h-4 mr-1"/> {t("declineButton")}
                         </Button>
                     </div>
                 )}
@@ -199,15 +145,14 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
     return <div className="space-y-6">
         <Card>
             <CardHeader>
-                <CardTitle>Neues Team erstellen</CardTitle>
-                <CardDescription>Geben Sie einen Namen für Ihr neues Team ein und wählen Sie ein
-                    Farbschema.</CardDescription>
+                <CardTitle>{t("createTeamTitle")}</CardTitle>
+                <CardDescription>{t("createTeamDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="flex flex-col space-y-4">
                     <Input
                         type="text"
-                        placeholder="Team Name"
+                        placeholder={t("teamNamePlaceholder")}
                         value={newTeamName}
                         onChange={(e) => setNewTeamName(e.target.value)}
                     />
@@ -244,49 +189,71 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
                             createTeamAndAddCreatorAsAdmin(userId, newTeamName, colorScheme).then((createdTeamId) => {
                                 toast({
                                     variant: "success",
-                                    title: "Team erstellt!",
-                                    description: `Das Team "${newTeamName}" wurde erfolgreich erstellt.`,
+                                    title: t("toasts.teamCreatedTitle"),
+                                    description: t("toasts.teamCreatedDescription", { name: newTeamName })
                                 })
                                 setNewTeamName("")
                                 router.push(`/${createdTeamId}/tasks`)
                             }).catch((error) => {
+                                console.error("Error creating team", error)
                                 toast({
                                     variant: "destructive",
-                                    title: "Something went wrong!",
-                                    description: error.message,
+                                    title: t("toasts.teamCreatedErrorTitle"),
+                                    description: t("toasts.teamCreatedErrorDescription"),
                                 })
                             })
                         }}>
-                            <PlusCircleIcon className="w-4 h-4 mr-2"/> Erstellen
+                            <PlusCircleIcon className="w-4 h-4 mr-2"/> {t("createButton")}
                         </Button>
                     </div>
                 </div>
             </CardContent>
         </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>Ihre Teams</CardTitle>
-                <CardDescription>Klicken Sie auf ein Team, um es auszuwählen und zur Hauptanwendung zu
-                    gelangen.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ScrollArea className="h-[300px]">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {teams.map((team: TeamInfo) => {
-                            return <Link key={team.teamId + "-link"} href={`/${team.teamId}/tasks`}>
-                                {renderCard(team)}
-                            </Link>
-                        })}
-                    </div>
-                </ScrollArea>
-            </CardContent>
-        </Card>
+        <div className="grid md:grid-cols-2 w-full gap-4">
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t("yourTeamsTitle")}</CardTitle>
+                    <CardDescription>{t("yourTeamsDescription")}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ScrollArea className="h-[300px]">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {teams.filter((team: TeamInfo) => team.team.createdBy === userId).map((team: TeamInfo) => {
+                                return <Link key={team.teamId + "-link"} href={`/${team.teamId}/stats`}>
+                                    {renderCard(team)}
+                                </Link>
+                            })}
+                        </div>
+                    </ScrollArea>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t("joinedTeamsTitle")}</CardTitle>
+                    <CardDescription>{t("joinedTeamsDescription")}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ScrollArea className="h-[300px]">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {teams.filter((team: TeamInfo) => team.team.createdBy !== userId).map((team: TeamInfo) => {
+                                return <Link key={team.teamId + "-link"} href={`/${team.teamId}/stats`}>
+                                    {renderCard(team)}
+                                </Link>
+                            })}
+                        </div>
+                    </ScrollArea>
+                </CardContent>
+            </Card>
+
+        </div>
 
         <Card>
             <CardHeader>
-                <CardTitle>Ausstehende Einladungen</CardTitle>
-                <CardDescription>Nehmen Sie Einladungen an oder lehnen Sie sie ab.</CardDescription>
+                <CardTitle>{t("pendingInvitationsTitle")}</CardTitle>
+                <CardDescription>{t("pendingInvitationsDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
                 <ScrollArea className="h-[200px]">
@@ -296,14 +263,5 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
                 </ScrollArea>
             </CardContent>
         </Card>
-
-        <ConfirmationDialog
-            isOpen={confirmDialog.isOpen}
-            onClose={() => setConfirmDialog({isOpen: false, teamName: null, teamId: null})}
-            onConfirm={confirmDeleteTeam}
-            title={`Team "${confirmDialog.teamName}" wirklich löschen?`}
-            description={`Möchten Sie das Team "${confirmDialog.teamName}" wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden. Alle Daten, die mit diesem Team verknüpft sind, werden ebenfalls gelöscht.`}
-            confirmLabel="Team löschen"
-        />
     </div>
 }

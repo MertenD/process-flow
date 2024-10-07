@@ -1,6 +1,6 @@
 "use server"
 
-import {ManualTask, ManualTaskWithTitleAndDescription, ProfilesWithRoles} from "@/types/database.types";
+import {ManualTaskWithTitleAndDescription} from "@/types/database.types";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
 
@@ -29,9 +29,9 @@ export default async function(teamId: number, userId: string): Promise<ManualTas
         .filter("assigned_role", "in", `(${userRoleIds.map(role => `"${role.roleId}"`).join(",")})`)
         .returns<ManualTaskWithTitleAndDescription[]>()
 
-    if (tasksError || !tasks) {
+    if (tasksError) {
         throw Error(tasksError?.message)
     }
 
-    return tasks
+    return tasks || []
 }

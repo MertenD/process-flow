@@ -1,6 +1,6 @@
 import React from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
-import {handleStyle, selectedColor} from "../../../store";
+import {handleStyle, selectedColor} from "../../../stores/store";
 
 export type EndNodeData = {
     backgroundColor?: string
@@ -22,6 +22,5 @@ export default function EndNode({ id, selected, data}: NodeProps<EndNodeData>) {
 export const endNodeShapeStyle = {
     width: 30,
     height: 30,
-    backgroundColor: "white",
     borderRadius: "50%",
 }

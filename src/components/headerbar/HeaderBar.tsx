@@ -60,5 +60,5 @@ export default async function HeaderBar({ selectedTeamId }: Readonly<HeaderBarPr
                 </div>
             </div>
         </section>
-        )
+    )
 }
