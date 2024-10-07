@@ -55,3 +55,5 @@ export type Invitation = Tables<"invitation">
 export type InvitationWithTeam = MergeDeep<Invitation, { team: Team }>
 
 export type Statistics = Tables<"statistics">
+
+export type Theme = Enums<"theme">

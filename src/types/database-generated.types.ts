@@ -721,8 +721,8 @@ export type Database = {
           created_by: string | null
           email: string
           id: string
-          is_dark_mode_enabled: boolean
           language: string
+          theme: Database["public"]["Enums"]["theme"]
           updated_at: string | null
           updated_by: string | null
           username: string
@@ -733,8 +733,8 @@ export type Database = {
           created_by?: string | null
           email: string
           id?: string
-          is_dark_mode_enabled?: boolean
           language?: string
+          theme?: Database["public"]["Enums"]["theme"]
           updated_at?: string | null
           updated_by?: string | null
           username: string
@@ -745,8 +745,8 @@ export type Database = {
           created_by?: string | null
           email?: string
           id?: string
-          is_dark_mode_enabled?: boolean
           language?: string
+          theme?: Database["public"]["Enums"]["theme"]
           updated_at?: string | null
           updated_by?: string | null
           username?: string
@@ -864,27 +864,27 @@ export type Database = {
         Row: {
           badges: Json
           belongs_to: number
-          coins: number | null
+          coins: number
           created_at: string
-          experience: number | null
+          experience: number
           id: number
           profile_id: string
         }
         Insert: {
           badges?: Json
           belongs_to: number
-          coins?: number | null
+          coins?: number
           created_at?: string
-          experience?: number | null
+          experience?: number
           id?: number
           profile_id: string
         }
         Update: {
           badges?: Json
           belongs_to?: number
-          coins?: number | null
+          coins?: number
           created_at?: string
-          experience?: number | null
+          experience?: number
           id?: number
           profile_id?: string
         }
@@ -1031,7 +1031,7 @@ export type Database = {
       }
       add_profile_to_team: {
         Args: {
-          profile_id_param: number
+          profile_id_param: string
           team_id_param: number
         }
         Returns: undefined
@@ -1091,21 +1091,13 @@ export type Database = {
         }
         Returns: number
       }
-      remove_profile_from_team:
-        | {
-            Args: {
-              profile_id_param: number
-              team_id_param: number
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              profile_id_param: string
-              team_id_param: number
-            }
-            Returns: undefined
-          }
+      remove_profile_from_team: {
+        Args: {
+          profile_id_param: string
+          team_id_param: number
+        }
+        Returns: undefined
+      }
       remove_role: {
         Args: {
           role_id: number
@@ -1153,6 +1145,7 @@ export type Database = {
       point_type: "Experience" | "Coins"
       points_application_method: "setTo" | "incrementBy" | "decrementBy"
       process_instance_status: "Running" | "Completed" | "Error"
+      theme: "light" | "dark" | "system"
     }
     CompositeTypes: {
       [_ in never]: never
