@@ -721,8 +721,8 @@ export type Database = {
           created_by: string | null
           email: string
           id: string
-          is_dark_mode_enabled: boolean
           language: string
+          theme: Database["public"]["Enums"]["theme"]
           updated_at: string | null
           updated_by: string | null
           username: string
@@ -733,8 +733,8 @@ export type Database = {
           created_by?: string | null
           email: string
           id?: string
-          is_dark_mode_enabled?: boolean
           language?: string
+          theme?: Database["public"]["Enums"]["theme"]
           updated_at?: string | null
           updated_by?: string | null
           username: string
@@ -745,8 +745,8 @@ export type Database = {
           created_by?: string | null
           email?: string
           id?: string
-          is_dark_mode_enabled?: boolean
           language?: string
+          theme?: Database["public"]["Enums"]["theme"]
           updated_at?: string | null
           updated_by?: string | null
           username?: string
@@ -1160,6 +1160,7 @@ export type Database = {
       point_type: "Experience" | "Coins"
       points_application_method: "setTo" | "incrementBy" | "decrementBy"
       process_instance_status: "Running" | "Completed" | "Error"
+      theme: "light" | "dark" | "system"
     }
     CompositeTypes: {
       [_ in never]: never
