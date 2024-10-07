@@ -50,7 +50,9 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
                 table: "profile_team",
                 filter: `profile_id=eq.${userId}`
             }, () => {
-                getTeams(userId).then(setTeams)
+                getTeams(userId).then(setTeams).catch((error) => {
+                    console.error("Error loading teams in TeamsOverview", error.message)
+                })
             })
             .subscribe()
 
@@ -68,7 +70,9 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
                 table: "invitation",
                 filter: `email=eq.${userEmail}`
             }, () => {
-                getInvitations(userEmail).then(setInvitations)
+                getInvitations(userEmail).then(setInvitations).catch((error) => {
+                    console.error("Error loading invitations in TeamsOverview", error.message)
+                })
             })
             .subscribe()
 

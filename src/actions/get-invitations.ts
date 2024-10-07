@@ -15,9 +15,9 @@ export default async function(userEmail: string): Promise<InvitationWithTeam[]> 
         .eq('email', userEmail)
         .returns<InvitationWithTeam[]>()
 
-    if (error || !invitations) {
+    if (error) {
         throw Error(error?.message || "Error loading invitations")
     }
 
-    return invitations
+    return invitations || []
 }
