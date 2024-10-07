@@ -31,8 +31,7 @@ export default function MiniatureLevelCard({ userId, teamId }: MiniatureLevelCar
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "statistics",
-                filter: `profile_id=eq.${userId}`
+                table: "statistics"
             }, (payload) => {
                 getUserStatistics(userId, teamId).then(setUserStats)
             })

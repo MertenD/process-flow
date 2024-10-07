@@ -68,12 +68,6 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
                 schema: "public",
                 table: "invitation"
             }, () => {
-                toast({
-                    variant: "destructive",
-                    title: "Einladungen aktualisiert",
-                    description: "Einladungen wurden aktualisiert."
-
-                })
                 getInvitations(userEmail).then(setInvitations).catch((error) => {
                     console.error("Error loading invitations in TeamsOverview", error.message)
                 })

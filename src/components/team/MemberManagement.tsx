@@ -72,8 +72,7 @@ export function MemberManagement({teamId}: MemberManagementProps) {
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "role",
-                filter: `belongs_to=eq.${teamId}`
+                table: "role"
             }, () => {
                 getRoles(teamId).then((roles: Role[]) => {
                     setRoles(roles || [])
@@ -93,8 +92,7 @@ export function MemberManagement({teamId}: MemberManagementProps) {
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "profile_team",
-                filter: `team_id=eq.${teamId}`
+                table: "profile_team"
             }, () => {
                 getMembers(teamId).then((members: Member[]) =>
                     setMembers(members || [])
@@ -103,8 +101,7 @@ export function MemberManagement({teamId}: MemberManagementProps) {
             .on("postgres_changes", {
                 event: "*",
                 schema: "public",
-                table: "profile_role_team",
-                filter: `team_id=eq.${teamId}`
+                table: "profile_role_team"
             }, () => {
                 getMembers(teamId).then((members: Member[]) =>
                     setMembers(members || [])
