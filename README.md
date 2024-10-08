@@ -23,6 +23,7 @@
 - [💻 Pages](#-pages)
 - [🚀 Installation](#-installation)
 - [🤖 Usage](#-usage)
+- [➿ App Process Flow (Engine)](#-app-process-flow-engine)
 - [📂 Repository Structure](#-repository-structure)
 
 ---
@@ -129,6 +130,59 @@ The application will be available at `http://localhost:3000`. You can also see t
 5. **Complete Tasks**: Tasks will automatically appear in users’ worklists based on the process instance’s current state and the user's assigned role and can completed right there in the app.
 5. **Monitor Progress**: Use the dashboard to monitor active processes and track task completion and overall progress.
 6. **Track Statistics**: Users can view their personal statistics, including experience points, levels, coins, and badges, as a way to measure their engagement and progress.
+
+---
+
+## ➿ App Process Flow (Engine)
+
+This section describes the workflow of process instances.
+
+### Involved Components
+
+- **Web App:** The interface that the user uses to start processes and complete tasks.
+- **Database:** Stores the status and progress of process instances, as well as the results of tasks. It also functions as an engine that executes process steps.
+- **External Servers:** These servers provide tasks, render them, and receive user input results.
+
+### Workflow Description
+
+1. **Creating a Process Instance**
+    - The user starts a new process instance via the web app or an API.
+    - The web app communicates with the database to create this instance and start the process.
+
+
+2. **Creating the First Step in the Database**
+    - The database creates the new process instance.
+    - At the same time, the first element in the process flow (flow element) is created. If it's a task, the instance's status is set to `TODO`.
+
+
+3. **Task is Displayed to the User**
+    - The user sees all elements in the web app under "Tasks" that have the `TODO` status and are assigned to their role.
+    - These tasks need to be completed by the user.
+
+
+4. **Opening the Task and Communication with External Server**
+    - The user opens a task in the web app.
+    - A request is sent to an external server. The server receives all information about the task, an ID, and a `responseURL`.
+    - The server renders the task (e.g., as a form) and displays it in an `iframe` within the web app.
+    - Once the user completes the task and clicks "Finish," the server sends the results and the task ID to the web app's `responseURL`.
+
+
+5. **Completing the Task in the Database**
+    - The web app receives the results from the server via an API endpoint.
+    - The web app invokes a function in the database to mark the task as completed and store the results.
+
+
+6. **Database Triggers the Next Element**
+    - A trigger in the database detects that the task is completed and creates the next flow element with the status `TODO`.
+    - This can either be a new user task or an automated step.
+
+
+7. **Automated Elements are Executed Immediately**
+    - If the next element in the process is an automated step (e.g., a gateway or the end of the process), the database automatically executes this step and creates the next flow element.
+
+
+8. **Concurrent Execution**
+    - The database can manage and execute multiple instances of a process simultaneously, allowing for parallel tasks or steps.
 
 ---
 
