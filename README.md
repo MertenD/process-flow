@@ -1,4 +1,4 @@
-[<img src="process-flow.png" align="right" width="25%" padding-right="350">](documentation/docs/assets/icon.png)
+![<img src="process-flow.png" align="right" width="25%" padding-right="350">](documentation/docs/assets/icon.png)
 
 # `PROCESS-FLOW`
 
@@ -80,6 +80,7 @@ Process Flow is a web application designed to create and manage gamified busines
 
 ## 🚀 Installation
 
+You need docker installed and the docker engine running.
 To run the application locally, follow these steps:
 
 1. Clone the repository:
@@ -93,12 +94,29 @@ To run the application locally, follow these steps:
    npm install
     ```
 
-3. Start the development server:
+3. Init supabase
+    ```bash
+    npx supabase init
+     ```
+
+    You should use the given values inside the `.env` file, which can be copied from the `.env.example` file.
+
+
+4. Apply migrations
+
+    ```bash
+    npx supabase migration up
+     ```
+
+   You should apply the migrations to the database to create the necessary tables.
+
+
+5. Start the development server:
    ```bash
    npm run dev
     ```
 
-The application will be available at `http://localhost:3000`.
+The application will be available at `http://localhost:3000`. You can also see the supabase dashboard at `http://localhost:44323`.
 
 ---
 
