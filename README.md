@@ -155,3 +155,9 @@ The application will be available at `http://localhost:3000`.
     ├── tailwind.config.ts
     └── tsconfig.json
 ```
+
+---
+
+## Database Structure
+
+![database](documentation/docs/assets/database.png)
