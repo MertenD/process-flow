@@ -1,4 +1,4 @@
-[<img src="process-flow.png" align="right" width="25%" padding-right="350">]()
+[<img src="process-flow.png" align="right" width="25%" padding-right="350">](documentation/docs/assets/icon.png)
 
 # `PROCESS-FLOW`
 
@@ -159,5 +159,7 @@ The application will be available at `http://localhost:3000`.
 ---
 
 ## Database Structure
+
+The database structure is managed by Supabase, a cloud database service. The database schema is defined in the `supabase` directory, which includes migration files and a seed file. The database structure consists of the following tables:
 
 ![database](documentation/docs/assets/database.png)
