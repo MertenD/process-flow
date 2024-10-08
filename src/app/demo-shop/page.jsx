@@ -66,7 +66,6 @@ export default function Storefront() {
         }
 
         try {
-            console.log('Payload:', payload)
             const response = await fetch(`${window.location.protocol}//${window.location.host}/api/instance/create`, {
                 method: 'POST',
                 headers: {
@@ -78,19 +77,13 @@ export default function Storefront() {
             if (!response.ok) {
                 throw new Error('Netzwerkantwort war nicht ok')
             }
-
-            const data = await response.json()
+            
             toast({
                 variant: "success",
                 title: "Bestellung erfolgreich",
-                description: `Ihre Bestellung wurde aufgegeben. Bestellnummer: ${data.id}`,
+                description: `Ihre Bestellung wurde aufgegeben. Sie erhalten in Kürze eine Versandbestätigung.`,
             })
         } catch (error) {
-            toast({
-                title: "Fehler",
-                description: "Fehler beim Aufgeben der Bestellung. Bitte versuchen Sie es später erneut.",
-                variant: "destructive",
-            })
             console.error('Fehler:', error)
         } finally {
             setIsLoading(false)
