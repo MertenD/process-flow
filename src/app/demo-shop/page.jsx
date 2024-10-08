@@ -10,9 +10,9 @@ import { useToast } from "@/components/ui/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 
 const products = [
-    { id: 1, name: "Kopfhörer", price: 99.99, image: "/placeholder.svg?height=200&width=200" },
-    { id: 2, name: "Maus", price: 29.99, image: "/placeholder.svg?height=200&width=200" },
-    { id: 3, name: "Bildschirm", price: 199.99, image: "/placeholder.svg?height=200&width=200" }
+    { id: 1, name: "Kopfhörer", price: 99.99, image: "https://media.cdn.kaufland.de/product-images/1024x1024/43220500f9a5b3852a3e198655e2efb8.jpg" },
+    { id: 2, name: "Maus", price: 29.99, image: "https://cdn.bueromarkt-ag.de/product/24511c8e41b0c3359429bf2cd8aafe1c3599a795/maus_trust_ozaa_plus_kabellos_24820.jpg?1716350595" },
+    { id: 3, name: "Bildschirm", price: 199.99, image: "https://cdn.eizo.de/fileadmin/_processed_/1/b/csm_EV2360-BK_stage_7cb94d8d85.jpg" }
 ]
 
 export default function Storefront() {
@@ -67,7 +67,7 @@ export default function Storefront() {
 
         try {
             console.log('Payload:', payload)
-            const response = await fetch(`${process.env.APP_URL}/api/instance/create`, {
+            const response = await fetch(`${window.location.protocol}//${window.location.host}/api/instance/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ export default function Storefront() {
                             <CardDescription>{product.price.toFixed(2)} €</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <img src={product.image} alt={product.name} className="w-full h-48 object-cover mb-4" />
+                            <img src={product.image} alt={product.name} className="h-32 object-cover mb-4" />
                             <div className="flex items-center space-x-2">
                                 <Label htmlFor={`quantity-${product.id}`}>Menge:</Label>
                                 <Select
