@@ -1,4 +1,4 @@
-![<img src="process-flow.png" align="right" width="25%" padding-right="350">](documentation/docs/assets/icon.png)
+<img src="documentation/docs/assets/icon.png" align="right" width="25%" padding-right="350">
 
 # `PROCESS-FLOW`
 
@@ -80,7 +80,6 @@ Process Flow is a web application designed to create and manage gamified busines
 
 ## 🚀 Installation
 
-You need docker installed and the docker engine running.
 To run the application locally, follow these steps:
 
 1. Clone the repository:
