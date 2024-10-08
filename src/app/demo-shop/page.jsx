@@ -67,7 +67,7 @@ export default function Storefront() {
 
         try {
             console.log('Payload:', payload)
-            const response = await fetch('http://localhost:3000/api/instance/create', {
+            const response = await fetch(`${process.env.APP_URL}/api/instance/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
