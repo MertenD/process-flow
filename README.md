@@ -25,6 +25,7 @@
 - [🤖 Usage](#-usage)
 - [➿ App Process Flow (Engine)](#-app-process-flow-engine)
 - [📂 Repository Structure](#-repository-structure)
+- [📚 Database Structure](#-database-structure)
 
 ---
 
@@ -229,7 +230,7 @@ This section describes the workflow of process instances.
 
 ---
 
-## Database Structure
+## 📚 Database Structure
 
 The database structure is managed by Supabase, a cloud database service. The database schema is defined in the `supabase` directory, which includes migration files and a seed file. The database structure consists of the following tables:
 
