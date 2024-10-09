@@ -53,7 +53,7 @@ export default function AppearanceSettings({ profile }: Readonly<AppearanceSetti
             <form onSubmit={handleGeneralSubmit} className="space-y-6">
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="language" className="text-base">{t("lanuage")}</Label>
+                        <Label htmlFor="language" className="text-base">{t("language")}</Label>
                         <Select value={language} onValueChange={setLanguage}>
                             <SelectTrigger id="language" className="w-[200px]">
                                 <SelectValue placeholder="Wählen Sie eine Sprache"/>
@@ -61,6 +61,7 @@ export default function AppearanceSettings({ profile }: Readonly<AppearanceSetti
                             <SelectContent>
                                 <SelectItem value="de">{t("languages.de")}</SelectItem>
                                 <SelectItem value="en">{t("languages.en")}</SelectItem>
+                                <SelectItem value="sr">{t("languages.sr")}</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

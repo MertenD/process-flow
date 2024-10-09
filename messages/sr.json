@@ -1,0 +1,317 @@
+{
+  "Homepage": {
+    "title": "ProcessFlow",
+    "titleDescription": "Engine za gamifikovane poslovne procese",
+    "teamDashboardTitle": "Tim Dashboard",
+    "createTeamTitle": "Kreiraj novi tim",
+    "createTeamDescription": "Unesite ime vašeg novog tima i odaberite šemu boja.",
+    "teamNamePlaceholder": "Ime tima",
+    "colors": {
+      "blue": "Plava",
+      "green": "Zelena",
+      "yellow": "Žuta",
+      "red": "Crvena",
+      "pink": "Roze"
+    },
+    "createButton": "Kreiraj",
+    "yourTeamsTitle": "Vaši timovi",
+    "yourTeamsDescription": "Timovi koje ste sami kreirali.",
+    "joinedTeamsTitle": "Pridruženi timovi",
+    "joinedTeamsDescription": "Timovi kojima ste se pridružili, ali niste kreirali.",
+    "pendingInvitationsTitle": "Očekivani pozivi",
+    "pendingInvitationsDescription": "Prihvatite ili odbijte pozive.",
+    "acceptButton": "Prihvati",
+    "declineButton": "Odbij",
+    "toasts": {
+      "inviteAcceptedTitle": "Poziv prihvaćen!",
+      "inviteAcceptedDescription": "Sada ste član tima \"{name}\".",
+      "inviteAcceptedErrorTitle": "Greška prilikom prihvatanja poziva!",
+      "inviteAcceptedErrorDescription": "Došlo je do greške prilikom prihvatanja poziva.",
+      "inviteDeclinedTitle": "Poziv odbijen!",
+      "inviteDeclinedDescription": "Odbili ste poziv u tim \"{name}\".",
+      "inviteDeclinedErrorTitle": "Greška prilikom odbijanja poziva!",
+      "inviteDeclinedErrorDescription": "Došlo je do greške prilikom odbijanja poziva.",
+      "teamCreatedTitle": "Tim kreiran!",
+      "teamCreatedDescription": "Tim \"{name}\" je uspešno kreiran.",
+      "teamCreatedErrorTitle": "Greška prilikom kreiranja tima!",
+      "teamCreatedErrorDescription": "Došlo je do greške prilikom kreiranja tima."
+    }
+  },
+  "Header": {
+    "TeamSwitcher": {
+      "search": "Pretraga...",
+      "noTeamsFound": "Nema pronađenih timova",
+      "ownTeams": "Vaši timovi",
+      "otherTeams": "Ostali timovi"
+    },
+    "nav": {
+      "editor": "Editor",
+      "team": "Tim",
+      "stats": "Statistike",
+      "settings": "Podešavanja",
+      "monitoring": "Praćenje",
+      "tasks": "Zadaci"
+    },
+    "userNav": {
+      "settings": "Podešavanja",
+      "logout": "Odjavi se",
+      "login": "Prijavi se"
+    }
+  },
+  "settings": {
+    "generalSettings": "Opšta podešavanja",
+    "teamSettingsTitle": "Podešavanja tima",
+    "profileSettings": {
+      "title": "Podešavanja profila",
+      "description": "Upravljajte informacijama vašeg profila.",
+      "changeProfilePicture": "Promeni profilnu sliku",
+      "username": "Korisničko ime",
+      "email": "E-mail",
+      "saveChanges": "Sačuvaj promene",
+      "toasts": {
+        "profileUpdatedTitle": "Profil ažuriran!",
+        "profileUpdatedDescription": "Vaši podaci o profilu su uspešno ažurirani.",
+        "profileUpdatedErrorTitle": "Greška prilikom ažuriranja profila!",
+        "profileUpdatedErrorDescription": "Došlo je do greške prilikom ažuriranja podataka o profilu.",
+        "profileUpdatedPictureTooLargeTitle": "Slika je prevelika!",
+        "profileUpdatedPictureTooLargeDescription": "Slika koju pokušavate da postavite je prevelika. Izaberite sliku manju od 1 MB."
+      }
+    },
+    "appearanceSettings": {
+      "title": "Podešavanja izgleda",
+      "description": "Prilagodite aplikaciju vašim potrebama.",
+      "language": "Jezik",
+      "languages": {
+        "de": "Nemački",
+        "en": "Engleski",
+        "sr": "Srpski"
+      },
+      "theme": "Tema",
+      "themes": {
+        "light": "Svetla",
+        "dark": "Tamna",
+        "system": "Sistem"
+      },
+      "saveChanges": "Sačuvaj promene",
+      "toasts": {
+        "appearanceUpdatedTitle": "Podešavanja izgleda ažurirana!",
+        "appearanceUpdatedDescription": "Vaša podešavanja izgleda su uspešno ažurirana.",
+        "appearanceUpdatedErrorTitle": "Greška prilikom ažuriranja podešavanja!",
+        "appearanceUpdatedErrorDescription": "Vaša podešavanja izgleda nisu mogla biti ažurirana."
+      }
+    },
+    "teamSettings": {
+      "title:": "Podešavanja",
+      "couldNotLoadTeam": "Nije moguće učitati podešavanja tima.",
+      "ownerDangerZone": {
+        "title": "Opasna zona",
+        "deleteTeamTitle": "Obriši tim",
+        "deleteTeamDescription": "Nepovratno obrišite svoj tim i sve povezane podatke.",
+        "deleteTeamButton": "Obriši tim"
+      },
+      "memberDangerZone": {
+        "title": "Opasna zona",
+        "leaveTeamTitle": "Napusti tim",
+        "leaveTeamDescription": "Napustite \"${teamName}\" i nepovratno obrišite sve svoje povezane podatke.",
+        "leaveTeamButton": "Napusti tim"
+      }
+    }
+  },
+  "stats": {
+    "title": "Vaše statistike",
+    "noStats": "Nema dostupnih statistika",
+    "levelCard": {
+      "title": "Napredak",
+      "level": "Nivo {level}",
+      "xpToNextLevel": "{xp} / {xpToNextLevel} XP do sledećeg nivoa"
+    },
+    "coinsCard": {
+      "title": "Novčići"
+    },
+    "badgesCard": {
+      "title": "Značke"
+    }
+  },
+  "team": {
+    "title": "Upravljanje timom",
+    "invite": {
+      "title": "Pozovi člana",
+      "description": "Pozovite članove u ovaj tim putem e-mail adrese.",
+      "emailPlaceholder": "E-mail adresa",
+      "inviteButton": "Pozovi",
+      "toasts": {
+        "invitationSentTitle": "Poziv poslat",
+        "invitationSentDescription": "Poziv na {email} je uspešno poslat.",
+        "invitationSentErrorTitle": "Greška prilikom pozivanja",
+        "invitationSentErrorDescription": "Poziv na {email} nije mogao biti poslat."
+      }
+    },
+    "roles": {
+      "title": "Uloge",
+      "description": "Upravljajte ulogama u vašem timu.",
+      "addRole": "Dodaj ulogu",
+      "roleName": "Ime uloge",
+      "roleColor": "Boja uloge",
+      "allowedPages": "Dozvoljene stranice",
+      "addButton": "Dodaj",
+      "deleteButton": "Obriši",
+      "confirmDelete": {
+        "title": "Obriši ulogu",
+        "description": "Da li ste sigurni da želite da obrišete ovu ulogu? Ova radnja ne može biti poništena i ukloniće ulogu sa svih članova.",
+        "confirmButton": "Obriši ulogu"
+      },
+      "table": {
+        "name": "Ime",
+        "color": "Boja",
+        "pages": "Dozvoljene stranice",
+        "actions": "Akcije",
+        "none": "Nijedna",
+        "edit": "Uredi"
+      },
+      "edit": {
+        "title": "Uredi ulogu",
+        "roleName": "Ime uloge",
+        "roleColor": "Boja uloge",
+        "allowedPages": "Dozvoljene stranice",
+        "updateButton": "Ažuriraj"
+      },
+      "toasts": {
+        "roleAddedTitle": "Uloga dodata",
+        "roleAddedDescription": "Uloga {name} je uspešno dodata.",
+        "roleAddedErrorTitle": "Greška prilikom dodavanja uloge",
+        "roleAddedErrorDescription": "Uloga {name} nije mogla biti dodata.",
+        "roleAddedErrorNullDescription": "Uloga nije mogla biti dodata jer je ime ili boja prazna.",
+        "roleUpdatedTitle": "Uloga ažurirana",
+        "roleUpdatedDescription": "Uloga je uspešno ažurirana.",
+        "roleDeletedTitle": "Uloga obrisana",
+        "roleDeletedDescription": "Uloga je uspešno obrisana.",
+        "roleDeletedErrorTitle": "Greška prilikom brisanja uloge",
+        "roleDeletedErrorDescription": "Uloga nije mogla biti obrisana."
+      }
+    },
+    "members": {
+      "title": "Članovi",
+      "description": "Upravljajte članovima i njihovim ulogama u ovom timu.",
+      "searchPlaceholder": "Pretraži po imenu ili e-mailu",
+      "filterByRole": "Filtriraj po ulozi",
+      "allRoles": "Sve uloge",
+      "noRole": "Nema uloge",
+      "table": {
+        "name": "Ime",
+        "email": "E-mail",
+        "role": "Uloga",
+        "actions": "Akcije",
+        "editRoles": "Uredi uloge"
+      },
+      "editRoles": {
+        "title": "Uredi uloge za {name}",
+        "updateButton": "Potvrdi"
+      },
+      "removeMember": "Ukloni",
+      "confirmRemoveMember": {
+        "title": "Ukloni člana",
+        "description": "Da li ste sigurni da želite da uklonite ovog člana? Ova radnja ne može biti poništena.",
+        "confirmButton": "Ukloni člana"
+      },
+      "toasts": {
+        "memberRemovedTitle": "Član uklonjen",
+        "memberRemovedDescription": "Član je uspešno uklonjen.",
+        "memberRemovedErrorTitle": "Greška prilikom uklanjanja člana",
+        "memberRemovedErrorDescription": "Član nije mogao biti uklonjen.",
+        "rolesUpdatedTitle": "Uloge ažurirane",
+        "rolesUpdatedDescription": "Uloge su uspešno ažurirane.",
+        "rolesUpdatedErrorTitle": "Greška prilikom ažuriranja uloga",
+        "rolesUpdatedErrorDescription": "Uloge nisu mogle biti ažurirane."
+      }
+    }
+  },
+  "confirmDialog": {
+    "confirm": "Potvrdi",
+    "cancel": "Otkaži"
+  },
+  "monitoring": {
+    "title": "Dashboard za praćenje procesa",
+    "general": {
+      "totalInstances": "Ukupno instanci",
+      "totalCompleted": "Završeno",
+      "totalInProgress": "U toku",
+      "totalOnHold": "Blokirano",
+      "percentOfAll": "{percent}% od ukupnih instanci",
+      "trendTitle": "Trend instanci procesa",
+      "startedInstances": "Započete instance",
+      "completedInstances": "Završene instance",
+      "all": "Sve"
+    },
+    "processes": {
+      "title": "Pregled modela procesa",
+      "instanceState": "Status instanci",
+      "completed": "Završeno",
+      "inProgress": "U toku",
+      "onHold": "Blokirano",
+      "readyOrInProgress": "Spremno ili u toku",
+      "taskProgress": "Napredak zadataka",
+      "allTasks": "Svi zadaci"
+    }
+  },
+  "tasks": {
+    "couldNotFoundSelectedTask": "Izabrani zadatak nije pronađen.",
+    "selectTask": "Izaberite zadatak sa liste.",
+    "noTasksAvailable": "Nema dostupnih zadataka.",
+    "toasts": {
+      "taskCompletedTitle": "Zadatak završen",
+      "taskCompletedDescription": "Zadatak je uspešno završen i uklonjen sa vaše liste."
+    }
+  },
+  "editor": {
+    "createProcess": "Kreiraj proces",
+    "createProcessDescription": "Kreirajte novi model procesa za vaš tim.",
+    "name": "Ime procesa",
+    "description": "Opis",
+    "selectProcessModel": "Izaberite model procesa za uređivanje",
+    "createButton": "Kreiraj",
+    "cancelButton": "Otkaži",
+    "save": {
+      "saveButton": "Sačuvaj",
+      "saveErrorTitle": "Greška prilikom čuvanja procesa",
+      "saveErrorDescription": "Proces nije mogao biti sačuvan.",
+      "saveSuccessTitle": "Proces sačuvan",
+      "saveSuccessDescription": "Proces je uspešno sačuvan."
+    },
+    "instance": {
+      "instanceButton": "Kreiraj instancu",
+      "createNewInstanceTitle": "Kreiraj novu instancu procesa",
+      "createNewInstanceDescription": "Kreirajte novu instancu procesa.",
+      "instanceAPIExplanation": "Takođe možete poslati zahtev na ovaj URL da kreirate novu instancu:",
+      "urlCopied": "URL kopiran u clipboard!",
+      "create": "Kreiraj",
+      "cancel": "Otkaži",
+      "toasts": {
+        "instanceCreatedTitle": "Instanca kreirana",
+        "instanceCreatedDescription": "Instanca je uspešno kreirana.",
+        "instanceCreatedErrorTitle": "Greška prilikom kreiranja instance",
+        "instanceCreatedErrorDescription": "Instanca nije mogla biti kreirana."
+      }
+    },
+    "export": {
+      "exportButton": "Eksportuj"
+    },
+    "undoRedo": {
+      "undoButton": "Poništi",
+      "redoButton": "Ponovi"
+    },
+    "delete": {
+      "deleteButton": "Obriši",
+      "deleteProcessTitle": "Zaista obrisati model procesa?",
+      "deleteProcessDescription": "Da li ste sigurni da želite da obrišete ovaj proces? Ova radnja ne može biti poništena. Svi podaci povezani sa ovim procesom takođe će biti obrisani.",
+      "deleteButtonConfirm": "Obriši"
+    },
+    "toasts": {
+      "processCreatedTitle": "Proces kreiran",
+      "processCreatedDescription": "Proces je uspešno kreiran.",
+      "processDeletedSuccessfullyTitle": "Proces {name} obrisan",
+      "processDeletedSuccessfullyDescription": "Proces je uspešno obrisan.",
+      "processCreatedErrorTitle": "Greška prilikom kreiranja procesa",
+      "processCreatedErrorDescription": "Proces nije mogao biti kreiran."
+    }
+  }
+}

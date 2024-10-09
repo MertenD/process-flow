@@ -83,7 +83,8 @@
       "language": "Language",
       "languages": {
         "de": "German",
-        "en": "English"
+        "en": "English",
+        "sr": "Serbian"
       },
       "theme": "Theme",
       "themes": {
