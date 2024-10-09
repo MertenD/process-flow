@@ -25,22 +25,31 @@ export default async function RootLayout({children,}: Readonly<{ children: React
 
     return (
         <html lang={locale}>
-            <body className={cn(
-                "min-h-screen bg-background font-sans antialiased",
-                fontSans.variable
-            )}>
-                <NextIntlClientProvider messages={messages}>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme={"system"}
-                        enableSystem
-                        disableTransitionOnChange
-                    >
-                        <Toaster/>
-                        {children}
-                    </ThemeProvider>
-                </NextIntlClientProvider>
-            </body>
+        <head>
+            <link rel="icon" href="/favicon.ico" sizes="any"/>
+            <link
+                rel="icon"
+                href="/icon?<generated>"
+                type="image/<generated>"
+                sizes="<generated>"
+            />
+        </head>
+        <body className={cn(
+            "min-h-screen bg-background font-sans antialiased",
+            fontSans.variable
+        )}>
+        <NextIntlClientProvider messages={messages}>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme={"system"}
+                enableSystem
+                disableTransitionOnChange
+            >
+                <Toaster/>
+                {children}
+            </ThemeProvider>
+        </NextIntlClientProvider>
+        </body>
         </html>
     );
 }

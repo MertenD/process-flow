@@ -229,7 +229,7 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                         <TableHead>{t("table.name")}</TableHead>
                         <TableHead>{t("table.color")}</TableHead>
                         <TableHead>{t("table.pages")}</TableHead>
-                        <TableHead className="text-right">{t("actions")}</TableHead>
+                        <TableHead className="text-right">{t("table.actions")}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
