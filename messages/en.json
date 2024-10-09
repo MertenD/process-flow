@@ -15,9 +15,9 @@
     },
     "createButton": "Create",
     "yourTeamsTitle": "Your Teams",
-    "yourTeamsDescription": "The teams you have created.",
+    "yourTeamsDescription": "Teams you have created yourself.",
     "joinedTeamsTitle": "Joined Teams",
-    "joinedTeamsDescription": "The teams you have joined but did not create.",
+    "joinedTeamsDescription": "Teams you have joined but did not create.",
     "pendingInvitationsTitle": "Pending Invitations",
     "pendingInvitationsDescription": "Accept or decline invitations.",
     "acceptButton": "Accept",
@@ -28,7 +28,7 @@
       "inviteAcceptedErrorTitle": "Error Accepting Invitation!",
       "inviteAcceptedErrorDescription": "An error occurred while accepting the invitation.",
       "inviteDeclinedTitle": "Invitation Declined!",
-      "inviteDeclinedDescription": "You have declined the invitation to \"{name}\".",
+      "inviteDeclinedDescription": "You declined the invitation to \"{name}\".",
       "inviteDeclinedErrorTitle": "Error Declining Invitation!",
       "inviteDeclinedErrorDescription": "An error occurred while declining the invitation.",
       "teamCreatedTitle": "Team Created!",
@@ -55,14 +55,14 @@
     "userNav": {
       "settings": "Settings",
       "logout": "Logout",
-      "login": "Sign in"
+      "login": "Login"
     }
   },
   "settings": {
     "generalSettings": "General Settings",
-    "teamSettings": "Team Settings",
+    "teamSettingsTitle": "Team Settings",
     "profileSettings": {
-      "title": "Personal Settings",
+      "title": "Profile Settings",
       "description": "Manage your profile information.",
       "changeProfilePicture": "Change Profile Picture",
       "username": "Username",
@@ -76,7 +76,241 @@
         "profileUpdatedPictureTooLargeTitle": "Picture Too Large!",
         "profileUpdatedPictureTooLargeDescription": "The picture you are trying to upload is too large. Please choose a picture smaller than 1 MB."
       }
+    },
+    "appearanceSettings": {
+      "title": "Appearance Settings",
+      "description": "Customize the application to suit your needs.",
+      "language": "Language",
+      "languages": {
+        "de": "German",
+        "en": "English"
+      },
+      "theme": "Theme",
+      "themes": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "saveChanges": "Save Changes",
+      "toasts": {
+        "appearanceUpdatedTitle": "Appearance Settings Updated!",
+        "appearanceUpdatedDescription": "Your appearance settings have been successfully updated.",
+        "appearanceUpdatedErrorTitle": "Error Updating Settings!",
+        "appearanceUpdatedErrorDescription": "Your appearance settings could not be updated."
+      }
+    },
+    "teamSettings": {
+      "title:": "Settings",
+      "couldNotLoadTeam": "Team settings could not be loaded.",
+      "ownerDangerZone": {
+        "title": "Danger Zone",
+        "deleteTeamTitle": "Delete Team",
+        "deleteTeamDescription": "Permanently delete your team and all related data.",
+        "deleteTeamButton": "Delete Team"
+      },
+      "memberDangerZone": {
+        "title": "Danger Zone",
+        "leaveTeamTitle": "Leave Team",
+        "leaveTeamDescription": "Leave \"${teamName}\" and permanently delete all your related data.",
+        "leaveTeamButton": "Leave Team"
+      }
+    }
+  },
+  "stats": {
+    "title": "Your Statistics",
+    "noStats": "No statistics available",
+    "levelCard": {
+      "title": "Progress",
+      "level": "Level {level}",
+      "xpToNextLevel": "{xp} / {xpToNextLevel} XP to the next level"
+    },
+    "coinsCard": {
+      "title": "Coins"
+    },
+    "badgesCard": {
+      "title": "Badges"
+    }
+  },
+  "team": {
+    "title": "Team Management",
+    "invite": {
+      "title": "Invite Member",
+      "description": "Invite members to this team via email address.",
+      "emailPlaceholder": "Email Address",
+      "inviteButton": "Invite",
+      "toasts": {
+        "invitationSentTitle": "Invitation Sent",
+        "invitationSentDescription": "The invitation to {email} was successfully sent.",
+        "invitationSentErrorTitle": "Error Inviting",
+        "invitationSentErrorDescription": "The invitation to {email} could not be sent."
+      }
+    },
+    "roles": {
+      "title": "Roles",
+      "description": "Manage the roles in your team.",
+      "addRole": "Add Role",
+      "roleName": "Role Name",
+      "roleColor": "Role Color",
+      "allowedPages": "Allowed Pages",
+      "addButton": "Add",
+      "deleteButton": "Delete",
+      "confirmDelete": {
+        "title": "Delete Role",
+        "description": "Are you sure you want to delete this role? This action cannot be undone and will remove the role from all members.",
+        "confirmButton": "Delete Role"
+      },
+      "table": {
+        "name": "Name",
+        "color": "Color",
+        "pages": "Allowed Pages",
+        "actions": "Actions",
+        "none": "None",
+        "edit": "Edit"
+      },
+      "edit": {
+        "title": "Edit Role",
+        "roleName": "Role Name",
+        "roleColor": "Role Color",
+        "allowedPages": "Allowed Pages",
+        "updateButton": "Update"
+      },
+      "toasts": {
+        "roleAddedTitle": "Role Added",
+        "roleAddedDescription": "The role {name} was successfully added.",
+        "roleAddedErrorTitle": "Error Adding Role",
+        "roleAddedErrorDescription": "The role {name} could not be added.",
+        "roleAddedErrorNullDescription": "The role could not be added because the name or color is empty.",
+        "roleUpdatedTitle": "Role Updated",
+        "roleUpdatedDescription": "The role was successfully updated.",
+        "roleDeletedTitle": "Role Deleted",
+        "roleDeletedDescription": "The role was successfully deleted.",
+        "roleDeletedErrorTitle": "Error Deleting Role",
+        "roleDeletedErrorDescription": "The role could not be deleted."
+      }
+    },
+    "members": {
+      "title": "Members",
+      "description": "Manage the members and their roles in this team.",
+      "searchPlaceholder": "Search by name or email",
+      "filterByRole": "Filter by role",
+      "allRoles": "All Roles",
+      "noRole": "No Role",
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "actions": "Actions",
+        "editRoles": "Edit Roles"
+      },
+      "editRoles": {
+        "title": "Edit Roles for {name}",
+        "updateButton": "Confirm"
+      },
+      "removeMember": "Remove",
+      "confirmRemoveMember": {
+        "title": "Remove Member",
+        "description": "Are you sure you want to remove this member? This action cannot be undone.",
+        "confirmButton": "Remove Member"
+      },
+      "toasts": {
+        "memberRemovedTitle": "Member Removed",
+        "memberRemovedDescription": "The member was successfully removed.",
+        "memberRemovedErrorTitle": "Error Removing Member",
+        "memberRemovedErrorDescription": "The member could not be removed.",
+        "rolesUpdatedTitle": "Roles Updated",
+        "rolesUpdatedDescription": "The roles were successfully updated.",
+        "rolesUpdatedErrorTitle": "Error Updating Roles",
+        "rolesUpdatedErrorDescription": "The roles could not be updated."
+      }
+    }
+  },
+  "confirmDialog": {
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "monitoring": {
+    "title": "Process Monitoring Dashboard",
+    "general": {
+      "totalInstances": "Total Instances",
+      "totalCompleted": "Completed",
+      "totalInProgress": "In Progress",
+      "totalOnHold": "On Hold",
+      "percentOfAll": "{percent}% of total instances",
+      "trendTitle": "Trend of Process Instances",
+      "startedInstances": "Started Instances",
+      "completedInstances": "Completed Instances",
+      "all": "All"
+    },
+    "processes": {
+      "title": "Process Models Overview",
+      "instanceState": "Instance Status",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "onHold": "On Hold",
+      "readyOrInProgress": "Ready or In Progress",
+      "taskProgress": "Task Progress",
+      "allTasks": "All Tasks"
+    }
+  },
+  "tasks": {
+    "couldNotFoundSelectedTask": "The selected task could not be found.",
+    "selectTask": "Select a task from the list.",
+    "noTasksAvailable": "No tasks available.",
+    "toasts": {
+      "taskCompletedTitle": "Task Completed",
+      "taskCompletedDescription": "The task was successfully completed and removed from your list."
+    }
+  },
+  "editor": {
+    "createProcess": "Create Process",
+    "createProcessDescription": "Create a new process model for your team.",
+    "name": "Process Name",
+    "description": "Description",
+    "selectProcessModel": "Select Process Model to Edit",
+    "createButton": "Create",
+    "cancelButton": "Cancel",
+    "save": {
+      "saveButton": "Save",
+      "saveErrorTitle": "Error Saving Process",
+      "saveErrorDescription": "The process could not be saved.",
+      "saveSuccessTitle": "Process Saved",
+      "saveSuccessDescription": "The process was successfully saved."
+    },
+    "instance": {
+      "instanceButton": "Create Instance",
+      "createNewInstanceTitle": "Create New Process Instance",
+      "createNewInstanceDescription": "Create a new instance of the process.",
+      "instanceAPIExplanation": "You can also send a request to this URL to create a new instance:",
+      "urlCopied": "URL copied to clipboard!",
+      "create": "Create",
+      "cancel": "Cancel",
+      "toasts": {
+        "instanceCreatedTitle": "Instance Created",
+        "instanceCreatedDescription": "The instance was successfully created.",
+        "instanceCreatedErrorTitle": "Error Creating Instance",
+        "instanceCreatedErrorDescription": "The instance could not be created."
+      }
+    },
+    "export": {
+      "exportButton": "Export"
+    },
+    "undoRedo": {
+      "undoButton": "Undo",
+      "redoButton": "Redo"
+    },
+    "delete": {
+      "deleteButton": "Delete",
+      "deleteProcessTitle": "Really delete process model?",
+      "deleteProcessDescription": "Are you sure you want to delete this process? This action cannot be undone. All data associated with this process will also be deleted.",
+      "deleteButtonConfirm": "Delete"
+    },
+    "toasts": {
+      "processCreatedTitle": "Process Created",
+      "processCreatedDescription": "The process was successfully created.",
+      "processDeletedSuccessfullyTitle": "Process {name} Deleted",
+      "processDeletedSuccessfullyDescription": "The process was successfully deleted.",
+      "processCreatedErrorTitle": "Error Creating Process",
+      "processCreatedErrorDescription": "The process could not be created."
     }
   }
-
 }
