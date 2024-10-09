@@ -101,7 +101,7 @@
       }
     },
     "teamSettings": {
-      "title:": "Podešavanja",
+      "title": "Podešavanja",
       "couldNotLoadTeam": "Nije moguće učitati podešavanja tima.",
       "ownerDangerZone": {
         "title": "Opasna zona",

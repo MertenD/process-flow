@@ -2,20 +2,34 @@
 
 import "@/styles/processList.css";
 import {useParams, usePathname} from "next/navigation";
-import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {ManualTaskWithTitleAndDescription, Role} from "@/types/database.types";
 import Link from "next/link";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {createClient} from "@/utils/supabase/client";
 import {toast} from "@/components/ui/use-toast";
 import getTasks from "@/actions/get-tasks";
 import {Badge} from "@/components/ui/badge";
 import getRoles from "@/actions/get-roles";
 import {useTranslations} from "next-intl";
+import {GamificationType} from "@/model/GamificationType";
+import {PointsType} from "@/model/PointsType";
+import {Award} from "lucide-react";
 
 export interface TaskListProps {
     teamId: number;
     userId: string
+}
+
+interface TaskData {
+    gamificationType?: GamificationType;
+    gamificationOptions?: string
+}
+
+interface gamificationOptions {
+    pointType?: PointsType;
+    points?: number;
+    badgeType?: string;
 }
 
 export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
@@ -113,17 +127,34 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
                             <CardTitle>
                                 <div className="w-full flex flex-row justify-between">
                                     {task.name}
-                                    <Badge
-                                        style={{backgroundColor: role?.color}}
-                                    >{role?.name}</Badge>
                                 </div>
                             </CardTitle>
-                            <CardDescription>{task.description}</CardDescription>
+                            <CardDescription>
+                                <div className="flex flex-col space-y-2">
+                                    <div>{task.description}</div>
+                                    <div className="flex flex-row flex-wrap">
+                                        <Badge
+                                            style={{backgroundColor: role?.color}}
+                                        >{role?.name}</Badge>
+                                        {(task.data as TaskData)?.gamificationType === GamificationType.NONE ? null : (
+                                            (task.data as TaskData)?.gamificationType === GamificationType.POINTS ?
+                                                (JSON.parse((task.data as TaskData)?.gamificationOptions || "")?.pointType === PointsType.EXPERIENCE ?
+                                                        <Badge className="bg-green-600">{JSON.parse((task.data as TaskData)?.gamificationOptions || "")?.points} XP</Badge> :
+                                                        <Badge className="bg-yellow-500">{JSON.parse((task.data as TaskData)?.gamificationOptions || "")?.points} Coins</Badge>
+                                                ) :
+                                                <Badge key={index} variant="secondary" className="flex items-center">
+                                                    <Award className="mr-1 h-4 w-4"/>
+                                                    {JSON.parse((task.data as TaskData)?.gamificationOptions || "")?.badgeType}
+                                                </Badge>
+                                        )}
+                                    </div>
+                                </div>
+                            </CardDescription>
                         </CardHeader>
                     </Card>
                 </Link>
             })}
-            { tasks.length === 0 && <p className="text-center">{t("noTasksAvailable")}</p> }
+            {tasks.length === 0 && <p className="text-center">{t("noTasksAvailable")}</p>}
         </form>
     </section>
 }
