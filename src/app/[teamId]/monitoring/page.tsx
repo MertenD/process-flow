@@ -10,6 +10,7 @@ import {
     ProcessModel,
     ProcessModelInstanceState
 } from "@/types/database.types";
+import {getTranslations} from "next-intl/server";
 
 export type FlowElementInstanceWithFlowElement = FlowElementInstance & { flow_element: FlowElement & { name: string } };
 
@@ -22,6 +23,8 @@ type ProcessModelWithInstances = ProcessModel & {
 };
 
 export default async function MonitoringPage({ params }: Readonly<{ params: { teamId: string } }>) {
+
+    const t = await getTranslations("monitoring")
 
     const supabase = createClient()
     const {data: userData, error} = await supabase.auth.getUser()
@@ -171,7 +174,7 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
     const tasksData: FlowElementInstanceWithFlowElement[] = processModels?.map(model => model.process_instance).flat().map(instance => instance.flow_element_instance).flat() || [];
 
     return <div className="container mx-auto p-4 flex flex-col space-y-6">
-        <h1 className="text-3xl font-bold">Prozess-Monitoring Dashboard</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <GeneralMonitoringStatistics
             totalCompleted={totalCompleted}
             totalOnHold={totalOnHold}

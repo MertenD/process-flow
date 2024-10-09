@@ -20,6 +20,7 @@ import {ChevronDown, ChevronUp} from 'lucide-react'
 import {ProcessModelInstanceState} from "@/types/database.types";
 import AllTasksTable from "@/components/monitoring/AllTasksTable";
 import {FlowElementInstanceWithFlowElement} from "@/app/[teamId]/monitoring/page";
+import {useTranslations} from "next-intl";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 
@@ -40,12 +41,15 @@ function ProcessModelStatisticsDetail({data, tasksData}: {
     data: ModelStatisticsData,
     tasksData: FlowElementInstanceWithFlowElement[]
 }) {
+
+    const t = useTranslations("monitoring.processes")
+
     return (
         <div className="space-y-6 mt-4">
             <div className="grid gap-4 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Instanzen-Status</CardTitle>
+                        <CardTitle>{t("instanceState")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <ResponsiveContainer width="100%" height={300}>
@@ -61,11 +65,11 @@ function ProcessModelStatisticsDetail({data, tasksData}: {
                                     label={({name, percent}: { name: ProcessModelInstanceState, percent: number }) => {
                                         let showName = name.toString()
                                         if (name === "Completed") {
-                                            showName = "Fertig"
+                                            showName = t("completed")
                                         } else if (name === "Running") {
-                                            showName = "Läuft gerade"
+                                            showName = t("inProgress")
                                         } else if (name === "Error") {
-                                            showName = "Blockiert"
+                                            showName = t("blocked")
                                         }
                                         return `${showName} ${(percent * 100).toFixed(0)}%`
                                     }}
@@ -82,7 +86,7 @@ function ProcessModelStatisticsDetail({data, tasksData}: {
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Aufgaben-Fortschritt</CardTitle>
+                        <CardTitle>{t("taskProgress")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <ResponsiveContainer width="100%" height={300}>
@@ -91,9 +95,9 @@ function ProcessModelStatisticsDetail({data, tasksData}: {
                                 <XAxis dataKey="step" angle={-45} textAnchor="end" height={100}/>
                                 <YAxis/>
                                 <Tooltip/>
-                                <Bar dataKey="amountInProgress" name="Bereit oder in Bearbeitung" fill="#0088FE"/>
-                                <Bar dataKey="amountCompleted" name="Fertig" fill="#00C49F"/>
-                                <Bar dataKey="amountBlocked" name="Blockiert" fill="#FFBB28"/>
+                                <Bar dataKey="amountInProgress" name={t("readyOrInProgress")} fill="#0088FE"/>
+                                <Bar dataKey="amountCompleted" name={t("completed")} fill="#00C49F"/>
+                                <Bar dataKey="amountBlocked" name={t("onHold")} fill="#FFBB28"/>
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -101,7 +105,7 @@ function ProcessModelStatisticsDetail({data, tasksData}: {
             </div>
             <Card className="grid-cols-2 w-full">
                 <CardHeader>
-                    <CardTitle>Alle Aufgaben</CardTitle>
+                    <CardTitle>{t("allTasks")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <AllTasksTable data={tasksData.filter(task =>
@@ -114,6 +118,9 @@ function ProcessModelStatisticsDetail({data, tasksData}: {
 }
 
 export default function ProcessModelsStatistics({modelData, tasksData}: ProcessModelsStatisticsProps) {
+
+    const t = useTranslations("monitoring.processes")
+
     const [openModells, setOpenModells] = useState<number[]>([])
 
     const toggleModell = (id: number) => {
@@ -126,7 +133,7 @@ export default function ProcessModelsStatistics({modelData, tasksData}: ProcessM
 
         <Card>
             <CardHeader>
-                <CardTitle>Prozessmodelle Übersicht</CardTitle>
+                <CardTitle>{t("title")}</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">

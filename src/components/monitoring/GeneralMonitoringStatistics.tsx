@@ -4,6 +4,7 @@ import React, {useState, useMemo} from 'react'
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts'
+import {useTranslations} from "next-intl";
 
 export type TrendData = {
     [key: string]: { date: string; started: number; completed: number }[];
@@ -24,6 +25,8 @@ export default function GeneralMonitoringStatistics({
     totalOnHold,
     trendData
 }: GeneralMonitoringStatisticsProps) {
+
+    const t = useTranslations("monitoring.general")
 
     const [selectedModel, setSelectedModel] = useState<string>('Alle')
 
@@ -62,7 +65,7 @@ export default function GeneralMonitoringStatistics({
             <div className="grid gap-4 md:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Gesamtinstanzen</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t("totalInstances")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalInstances}</div>
@@ -70,34 +73,34 @@ export default function GeneralMonitoringStatistics({
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Abgeschlossen</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t("totalCompleted")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalCompleted}</div>
                         <p className="text-xs text-muted-foreground">
-                            {((totalCompleted / totalInstances) * 100).toFixed(1)}% der Gesamtinstanzen
+                            {t("percentOfAll",  { percent: ((totalCompleted / totalInstances) * 100).toFixed(1) })}
                         </p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">In Bearbeitung</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t("totalInProgress")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalInProgress}</div>
                         <p className="text-xs text-muted-foreground">
-                            {((totalInProgress / totalInstances) * 100).toFixed(1)}% der Gesamtinstanzen
+                            {t("percentOfAll",  { percent: ((totalInProgress / totalInstances) * 100).toFixed(1) })}
                         </p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Blockiert</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t("totalOnHold")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalOnHold}</div>
                         <p className="text-xs text-muted-foreground">
-                            {((totalOnHold / totalInstances) * 100).toFixed(1)}% der Gesamtinstanzen
+                            {t("percentOfAll",  { percent: ((totalOnHold / totalInstances) * 100).toFixed(1) })}
                         </p>
                     </CardContent>
                 </Card>
@@ -105,13 +108,13 @@ export default function GeneralMonitoringStatistics({
             <Card>
                 <CardHeader>
                     <CardTitle className="flex justify-between items-center">
-                        <span>Trend der Prozessinstanzen</span>
+                        <span>{t("trendTitle")}</span>
                         <Select value={selectedModel} onValueChange={setSelectedModel}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Wähle ein Prozessmodell"/>
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem key={"all"} value={"Alle"}>
+                                <SelectItem key={"all"} value={t("all")}>
                                     Alle
                                 </SelectItem>
                                 {Object.keys(trendData).map((model: string) => (
@@ -131,8 +134,8 @@ export default function GeneralMonitoringStatistics({
                             <YAxis/>
                             <Tooltip/>
                             <Legend/>
-                            <Line type="linear" dataKey="started" stroke="#8884d8" name="Gestartete Instanzen"/>
-                            <Line type="linear" dataKey="completed" stroke="#82ca9d" name="Abgeschlossene Instanzen"/>
+                            <Line type="linear" dataKey="started" stroke="#8884d8" name={t("startedInstances")}/>
+                            <Line type="linear" dataKey="completed" stroke="#82ca9d" name={t("completedInstances")}/>
                         </LineChart>
                     </ResponsiveContainer>
                 </CardContent>

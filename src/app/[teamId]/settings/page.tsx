@@ -30,7 +30,7 @@ export default async function SettingsPage({ params }: Readonly<{ params: { team
     return <div className="container mx-auto p-4 flex flex-col space-y-6">
         <h1 className="text-3xl font-bold">{t("generalSettings")}</h1>
         <SettingsDashboard userId={userData.user.id}/>
-        <h1 className="text-3xl font-bold">{t("teamSettings")}</h1>
+        <h1 className="text-3xl font-bold">{t("teamSettingsTitle")}</h1>
         { isUserOwner ?
             <OwnerTeamSettings teamId={params.teamId} />
             :

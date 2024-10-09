@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import {useTranslations} from "next-intl";
 
 interface ConfirmationDialogProps {
   isOpen: boolean
@@ -29,9 +30,12 @@ export function ConfirmationDialog({
   onConfirm,
   title,
   description,
-  confirmLabel = "Bestätigen",
-  cancelLabel = "Abbrechen"
+  confirmLabel,
+  cancelLabel
 }: ConfirmationDialogProps) {
+
+  const t = useTranslations("confirmDialog")
+
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent>
@@ -41,10 +45,10 @@ export function ConfirmationDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
-            <Button variant="outline" onClick={onClose}>{cancelLabel}</Button>
+            <Button variant="outline" onClick={onClose}>{cancelLabel || t("cancel")}</Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Button variant="destructive" onClick={onConfirm}>{confirmLabel}</Button>
+            <Button variant="destructive" onClick={onConfirm}>{confirmLabel || t("confirm")}</Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

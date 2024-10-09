@@ -15,6 +15,7 @@ import {toast} from "@/components/ui/use-toast";
 import {createClient} from "@/utils/supabase/client";
 import getRoles from "@/actions/get-roles";
 import {Checkbox} from "@/components/ui/checkbox";
+import {useTranslations} from "next-intl";
 
 export interface RoleManagementProps {
     teamId: number
@@ -23,6 +24,9 @@ export interface RoleManagementProps {
 const availablePages: Page[] = ["Editor", "Tasks", "Monitoring", "Team"]
 
 export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) {
+
+    const t = useTranslations("team.roles")
+
     const supabase = createClient()
 
     const [newRoleName, setNewRoleName] = useState<string>('')
@@ -82,8 +86,8 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
             .eq('id', editingRole.id)
             .then(() => {
                 toast({
-                    title: 'Rolle aktualisiert',
-                    description: 'Die Rolle wurde erfolgreich aktualisiert.',
+                    title: t("toasts.roleUpdatedTitle"),
+                    description: t("toasts.roleUpdatedDescription"),
                     variant: 'success'
                 })
             })
@@ -98,14 +102,14 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
         if (confirmDialog.id === null) return
         removeRole(confirmDialog.id).then(() => {
             toast({
-                title: 'Rolle gelöscht',
-                description: 'Die Rolle wurde erfolgreich gelöscht.',
+                title: t("toasts.roleDeletedTitle"),
+                description: t("toasts.roleDeletedDescription"),
                 variant: 'success'
             })
         }).catch(() => {
             toast({
-                title: 'Fehler beim Löschen der Rolle',
-                description: 'Die Rolle konnte nicht gelöscht werden.',
+                title: t("toasts.roleDeletedErrorTitle"),
+                description: t("toasts.roleDeletedErrorDescription"),
                 variant: 'destructive'
             })
         })
@@ -148,30 +152,30 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
 
     return <Card>
         <CardHeader>
-            <CardTitle>Rollen</CardTitle>
-            <CardDescription>Verwalten Sie welche Rollen es in diesem Team gibt.</CardDescription>
+            <CardTitle>{t("title")}</CardTitle>
+            <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
             <Dialog open={isCreateRoleDialogOpen} onOpenChange={setIsCreateRoleDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button className="mb-2">Neue Rolle hinzufügen</Button>
+                    <Button className="mb-2">{t("addRole")}</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Neue Rolle hinzufügen</DialogTitle>
+                        <DialogTitle>{t("addRole")}</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="new-role-name">Rollenname</Label>
+                            <Label htmlFor="new-role-name">{t("roleName")}</Label>
                             <Input
                                 id="new-role-name"
-                                placeholder="Rollenname"
+                                placeholder={t("roleName")}
                                 value={newRoleName}
                                 onChange={(e) => setNewRoleName(e.target.value)}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="new-role-color">Rollenfarbe</Label>
+                            <Label htmlFor="new-role-color">{t("roleColor")}</Label>
                             <div className="flex items-center gap-2">
                                 <Input
                                     id="new-role-color"
@@ -184,7 +188,7 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label>Erlaubte Seiten</Label>
+                            <Label>{t("allowedPages")}</Label>
                             <PageCheckboxes
                                 value={newRolePages}
                                 onChange={setNewRolePages}
@@ -193,39 +197,39 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                         <Button onClick={() => {
                             if (!newRoleName) {
                                 toast({
-                                    title: 'Fehler beim Hinzufügen der Rolle',
-                                    description: 'Der Name der Rolle darf nicht leer sein.',
+                                    title: t("toasts.roleAddedErrorTitle"),
+                                    description: t("toasts.roleAddedErrorNullDescription"),
                                     variant: 'destructive'
                                 })
                                 return
                             }
                             addRole(newRoleName, teamId, newRoleColor, newRolePages).then(newRoleId => {
                                 toast({
-                                    title: 'Rolle hinzugefügt',
-                                    description: `Die Rolle ${newRoleName} wurde erfolgreich hinzugefügt.`,
+                                    title: t("toasts.roleAddedTitle"),
+                                    description: t("toasts.roleAddedDescription", {name: newRoleName}),
                                     variant: 'success'
                                 })
                             }).catch(() => {
                                 toast({
-                                    title: 'Fehler beim Hinzufügen der Rolle',
-                                    description: `Die Rolle ${newRoleName} konnte nicht hinzugefügt werden.`,
+                                    title: t("toasts.roleAddedErrorTitle"),
+                                    description: t("toasts.roleAddedErrorDescription", {name: newRoleName}),
                                     variant: 'destructive'
                                 })
                             })
                             setNewRoleName('')
                             setNewRolePages([])
                             setIsCreateRoleDialogOpen(false)
-                        }}>Hinzufügen</Button>
+                        }}>{t("addButton")}</Button>
                     </div>
                 </DialogContent>
             </Dialog>
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Farbe</TableHead>
-                        <TableHead>Erlaubte Seiten</TableHead>
-                        <TableHead className="text-right">Aktionen</TableHead>
+                        <TableHead>{t("table.name")}</TableHead>
+                        <TableHead>{t("table.color")}</TableHead>
+                        <TableHead>{t("table.pages")}</TableHead>
+                        <TableHead className="text-right">{t("actions")}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -242,25 +246,25 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                                 </div>
                             </TableCell>
                             <TableCell>
-                                { role.allowed_pages.join(", ") || "Keine" }
+                                { role.allowed_pages.join(", ") || t("table.none") }
                             </TableCell>
                             <TableCell className="text-right">
                                 <Dialog open={isUpdateRoleDialogOpen} onOpenChange={setIsUpdateRoleDialogOpen}>
                                     <DialogTrigger asChild>
                                         <Button variant="outline" className="mr-2" onClick={() => {
                                             setEditingRole(role)
-                                        }}>Bearbeiten</Button>
+                                        }}>{t("table.edit")}</Button>
                                     </DialogTrigger>
                                     <DialogContent>
                                         <DialogHeader>
-                                            <DialogTitle>Rolle bearbeiten</DialogTitle>
+                                            <DialogTitle>{t("edit.title")}</DialogTitle>
                                         </DialogHeader>
                                         <div className="space-y-4">
                                             <div className="space-y-2">
-                                                <Label htmlFor="edit-role-name">Rollenname</Label>
+                                                <Label htmlFor="edit-role-name">{t("edit.roleName")}</Label>
                                                 <Input
                                                     id="edit-role-name"
-                                                    placeholder="Rollenname"
+                                                    placeholder={t("edit.roleName")}
                                                     value={editingRole !== null ? editingRole.name : role.name}
                                                     onChange={(e) => {
                                                         if (!editingRole) {
@@ -272,7 +276,7 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="edit-role-color">Rollenfarbe</Label>
+                                                <Label htmlFor="edit-role-color">{t("edit.roleColor")}</Label>
                                                 <div className="flex items-center gap-2">
                                                     <Input
                                                         id="edit-role-color"
@@ -291,7 +295,7 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                                                 </div>
                                             </div>
                                             <div className="space-y-2 space-x-2">
-                                                <Label>Erlaubte Seiten</Label>
+                                                <Label>{t("edit.allowedPages")}</Label>
                                                 <PageCheckboxes
                                                     value={editingRole?.allowed_pages || role.allowed_pages || []}
                                                     onChange={(newPages) => {
@@ -314,11 +318,11 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
                                                 }
                                                 setIsUpdateRoleDialogOpen(false)
                                                 updateRole()
-                                            }}>Aktualisieren</Button>
+                                            }}>{t("edit.updateButton")}</Button>
                                         </div>
                                     </DialogContent>
                                 </Dialog>
-                                <Button variant="destructive" onClick={() => deleteRole(role.id)}>Löschen</Button>
+                                <Button variant="destructive" onClick={() => deleteRole(role.id)}>{t("deleteButton")}</Button>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -330,10 +334,9 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
             isOpen={confirmDialog.isOpen}
             onClose={() => setConfirmDialog({isOpen: false, id: null})}
             onConfirm={confirmDeleteRole}
-            title={'Rolle löschen'}
-            description={`Sind Sie sicher, dass Sie die Rolle löschen möchten? Diese Aktion kann nicht rückgängig 
-            gemacht werden und wird die Rolle von allen Mitgliedern entfernen.`}
-            confirmLabel={'Rolle löschen'}
+            title={t("confirmDelete.title")}
+            description={t("confirmDelete.description")}
+            confirmLabel={t("confirmDelete.confirmButton")}
         />
     </Card>
 }

@@ -5,6 +5,7 @@ import {toast} from "@/components/ui/use-toast";
 import {createClient} from "@/utils/supabase/client";
 import {Trash2} from "lucide-react";
 import {useRouter} from "next/navigation";
+import {useTranslations} from "next-intl";
 
 export interface DeleteProcessButtonProps {
     teamId: number
@@ -13,6 +14,8 @@ export interface DeleteProcessButtonProps {
 }
 
 export default function DeleteProcessButton({ teamId, processModelId, processModelName }: DeleteProcessButtonProps) {
+
+    const t = useTranslations("editor.delete")
 
     const supabase = createClient();
 
@@ -48,17 +51,15 @@ export default function DeleteProcessButton({ teamId, processModelId, processMod
 
     return <>
         <Button variant="destructive" onClick={handleDeleteClick}>
-            <Trash2 className="mr-2 h-4 w-4" /> Delete Model
+            <Trash2 className="mr-2 h-4 w-4" /> {t("deleteButton")}
         </Button>
         <ConfirmationDialog
             isOpen={isConfirmDialogOpen}
             onClose={() => setIsConfirmDialogOpen(false)}
             onConfirm={handleDeleteConfirm}
-            title="Prozessmodell wirklich löschen?"
-            description={`Möchten sie das Modell "${processModelName}" wirklich löschen? 
-                Dieser Vorgang kann nicht rückgängig gemacht werden. 
-                Alle Daten die mit diesem Prozessmodell verknüpft sind, werden ebenfalls gelöscht.`}
-            confirmLabel="Prozess löschen"
+            title={t("deleteProcessTitle")}
+            description={t("deleteProcessDescription")}
+            confirmLabel={t("deleteButtonConfirm")}
         />
     </>
 }

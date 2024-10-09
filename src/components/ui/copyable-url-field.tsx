@@ -4,8 +4,12 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Check, Copy } from "lucide-react"
+import {useTranslations} from "next-intl";
 
 export function CopyableUrlField({ url = "https://example.com/message" }) {
+
+  const t = useTranslations("editor.instance")
+
   const [copied, setCopied] = useState(false)
 
   const copyToClipboard = async () => {
@@ -36,7 +40,7 @@ export function CopyableUrlField({ url = "https://example.com/message" }) {
         </Button>
       </div>
       {copied && (
-        <p className="text-sm text-green-600">URL wurde in die Zwischenablage kopiert!</p>
+        <p className="text-sm text-green-600">{t("urlCopied")}</p>
       )}
     </div>
   )

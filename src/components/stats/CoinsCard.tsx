@@ -1,6 +1,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Coins} from "lucide-react";
 import React from "react";
+import {useTranslations} from "next-intl";
 
 export interface CoinsCardProps {
     coins: number
@@ -8,9 +9,11 @@ export interface CoinsCardProps {
 
 export default function CoinsCard({ coins }: CoinsCardProps) {
 
+    const t = useTranslations("stats.coinsCard")
+
     return <Card>
         <CardHeader>
-            <CardTitle>Münzen</CardTitle>
+            <CardTitle>{t("title")}</CardTitle>
         </CardHeader>
         <CardContent>
             <div className="flex items-center">

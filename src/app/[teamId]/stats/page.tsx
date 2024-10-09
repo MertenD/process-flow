@@ -4,8 +4,11 @@ import {UserStats} from "@/model/UserStats";
 import getUserStatistics from "@/actions/get-user-statistics";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
+import {getTranslations} from "next-intl/server";
 
 export default async function StatsPage({ params }: Readonly<{ params: { teamId: number } }>) {
+
+    const t = await getTranslations("stats")
 
     const supabase = createClient()
     const {data: userData, error} = await supabase.auth.getUser()
@@ -19,7 +22,7 @@ export default async function StatsPage({ params }: Readonly<{ params: { teamId:
     })
 
     return userStats ? ( <div className="container mx-auto p-4 flex flex-col space-y-6">
-        <h1 className="text-3xl font-bold">Deine Statistiken</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <UserStatsDashboard stats={userStats}/>
-    </div> ) : <div className="w-full h-full flex justify-center items-center">No stats found</div>
+    </div> ) : <div className="w-full h-full flex justify-center items-center">{t("noStats")}</div>
 }

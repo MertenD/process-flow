@@ -16,6 +16,7 @@ import createProcessModel from "@/actions/create-process-model";
 import {toast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
 import {Textarea} from "@/components/ui/textarea";
+import {useTranslations} from "next-intl";
 
 export interface CreateProcessButtonProps {
     userId: string
@@ -24,35 +25,35 @@ export interface CreateProcessButtonProps {
 
 export default function CreateProcessButton({userId, teamId}: Readonly<CreateProcessButtonProps>) {
 
+    const t = useTranslations("editor")
+
     const router = useRouter()
     const [showCreateProcessDialog, setShowCreateProcessDialog] = React.useState(false)
 
     return <Dialog open={showCreateProcessDialog} onOpenChange={setShowCreateProcessDialog}>
         <Button onClick={() => setShowCreateProcessDialog(true)}>
-            Create new Process
+            {t("createProcess")}
         </Button>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Create process</DialogTitle>
-                <DialogDescription>
-                    Create a new process model for your team
-                </DialogDescription>
+                <DialogTitle>{t("createProcess")}</DialogTitle>
+                <DialogDescription>{t("createProcessDescription")}</DialogDescription>
             </DialogHeader>
             <div>
                 <div className="space-y-4 py-2 pb-4">
                     <div className="space-y-2">
-                        <Label htmlFor="process-name">Process name</Label>
-                        <Input id="process-name" placeholder="process name"/>
+                        <Label htmlFor="process-name">{t("name")}</Label>
+                        <Input id="process-name" placeholder={t("name")}/>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="process-description">Process description</Label>
-                        <Textarea id="process-description" placeholder="process description"/>
+                        <Label htmlFor="process-description">{t("description")}</Label>
+                        <Textarea id="process-description" placeholder={t("description")}/>
                     </div>
                 </div>
             </div>
             <DialogFooter>
                 <Button variant="outline" onClick={() => setShowCreateProcessDialog(false)}>
-                    Cancel
+                    {t("cancelButton")}
                 </Button>
                 <Button type="submit" onClick={() => {
                     const processName = (document.getElementById("process-name") as HTMLInputElement).value;
@@ -63,11 +64,11 @@ export default function CreateProcessButton({userId, teamId}: Readonly<CreatePro
                     }).catch((error) => {
                         toast({
                             variant: "destructive",
-                            title: "Something went wrong!",
-                            description: error.message,
+                            title: t("toasts.processCreatedErrorTitle"),
+                            description: t("processCreatedErrorDescription"),
                         })
                     })
-                }}>Continue</Button>
+                }}>{t("createButton")}</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

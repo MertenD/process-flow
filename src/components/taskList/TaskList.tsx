@@ -11,6 +11,7 @@ import {toast} from "@/components/ui/use-toast";
 import getTasks from "@/actions/get-tasks";
 import {Badge} from "@/components/ui/badge";
 import getRoles from "@/actions/get-roles";
+import {useTranslations} from "next-intl";
 
 export interface TaskListProps {
     teamId: number;
@@ -18,6 +19,8 @@ export interface TaskListProps {
 }
 
 export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
+
+    const t = useTranslations("tasks")
 
     const params = useParams<{ taskId: string }>()
     const pathName = usePathname()
@@ -72,8 +75,8 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
                     setSelectedTaskId(null)
                     toast({
                         variant: "success",
-                        title: "Task completed",
-                        description: "The task has been completed and removed from your task list."
+                        title: t("toasts.taskCompletedTitle"),
+                        description: t("toasts.taskCompletedDescription")
                     })
                 }
             })
@@ -120,7 +123,7 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
                     </Card>
                 </Link>
             })}
-            { tasks.length === 0 && <p className="text-center">No tasks available</p> }
+            { tasks.length === 0 && <p className="text-center">{t("noTasksAvailable")}</p> }
         </form>
     </section>
 }

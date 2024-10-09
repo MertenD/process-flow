@@ -7,6 +7,7 @@ import {ConfirmationDialog} from "@/components/ConfirmationDialog";
 import {toast} from "@/components/ui/use-toast";
 import {createClient} from "@/utils/supabase/client";
 import {useRouter} from "next/navigation";
+import {useTranslations} from "next-intl";
 
 export interface OwnerDangerZoneSettingsProps {
     teamId: number
@@ -14,6 +15,8 @@ export interface OwnerDangerZoneSettingsProps {
 }
 
 export default function OwnerDangerZoneSettings({ teamId, teamName }: Readonly<OwnerDangerZoneSettingsProps>){
+
+    const t = useTranslations("settings.teamSettings.ownerDangerZone")
 
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState<boolean>(false)
 
@@ -49,15 +52,15 @@ export default function OwnerDangerZoneSettings({ teamId, teamName }: Readonly<O
 
     return <Card className="border-destructive">
         <CardHeader>
-            <CardTitle>Danger Zone</CardTitle>
+            <CardTitle>{t("title")}</CardTitle>
         </CardHeader>
         <CardContent>
             <div className="flex flex-row justify-between">
                 <div className="flex flex-col items-start">
-                    <h3 className="text-lg font-semibold">Team löschen</h3>
-                    <p className="text-sm">Löschen Sie Ihr Team und alle zugehörigen Daten unwiderruflich.</p>
+                    <h3 className="text-lg font-semibold">{t("deleteTeamTitle")}</h3>
+                    <p className="text-sm">{t("deleteTeamDescription")}</p>
                 </div>
-                <Button variant="destructive" onClick={() => setIsConfirmDialogOpen(true)}>Team löschen</Button>
+                <Button variant="destructive" onClick={() => setIsConfirmDialogOpen(true)}>{t("deleteTeamButton")}</Button>
             </div>
         </CardContent>
 

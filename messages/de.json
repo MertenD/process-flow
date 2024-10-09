@@ -60,7 +60,7 @@
   },
   "settings": {
     "generalSettings": "Allgemeine Einstellungen",
-    "teamSettings": "Team Einstellungen",
+    "teamSettingsTitle": "Team Einstellungen",
     "profileSettings": {
       "title": "Persönlische Einstellungen",
       "description": "Verwalten Sie Ihre Profilinformationen.",
@@ -76,6 +76,241 @@
         "profileUpdatedPictureTooLargeTitle": "Bild zu groß!",
         "profileUpdatedPictureTooLargeDescription": "Das Bild, das Sie hochladen möchten, ist zu groß. Bitte wählen Sie ein Bild, das kleiner als 1 MB ist."
       }
+    },
+    "appearanceSettings": {
+      "title": "Anwendungseinstellungen",
+      "description": "Passen Sie die Anwendung an Ihre Bedürfnisse an.",
+      "language": "Sprache",
+      "languages": {
+        "de": "Deutsch",
+        "en": "Englisch"
+      },
+      "theme": "Erscheinungsbild",
+      "themes": {
+        "light": "Hell",
+        "dark": "Dunkel",
+        "system": "System"
+      },
+      "saveChanges": "Änderungen speichern",
+      "toasts": {
+        "appearanceUpdatedTitle": "Anzeigeeinstellungen aktualisiert!",
+        "appearanceUpdatedDescription": "Ihre Anzeigeeinstellungen wurden erfolgreich aktualisiert.",
+        "appearanceUpdatedErrorTitle": "Fehler beim Aktualisieren der Einstellungen!",
+        "appearanceUpdatedErrorDescription": "Ihre Anzeigeeinstellungen konnten nicht aktualisiert werden"
+      }
+    },
+    "teamSettings": {
+      "title:": "Einstellungen",
+      "couldNotLoadTeam": "Die Team Einstellungen konnten nicht geladen werden.",
+      "ownerDangerZone": {
+        "title": "Danger Zone",
+        "deleteTeamTitle": "Team löschen",
+        "deleteTeamDescription": "Löschen Sie Ihr Team und alle zugehörigen Daten unwiderruflich.",
+        "deleteTeamButton": "Team löschen"
+      },
+      "memberDangerZone": {
+          "title": "Danger Zone",
+          "leaveTeamTitle": "Team verlassen",
+          "leaveTeamDescription": "Verlassen Sie \"${teamName}\" und löschen Sie alle Ihre zugehörigen Daten unwiderruflich.",
+          "leaveTeamButton": "Team verlassen"
+      }
+    }
+  },
+  "stats": {
+    "title": "Deine Statistiken",
+    "noStats": "Keine Statistiken verfügbar",
+    "levelCard": {
+      "title": "Fortschritt",
+      "level": "Level {level}",
+      "xpToNextLevel": "{xp} / {xpToNextLevel} XP für das nächste Level"
+    },
+    "coinsCard": {
+      "title": "Münzen"
+    },
+    "badgesCard": {
+      "title": "Auszeichnungen"
+    }
+  },
+  "team": {
+    "title": "Team Management",
+    "invite": {
+      "title": "Mitglied einladen",
+      "description": "Laden Sie Mitglieder über die E-Mail-Adresse zu diesem Team hinzu.",
+      "emailPlaceholder": "E-Mail Adresse",
+      "inviteButton": "Einladen",
+      "toasts": {
+        "invitationSentTitle": "Einladung gesendet",
+        "invitationSentDescription": "Die Einladung an {email} wurde erfolgreich gesendet.",
+        "invitationSentErrorTitle": "Fehler beim Einladen",
+        "invitationSentErrorDescription": "Die Einladung an {email} konnte nicht gesendet werden."
+      }
+    },
+    "roles": {
+      "title": "Rollen",
+      "description": "Verwalten Sie die Rollen in Ihrem Team.",
+      "addRole": "Rolle hinzufügen",
+      "roleName": "Rollenname",
+      "roleColor": "Rollenfarbe",
+      "allowedPages": "Erlaubte Seiten",
+      "addButton": "Hinzufügen",
+      "deleteButton": "Löschen",
+      "confirmDelete": {
+        "title": "Rolle löschen",
+        "description": "Sind Sie sicher, dass Sie die Rolle löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden und wird die Rolle von allen Mitgliedern entfernen.",
+        "confirmButton": "Rolle löschen"
+      },
+      "table": {
+        "name": "Name",
+        "color": "Farbe",
+        "pages": "Erlaubte Seiten",
+        "actions": "Aktionen",
+        "none": "Keine",
+        "edit": "Bearbeiten"
+      },
+      "edit": {
+        "title": "Rolle bearbeiten",
+        "roleName": "Rollenname",
+        "roleColor": "Rollenfarbe",
+        "allowedPages": "Erlaubte Seiten",
+        "updateButton": "Aktualisieren"
+      },
+      "toasts": {
+        "roleAddedTitle": "Rolle hinzugefügt",
+        "roleAddedDescription": "Die Rolle {name} wurde erfolgreich hinzugefügt.",
+        "roleAddedErrorTitle": "Fehler beim Hinzufügen der Rolle",
+        "roleAddedErrorDescription": "Die Rolle {name} konnte nicht hinzugefügt werden.",
+        "roleAddedErrorNullDescription": "Die Rolle konnte nicht hinzugefügt werden, da der Name oder die Farbe leer ist.",
+        "roleUpdatedTitle": "Rolle aktualisiert",
+        "roleUpdatedDescription": "Die Rolle wurde erfolgreich aktualisiert.",
+        "roleDeletedTitle": "Rolle gelöscht",
+        "roleDeletedDescription": "Die Rolle wurde erfolgreich gelöscht.",
+        "roleDeletedErrorTitle": "Fehler beim Löschen der Rolle",
+        "roleDeletedErrorDescription": "Die Rolle konnte nicht gelöscht werden."
+      }
+    },
+    "members": {
+      "title": "Mitglieder",
+      "description": "Verwalten Sie die Mitglieder und deren Rollen in diesem Team.",
+      "searchPlaceholder": "Suche nach Namen oder E-Mail",
+      "filterByRole": "Filtern nach Rolle",
+      "allRoles": "Alle Rollen",
+      "noRole": "Keine Rolle",
+      "table": {
+        "name": "Name",
+        "email": "E-Mail",
+        "role": "Rolle",
+        "actions": "Aktionen",
+        "editRoles": "Rollen bearbeiten"
+      },
+      "editRoles": {
+        "title": "Rollen für {name} bearbeiten",
+        "updateButton": "Bestätigen"
+      },
+      "removeMember": "Entfernen",
+      "confirmRemoveMember": {
+        "title": "Mitglied entfernen",
+        "description": "Sind Sie sicher, dass Sie dieses Mitglied entfernen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "confirmButton": "Mitglied entfernen"
+      },
+      "toasts": {
+        "memberRemovedTitle": "Mitglied entfernt",
+        "memberRemovedDescription": "Das Mitglied wurde erfolgreich entfernt.",
+        "memberRemovedErrorTitle": "Fehler beim Entfernen des Mitglieds",
+        "memberRemovedErrorDescription": "Das Mitglied konnte nicht entfernt werden.",
+        "rolesUpdatedTitle": "Rollen aktualisiert",
+        "rolesUpdatedDescription": "Die Rollen wurden erfolgreich aktualisiert.",
+        "rolesUpdatedErrorTitle": "Fehler beim Aktualisieren der Rollen",
+        "rolesUpdatedErrorDescription": "Die Rollen konnten nicht aktualisiert werden."
+      }
+    }
+  },
+  "confirmDialog": {
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen"
+  },
+  "monitoring": {
+    "title": "Prozess-Monitoring Dashboard",
+    "general": {
+      "totalInstances": "Gesamtinstanzen",
+      "totalCompleted": "Abgeschlossen",
+      "totalInProgress": "In Bearbeitung",
+      "totalOnHold": "Blockiert",
+      "percentOfAll": "{percent}% der Gesamtinstanzen",
+      "trendTitle": "Trend der Prozessinstanzen",
+      "startedInstances": "Gestartete Instanzen",
+      "completedInstances": "Abgeschlossene Instanzen",
+      "all": "Alle"
+    },
+    "processes": {
+      "title": "Prozessmodelle Übersicht",
+      "instanceState": "Instanzen Status",
+      "completed": "Abgeschlossen",
+      "inProgress": "In Bearbeitung",
+      "onHold": "Blockiert",
+      "readyOrInProgress": "Bereit oder In Bearbeitung",
+      "taskProgress": "Aufgaben-Fortschritt",
+      "allTasks": "Alle Aufgaben"
+    }
+  },
+  "tasks": {
+    "couldNotFoundSelectedTask": "Die ausgewählte Aufgabe konnte nicht gefunden werden.",
+    "selectTask": "Wählen Sie eine Aufgabe aus der Liste aus.",
+    "noTasksAvailable": "Keine Aufgaben verfügbar.",
+    "toasts": {
+        "taskCompletedTitle": "Aufgabe abgeschlossen",
+        "taskCompletedDescription": "Die Aufgabe wurde erfolgreich abgeschlossen und von Ihrer Liste entfernt."
+    }
+  },
+  "editor": {
+    "createProcess": "Prozess erstellen",
+    "createProcessDescription": "Erstellen Sie ein neues Prozessmodell für Ihr Team.",
+    "name": "Prozessname",
+    "description": "Beschreibung",
+    "selectProcessModel": "Prozessmodell zum Bearbeiten auswählen",
+    "createButton": "Erstellen",
+    "cancelButton": "Abbrechen",
+    "save": {
+      "saveButton": "Speichern",
+      "saveErrorTitle": "Fehler beim Speichern des Prozesses",
+      "saveErrorDescription": "Der Prozess konnte nicht gespeichert werden.",
+      "saveSuccessTitle": "Prozess gespeichert",
+      "saveSuccessDescription": "Der Prozess wurde erfolgreich gespeichert."
+    },
+    "instance": {
+      "instanceButton": "Instanz erstellen",
+      "createNewInstanceTitle": "Neue ProzessInstanz erstellen",
+      "createNewInstanceDescription": "Erstellen Sie eine neue Instanz des Prozesses.",
+      "instanceAPIExplanation": "Sie können auch eine Anfrage an diese URL senden, um eine neue Instanz zu erstellen:",
+      "urlCopied": "URL wurde in die Zwischenablage kopiert!",
+      "create": "Erstellen",
+      "cancel": "Abbrechen",
+      "toasts": {
+        "instanceCreatedTitle": "Instanz erstellt",
+        "instanceCreatedDescription": "Die Instanz wurde erfolgreich erstellt.",
+        "instanceCreatedErrorTitle": "Fehler beim Erstellen der Instanz",
+        "instanceCreatedErrorDescription": "Die Instanz konnte nicht erstellt werden."
+      }
+    },
+    "export": {
+      "exportButton": "Exportieren"
+    },
+    "undoRedo": {
+      "undoButton": "Rückgängig",
+      "redoButton": "Wiederholen"
+    },
+    "delete": {
+      "deleteButton": "Löschen",
+      "deleteProcessTitle": "Prozessmodell wirklich löschen?",
+      "deleteProcessDescription": "Sind Sie sicher, dass Sie diesen Prozess löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden. Alle Daten, die mit diesem Prozess verbunden sind, werden ebenfalls gelöscht.",
+      "deleteButtonConfirm": "Löschen"
+    },
+    "toasts": {
+        "processCreatedTitle": "Prozess erstellt",
+        "processCreatedDescription": "Der Prozess wurde erfolgreich erstellt.",
+        "processDeletedSuccessfullyTitle": "Prozess {name} gelöscht",
+        "processDeletedSuccessfullyDescription": "Der Prozess wurde erfolgreich gelöscht.",
+        "processCreatedErrorTitle": "Fehler beim Erstellen des Prozesses",
+        "processCreatedErrorDescription": "Der Prozess konnte nicht erstellt werden."
     }
   }
 }

@@ -2,6 +2,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
 import {Award} from "lucide-react";
 import React from "react";
+import {useTranslations} from "next-intl";
 
 export interface BadgesCardProps {
     badges: string[]
@@ -9,11 +10,11 @@ export interface BadgesCardProps {
 
 export default function BadgesCard({ badges }: BadgesCardProps) {
 
-
+    const t = useTranslations("stats.badgesCard")
 
     return  <Card>
         <CardHeader>
-            <CardTitle>Auszeichnungen</CardTitle>
+            <CardTitle>{t("title")}</CardTitle>
         </CardHeader>
         <CardContent>
             <div className="flex flex-wrap gap-2">

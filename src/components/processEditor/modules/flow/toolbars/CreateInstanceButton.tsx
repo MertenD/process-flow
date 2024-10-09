@@ -17,12 +17,15 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {CopyableUrlField} from "@/components/ui/copyable-url-field";
 import {Separator} from "@/components/ui/separator";
+import {useTranslations} from "next-intl";
 
 export interface CreateInstanceButtonProps {
     processModelId: number
 }
 
 export default function CreateInstanceButton({ processModelId }: Readonly<CreateInstanceButtonProps>) {
+
+    const t = useTranslations("editor.instance")
 
     const [showCreateInstanceDialog, setShowCreateInstanceDialog] = React.useState<boolean>(false)
     const [inputVariableNames, setInputVariableNames] = React.useState<string[]>([])
@@ -49,15 +52,15 @@ export default function CreateInstanceButton({ processModelId }: Readonly<Create
                     throw new Error()
                 }
                 toast({
-                   title: "Process Instance created!",
-                   description: res.text(),
+                   title: t("toasts.instanceCreatedTitle"),
+                   description: t("toasts.instanceCreatedDescription"),
                    variant: "success"
                 })
             }).catch((error) => {
                 toast({
                     variant: "destructive",
-                    title: "Something went wrong!",
-                    description: error.message,
+                    title: t("toasts.instanceCreatedErrorTitle"),
+                    description: t("toasts.instanceCreatedErrorDescription"),
                 })
             })
     }
@@ -68,14 +71,12 @@ export default function CreateInstanceButton({ processModelId }: Readonly<Create
                 .then(setInputVariableNames)
                 .then(() => setShowCreateInstanceDialog(true))
         }}>
-            <GitBranchPlus className="mr-2 h-4 w-4" /> Create Instance
+            <GitBranchPlus className="mr-2 h-4 w-4" /> {t("instanceButton")}
         </Button>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Create Process Instance</DialogTitle>
-                <DialogDescription>
-                    Create a new process instance for the selected process model
-                </DialogDescription>
+                <DialogTitle>{t("createNewInstanceTitle")}</DialogTitle>
+                <DialogDescription>{t("createNewInstanceDescription")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-2">
                 { inputVariableNames.map((inputVariableName) => {
@@ -84,15 +85,15 @@ export default function CreateInstanceButton({ processModelId }: Readonly<Create
                         <Input id={inputVariableName} placeholder={ inputVariableName } />
                     </div>
                 }) }
-                <div className="pt-8 space-y-2">
+                <div className="pt-8 space-y-4">
                     <Separator/>
-                    <h2 className="text-md font-semibold">You can also send a request to this URL to create a new instance:</h2>
+                    <h2 className="text-md">{t("instanceAPIExplanation")}</h2>
                     <CopyableUrlField url={`${origin}${createInstancePath}`}/>
                 </div>
             </div>
             <DialogFooter>
                 <Button variant="outline" onClick={() => setShowCreateInstanceDialog(false)}>
-                    Cancel
+                    {t("cancel")}
                 </Button>
                 <Button type="submit" onClick={() => {
                     const inputs: {[key: string]: string} = {}
@@ -101,7 +102,7 @@ export default function CreateInstanceButton({ processModelId }: Readonly<Create
                     })
                     handleCreateInstance(inputs)
                     setShowCreateInstanceDialog(false)
-                }}>Create</Button>
+                }}>{t("create")}</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

@@ -6,12 +6,15 @@ import {Button} from "@/components/ui/button";
 import React from "react";
 import createInvitation from "@/actions/create-invitation";
 import {toast} from "@/components/ui/use-toast";
+import {useTranslations} from "next-intl";
 
 export interface InviteMemberProps {
     teamId: number
 }
 
 export default function InviteMember({teamId}: InviteMemberProps) {
+
+    const t = useTranslations("team.invite")
 
     function onInviteMember(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -20,14 +23,14 @@ export default function InviteMember({teamId}: InviteMemberProps) {
 
         createInvitation(email, teamId).then(() => {
             toast({
-                title: "Einladung gesendet",
-                description: `Die Einladung an ${email} wurde erfolgreich gesendet.`,
+                title: t("toasts.invitationSentTitle"),
+                description: t("toasts.invitationSentDescription", { email }),
                 variant: "success"
             })
         }).catch((error) => {
             toast({
-                title: "Fehler beim Einladen",
-                description: `Die Einladung an ${email} konnte nicht gesendet werden: ${error.message}`,
+                title: t("toasts.invitationSentErrorTitle"),
+                description: t("toasts.invitationSentErrorDescription", { email }),
                 variant: "destructive"
             })
         })
@@ -35,8 +38,8 @@ export default function InviteMember({teamId}: InviteMemberProps) {
 
     return <Card>
         <CardHeader>
-            <CardTitle>Mitglied einladen</CardTitle>
-            <CardDescription>Laden sie Mitglieder über die Email Adresse zu diesem Team hinzu.</CardDescription>
+            <CardTitle>{t("title")}</CardTitle>
+            <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
             <form onSubmit={onInviteMember}>
@@ -44,10 +47,10 @@ export default function InviteMember({teamId}: InviteMemberProps) {
                     <Input
                         name="email"
                         type="email"
-                        placeholder="E-Mail Adresse"
+                        placeholder={t("emailPlaceholder")}
                         required
                     />
-                    <Button type="submit">Einladen</Button>
+                    <Button type="submit">{t("inviteButton")}</Button>
                 </div>
             </form>
         </CardContent>

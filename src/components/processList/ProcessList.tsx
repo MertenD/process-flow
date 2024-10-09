@@ -11,6 +11,7 @@ import {createClient} from "@/utils/supabase/client";
 import getProcessModels from "@/actions/get-process-models";
 import {toast} from "@/components/ui/use-toast";
 import {useUndoRedoStore} from "@/components/processEditor/stores/UndoRedoStore";
+import {useTranslations} from "next-intl";
 
 export interface ProcessListProps {
     userId: string;
@@ -18,6 +19,8 @@ export interface ProcessListProps {
 }
 
 export default function ProcessList({userId, teamId}: Readonly<ProcessListProps>) {
+
+    const t = useTranslations("editor")
 
     const params = useParams<{ processModelId: string }>()
     const pathName = usePathname()
@@ -57,8 +60,8 @@ export default function ProcessList({userId, teamId}: Readonly<ProcessListProps>
                     if ((payload.new as ProcessModel).created_by === userId) {
                         toast({
                             variant: "success",
-                            title: "Process created",
-                            description: "The process model was created successfully."
+                            title: t("toasts.processCreatedTitle"),
+                            description: t("toasts.processCreatedDescription")
                         })
                     }
                 } else if (payload.eventType === "DELETE") {
@@ -71,8 +74,8 @@ export default function ProcessList({userId, teamId}: Readonly<ProcessListProps>
                     if (pathName === `/${teamId}/editor/${payload.old.id}`) {
                         toast({
                             variant: "success",
-                            title: `Process "${processes.find(p => p.id === payload.old.id)?.name}" deleted`,
-                            description: "The process model was deleted successfully."
+                            title: t("toasts.processDeletedSuccessfullyTitle", { name: processes.find(p => p.id === payload.old.id)?.name }),
+                            description: t("toasts.processDeletedSuccessfullyDescription")
                         })
                         router.push(`/${teamId}/editor`)
                     }

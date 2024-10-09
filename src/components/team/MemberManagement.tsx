@@ -18,6 +18,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import updateProfileRolesInTeam from "@/actions/update-profile-roles-in-team";
 import {toast} from "@/components/ui/use-toast";
 import removeProfileFromTeam from "@/actions/remove-profile-from-team";
+import {useTranslations} from "next-intl";
 
 type MemberRole = {
     id: number
@@ -42,6 +43,8 @@ export interface MemberManagementProps {
 }
 
 export function MemberManagement({teamId}: MemberManagementProps) {
+
+    const t = useTranslations("team.members")
 
     const supabase = createClient()
 
@@ -138,8 +141,8 @@ export function MemberManagement({teamId}: MemberManagementProps) {
     const confirmRemoveMember = () => {
         if (!confirmDialog.id) {
             toast({
-                title: "Fehler beim Entfernen des Mitglieds",
-                description: `Das Mitglied konnte nicht entfernt werden.`,
+                title: t("toasts.memberRemovedErrorTitle"),
+                description: t("toasts.memberRemovedErrorDescription"),
                 variant: "destructive"
             })
             setConfirmDialog({isOpen: false, type: null, id: null})
@@ -147,14 +150,14 @@ export function MemberManagement({teamId}: MemberManagementProps) {
         }
         removeProfileFromTeam(teamId, confirmDialog.id).then(() => {
             toast({
-                title: "Mitglied entfernt",
-                description: "Das Mitglied wurde erfolgreich entfernt.",
+                title: t("toasts.memberRemovedTitle"),
+                description: t("toasts.memberRemovedDescription"),
                 variant: "success"
             })
         }).catch((error) => {
             toast({
-                title: "Fehler beim Entfernen des Mitglieds",
-                description: `Das Mitglied konnte nicht entfernt werden: ${error.message}`,
+                title: t("toasts.memberRemovedErrorTitle"),
+                description: t("toasts.memberRemovedErrorDescription"),
                 variant: "destructive"
             })
         })
@@ -164,14 +167,14 @@ export function MemberManagement({teamId}: MemberManagementProps) {
     function updateRoles(memberId: string, roles: MemberRole[]) {
         updateProfileRolesInTeam(teamId, memberId, roles.map(role => role.id)).then(() => {
             toast({
-                title: "Rollen aktualisiert",
-                description: "Die Rollen wurden erfolgreich aktualisiert.",
+                title: t("toasts.rolesUpdatedTitle"),
+                description: t("toasts.rolesUpdatedDescription"),
                 variant: "success"
             })
         }).catch((error) => {
             toast({
-                title: "Fehler beim Aktualisieren der Rollen",
-                description: `Die Rollen konnten nicht aktualisiert werden: ${error.message}`,
+                title: t("toasts.rolesUpdatedErrorTitle"),
+                description: t("toasts.rolesUpdatedErrorDescription"),
                 variant: "destructive"
             })
         })
@@ -185,26 +188,26 @@ export function MemberManagement({teamId}: MemberManagementProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Mitglieder</CardTitle>
-                <CardDescription>Verwalten Sie die Mitglieder und deren Rollen in diesem Team.</CardDescription>
+                <CardTitle>{t("title")}</CardTitle>
+                <CardDescription>{t("description")}</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="flex items-center space-x-2 mb-4">
                     <Search className="w-5 h-5 text-gray-500"/>
                     <Input
                         type="text"
-                        placeholder="Suche nach Namen oder E-Mail"
+                        placeholder={t("searchPlaceholder")}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-grow"
                     />
                     <Select value={roleFilter} onValueChange={setRoleFilter}>
                         <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Filter by Role"/>
+                            <SelectValue placeholder={t("filterByRole")}/>
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Alle Rollen</SelectItem>
-                            <SelectItem value="none">Keine Rolle</SelectItem>
+                            <SelectItem value="all">{t("allRoles")}</SelectItem>
+                            <SelectItem value="none">{t("noRole")}</SelectItem>
                             {roles.map((role) => (
                                 <SelectItem key={role.id} value={role.id.toString()}>{role.name}</SelectItem>
                             ))}
@@ -214,10 +217,10 @@ export function MemberManagement({teamId}: MemberManagementProps) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>E-Mail</TableHead>
-                            <TableHead>Rollen</TableHead>
-                            <TableHead className="text-right">Aktionen</TableHead>
+                            <TableHead>{t("table.name")}</TableHead>
+                            <TableHead>{t("table.email")}</TableHead>
+                            <TableHead>{t("table.role")}</TableHead>
+                            <TableHead className="text-right">{t("table.actions")}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -245,10 +248,10 @@ export function MemberManagement({teamId}: MemberManagementProps) {
                                             <Button variant="outline" className="mr-2" onClick={() => {
                                                 setEditRolesMemberId(member.id)
                                                 setEditRoles(member.roles)
-                                            }}>Rollen bearbeiten</Button>
+                                            }}>{t("table.editRoles")}</Button>
                                         </DialogTrigger>
                                         <DialogContent>
-                                            <DialogTitle>Rollen für {member.name}</DialogTitle>
+                                            <DialogTitle>{t("editRoles.title", { name: member.name })}</DialogTitle>
                                             <div className="flex flex-col gap-2">
                                                 {roles.map((role) => (
                                                     <div key={role.id} className="flex items-center space-x-2">
@@ -281,12 +284,12 @@ export function MemberManagement({teamId}: MemberManagementProps) {
                                                 setEditRoles([])
                                                 setEditRolesMemberId("")
                                                 setIsEditRoleDialogOpen(false)
-                                            }}>Bestätigen</Button>
+                                            }}>{t("editRoles.updateButton")}</Button>
                                         </DialogContent>
                                     </Dialog>
                                     {!member.roles.map(role => role.name).includes("owner") &&
                                         <Button variant="destructive" onClick={() => removeMember(member.id)}>
-                                            Entfernen
+                                            {t("removeMember")}
                                         </Button>}
                                 </TableCell>
                             </TableRow>
@@ -299,11 +302,9 @@ export function MemberManagement({teamId}: MemberManagementProps) {
                 isOpen={confirmDialog.isOpen}
                 onClose={() => setConfirmDialog({isOpen: false, type: null, id: null})}
                 onConfirm={confirmRemoveMember}
-                title={confirmDialog.type === 'member' ? 'Mitglied entfernen' : 'Rolle löschen'}
-                description={confirmDialog.type === 'member'
-                    ? 'Sind Sie sicher, dass Sie dieses Mitglied entfernen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
-                    : 'Sind Sie sicher, dass Sie diese Rolle löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden und wird die Rolle von allen Mitgliedern entfernen.'}
-                confirmLabel={confirmDialog.type === 'member' ? 'Mitglied entfernen' : 'Rolle löschen'}
+                title={t("confirmRemoveMember.title")}
+                description={t("confirmRemoveMember.description")}
+                confirmLabel={t("confirmRemoveMember.confirmButton")}
             />
         </Card>
     )

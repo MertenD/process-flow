@@ -4,10 +4,13 @@ import {ManualTaskWithTitleDescriptionAndOutputs} from "@/types/database.types";
 import TaskFrame from "@/app/[teamId]/tasks/[taskId]/TaskFrame";
 import {redirect} from "next/navigation";
 import getTasks from "@/actions/get-tasks";
+import {getTranslations} from "next-intl/server";
 
 // TODO Generell middleware um zu überprüfen, ob man auf gewisse Routen zugriff hat
 
 export default async function SelectedTasksPage({ params }: Readonly<{ params: { taskId: string, teamId: number } }>) {
+
+    const t = await getTranslations("tasks")
 
     const supabase = createClient()
     const {data: userData, error} = await supabase.auth.getUser()
@@ -50,7 +53,7 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
             <TaskFrame taskId={currentTask.id.toString()} taskUrl={taskUrl}  teamId={params.teamId}/>
         ) : (
             <div>
-                Could not find selected task
+                {t("couldNotFoundSelectedTask")}
             </div>
         ) }
     </>
