@@ -142,7 +142,7 @@ This section describes the workflow of process instances.
 
 - **Web App:** The interface that the user uses to start processes and complete tasks.
 - **Database:** Stores the status and progress of process instances, as well as the results of tasks. It also functions as an engine that executes process steps.
-- **External Servers:** These servers provide tasks, render them, and receive user input results.
+- **External Servers:** These servers provide tasks, render them, and return user input results to the web app.
 
 ### Workflow Description
 
