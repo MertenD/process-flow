@@ -10,7 +10,7 @@ import {
     OptionsStructureType
 } from "@/model/OptionsModel";
 import {setDefaultValues} from "@/components/processEditor/toolbars/dynamicOptions/DynamicOptions";
-import {ActivityNodeData} from "@/components/processEditor/modules/flow/nodes/ActivityNode";
+import {ActivityNodeData} from "@/components/processEditor/nodes/ActivityNode";
 import {X} from "lucide-react";
 
 export type GatewayNodeData = {

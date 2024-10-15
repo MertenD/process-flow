@@ -1,20 +1,21 @@
 "use client"
 
 import {Edge, Node} from "reactflow";
-import {BpmnDto, mergeBpmnDto} from "@/model/Bpmn";
-import {v4 as uuidv4} from 'uuid';
+import {BpmnDto} from "@/model/Bpmn";
 import {NodeTypes} from "@/model/NodeTypes";
-import {ActivityNodeData} from "../../components/processEditor/modules/flow/nodes/ActivityNode";
-import {GatewayNodeData} from "../../components/processEditor/modules/flow/nodes/GatewayNode";
+import {ActivityNodeData} from "@/components/processEditor/nodes/ActivityNode";
+import {GatewayNodeData} from "@/components/processEditor/nodes/GatewayNode";
 
 export const onExport = (
     nodes: Node[],
     edges: Edge[],
-    getChildren: (nodeId: string) => Node[],
     getNodeById: (nodeId: string) => Node | null
 ) => {
 
-    const transformedBpmn = transformChallengesToRealBpmn(nodes, edges, getChildren, getNodeById)
+    const transformedBpmn = {
+        nodes: nodes,
+        edges: edges
+    } as BpmnDto
 
     const bpmn = {
         "definitions": {
@@ -76,8 +77,8 @@ export const onExport = (
                                                             "dc:Bounds": {
                                                                 x: node.parentId !== undefined ? node.position.x + (getNodeById(node.parentId)?.position.x || 0) : node.position.x,
                                                                 y: node.parentId !== undefined ? node.position.y + (getNodeById(node.parentId)?.position.y || 0) : node.position.y,
-                                                                width: node.type === NodeTypes.GAMIFICATION_EVENT_NODE ? 40 : node.width,
-                                                                height: node.type === NodeTypes.GAMIFICATION_EVENT_NODE ? 40 : node.height
+                                                                width: node.width,
+                                                                height: node.height
                                                             }
                                                         }
                                                     ]
@@ -85,8 +86,6 @@ export const onExport = (
                                             })
                                             switch (node.type as NodeTypes) {
                                                 case NodeTypes.ACTIVITY_NODE:
-                                                case NodeTypes.CHALLENGE_NODE:
-                                                case NodeTypes.GAMIFICATION_EVENT_NODE:
                                                     shapes.push({
                                                         "bpmndi:BPMNShape": {
                                                             id: "DataObjectReference_" + node.id.replaceAll("-", "") + "_di",
@@ -272,182 +271,6 @@ export const onExport = (
             }
         })
     }
-}
-
-function transformChallengesToRealBpmn(
-    nodes: Node[],
-    edges: Edge[],
-    getChildren: (nodeId: string) => Node[],
-    getNodeById: (nodeId: string) => Node | null
-): BpmnDto {
-
-    const challengeNodes = getChallengeNodes(nodes)
-    const transformedChallengeStartAndStop = mergeBpmnDto(challengeNodes.map((challengeNode: Node) => {
-        const firstChildren = getFirstChildrenInChallenge(challengeNode, edges, getChildren)
-        const lastChildren = getLastChildrenInChallenge(challengeNode, edges, getChildren)
-
-        const substitutedIngoingEdges = substituteIngoingEdges(firstChildren, challengeNode, edges)
-        const substitutedOutgoingEdges = substituteOutgoingEdges(lastChildren, challengeNode, edges, nodes)
-
-        return mergeBpmnDto([substitutedIngoingEdges, substitutedOutgoingEdges])
-    }))
-
-    const edgesOutsideOrInsideChallenges = edges.filter((edge) => getNodeById(edge.source)?.parentId === getNodeById(edge.target)?.parentId)
-
-    const transformedNodes = [...nodes.filter((node) => node.type as NodeTypes !== NodeTypes.CHALLENGE_NODE), ...transformedChallengeStartAndStop.nodes]
-    const transformedEdges = [...edgesOutsideOrInsideChallenges, ...transformedChallengeStartAndStop.edges]
-
-    return {
-        nodes: transformedNodes,
-        edges: transformedEdges
-    } as BpmnDto
-}
-
-function getChallengeNodes(nodes: Node[]): Node[] {
-    return nodes.filter((node) => node.type as NodeTypes === NodeTypes.CHALLENGE_NODE)
-}
-
-function getFirstChildrenInChallenge(challengeNode: Node, edges: Edge[], getChildren: (nodeId: string) => Node[]) {
-    let challengeChildren = getChildren(challengeNode.id)
-    return challengeChildren.filter((node) => {
-        // Get all incoming edges to the current child node
-        const incomingEdges = edges.filter((edge) => edge.target === node.id)
-        let isFirst = false
-        // Check if any of the incoming edges to the current child node are from a node outside the challenge node's children
-        incomingEdges.forEach((edge) => {
-            const prevNodeId = edge.source
-            if (!challengeChildren.map((node) => node.id).includes(prevNodeId)) {
-                isFirst = true
-            }
-        })
-        return isFirst
-    })
-}
-
-function getLastChildrenInChallenge(challengeNode: Node, edges: Edge[], getChildren: (nodeId: string) => Node[]) {
-    let challengeChildren = getChildren(challengeNode.id)
-    // Get all the last children of the challenge node (i.e. children that have no outgoing edges to other children of the challenge node)
-    return challengeChildren.filter((node) => {
-        // Get all outgoing edges from the current child node
-        const outgoingEdges = edges.filter((edge) => edge.source === node.id)
-        let isLast = false
-        // Check if any of the outgoing edges from the current child node are to a node outside of the challenge node's children
-        outgoingEdges.forEach((edge) => {
-            const nextNodeId = edge.target
-            if (!challengeChildren.map((node) => node.id).includes(nextNodeId)) {
-                isLast = true
-            }
-        })
-        return isLast
-    })
-}
-
-function substituteIngoingEdges(firstChildren: Node[], challengeNode: Node, edges: Edge[]): BpmnDto {
-
-    // Array to store all new nodes
-    let newNodes: Node[] = []
-    // Array to store all new edges
-    let newEdges: Edge[] = []
-
-    // For each first child node of the challenge node
-    firstChildren.map((node) => {
-        // Get all incoming edges to the current first child node
-        const incomingEdges = edges.filter((edge) => edge.target === node.id)
-        // Generate a unique ID for a new outgoing edge
-        const outgoingEdgeId = uuidv4()
-        // Generate a unique ID for a new "Challenge Start" info node
-        const challengeStartId = uuidv4()
-        // Create a new "Challenge Start" info node
-        const newChallengeStartNode = {
-            id: challengeStartId,
-            type: NodeTypes.CHALLENGE_NODE,
-            position: {
-                x: node.position.x + challengeNode.position.x - 100,
-                y: node.position.y + challengeNode.position.y + (node.height || 0) / 2
-            },
-            width: 50,
-            height: 50,
-            data: {
-                isStart: true,
-                ...challengeNode.data
-            }
-        } as Node
-        // Add the new "Challenge Start" node to
-        newNodes.push(newChallengeStartNode)
-        const newOutgoingEdge = {
-            id: outgoingEdgeId,
-            source: challengeStartId,
-            target: node.id,
-        } as Edge
-        newEdges.push(newOutgoingEdge)
-        incomingEdges.forEach((edge) => {
-            const newIncomingEdge = {
-                id: edge.id,
-                source: edge.source,
-                sourceHandle: edge.sourceHandle,
-                target: challengeStartId
-            } as Edge
-            newEdges.push(newIncomingEdge)
-        })
-    })
-
-    return {
-        nodes: newNodes,
-        edges: newEdges
-    } as BpmnDto
-}
-
-function substituteOutgoingEdges(lastChildren: Node[], challengeNode: Node, edges: Edge[], nodes: Node[]): BpmnDto {
-
-    // Array to store all new nodes
-    let newNodes: Node[] = []
-    // Array to store all new edges
-    let newEdges: Edge[] = []
-
-    lastChildren.map((node) => {
-        const outgoingEdges = edges.filter((edge) => edge.source === node.id)
-        outgoingEdges
-            .filter((edge) => nodes.find((node => node.id === edge.target))?.parentNode === undefined)
-            .forEach((outgoingEdge, index) => {
-                const challengeEndId = uuidv4() + outgoingEdge.id
-                const incomingEdgeId = uuidv4() + outgoingEdge.id
-                const newChallengeEndNode = {
-                    id: challengeEndId,
-                    type: NodeTypes.CHALLENGE_NODE,
-                    position: {
-                        x: node.position.x + challengeNode.position.x + (node.width || 0) + 50,
-                        y: (node.position.y + challengeNode.position.y + (node.height || 0) / 2) + (index === 0 ? 30 : -60)
-                    },
-                    width: 50,
-                    height: 50,
-                    parent: challengeNode.id,
-                    data: {
-                        isStart: false,
-                        ...challengeNode.data
-                    }
-                } as Node
-                newNodes.push(newChallengeEndNode)
-                const newIncomingEdge = {
-                    id: incomingEdgeId,
-                    source: node.id,
-                    sourceHandle: outgoingEdge?.sourceHandle,
-                    target: challengeEndId,
-                } as Edge
-                newEdges.push(newIncomingEdge)
-                const newOutgoingEdge = {
-                    id: outgoingEdge?.id,
-                    source: challengeEndId,
-                    target: outgoingEdge?.target,
-                    targetHandle: outgoingEdge?.targetHandle
-                } as Edge
-                newEdges.push(newOutgoingEdge)
-            })
-    })
-
-    return {
-        nodes: newNodes,
-        edges: newEdges
-    } as BpmnDto
 }
 
 function jsonToPrettyXml(json: any, spacing: string = ""): string {

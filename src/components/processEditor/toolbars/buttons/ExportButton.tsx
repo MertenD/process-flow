@@ -19,10 +19,10 @@ export default function ExportButton() {
 
     const t = useTranslations("editor.export")
 
-    const { nodes, edges, getChildren, getNodeById } = useStore(selector, shallow);
+    const { nodes, edges, getNodeById } = useStore(selector, shallow);
 
     return <Button onClick={() => {
-        onExport(nodes, edges, getChildren, getNodeById)
+        onExport(nodes, edges, getNodeById)
     }}>
         <FileDown className="mr-2 h-4 w-4"/> {t("exportButton")}
         <a id="downloadExport" style={{display: "none"}}></a>
