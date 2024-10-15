@@ -3,7 +3,7 @@
 import {getRequestConfig} from 'next-intl/server';
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
-import {Profile} from "@/types/database.types";
+import {Profile} from "@/model/database/database.types";
 
 const defaultLocale: string = 'de';
 

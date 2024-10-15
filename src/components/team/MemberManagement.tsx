@@ -11,7 +11,7 @@ import {ConfirmationDialog} from '../ConfirmationDialog'
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import getRoles from "@/actions/get-roles";
-import {Role} from "@/types/database.types";
+import {Role} from "@/model/database/database.types";
 import {createClient} from "@/utils/supabase/client";
 import getMembers from "@/actions/get-members";
 import {Checkbox} from "@/components/ui/checkbox";

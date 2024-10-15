@@ -7,7 +7,7 @@ import HomeButton from "@/components/headerbar/HomeButton";
 import getAllowedPages from "@/actions/get-allowed-pages";
 import {redirect} from "next/navigation";
 import MiniatureLevelCard from "@/components/stats/MiniatureLevelCard";
-import {Page} from "@/types/database.types";
+import {Page} from "@/model/database/database.types";
 
 export interface HeaderBarProps {
     selectedTeamId: number

@@ -3,7 +3,7 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import ProfileSettings from "@/components/settings/ProfileSettings";
 import AppearanceSettings from "@/components/settings/AppearanceSettings";
-import {Profile} from "@/types/database.types";
+import {Profile} from "@/model/database/database.types";
 import {createClient} from "@/utils/supabase/client";
 import {useEffect, useState} from "react";
 import {LoadingSpinner} from "@/components/ui/loadingSpinner";

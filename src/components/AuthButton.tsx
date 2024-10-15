@@ -2,7 +2,7 @@ import {createClient} from '@/utils/supabase/server'
 import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
 import Link from "next/link";
-import {Profile} from "@/types/database.types";
+import {Profile} from "@/model/database/database.types";
 import {Button} from "@/components/ui/button";
 
 export default async function AuthButton() {

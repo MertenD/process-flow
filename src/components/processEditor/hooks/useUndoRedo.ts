@@ -1,6 +1,6 @@
 import {useCallback, useEffect} from 'react'
 import {Edge, Node, useReactFlow} from 'reactflow'
-import {useUndoRedoStore} from "@/components/processEditor/stores/UndoRedoStore";
+import {useUndoRedoStore} from "@/stores/UndoRedoStore";
 
 type UseUndoRedoOptions = {
     maxHistorySize: number

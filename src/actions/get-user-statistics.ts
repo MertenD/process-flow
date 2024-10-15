@@ -3,7 +3,7 @@
 import {UserStats} from "@/model/UserStats";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
-import {Statistics} from "@/types/database.types";
+import {Statistics} from "@/model/database/database.types";
 
 export default async function(userId: string, teamId: number): Promise<UserStats> {
 

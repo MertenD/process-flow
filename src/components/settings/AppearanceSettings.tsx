@@ -5,7 +5,7 @@ import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import React, {useState} from "react";
-import {Profile, Theme} from "@/types/database.types";
+import {Profile, Theme} from "@/model/database/database.types";
 import updateAppearanceSettings from "@/actions/update-appearance-settings";
 import {toast} from "@/components/ui/use-toast";
 import {useTheme} from "next-themes";

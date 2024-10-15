@@ -3,7 +3,7 @@
 import {Undo} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import React from "react";
-import useUndoRedo from "../hooks/useUndoRedo";
+import useUndoRedo from "../../hooks/useUndoRedo";
 import {useTranslations} from "next-intl";
 
 export default function UndoButton() {

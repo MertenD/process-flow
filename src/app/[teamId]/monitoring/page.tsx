@@ -9,7 +9,7 @@ import {
     ProcessInstance,
     ProcessModel,
     ProcessModelInstanceState
-} from "@/types/database.types";
+} from "@/model/database/database.types";
 import {getTranslations} from "next-intl/server";
 
 export type FlowElementInstanceWithFlowElement = FlowElementInstance & { flow_element: FlowElement & { name: string } };

@@ -8,7 +8,7 @@ import {Input} from "@/components/ui/input";
 import React, {useRef, useState} from "react";
 import updateProfileSettings from "@/actions/update-profile-settings";
 import {toast} from "@/components/ui/use-toast";
-import {Profile} from "@/types/database.types";
+import {Profile} from "@/model/database/database.types";
 import {CardActionArea, CardActions} from "@mui/material";
 import {useTranslations} from "next-intl";
 

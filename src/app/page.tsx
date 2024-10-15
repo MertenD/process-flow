@@ -4,7 +4,7 @@ import React from "react";
 import {TeamsOverview} from "@/components/home/TeamsOverview";
 import Link from "next/link";
 import {TeamInfo} from "@/model/TeamInfo";
-import {InvitationWithTeam} from "@/types/database.types";
+import {InvitationWithTeam} from "@/model/database/database.types";
 import getTeams from "@/actions/get-teams";
 import getInvitations from "@/actions/get-invitations";
 import {UserNav} from "@/components/headerbar/UserNav";

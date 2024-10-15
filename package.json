@@ -13,7 +13,7 @@
     "start": "next start",
     "lint": "next lint",
     "doc": "cd documentation && mkdocs serve",
-    "update-db-types": "npx supabase gen types typescript --local > src/types/database-generated.types.ts"
+    "update-db-types": "npx supabase gen types typescript --local > src/model/database/database-generated.types.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

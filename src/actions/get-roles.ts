@@ -1,6 +1,6 @@
 "use server"
 
-import {RoleWithAllowedPages} from "@/types/database.types";
+import {RoleWithAllowedPages} from "@/model/database/database.types";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
 

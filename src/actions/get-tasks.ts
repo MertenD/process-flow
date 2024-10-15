@@ -1,6 +1,6 @@
 "use server"
 
-import {ManualTaskWithTitleDescriptionAndOutputs} from "@/types/database.types";
+import {ManualTaskWithTitleDescriptionAndOutputs} from "@/model/database/database.types";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
 

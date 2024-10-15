@@ -1,16 +1,16 @@
 "use client"
 
 import "@/styles/processList.css";
-import CreateProcessButton from "@/components/processList/CreateProcessButton";
+import CreateProcessButton from "@/components/processEditor/processList/CreateProcessButton";
 import React, {useEffect, useState} from "react";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ProcessModel} from "@/types/database.types";
+import {ProcessModel} from "@/model/database/database.types";
 import Link from "next/link";
 import {useParams, usePathname, useRouter} from "next/navigation";
 import {createClient} from "@/utils/supabase/client";
 import getProcessModels from "@/actions/get-process-models";
 import {toast} from "@/components/ui/use-toast";
-import {useUndoRedoStore} from "@/components/processEditor/stores/UndoRedoStore";
+import {useUndoRedoStore} from "@/stores/UndoRedoStore";
 import {useTranslations} from "next-intl";
 
 export interface ProcessListProps {

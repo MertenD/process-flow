@@ -1,6 +1,6 @@
 "use server"
 
-import {Page} from "@/types/database.types";
+import {Page} from "@/model/database/database.types";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
 

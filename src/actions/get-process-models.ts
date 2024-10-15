@@ -1,6 +1,6 @@
 "use server"
 
-import {ProcessModel} from "@/types/database.types";
+import {ProcessModel} from "@/model/database/database.types";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
 

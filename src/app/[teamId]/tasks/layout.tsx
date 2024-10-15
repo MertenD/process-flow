@@ -2,7 +2,7 @@ import React from "react";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
 import {ResizableHandle, ResizablePanel, ResizablePanelGroup} from "@/components/ui/resizable";
-import TaskList from "@/components/taskList/TaskList";
+import TaskList from "@/components/tasks/TaskList";
 
 export default async function TasksLayout({ children, params }: Readonly<{ children: React.ReactNode, params: { teamId: number, taskId: string } }>) {
 

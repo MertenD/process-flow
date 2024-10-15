@@ -2,7 +2,7 @@
 
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
-import {InvitationWithTeam} from "@/types/database.types";
+import {InvitationWithTeam} from "@/model/database/database.types";
 
 export default async function(invitationWithTeam: InvitationWithTeam, userId: string): Promise<void> {
 

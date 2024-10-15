@@ -8,7 +8,7 @@ import {Input} from "@/components/ui/input";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import React, {useEffect, useState} from "react";
 import {ConfirmationDialog} from "@/components/ConfirmationDialog";
-import {Page, RoleWithAllowedPages} from "@/types/database.types";
+import {Page, RoleWithAllowedPages} from "@/model/database/database.types";
 import addRole from "@/actions/add-role";
 import removeRole from "@/actions/remove-role";
 import {toast} from "@/components/ui/use-toast";

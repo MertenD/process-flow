@@ -1,4 +1,4 @@
-import {Enums} from "@/types/database.types";
+import {Enums} from "@/model/database/database.types";
 
 export interface GamificationOptions {
     value1: string,

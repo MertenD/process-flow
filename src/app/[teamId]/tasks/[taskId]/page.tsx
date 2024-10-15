@@ -1,6 +1,6 @@
 import {createClient} from "@/utils/supabase/server";
 import React from "react";
-import {ManualTaskWithTitleDescriptionAndOutputs} from "@/types/database.types";
+import {ManualTaskWithTitleDescriptionAndOutputs} from "@/model/database/database.types";
 import TaskFrame from "@/app/[teamId]/tasks/[taskId]/TaskFrame";
 import {redirect} from "next/navigation";
 import getTasks from "@/actions/get-tasks";

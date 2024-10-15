@@ -2,7 +2,7 @@
 
 import {createClient} from "@/utils/supabase/server";
 import {cookies} from "next/headers";
-import {ProfilesWithRoles} from "@/types/database.types";
+import {ProfilesWithRoles} from "@/model/database/database.types";
 import {Member} from "@/components/team/MemberManagement";
 
 export default async function(teamId: number): Promise<Member[]> {

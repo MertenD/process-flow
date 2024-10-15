@@ -17,7 +17,7 @@ import {
     Cell
 } from 'recharts'
 import {ChevronDown, ChevronUp} from 'lucide-react'
-import {ProcessModelInstanceState} from "@/types/database.types";
+import {ProcessModelInstanceState} from "@/model/database/database.types";
 import AllTasksTable from "@/components/monitoring/AllTasksTable";
 import {FlowElementInstanceWithFlowElement} from "@/app/[teamId]/monitoring/page";
 import {useTranslations} from "next-intl";

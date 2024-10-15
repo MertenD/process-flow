@@ -2,7 +2,7 @@
 
 import {Button} from "@/components/ui/button"
 import {Save} from "lucide-react";
-import useStore from "@/components/processEditor/stores/store";
+import useStore from "@/stores/store";
 import {Edge, Node, useReactFlow} from "reactflow";
 import {toast} from "@/components/ui/use-toast";
 import saveProcessModelToDatabase from "@/actions/save-process-model-to-database";

@@ -2,7 +2,7 @@
 
 import {createClient} from "@/utils/supabase/server";
 import {cookies} from "next/headers";
-import {Page} from "@/types/database.types";
+import {Page} from "@/model/database/database.types";
 
 export default async function(roleName: string, teamId: number, color: string, allowedPages: Page[]): Promise<number> {
 

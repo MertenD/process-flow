@@ -1,7 +1,7 @@
 "use server"
 
 import {createClient} from "@/utils/supabase/server";
-import {InvitationWithTeam} from "@/types/database.types";
+import {InvitationWithTeam} from "@/model/database/database.types";
 
 export default async function acceptInvite(invitationWithTeam: InvitationWithTeam, userId: string): Promise<void> {
 

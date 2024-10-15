@@ -1,11 +1,11 @@
 "use client"
 
-import useStore from "@/components/processEditor/stores/store";
+import useStore from "@/stores/store";
 import {shallow} from "zustand/shallow";
 import {FileDown} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import React from "react";
-import {onExport} from "@/components/processEditor/util/ExportUtils";
+import {onExport} from "@/utils/editor/ExportUtils";
 import {useTranslations} from "next-intl";
 
 const selector = (state: any) => ({

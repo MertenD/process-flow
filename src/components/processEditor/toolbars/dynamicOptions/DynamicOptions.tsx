@@ -5,7 +5,7 @@
 // TODO Default value for select should be the first option?
 
 import React, {useEffect, useRef, useState} from "react";
-import useStore from "@/components/processEditor/stores/store";
+import useStore from "@/stores/store";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {
@@ -35,8 +35,8 @@ import {
     OptionsStructureType,
     OptionsText,
     OptionsTextarea
-} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
-import {Role} from "@/types/database.types";
+} from "@/model/OptionsModel";
+import {Role} from "@/model/database/database.types";
 import getRoles from "@/actions/get-roles";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";

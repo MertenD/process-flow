@@ -1,4 +1,4 @@
-import BpmnEditor from "@/components/processEditor/modules/flow/BpmnEditor";
+import BpmnEditor from "@/components/processEditor/BpmnEditor";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
 import React from "react";

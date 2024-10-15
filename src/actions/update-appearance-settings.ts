@@ -2,7 +2,7 @@
 
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
-import {Theme} from "@/types/database.types";
+import {Theme} from "@/model/database/database.types";
 
 export default async function(profileId: string, newLanguage: string, theme: Theme): Promise<void> {
 

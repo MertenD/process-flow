@@ -1,6 +1,6 @@
 import React from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
-import {handleStyle, selectedColor} from "../../../stores/store";
+import {handleStyle, selectedColor} from "@/stores/store";
 
 export type EndNodeData = {
     backgroundColor?: string

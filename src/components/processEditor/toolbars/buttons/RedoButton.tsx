@@ -1,7 +1,7 @@
 "use client"
 
 import {Redo} from "lucide-react";
-import useUndoRedo from "../hooks/useUndoRedo";
+import useUndoRedo from "../../hooks/useUndoRedo";
 import {Button} from "@/components/ui/button";
 import {useTranslations} from "next-intl";
 

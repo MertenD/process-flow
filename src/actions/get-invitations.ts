@@ -2,7 +2,7 @@
 
 import {createClient} from "@/utils/supabase/server";
 import {cookies} from "next/headers";
-import {InvitationWithTeam} from "@/types/database.types";
+import {InvitationWithTeam} from "@/model/database/database.types";
 
 export default async function(userEmail: string): Promise<InvitationWithTeam[]> {
 

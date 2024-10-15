@@ -19,17 +19,17 @@ import NodesToolbar from "./toolbars/NodesToolbar";
 import {v4 as uuidv4} from 'uuid';
 import OnCanvasNodesToolbar from "./toolbars/OnCanvasNodesSelector";
 import {NodeTypes} from "@/model/NodeTypes";
-import SaveButton from "@/components/processEditor/modules/flow/toolbars/SaveButton";
-import CreateInstanceButton from "@/components/processEditor/modules/flow/toolbars/CreateInstanceButton";
+import SaveButton from "@/components/processEditor/toolbars/buttons/SaveButton";
+import CreateInstanceButton from "@/components/processEditor/toolbars/buttons/CreateInstanceButton";
 import "@/styles/globals.css";
-import OptionsToolbar from "@/components/processEditor/modules/flow/toolbars/OptionsToolbar";
-import DeleteProcessButton from "@/components/processEditor/modules/flow/toolbars/DeleteProcessButton";
+import OptionsToolbar from "@/components/processEditor/toolbars/OptionsToolbar";
+import DeleteProcessButton from "@/components/processEditor/toolbars/buttons/DeleteProcessButton";
 import loadProcessModelFromDatabase from "@/actions/load-process-model-from-database";
-import ExportButton from "@/components/processEditor/modules/flow/toolbars/ExportButton";
-import UndoButton from "@/components/processEditor/modules/flow/toolbars/UndoButton";
-import useUndoRedo from "@/components/processEditor/modules/flow/hooks/useUndoRedo";
-import RedoButton from "@/components/processEditor/modules/flow/toolbars/RedoButton";
-import useStore, {edgeStyle} from "@/components/processEditor/stores/store";
+import ExportButton from "@/components/processEditor/toolbars/buttons/ExportButton";
+import UndoButton from "@/components/processEditor/toolbars/buttons/UndoButton";
+import useUndoRedo from "@/components/processEditor/hooks/useUndoRedo";
+import RedoButton from "@/components/processEditor/toolbars/buttons/RedoButton";
+import useStore, {edgeStyle} from "@/stores/store";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,

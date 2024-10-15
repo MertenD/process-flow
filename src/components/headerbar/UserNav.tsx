@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
-import {Profile} from "@/types/database.types";
+import {Profile} from "@/model/database/database.types";
 import {redirect} from "next/navigation";
 import Link from "next/link";
 import {getTranslations} from "next-intl/server";

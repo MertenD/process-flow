@@ -4,7 +4,7 @@ import Link from "next/link";
 import React from "react";
 import {cn} from "@/lib/utils";
 import { usePathname } from 'next/navigation'
-import {Page} from "@/types/database.types";
+import {Page} from "@/model/database/database.types";
 import {useTranslations} from "next-intl";
 
 export interface NavigationProps extends React.HTMLAttributes<HTMLElement> {

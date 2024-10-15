@@ -2,11 +2,11 @@
 
 import React, {useState} from "react";
 import {Node, useOnSelectionChange} from "reactflow";
-import {getActivityOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/ActivityNode";
+import {getActivityOptionsDefinition} from "@/components/processEditor/nodes/ActivityNode";
 import {NodeTypes} from "@/model/NodeTypes";
-import DynamicOptions from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
-import {getGatewayOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/GatewayNode";
-import {getStartOptionsDefinition} from "@/components/processEditor/modules/flow/nodes/StartNode";
+import DynamicOptions from "@/components/processEditor/toolbars/dynamicOptions/DynamicOptions";
+import {getGatewayOptionsDefinition} from "@/components/processEditor/nodes/GatewayNode";
+import {getStartOptionsDefinition} from "@/components/processEditor/nodes/StartNode";
 
 export interface OptionsToolbarProps {
     teamId: number

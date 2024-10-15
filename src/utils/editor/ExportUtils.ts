@@ -4,8 +4,8 @@ import {Edge, Node} from "reactflow";
 import {BpmnDto, mergeBpmnDto} from "@/model/Bpmn";
 import {v4 as uuidv4} from 'uuid';
 import {NodeTypes} from "@/model/NodeTypes";
-import {ActivityNodeData} from "../modules/flow/nodes/ActivityNode";
-import {GatewayNodeData} from "../modules/flow/nodes/GatewayNode";
+import {ActivityNodeData} from "../../components/processEditor/modules/flow/nodes/ActivityNode";
+import {GatewayNodeData} from "../../components/processEditor/modules/flow/nodes/GatewayNode";
 
 export const onExport = (
     nodes: Node[],

@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
-import useStore, {handleStyle, selectedColor} from "../../../stores/store";
+import useStore, {handleStyle, selectedColor} from "@/stores/store";
 import {GamificationType} from "@/model/GamificationType";
 import {ActivityType} from "@/model/ActivityType";
 import {
@@ -15,8 +15,8 @@ import {
     OptionsStructureType,
     OptionsTextarea,
     OptionsVariableNameInput
-} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/OptionsModel";
-import {setDefaultValues} from "@/components/processEditor/modules/flow/toolbars/dynamicOptions/DynamicOptions";
+} from "@/model/OptionsModel";
+import {setDefaultValues} from "@/components/processEditor/toolbars/dynamicOptions/DynamicOptions";
 import {PointsType} from "@/model/PointsType";
 import {BadgeType} from "@/model/BadgeType";
 import {Comparisons} from "@/model/Comparisons";

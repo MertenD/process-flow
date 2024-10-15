@@ -9,7 +9,7 @@ import { startNodeShapeStyle } from "../nodes/StartNode"
 import { GatewayShapeStyle } from "../nodes/GatewayNode"
 import { endNodeShapeStyle } from "../nodes/EndNode"
 import { NodeTypes } from "@/model/NodeTypes"
-import useStore from "../../../stores/store"
+import useStore from "@/stores/store"
 
 export default function NodesToolbar() {
     const onDragStart = (event: React.DragEvent, nodeType: string, nodeData: any) => {

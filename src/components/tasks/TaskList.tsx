@@ -3,7 +3,7 @@
 import "@/styles/processList.css";
 import {useParams, usePathname} from "next/navigation";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {ManualTaskWithTitleAndDescription, Role} from "@/types/database.types";
+import {ManualTaskWithTitleAndDescription, Role} from "@/model/database/database.types";
 import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import {createClient} from "@/utils/supabase/client";

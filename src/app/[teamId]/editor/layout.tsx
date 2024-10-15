@@ -2,7 +2,7 @@ import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
 import React from 'react';
 import {ResizableHandle, ResizablePanel, ResizablePanelGroup} from "@/components/ui/resizable";
-import ProcessList from "@/components/processList/ProcessList";
+import ProcessList from "@/components/processEditor/processList/ProcessList";
 
 export default async function EditorLayout({ children, params }: Readonly<{ children: React.ReactNode, params: { teamId: number } }>) {
 

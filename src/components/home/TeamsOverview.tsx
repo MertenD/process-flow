@@ -12,7 +12,7 @@ import Link from 'next/link'
 import createTeamAndAddCreatorAsAdmin from "@/actions/create-team-and-add-creator-as-admin";
 import {toast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
-import {InvitationWithTeam} from "@/types/database.types";
+import {InvitationWithTeam} from "@/model/database/database.types";
 import acceptInvite from "@/actions/accept-invite";
 import {createClient} from "@/utils/supabase/client";
 import getTeams from "@/actions/get-teams";
