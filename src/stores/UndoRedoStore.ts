@@ -1,5 +1,5 @@
 import create from "zustand";
-import {HistoryItem} from "@/components/processEditor/modules/flow/hooks/useUndoRedo";
+import {HistoryItem} from "@/components/processEditor/hooks/useUndoRedo";
 
 export type UndoRedoState = {
     past: HistoryItem[]
