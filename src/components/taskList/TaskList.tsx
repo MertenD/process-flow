@@ -15,6 +15,7 @@ import {useTranslations} from "next-intl";
 import {GamificationType} from "@/model/GamificationType";
 import {PointsType} from "@/model/PointsType";
 import {Award} from "lucide-react";
+import {GamificationOptions} from "@/model/GamificationOptions";
 
 export interface TaskListProps {
     teamId: number;
@@ -23,13 +24,7 @@ export interface TaskListProps {
 
 interface TaskData {
     gamificationType?: GamificationType;
-    gamificationOptions?: string
-}
-
-interface gamificationOptions {
-    pointType?: PointsType;
-    points?: number;
-    badgeType?: string;
+    gamificationOptions?: GamificationOptions
 }
 
 export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
@@ -67,6 +62,12 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
             console.error("Error fetching tasks", error)
         })
     }, [teamId, userId]);
+
+    useEffect(() => {
+        if (tasks && tasks.length > 0) {
+            console.log("Tasks:", tasks)
+        }
+    }, [tasks])
 
     useEffect(() => {
         setSelectedTaskId(params.taskId)
@@ -108,7 +109,7 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
         return () => {
             updateSubscription.unsubscribe().then()
         }
-    }, [pathName, supabase, teamId, userId]);
+    }, [pathName, supabase, t, teamId, userId]);
 
     return <section className="processList flex flex-col h-full">
         <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">
@@ -138,13 +139,13 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
                                         >{role?.name}</Badge>
                                         {(task.data as TaskData)?.gamificationType === GamificationType.NONE ? null : (
                                             (task.data as TaskData)?.gamificationType === GamificationType.POINTS ?
-                                                (JSON.parse((task.data as TaskData)?.gamificationOptions || "")?.pointType === PointsType.EXPERIENCE ?
-                                                        <Badge className="bg-green-600">{JSON.parse((task.data as TaskData)?.gamificationOptions || "")?.points} XP</Badge> :
-                                                        <Badge className="bg-yellow-500">{JSON.parse((task.data as TaskData)?.gamificationOptions || "")?.points} Coins</Badge>
+                                                (((task.data as TaskData).gamificationOptions)?.pointType === PointsType.EXPERIENCE ?
+                                                        <Badge className="bg-green-600">{((task.data as TaskData).gamificationOptions)?.pointsForSuccess} XP</Badge> :
+                                                        <Badge className="bg-yellow-500">{((task.data as TaskData).gamificationOptions)?.pointsForSuccess} Coins</Badge>
                                                 ) :
                                                 <Badge key={index} variant="secondary" className="flex items-center">
                                                     <Award className="mr-1 h-4 w-4"/>
-                                                    {JSON.parse((task.data as TaskData)?.gamificationOptions || "")?.badgeType}
+                                                    {((task.data as TaskData).gamificationOptions)?.badgeType}
                                                 </Badge>
                                         )}
                                     </div>

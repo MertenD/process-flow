@@ -101,7 +101,7 @@
       }
     },
     "teamSettings": {
-      "title:": "Einstellungen",
+      "title": "Einstellungen",
       "couldNotLoadTeam": "Die Team Einstellungen konnten nicht geladen werden.",
       "ownerDangerZone": {
         "title": "Danger Zone",
@@ -281,7 +281,7 @@
       "instanceButton": "Instanz erstellen",
       "createNewInstanceTitle": "Neue ProzessInstanz erstellen",
       "createNewInstanceDescription": "Erstellen Sie eine neue Instanz des Prozesses.",
-      "instanceAPIExplanation": "Sie können auch eine Anfrage an diese URL senden, um eine neue Instanz zu erstellen:",
+      "instanceAPIExplanation": "Sie können auch eine POST Anfrage an diese URL senden, um eine neue Instanz zu erstellen:",
       "urlCopied": "URL wurde in die Zwischenablage kopiert!",
       "create": "Erstellen",
       "cancel": "Abbrechen",

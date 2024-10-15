@@ -281,7 +281,7 @@
       "instanceButton": "Kreiraj instancu",
       "createNewInstanceTitle": "Kreiraj novu instancu procesa",
       "createNewInstanceDescription": "Kreirajte novu instancu procesa.",
-      "instanceAPIExplanation": "Takođe možete poslati zahtev na ovaj URL da kreirate novu instancu:",
+      "instanceAPIExplanation": "Takođe možete poslati POST zahtev na ovaj URL da kreirate novu instancu:",
       "urlCopied": "URL kopiran u clipboard!",
       "create": "Kreiraj",
       "cancel": "Otkaži",

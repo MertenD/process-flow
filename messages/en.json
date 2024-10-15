@@ -101,7 +101,7 @@
       }
     },
     "teamSettings": {
-      "title:": "Settings",
+      "title": "Settings",
       "couldNotLoadTeam": "Team settings could not be loaded.",
       "ownerDangerZone": {
         "title": "Danger Zone",
@@ -281,7 +281,7 @@
       "instanceButton": "Create Instance",
       "createNewInstanceTitle": "Create New Process Instance",
       "createNewInstanceDescription": "Create a new instance of the process.",
-      "instanceAPIExplanation": "You can also send a request to this URL to create a new instance:",
+      "instanceAPIExplanation": "You can also send a POST request to this URL to create a new instance:",
       "urlCopied": "URL copied to clipboard!",
       "create": "Create",
       "cancel": "Cancel",
