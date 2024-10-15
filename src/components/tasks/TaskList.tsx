@@ -64,12 +64,6 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
     }, [teamId, userId]);
 
     useEffect(() => {
-        if (tasks && tasks.length > 0) {
-            console.log("Tasks:", tasks)
-        }
-    }, [tasks])
-
-    useEffect(() => {
         setSelectedTaskId(params.taskId)
     }, [params]);
 
