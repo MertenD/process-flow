@@ -26,31 +26,7 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
             let nextFlowElementId = null
 
             const nodeType = node.type as NodeTypes
-            if (nodeType === NodeTypes.CHALLENGE_NODE) {
-                const { data: challengeElementData } = await supabase
-                    .from("challenge_element")
-                    .select("*")
-                    .eq("flow_element_id", node.id)
-                    .single()
-
-                let gamificationOptions = null
-                if (challengeElementData?.gamification_option_id) {
-                    const { data } = await supabase
-                        .from("gamification_option")
-                        .select("*")
-                        .eq("id", challengeElementData?.gamification_option_id)
-                        .single()
-                    gamificationOptions = data
-                }
-
-                nodeData = {
-                    backgroundColor: challengeElementData?.background_color,
-                    challengeType: challengeElementData?.challenge_type,
-                    secondsToComplete: challengeElementData?.seconds_to_complete,
-                    rewardType: challengeElementData?.reward_type,
-                    gamificationOptions: convertKeysFromSnakeToCamelCase(gamificationOptions)
-                }
-            } else if (nodeType === NodeTypes.ACTIVITY_NODE) {
+            if (nodeType === NodeTypes.ACTIVITY_NODE) {
                 const { data: activityElementData } = await supabase
                     .from("activity_element")
                     .select("next_flow_element_id")
@@ -76,16 +52,8 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                     .select("*")
                     .eq("flow_element_id", node.id)
                     .single()
+
                 const falseFlowElementId = data?.next_flow_element_false_id
-
-                // TODO Better handling of undefined / null values
-
-                nodeData = {
-                    value1: data?.value1,
-                    comparison: data?.comparison,
-                    value2: data?.value2
-                }
-
                 edges.push({
                     id: `${node.id}-${falseFlowElementId}`,
                     source: node.id.toString(),
@@ -99,6 +67,14 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                     target: trueFlowElementId?.toString() || "",
                     sourceHandle: "True"
                 })
+
+                const { data: flowElementData } = await supabase
+                    .from("flow_element")
+                    .select("data")
+                    .eq("id", node.id)
+                    .single()
+
+                nodeData = flowElementData?.data
             } else if (nodeType === NodeTypes.START_NODE) {
                 const { data: startElementData } = await supabase
                     .from("start_element")
@@ -121,34 +97,6 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                 } as Edge)
             } else if (nodeType === NodeTypes.END_NODE) {
                 // No data to load
-            } else if (nodeType === NodeTypes.GAMIFICATION_EVENT_NODE) {
-                const { data: gamificationEventElementData } = await supabase
-                    .from("gamification_event_element")
-                    .select("*")
-                    .eq("flow_element_id", node.id)
-                    .single()
-
-                let gamificationOptions = null
-                if (gamificationEventElementData?.gamification_option_id) {
-                    const {data} = await supabase
-                        .from("gamification_option")
-                        .select("*")
-                        .eq("id", gamificationEventElementData?.gamification_option_id || "")
-                        .single()
-                    gamificationOptions = data
-                }
-
-                nodeData = {
-                    gamificationType: gamificationEventElementData?.gamification_type,
-                    gamificationOptions: convertKeysFromSnakeToCamelCase(gamificationOptions)
-                }
-
-                nextFlowElementId = gamificationEventElementData?.next_flow_element_id
-                edges.push({
-                    id: `${node.id}-${nextFlowElementId}`,
-                    source: node.id.toString(),
-                    target: nextFlowElementId?.toString()
-                } as Edge)
             } else {
                 const exhaustiveCheck: never = nodeType;
                 throw new Error(`Unhandled nodeType case: ${exhaustiveCheck}`);
@@ -172,16 +120,4 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
 
         return {nodes: nodes, edges: edges}
     }
-}
-
-function convertKeysFromSnakeToCamelCase(obj: any): any {
-    if (!obj) {
-        return undefined
-    }
-    const newObj: any = {};
-    for (const [key, value] of Object.entries(obj)) {
-        const newKey = key.replace(/_([a-z])/g, letter => letter[1].toUpperCase());
-        newObj[newKey] = value;
-    }
-    return newObj;
 }
