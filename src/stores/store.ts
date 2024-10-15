@@ -13,10 +13,10 @@ import {
     OnEdgesChange,
     OnNodesChange
 } from 'reactflow';
-import ActivityNode from "../components/processEditor/modules/flow/nodes/ActivityNode";
-import StartNode from "../components/processEditor/modules/flow/nodes/StartNode";
-import GatewayNode from "../components/processEditor/modules/flow/nodes/GatewayNode";
-import EndNode from "../components/processEditor/modules/flow/nodes/EndNode";
+import ActivityNode from "../components/processEditor/nodes/ActivityNode";
+import StartNode from "../components/processEditor/nodes/StartNode";
+import GatewayNode from "../components/processEditor/nodes/GatewayNode";
+import EndNode from "../components/processEditor/nodes/EndNode";
 import {NodeTypes} from "@/model/NodeTypes";
 import {PointsType} from "@/model/PointsType";
 
