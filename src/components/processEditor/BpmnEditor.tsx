@@ -290,14 +290,14 @@ export default function BpmnEditor({ processModelId, processModelName, teamId }:
         <ReactFlowProvider>
             <div className="flex flex-row w-full h-full">
                 <div className="w-full h-full flex flex-col">
-                    <div className="w-full p-3 flex flex-row space-x-2 border-b">
+                    <div className="w-full p-3 flex flex-row flex-wrap items-center gap-2 border-b">
                         <SaveButton processModelId={processModelId}/>
                         <CreateInstanceButton processModelId={processModelId}/>
                         <ExportButton/>
-                        <div className="h-full w-1 bg-secondary rounded-2xl"/>
+                        <div className="h-10 w-1 bg-secondary rounded-2xl"/>
                         <UndoButton/>
                         <RedoButton/>
-                        <div className="h-full w-1 bg-secondary rounded-2xl"/>
+                        <div className="h-10 w-1 bg-secondary rounded-2xl"/>
                         <DeleteProcessButton teamId={teamId} processModelId={processModelId}
                                              processModelName={processModelName}/>
                     </div>
