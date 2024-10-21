@@ -21,25 +21,31 @@ export default async function EditorLayout({ children, params }: Readonly<{ chil
             <div className="hidden md:block h-full">
                 <ResizablePanelGroup direction="horizontal">
                     <ResizablePanel defaultSize={15}>
-                        <ProcessList teamId={params.teamId} userId={userData.user.id} />
+                        <div className="flex flex-col h-full">
+                            <h1 className="text-3xl font-bold p-3">{t("title")}</h1>
+                            <div className="flex-1 overflow-y-auto">
+                                <ProcessList teamId={params.teamId} userId={userData.user.id}/>
+                            </div>
+                        </div>
                     </ResizablePanel>
-                    <ResizableHandle />
+                    <ResizableHandle/>
                     <ResizablePanel defaultSize={85}>
                         { children }
                     </ResizablePanel>
                 </ResizablePanelGroup>
             </div>
             <div className="flex flex-col md:hidden h-full">
-                <Card className="m-3 border-amber-500 bg-amber-100 h-min">
+                <h1 className="text-3xl font-bold p-4">{t("title")}</h1>
+                <Card className="m-4 border-amber-500 bg-amber-100 h-min">
                     <CardHeader>
                         <CardTitle>{t("cannotEditProcessesDialogTitle")}</CardTitle>
                         <CardDescription>{t("cannotEditProcessesDialogDescription")}</CardDescription>
                     </CardHeader>
                 </Card>
                 <div className="flex-1 overflow-y-auto">
-                    <ProcessList teamId={params.teamId} userId={userData.user.id} isMobile />
+                    <ProcessList teamId={params.teamId} userId={userData.user.id} isMobile/>
                 </div>
             </div>
         </main>
-    );
+);
 }

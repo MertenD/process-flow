@@ -89,7 +89,7 @@ export default function ProcessList({userId, teamId, isMobile}: Readonly<Process
     }, [pathName, processes, router, supabase, teamId, userId]);
 
     return (
-        <section className="flex flex-col gap-2 p-3 h-full">
+        <section className="flex flex-col gap-2 p-4 h-full">
             <form className="flex flex-1 flex-col space-y-2 overflow-y-auto">
                 {processes?.map((process, index) => {
                     const processCard =

@@ -263,6 +263,7 @@
     }
   },
   "editor": {
+    "title": "Procesi",
     "createProcess": "Kreiraj proces",
     "cannotEditProcessesDialogTitle": "Ne može se uređivati procesi",
     "cannotEditProcessesDialogDescription": "Uređivanje procesa nije moguće na uskim ekranima. Molimo koristite uređaj sa širim ekranom.",

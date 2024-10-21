@@ -263,6 +263,7 @@
     }
   },
   "editor": {
+    "title": "Processes",
     "createProcess": "Create Process",
     "cannotEditProcessesDialogTitle": "Cannot edit processes",
     "cannotEditProcessesDialogDescription": "Editing processes is not possible on narrow screens. Please use a device with a wider screen.",
