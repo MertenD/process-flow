@@ -264,6 +264,8 @@
   },
   "editor": {
     "createProcess": "Create Process",
+    "cannotEditProcessesDialogTitle": "Cannot edit processes",
+    "cannotEditProcessesDialogDescription": "Editing processes is not possible on narrow screens. Please use a device with a wider screen.",
     "createProcessDescription": "Create a new process model for your team.",
     "name": "Process Name",
     "description": "Description",

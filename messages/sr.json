@@ -264,6 +264,8 @@
   },
   "editor": {
     "createProcess": "Kreiraj proces",
+    "cannotEditProcessesDialogTitle": "Ne može se uređivati procesi",
+    "cannotEditProcessesDialogDescription": "Uređivanje procesa nije moguće na uskim ekranima. Molimo koristite uređaj sa širim ekranom.",
     "createProcessDescription": "Kreirajte novi model procesa za vaš tim.",
     "name": "Ime procesa",
     "description": "Opis",

@@ -263,6 +263,8 @@
     }
   },
   "editor": {
+    "cannotEditProcessesDialogTitle": "Prozesse können nicht bearbeitet werden",
+    "cannotEditProcessesDialogDescription": "Die Bearbeitung von Prozessen ist auf schmalen Bildschirmen nicht möglich. Bitte benutzen Sie ein Gerät mit breiterem Bildschirm.",
     "createProcess": "Prozess erstellen",
     "createProcessDescription": "Erstellen Sie ein neues Prozessmodell für Ihr Team.",
     "name": "Prozessname",
