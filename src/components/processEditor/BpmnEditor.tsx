@@ -152,13 +152,6 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
                 yOffset = 15
                 zIndex = 4
                 break
-            case NodeTypes.CHALLENGE_NODE:
-                yOffset = 198
-                zIndex = 0
-                break
-            case NodeTypes.GAMIFICATION_EVENT_NODE:
-                yOffset = 25
-                zIndex = 3
         }
 
         const id = uuidv4();
@@ -182,36 +175,6 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
     const onNodeDragStop = useCallback(() => {
         setIsDragging(false)
     }, [])
-
-    // Update which nodes belong to a challenge
-    useEffect(() => {
-        if (!isDragging) {
-            nodes.filter((node: Node) =>
-                node.type !== NodeTypes.CHALLENGE_NODE &&
-                node.type !== NodeTypes.START_NODE &&
-                node.type !== NodeTypes.END_NODE
-            ).forEach((node: Node) => {
-                const intersectingChallenges = reactFlowInstance.getIntersectingNodes(node)
-                    .filter((node) => node.type === NodeTypes.CHALLENGE_NODE)
-                    .filter((node) => node.data.isResizing === undefined || node.data.isResizing === false)
-                // if the node already is part of a group and did not leave it, leave it as it is and don't change the parent
-                if (node.parentId !== undefined && intersectingChallenges.map(node => node.id).includes(node.parentId)) {
-                    return
-                }
-
-                // If the node had no parent it will be added
-                if (intersectingChallenges[0] !== undefined && node.parentId === undefined) {
-                    updateNodeParent(node, intersectingChallenges[0], undefined)
-                // If the node had a parent and was moved to another parent
-                } else if (intersectingChallenges[0] !== undefined && node.parentId !== undefined && node.parentId !== intersectingChallenges[0].id) {
-                    updateNodeParent(node, intersectingChallenges[0], getNodeById(node.parentId))
-                // If the node had a parent it will be removed
-                } else if (intersectingChallenges[0] === undefined && node.parentId !== undefined) {
-                    updateNodeParent(node, undefined, getNodeById(node.parentId))
-                }
-            })
-        }
-    }, [nodes])
 
     return (
         <ReactFlow ref={reactFlowWrapper}
@@ -252,9 +215,6 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
                 <NodesToolbar />
             </Panel>
             <MiniMap nodeColor={(node) => {
-                if (node.type === NodeTypes.CHALLENGE_NODE) {
-                    return node.data.backgroundColor + "88"
-                }
                 return node.data.backgroundColor || "gray"
             }} nodeStrokeWidth={3} zoomable pannable className="bg-accent" />
             <OnCanvasNodesToolbar
