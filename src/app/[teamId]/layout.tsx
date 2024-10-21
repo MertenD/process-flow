@@ -1,10 +1,10 @@
 import React from "react";
-import HeaderBar from "@/components/headerbar/HeaderBar";
+import HeaderBarWrapper from "@/components/headerbar/HeaderBarWrapper";
 
 export default function TeamLayout({ children, params }: Readonly<{ children: React.ReactNode, params: { teamId: number } }>) {
 
     return <>
-        <HeaderBar selectedTeamId={params.teamId} />
+        <HeaderBarWrapper selectedTeamId={params.teamId} />
         { children }
     </>
 }

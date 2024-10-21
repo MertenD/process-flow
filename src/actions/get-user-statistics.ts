@@ -10,18 +10,19 @@ export default async function(userId: string, teamId: number): Promise<UserStats
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
 
+    // TODO Hier werden manchmal zwei Ergebnisse zurückgegeben
     const { data: stats, error } = await supabase
         .from("statistics")
-        .select("*, badgeNames: badges->badges, profile_team ( profile_id, team_id )")
+        .select("*, badgeNames: badges->badges")
         .eq("profile_id", userId)
-        .eq("profile_team.team_id", teamId)
-        .single<Statistics & { badgeNames: string[], profile_team: { profile_id: string, team_id: number } }>()
+        .eq("team_id", teamId)
+        .single<Statistics & { badgeNames: string[] }>()
 
     if (error) {
         throw error
     }
 
-    if (!stats || !stats.profile_team) {
+    if (!stats) {
         throw new Error("No statistics found")
     }
 

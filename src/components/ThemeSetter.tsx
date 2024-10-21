@@ -3,6 +3,7 @@
 import {useTheme} from "next-themes";
 import {createClient} from "@/utils/supabase/client";
 import {useEffect} from "react";
+import {Theme} from "@/model/database/database.types";
 
 export interface ThemeSetterProps {
     userId: string
@@ -17,15 +18,15 @@ export default function ThemeSetter({ userId }: ThemeSetterProps) {
     useEffect(() => {
         supabase
             .from("profiles")
-            .select("is_dark_mode_enabled")
+            .select("theme")
             .eq("id", userId)
-            .single<{ is_dark_mode_enabled: boolean }>()
+            .single<{ theme: Theme }>()
             .then(({ data, error }) => {
                 if (!error && data) {
-                    setTheme(data.is_dark_mode_enabled ? 'dark' : 'light')
+                    setTheme(data.theme)
                 }
             })
-    }, [supabase, userId]);
+    }, [setTheme, supabase, userId]);
 
     return <></>
 }

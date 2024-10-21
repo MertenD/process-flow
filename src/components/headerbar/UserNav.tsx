@@ -16,8 +16,14 @@ import {Profile} from "@/model/database/database.types";
 import {redirect} from "next/navigation";
 import Link from "next/link";
 import {getTranslations} from "next-intl/server";
+import MiniatureLevelCard from "@/components/stats/MiniatureLevelCard";
+import React from "react";
 
-export async function UserNav() {
+export interface UserNavProps {
+    selectedTeamId?: number
+}
+
+export async function UserNav({ selectedTeamId }: Readonly<UserNavProps>) {
 
     const t = await getTranslations("Header.userNav")
 
@@ -55,14 +61,19 @@ export async function UserNav() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{ profile.username }</p>
-                        <p className="text-xs leading-none text-muted-foreground">
-                            { profile.email }
-                        </p>
+                    <div className="flex flex-col space-y-4">
+                        <div className="flex flex-col space-y-1">
+                            <p className="text-sm font-medium leading-none">{profile.username}</p>
+                            <p className="text-xs leading-none text-muted-foreground">
+                                {profile.email}
+                            </p>
+                        </div>
+                        { selectedTeamId && <div className="hidden md:block lg:hidden">
+                            <MiniatureLevelCard userId={profile.id} teamId={selectedTeamId}/>
+                        </div> }
                     </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator/>
                 <DropdownMenuGroup>
                     <Link href={"/settings"}>
                         <DropdownMenuItem>
