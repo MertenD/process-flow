@@ -1,6 +1,5 @@
 "use client"
 
-import "@/styles/processList.css";
 import CreateProcessButton from "@/components/processEditor/processList/CreateProcessButton";
 import React, {useEffect, useState} from "react";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
@@ -16,9 +15,10 @@ import {useTranslations} from "next-intl";
 export interface ProcessListProps {
     userId: string;
     teamId: number;
+    isMobile?: boolean;
 }
 
-export default function ProcessList({userId, teamId}: Readonly<ProcessListProps>) {
+export default function ProcessList({userId, teamId, isMobile}: Readonly<ProcessListProps>) {
 
     const t = useTranslations("editor")
 
@@ -89,9 +89,21 @@ export default function ProcessList({userId, teamId}: Readonly<ProcessListProps>
     }, [pathName, processes, router, supabase, teamId, userId]);
 
     return (
-        <section className="processList flex flex-col h-full">
-            <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">
+        <section className="flex flex-col gap-2 p-3 h-full">
+            <form className="flex flex-1 flex-col space-y-2 overflow-y-auto">
                 {processes?.map((process, index) => {
+                    const processCard =
+                        <Card className={`${selectedProcessId === process.id.toString() ? "bg-accent" : ""}`}>
+                            <CardHeader>
+                                <CardTitle>{process.name}</CardTitle>
+                                <CardDescription>{process.description}</CardDescription>
+                            </CardHeader>
+                        </Card>
+
+                    if (isMobile) {
+                        return processCard
+                    }
+
                     return <Link
                         key={`${process.id}`}
                         className="w-full"

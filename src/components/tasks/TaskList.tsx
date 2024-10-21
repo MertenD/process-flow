@@ -1,8 +1,7 @@
 "use client"
 
-import "@/styles/processList.css";
 import {useParams, usePathname} from "next/navigation";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {ManualTaskWithTitleAndDescription, Role} from "@/model/database/database.types";
 import Link from "next/link";
 import React, {useEffect, useState} from "react";
@@ -105,7 +104,7 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
         }
     }, [pathName, supabase, t, teamId, userId]);
 
-    return <section className="processList flex flex-col h-full">
+    return <section className="flex flex-1 flex-col gap-2 p-3 h-full">
         <form className="flex flex-col flex-1 space-y-2 p-1 overflow-y-auto">
             {tasks?.filter((task: ManualTaskWithTitleAndDescription) => task.status === "Todo").map((task: ManualTaskWithTitleAndDescription, index: number) => {
                 const role = roles.find(role => role.id.toString() === task.assigned_role)
