@@ -64,22 +64,6 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
         gatewayNode: GatewayNode
     },
     onNodesChange: (changes: NodeChange[]) => {
-        // Ungroup group if the deleted node is a group so the children are not deleted with the group
-        const nodeId = (changes[0] as NodeRemoveChange)?.id || null
-        if (changes[0]?.type === "remove" && nodeId !== null && get().getNodeById(nodeId)?.type === NodeTypes.CHALLENGE_NODE) {
-            const children = get().getChildren(nodeId)
-            set({
-                nodes: get().nodes.map((node) => {
-                    if (children.includes(node) && node.parentId !== undefined) {
-                        const oldParentNode = get().getNodeById(node.parentId) as Node
-                        node.parentId = undefined
-                        node.position = { x: node.position.x + oldParentNode.position.x, y: node.position.y + oldParentNode.position.y }
-                        node.data = { ...node.data, backgroundColor: "white"}
-                    }
-                    return node
-                })
-            })
-        }
         set({
             nodes: applyNodeChanges(changes, get().nodes),
         });
