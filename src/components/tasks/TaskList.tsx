@@ -148,7 +148,7 @@ export default function TaskList({teamId, userId}: Readonly<TaskListProps>) {
                     </Card>
                 </Link>
             })}
-            {tasks.length === 0 && <p className="text-center">{t("noTasksAvailable")}</p>}
+            {(!tasks || tasks.length === 0) && <p className="text-center">{t("noTasksAvailable")}</p>}
         </form>
     </section>
 }
