@@ -8,7 +8,6 @@ import {InvitationWithTeam} from "@/model/database/database.types";
 import getTeams from "@/actions/get-teams";
 import getInvitations from "@/actions/get-invitations";
 import {UserNav} from "@/components/headerbar/UserNav";
-import ThemeSetter from "@/components/ThemeSetter";
 import {getTranslations} from "next-intl/server";
 
 export default async function Home() {
@@ -31,7 +30,6 @@ export default async function Home() {
     const invitations: InvitationWithTeam[] = await getInvitations(userData.user.email || "")
 
     return <div>
-        <ThemeSetter userId={userData.user.id} />
         <div className="min-h-screen py-8">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-8">
