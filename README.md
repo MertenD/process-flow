@@ -16,6 +16,8 @@
 
 <br>
 
+Special thanks to [Emilija](https://github.com/ganglem) for designing the app logo!
+
 ##### 🔗 Quick Links
 
 - [📍 Overview](#-overview)
