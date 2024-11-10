@@ -15,7 +15,7 @@ export default getRequestConfig(async () => {
     if (userError || !userData.user || !userData.user.id) {
         return {
             locale: defaultLocale,
-            messages: (await import(`../../messages/${defaultLocale}.json`)).default
+            messages: (await import(`./dictionaries/${defaultLocale}.json`)).default
         }
     }
 
@@ -29,6 +29,6 @@ export default getRequestConfig(async () => {
 
     return {
         locale,
-        messages: (await import(`../../messages/${locale}.json`)).default
+        messages: (await import(`./dictionaries/${locale}.json`)).default
     };
 });
