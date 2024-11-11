@@ -1,4 +1,4 @@
-<img src="documentation/docs/assets/icon.png" align="right" width="25%" padding-right="350">
+<img src="public/icon.png" align="right" width="25%" padding-right="350">
 
 # `PROCESS-FLOW`
 
