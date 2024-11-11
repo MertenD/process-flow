@@ -5,6 +5,8 @@ import {cookies} from "next/headers";
 
 export default async function(flowElementInstanceId: number, outputData: any, completedBy: string): Promise<boolean> {
 
+    // TODO Das soll in eine einzelne Transaktion zusammengefasst werden
+
     const cookieStore = cookies()
     const supabase = createClient(cookieStore, process.env.SUPABASE_SERVICE_KEY)
 
