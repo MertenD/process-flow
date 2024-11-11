@@ -27,12 +27,6 @@ export default async function AppRootLayout({children,}: Readonly<{ children: Re
     const locale = await getLocale();
     const messages = await getMessages()
 
-    const supabase = createClient()
-    const {data: userData, error} = await supabase.auth.getUser()
-    if (error || !userData.user || !userData.user.id) {
-        redirect("/authenticate")
-    }
-
     return (
         <html lang={locale}>
         <head>
@@ -56,7 +50,7 @@ export default async function AppRootLayout({children,}: Readonly<{ children: Re
                         enableSystem
                         disableTransitionOnChange
                     >
-                        <ThemeSetter userId={userData.user.id} />
+                        <ThemeSetter />
                         <Toaster/>
                         {children}
                     </ThemeProvider>

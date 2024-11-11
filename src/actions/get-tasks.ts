@@ -1,10 +1,10 @@
 "use server"
 
-import {ManualTaskWithTitleDescriptionAndOutputs} from "@/model/database/database.types";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
+import {ManualTaskWithOutputs} from "@/model/database/database.types";
 
-export default async function(teamId: number, userId: string): Promise<ManualTaskWithTitleDescriptionAndOutputs[]> {
+export default async function(teamId: number, userId: string): Promise<ManualTaskWithOutputs[]> {
 
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
@@ -34,5 +34,7 @@ export default async function(teamId: number, userId: string): Promise<ManualTas
         throw Error(`Error loading manual tasks: ${error.message}`);
     }
 
-    return data as ManualTaskWithTitleDescriptionAndOutputs[];
+    console.log(data)
+
+    return data as ManualTaskWithOutputs[];
 }

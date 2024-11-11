@@ -20,7 +20,7 @@ export default async function EditorLayout({ children, params }: Readonly<{ chil
         <main className="h-[calc(100vh-64px)] overflow-y-hidden">
             <div className="hidden md:block h-full">
                 <ResizablePanelGroup direction="horizontal">
-                    <ResizablePanel defaultSize={15}>
+                    <ResizablePanel defaultSize={15} minSize={10}>
                         <div className="flex flex-col h-full">
                             <h1 className="text-3xl font-bold p-3">{t("title")}</h1>
                             <div className="flex-1 overflow-y-auto">

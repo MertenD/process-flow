@@ -1,10 +1,10 @@
 import {createClient} from "@/utils/supabase/server";
 import React from "react";
-import {ManualTaskWithTitleDescriptionAndOutputs} from "@/model/database/database.types";
-import TaskFrame from "@/app/[teamId]/tasks/[taskId]/TaskFrame";
+import TaskFrame from "@/components/tasks/TaskFrame";
 import {redirect} from "next/navigation";
 import getTasks from "@/actions/get-tasks";
 import {getTranslations} from "next-intl/server";
+import {ManualTaskWithOutputs} from "@/model/database/database.types";
 
 // TODO Generell middleware um zu überprüfen, ob man auf gewisse Routen zugriff hat
 
@@ -21,7 +21,7 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
     const tasks = await getTasks(params.teamId, userData.user.id)
     const currentTask = tasks?.find(task => task.id.toString() === params.taskId)
 
-    async function buildTaskUrl(task: ManualTaskWithTitleDescriptionAndOutputs | undefined, userId: string): Promise<string | null> {
+    async function buildTaskUrl(task: ManualTaskWithOutputs | undefined, userId: string): Promise<string | null> {
         if (task == null) return null
         let taskUrl = task.execution_url
         taskUrl += "?"

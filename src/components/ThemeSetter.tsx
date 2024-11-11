@@ -2,18 +2,28 @@
 
 import {useTheme} from "next-themes";
 import {createClient} from "@/utils/supabase/client";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {Theme} from "@/model/database/database.types";
 
-export interface ThemeSetterProps {
-    userId: string
-}
 
-export default function ThemeSetter({ userId }: ThemeSetterProps) {
+export default function ThemeSetter() {
 
     const { setTheme } = useTheme()
 
     const supabase = createClient()
+    const [userId, setUserId] = useState<string>("")
+
+    useEffect(() => {
+        async function fetchUser() {
+            const {data: userData, error} = await supabase.auth.getUser()
+            if (error || !userData.user || !userData.user.id) {
+                return
+            }
+            setUserId(userData.user.id)
+        }
+
+        fetchUser().then()
+    }, [supabase, setUserId]);
 
     useEffect(() => {
         supabase

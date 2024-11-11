@@ -1,7 +1,7 @@
 import React from "react";
 import {getTranslations} from "next-intl/server";
 
-export default async function TasksPage({ params }: Readonly<{ params: { teamId: string } }>) {
+export default async function TasksPage({ params }: Readonly<{ params: { teamId: number } }>) {
 
     const t = await getTranslations("tasks")
 

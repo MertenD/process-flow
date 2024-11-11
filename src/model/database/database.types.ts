@@ -30,9 +30,7 @@ export type Profile = Tables<'profiles'>
 export type ProfilesWithRoles = Views<'profiles_with_roles'>
 
 export type ManualTask = Views<'manual_task'>
-export type ManualTaskWithOutputs = MergeDeep<ManualTask, { outputs: { [key: string]: string } }>
-export type ManualTaskWithTitleAndDescription = MergeDeep<ManualTask, { name: string, description: string }>
-export type ManualTaskWithTitleDescriptionAndOutputs = MergeDeep<ManualTaskWithTitleAndDescription, { outputs: { [key: string]: string } }>
+export type ManualTaskWithOutputs = MergeDeep<ManualTask, { name: string, description: string, outputs: { [key: string]: string } }>
 
 export type ProcessModel = Tables<'process_model'>
 
@@ -58,3 +56,5 @@ export type InvitationWithTeam = MergeDeep<Invitation, { team: Team }>
 export type Statistics = Tables<"statistics">
 
 export type Theme = Enums<"theme">
+
+export type FlowElementInstanceState = Enums<"flow_element_instance_status">

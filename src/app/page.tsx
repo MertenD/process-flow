@@ -17,6 +17,7 @@ export default async function Home() {
     const supabase = createClient()
     const {data: userData, error} = await supabase.auth.getUser()
     if (error || !userData.user || !userData.user.id) {
+        console.error("User is not authenticated")
         redirect("/authenticate")
     }
 

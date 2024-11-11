@@ -14,7 +14,7 @@ export default async function Login (
 ) {
 
     const cookieStore = cookies()
-    const supabase = createClient()
+    const supabase = createClient(cookieStore)
     const {data: user, error} = await supabase.auth.getUser()
     if (user.user) {
         return redirect('/', RedirectType.replace)
@@ -22,6 +22,8 @@ export default async function Login (
 
     const signIn = async (formData: FormData) => {
         'use server'
+
+        console.log('Sign in', formData)
 
         const email = formData.get('email') as string
         const password = formData.get('password') as string
@@ -42,6 +44,8 @@ export default async function Login (
 
     const signUp = async (formData: FormData) => {
         'use server'
+
+        console.log('Sign up', formData)
 
         const origin = headers().get('origin')
         const email = formData.get('email') as string

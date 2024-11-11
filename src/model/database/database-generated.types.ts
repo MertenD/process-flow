@@ -36,49 +36,22 @@ export type Database = {
     Tables: {
       activity_element: {
         Row: {
-          activity_type: string | null
-          choices: string | null
           created_at: string
-          description: string | null
           flow_element_id: number
-          gamification_option_id: number | null
-          gamification_type: Database["public"]["Enums"]["gamification_type"]
           id: number
-          info_text: string | null
-          input_regex: string | null
           next_flow_element_id: number | null
-          task: string | null
-          variable_name: string | null
         }
         Insert: {
-          activity_type?: string | null
-          choices?: string | null
           created_at?: string
-          description?: string | null
           flow_element_id: number
-          gamification_option_id?: number | null
-          gamification_type?: Database["public"]["Enums"]["gamification_type"]
           id?: number
-          info_text?: string | null
-          input_regex?: string | null
           next_flow_element_id?: number | null
-          task?: string | null
-          variable_name?: string | null
         }
         Update: {
-          activity_type?: string | null
-          choices?: string | null
           created_at?: string
-          description?: string | null
           flow_element_id?: number
-          gamification_option_id?: number | null
-          gamification_type?: Database["public"]["Enums"]["gamification_type"]
           id?: number
-          info_text?: string | null
-          input_regex?: string | null
           next_flow_element_id?: number | null
-          task?: string | null
-          variable_name?: string | null
         }
         Relationships: [
           {
@@ -89,65 +62,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "public_activity_element_gamification_option_id_fkey"
-            columns: ["gamification_option_id"]
-            isOneToOne: false
-            referencedRelation: "gamification_option"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "public_activity_element_next_flow_element_id_fkey"
             columns: ["next_flow_element_id"]
             isOneToOne: false
             referencedRelation: "flow_element"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      challenge_element: {
-        Row: {
-          background_color: string | null
-          challenge_type: string | null
-          created_at: string
-          flow_element_id: number
-          gamification_option_id: number | null
-          id: number
-          reward_type: Database["public"]["Enums"]["gamification_type"] | null
-          seconds_to_complete: number | null
-        }
-        Insert: {
-          background_color?: string | null
-          challenge_type?: string | null
-          created_at?: string
-          flow_element_id: number
-          gamification_option_id?: number | null
-          id?: number
-          reward_type?: Database["public"]["Enums"]["gamification_type"] | null
-          seconds_to_complete?: number | null
-        }
-        Update: {
-          background_color?: string | null
-          challenge_type?: string | null
-          created_at?: string
-          flow_element_id?: number
-          gamification_option_id?: number | null
-          id?: number
-          reward_type?: Database["public"]["Enums"]["gamification_type"] | null
-          seconds_to_complete?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "public_challenge_element_flow_element_id_fkey"
-            columns: ["flow_element_id"]
-            isOneToOne: true
-            referencedRelation: "flow_element"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_challenge_element_gamification_option_id_fkey"
-            columns: ["gamification_option_id"]
-            isOneToOne: false
-            referencedRelation: "gamification_option"
             referencedColumns: ["id"]
           },
         ]
@@ -332,130 +250,27 @@ export type Database = {
           },
         ]
       }
-      gamification_event_element: {
-        Row: {
-          created_at: string
-          flow_element_id: number
-          gamification_option_id: number | null
-          gamification_type: Database["public"]["Enums"]["gamification_type"]
-          id: number
-          next_flow_element_id: number | null
-        }
-        Insert: {
-          created_at?: string
-          flow_element_id: number
-          gamification_option_id?: number | null
-          gamification_type: Database["public"]["Enums"]["gamification_type"]
-          id?: number
-          next_flow_element_id?: number | null
-        }
-        Update: {
-          created_at?: string
-          flow_element_id?: number
-          gamification_option_id?: number | null
-          gamification_type?: Database["public"]["Enums"]["gamification_type"]
-          id?: number
-          next_flow_element_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "public_gamification_event_element_flow_element_id_fkey"
-            columns: ["flow_element_id"]
-            isOneToOne: true
-            referencedRelation: "flow_element"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_gamification_event_element_gamification_option_id_fkey"
-            columns: ["gamification_option_id"]
-            isOneToOne: false
-            referencedRelation: "gamification_option"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "public_gamification_event_element_next_flow_element_id_fkey"
-            columns: ["next_flow_element_id"]
-            isOneToOne: false
-            referencedRelation: "flow_element"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gamification_option: {
-        Row: {
-          badge_type: string | null
-          comparison: Database["public"]["Enums"]["comparisons"] | null
-          created_at: string
-          has_condition: boolean | null
-          id: number
-          point_type: Database["public"]["Enums"]["point_type"] | null
-          points_application_method:
-            | Database["public"]["Enums"]["points_application_method"]
-            | null
-          points_for_success: string | null
-          value1: string | null
-          value2: string | null
-        }
-        Insert: {
-          badge_type?: string | null
-          comparison?: Database["public"]["Enums"]["comparisons"] | null
-          created_at?: string
-          has_condition?: boolean | null
-          id?: number
-          point_type?: Database["public"]["Enums"]["point_type"] | null
-          points_application_method?:
-            | Database["public"]["Enums"]["points_application_method"]
-            | null
-          points_for_success?: string | null
-          value1?: string | null
-          value2?: string | null
-        }
-        Update: {
-          badge_type?: string | null
-          comparison?: Database["public"]["Enums"]["comparisons"] | null
-          created_at?: string
-          has_condition?: boolean | null
-          id?: number
-          point_type?: Database["public"]["Enums"]["point_type"] | null
-          points_application_method?:
-            | Database["public"]["Enums"]["points_application_method"]
-            | null
-          points_for_success?: string | null
-          value1?: string | null
-          value2?: string | null
-        }
-        Relationships: []
-      }
       gateway_element: {
         Row: {
-          comparison: Database["public"]["Enums"]["comparisons"]
           created_at: string
           flow_element_id: number
           id: number
           next_flow_element_false_id: number | null
           next_flow_element_true_id: number | null
-          value1: string
-          value2: string
         }
         Insert: {
-          comparison: Database["public"]["Enums"]["comparisons"]
           created_at?: string
           flow_element_id: number
           id?: number
           next_flow_element_false_id?: number | null
           next_flow_element_true_id?: number | null
-          value1: string
-          value2: string
         }
         Update: {
-          comparison?: Database["public"]["Enums"]["comparisons"]
           created_at?: string
           flow_element_id?: number
           id?: number
           next_flow_element_false_id?: number | null
           next_flow_element_true_id?: number | null
-          value1?: string
-          value2?: string
         }
         Relationships: [
           {
@@ -863,39 +678,32 @@ export type Database = {
       statistics: {
         Row: {
           badges: Json
-          belongs_to: number
           coins: number | null
           created_at: string
           experience: number | null
           id: number
           profile_id: string
+          team_id: number
         }
         Insert: {
           badges?: Json
-          belongs_to: number
           coins?: number | null
           created_at?: string
           experience?: number | null
           id?: number
           profile_id: string
+          team_id: number
         }
         Update: {
           badges?: Json
-          belongs_to?: number
           coins?: number | null
           created_at?: string
           experience?: number | null
           id?: number
           profile_id?: string
+          team_id?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "public_statistics_belongs_to_fkey"
-            columns: ["belongs_to"]
-            isOneToOne: false
-            referencedRelation: "profile_team"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "public_statistics_profile_id_fkey"
             columns: ["profile_id"]
@@ -909,6 +717,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles_with_roles"
             referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "public_statistics_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -958,6 +773,7 @@ export type Database = {
           assigned_role: string | null
           belongs_to: number | null
           completed_at: string | null
+          completed_by: string | null
           created_at: string | null
           data: Json | null
           execution_url: string | null
@@ -967,9 +783,25 @@ export type Database = {
           status:
             | Database["public"]["Enums"]["flow_element_instance_status"]
             | null
+          task_description: string | null
+          task_title: string | null
           type: Database["public"]["Enums"]["node_type"] | null
         }
         Relationships: [
+          {
+            foreignKeyName: "public_flow_element_instance_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_flow_element_instance_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_with_roles"
+            referencedColumns: ["profile_id"]
+          },
           {
             foreignKeyName: "public_flow_element_instance_instance_of_fkey"
             columns: ["instance_of"]
@@ -1031,7 +863,7 @@ export type Database = {
       }
       add_profile_to_team: {
         Args: {
-          profile_id_param: number
+          profile_id_param: string
           team_id_param: number
         }
         Returns: undefined
@@ -1098,21 +930,13 @@ export type Database = {
         }
         Returns: Json
       }
-      remove_profile_from_team:
-        | {
-            Args: {
-              profile_id_param: number
-              team_id_param: number
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              profile_id_param: string
-              team_id_param: number
-            }
-            Returns: undefined
-          }
+      remove_profile_from_team: {
+        Args: {
+          profile_id_param: string
+          team_id_param: number
+        }
+        Returns: undefined
+      }
       remove_role: {
         Args: {
           role_id: number
@@ -1240,6 +1064,7 @@ export type Database = {
           owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
+          user_metadata: Json | null
           version: string | null
         }
         Insert: {
@@ -1253,6 +1078,7 @@ export type Database = {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Update: {
@@ -1266,6 +1092,7 @@ export type Database = {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Relationships: [
@@ -1287,6 +1114,7 @@ export type Database = {
           key: string
           owner_id: string | null
           upload_signature: string
+          user_metadata: Json | null
           version: string
         }
         Insert: {
@@ -1297,6 +1125,7 @@ export type Database = {
           key: string
           owner_id?: string | null
           upload_signature: string
+          user_metadata?: Json | null
           version: string
         }
         Update: {
@@ -1307,6 +1136,7 @@ export type Database = {
           key?: string
           owner_id?: string | null
           upload_signature?: string
+          user_metadata?: Json | null
           version?: string
         }
         Relationships: [
@@ -1442,6 +1272,10 @@ export type Database = {
           metadata: Json
           updated_at: string
         }[]
+      }
+      operation: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       search: {
         Args: {

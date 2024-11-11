@@ -3,6 +3,11 @@
 import React, {useEffect} from "react";
 import {createClient} from "@/utils/supabase/client";
 import {usePathname, useRouter} from "next/navigation";
+import Link from "next/link";
+import {CircleX} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {Tooltip} from "@/components/ui/tooltip";
+import {toast} from "@/components/ui/use-toast";
 
 export interface TaskFrameProps {
     taskId: string
@@ -35,5 +40,12 @@ export default function TaskFrame({ taskId, teamId, taskUrl }: Readonly<TaskFram
         }
     }, [supabase, router, pathName, teamId])
 
-    return <iframe className="w-full h-full" src={taskUrl} title={taskId}/>
+    return <section className="w-full h-full flex flex-col items-end">
+        <Link href={`/${teamId}/tasks`} className="m-4">
+            <Button variant="outline" size="icon">
+                <CircleX className="h-[1.2rem] w-[1.2rem]" />
+            </Button>
+        </Link>
+        <iframe className="w-full h-full" src={taskUrl} title={taskId}/>
+    </section>
 }
