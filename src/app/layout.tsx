@@ -7,10 +7,8 @@ import React from "react";
 import {Toaster} from "@/components/ui/toaster";
 import {getLocale, getMessages} from "next-intl/server";
 import {NextIntlClientProvider} from "next-intl";
-import { RootProvider } from 'fumadocs-ui/provider';
+import {RootProvider} from 'fumadocs-ui/provider';
 import ThemeSetter from "@/components/ThemeSetter";
-import {createClient} from "@/utils/supabase/server";
-import {redirect} from "next/navigation";
 
 const fontSans = FontSans({
     subsets: ["latin"],
