@@ -14,13 +14,13 @@ export default function EndNode({ id, selected, data}: NodeProps<EndNodeData>) {
             backgroundColor: data.backgroundColor,
             borderColor: selected ? selectedColor : undefined
         }} className="bg-background border-2 border-foreground">
-            <Handle style={handleStyle} type="target" position={Position.Left} />
+            <Handle style={{...handleStyle }} type="target" position={Position.Left} />
         </div>
     )
 }
 
 export const endNodeShapeStyle = {
-    width: 30,
-    height: 30,
+    width: 37,
+    height: 37,
     borderRadius: "50%",
 }

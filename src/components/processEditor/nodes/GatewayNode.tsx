@@ -76,8 +76,8 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
                 style={{
                     width: 70,
                     position: 'fixed',
-                    top: -35,
-                    left: 20
+                    top: -40,
+                    left: 25
                 }}
             >
                 { "True" }
@@ -97,7 +97,7 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
                 backgroundColor: data.backgroundColor,
                 borderColor: selected ? selectedColor : undefined
             }} className="bg-background border-2 border-foreground" >
-                <X style={{ transform: "rotate(-45deg)" }} className="pt-1" />
+                <X style={{ transform: "rotate(-45deg)" }} className="pt-3" />
             </div>
             <Handle style={handleStyle} type="target" position={Position.Left} id="a"/>
             <Handle style={handleStyle} type="source" position={Position.Top} id="True"/>
@@ -107,8 +107,8 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
 }
 
 export const GatewayShapeStyle = {
-    width: 30,
-    height: 30,
+    width: 37,
+    height: 37,
     transform: "rotateY(0deg) rotate(45deg)",
     borderRadius: 6,
 }

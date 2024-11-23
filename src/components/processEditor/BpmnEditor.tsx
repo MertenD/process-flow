@@ -208,6 +208,7 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
             }}
             deleteKeyCode={["Backspace", "Delete"]}
             className="bg-accent"
+            snapToGrid
         >
             <Controls />
             <Background variant={BackgroundVariant.Dots} />

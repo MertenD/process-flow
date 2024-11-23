@@ -57,7 +57,7 @@ export default function StartNode({ id, selected, data}: NodeProps<StartNodeData
 }
 
 export const startNodeShapeStyle = {
-    width: 30,
-    height: 30,
+    width: 37,
+    height: 37,
     borderRadius: "50%",
 }

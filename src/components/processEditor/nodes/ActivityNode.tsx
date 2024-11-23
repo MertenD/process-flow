@@ -246,6 +246,7 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
         updateNodeData<ActivityNodeData>(id, updatedData);
     }, [])
 
+
     return (
         <div style={{
             ...activityShapeStyle,
@@ -254,8 +255,8 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
         }} className="bg-background border-2 border-foreground" >
             <Handle style={handleStyle} type="source" position={Position.Right}/>
             <Handle style={handleStyle} type="target" position={Position.Left}/>
-            <div className="flex flex-col p-2">
-                <div>{ data.task }</div>
+            <div className="flex flex-col p-2 items-center">
+                <div>{ data.task || "-" }</div>
                 <div>{ data.activityType }</div>
             </div>
         </div>
