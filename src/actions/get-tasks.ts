@@ -34,7 +34,5 @@ export default async function(teamId: number, userId: string): Promise<ManualTas
         throw Error(`Error loading manual tasks: ${error.message}`);
     }
 
-    console.log(data)
-
-    return data as ManualTaskWithOutputs[];
+    return (data || []) as ManualTaskWithOutputs[];
 }
