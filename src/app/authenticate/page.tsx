@@ -7,7 +7,7 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
-import {Profile} from "@/model/database/database.types";
+import {Profile, Theme} from "@/model/database/database.types";
 
 export default async function Login (
     { searchParams }: Readonly<{ searchParams: { message: string } }>
@@ -92,7 +92,8 @@ export default async function Login (
             .insert([{
                 id: user?.id,
                 username: formData.get('username') as string,
-                email: user?.email
+                email: user?.email,
+                theme: "light" as Theme,
             } as Profile])
 
         return redirect('/', RedirectType.replace)
