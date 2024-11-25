@@ -2,7 +2,6 @@
 
 import {Edge, Node} from "reactflow";
 import {NodeTypes} from "@/model/NodeTypes";
-import {GamificationType} from "@/model/GamificationType";
 import {cookies} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
 
@@ -122,11 +121,16 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
     })
 
     // Delete any nodes that are not existing nodes and have the process model id
-    await supabase.from("flow_element").delete().not("id", "in", `(${existingNodes.join(",")})`).eq("model_id", processModelId).then(res => {
-        if (res.error) {
-            throw res.error
-        }
-    })
+    await supabase
+        .from("flow_element")
+        .delete()
+        .not("id", "in", `(${existingNodes.join(",")})`)
+        .eq("model_id", processModelId)
+        .then(res => {
+            if (res.error) {
+                throw res.error
+            }
+        })
 
     return oldNewIdMapping
 }

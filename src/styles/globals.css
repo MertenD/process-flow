@@ -118,3 +118,17 @@ main {
 .react-flow__attribution {
   @apply hidden
 }
+
+.highlight-feature {
+  @apply relative overflow-hidden rounded-[--radius] p-2;
+  background: linear-gradient(to bottom right, hsl(var(--muted)), hsl(var(--accent)));
+}
+
+.highlight-feature::before {
+  content: '';
+  @apply absolute inset-[1px] rounded-[calc(var(--radius)-1px)] bg-gradient-to-b from-border to-background z-0;
+}
+
+.highlight-feature > * {
+  @apply relative z-10;
+}
