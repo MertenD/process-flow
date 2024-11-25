@@ -1,14 +1,49 @@
-import { Button } from "@/components/ui/button"
-import { MacbookScroll } from "@/components/ui/macbook-scroll"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import {MacbookScroll} from "@/components/ui/macbook-scroll"
 import Image from "next/image"
 import Link from "next/link"
-import { Star, Users, Edit3, Award, BarChart3, ShieldCheck, Check } from 'lucide-react'
-import {ReactNode} from "react";
+import {Award, BarChart3, Edit3, ShieldCheck, Star, Users} from 'lucide-react'
 import {LinkButton} from "@/components/ui/link-button";
+import FeatureCard from "@/components/homepage/FeatureCard";
+import Footer from "@/components/homepage/Footer";
+import FAQ from "@/components/homepage/FAQ";
+import PricingSection from "@/components/homepage/PricingSection";
+import {AnimatedTooltip} from "@/components/ui/animated-tooltip";
 
 export default function LandingPage() {
+
+    const people = [
+        {
+            id: 1,
+            name: "Merten Dieckmann",
+            designation: "Software Engineer",
+            image: "/assets/placeholder-avatar.jpg"
+        },
+        {
+            id: 2,
+            name: "Merten Dieckmann",
+            designation: "Software Engineer",
+            image: "/assets/placeholder-avatar.jpg"
+        },
+        {
+            id: 3,
+            name: "Merten Dieckmann",
+            designation: "Software Engineer",
+            image: "/assets/placeholder-avatar.jpg"
+        },
+        {
+            id: 4,
+            name: "Merten Dieckmann",
+            designation: "Software Engineer",
+            image: "/assets/placeholder-avatar.jpg"
+        },
+        {
+            id: 5,
+            name: "Merten Dieckmann",
+            designation: "Software Engineer",
+            image: "/assets/placeholder-avatar.jpg"
+        }
+    ]
+
     return (
         <div className="min-h-screen bg-background text-foreground">
             {/* Navigation */}
@@ -32,15 +67,15 @@ export default function LandingPage() {
                         <Link href="#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                             Contact
                         </Link>
+                        <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                            Docs
+                        </Link>
                     </div>
 
                     <div className="flex items-center space-x-4">
-                        <Button variant="ghost" className="hidden md:flex">
+                        <LinkButton href="/authenticate" className="hidden md:flex">
                             Sign in
-                        </Button>
-                        <Button disabled>
-                            Book a demo
-                        </Button>
+                        </LinkButton>
                     </div>
                 </div>
             </nav>
@@ -67,18 +102,9 @@ export default function LandingPage() {
                     </div>
 
                     <div className="pt-8">
-                        <div className="flex items-center justify-center gap-4 py-4">
+                        <div className="flex items-center justify-center gap-8 py-4">
                             <div className="flex -space-x-2">
-                                {[...Array(6)].map((_, i) => (
-                                    <div key={i} className="w-8 h-8 rounded-full border-2 border-background bg-muted overflow-hidden">
-                                        <Image
-                                            src={`/placeholder.svg?text=${i + 1}`}
-                                            alt="User"
-                                            width={32}
-                                            height={32}
-                                        />
-                                    </div>
-                                ))}
+                                <AnimatedTooltip items={people} />
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="flex">
@@ -87,8 +113,8 @@ export default function LandingPage() {
                                     ))}
                                 </div>
                                 <span className="text-sm text-muted-foreground">
-                  Trusted by 1+ users
-                </span>
+                                    Trusted by 5+ users
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -144,197 +170,9 @@ export default function LandingPage() {
                 src="/assets/dashboard.png"
                 showGradient
             />
-
-            {/* Pricing Section */}
-            <section id="pricing" className="py-16 md:py-24">
-                <div className="container">
-                    <h2 className="text-3xl font-bold text-center mb-12">Choose the Perfect Plan for Your Team</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <PricingCard
-                            title="Starter"
-                            price="$29"
-                            description="Perfect for small teams just getting started"
-                            features={[
-                                "Up to 10 team members",
-                                "Basic process templates",
-                                "Standard support",
-                                "1 GB storage"
-                            ]}
-                        />
-                        <PricingCard
-                            title="Pro"
-                            price="$79"
-                            description="Ideal for growing teams with advanced needs"
-                            features={[
-                                "Up to 50 team members",
-                                "Advanced process editor",
-                                "Priority support",
-                                "10 GB storage",
-                                "Custom branding"
-                            ]}
-                            highlighted={true}
-                        />
-                        <PricingCard
-                            title="Enterprise"
-                            price="Custom"
-                            description="Tailored solutions for large organizations"
-                            features={[
-                                "Unlimited team members",
-                                "Dedicated account manager",
-                                "24/7 premium support",
-                                "Unlimited storage",
-                                "Advanced security features"
-                            ]}
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* FAQ Section */}
-            <section id="faq" className="py-16 md:py-24 bg-muted">
-                <div className="container">
-                    <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
-                    <Accordion type="single" collapsible className="w-full max-w-3xl mx-auto">
-                        <AccordionItem value="item-1">
-                            <AccordionTrigger>How does ProcessFlow&apos;s gamification work?</AccordionTrigger>
-                            <AccordionContent>
-                                ProcessFlow incorporates game-like elements such as points, badges, and levels into your workflow. As team members complete tasks and achieve goals, they earn rewards, fostering a sense of accomplishment and motivation.
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="item-2">
-                            <AccordionTrigger>Can I integrate ProcessFlow with other tools?</AccordionTrigger>
-                            <AccordionContent>
-                                Yes, ProcessFlow offers integrations with popular tools like Slack, Trello, and Google Workspace. We also provide an API for custom integrations with your existing systems.
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="item-3">
-                            <AccordionTrigger>Is my data secure with ProcessFlow?</AccordionTrigger>
-                            <AccordionContent>
-                                Absolutely. We use industry-standard encryption and security practices to protect your data. Our systems are regularly audited and comply with GDPR and other data protection regulations.
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="item-4">
-                            <AccordionTrigger>How customizable are the workflows?</AccordionTrigger>
-                            <AccordionContent>
-                                ProcessFlow offers highly customizable workflows. You can create complex, multi-stage processes with conditional logic, automated actions, and custom fields to fit your specific business needs.
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="item-5">
-                            <AccordionTrigger>Do you offer onboarding and training?</AccordionTrigger>
-                            <AccordionContent>
-                                Yes, we provide comprehensive onboarding and training for all plans. Our Pro and Enterprise plans include personalized onboarding sessions and ongoing training to ensure your team gets the most out of ProcessFlow.
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                </div>
-            </section>
-
-            {/* Footer */}
-            <footer className="bg-background text-foreground py-12">
-                <div className="container">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        <div>
-                            <h3 className="font-semibold mb-4">Product</h3>
-                            <ul className="space-y-2">
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Features</Link></li>
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Pricing</Link></li>
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">FAQ</Link></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold mb-4">Company</h3>
-                            <ul className="space-y-2">
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Careers</Link></li>
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold mb-4">Resources</h3>
-                            <ul className="space-y-2">
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Blog</Link></li>
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Documentation</Link></li>
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Community</Link></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold mb-4">Legal</h3>
-                            <ul className="space-y-2">
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
-                                <li><Link href="#" className="text-muted-foreground hover:text-foreground">Cookie Policy</Link></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="mt-12 pt-8 border-t border-border">
-                        <p className="text-center text-muted-foreground">
-                            © {new Date().getFullYear()} ProcessFlow. All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+            <PricingSection />
+            <FAQ />
+            <Footer />
         </div>
     )
 }
-
-interface FeatureCardProps {
-    icon: ReactNode
-    title: string
-    description: string
-    image?: string
-}
-
-function FeatureCard({ icon, title, description, image }: FeatureCardProps) {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    {icon}
-                    <span>{title}</span>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground mb-4">{description}</p>
-                {image && (
-                    <div className="relative aspect-video rounded-lg overflow-hidden">
-                        <Image src={image} alt={title} fill className="object-cover" />
-                    </div>
-                )}
-            </CardContent>
-        </Card>
-    )
-}
-
-interface PricingCardProps {
-    title: string
-    price: string
-    description: string
-    features: string[]
-    highlighted?: boolean
-}
-
-function PricingCard({ title, price, description, features, highlighted = false }: PricingCardProps) {
-    return (
-        <Card className={highlighted ? 'border-primary shadow-lg' : ''}>
-            <CardHeader>
-                <CardTitle className="text-2xl">{title}</CardTitle>
-                <p className="text-4xl font-bold">{price}</p>
-                <p className="text-muted-foreground">{description}</p>
-            </CardHeader>
-            <CardContent>
-                <ul className="space-y-2">
-                    {features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                            <Check className="h-5 w-5 text-primary" />
-                            <span>{feature}</span>
-                        </li>
-                    ))}
-                </ul>
-                <Button className="w-full mt-6" variant={highlighted ? 'default' : 'outline'}>
-                    Get Started
-                </Button>
-            </CardContent>
-        </Card>
-    )
-}
-
