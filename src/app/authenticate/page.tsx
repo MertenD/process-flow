@@ -92,8 +92,7 @@ export default async function Login (
             .insert([{
                 id: user?.id,
                 username: formData.get('username') as string,
-                email: user?.email,
-                theme: "light" as Theme,
+                email: user?.email
             } as Profile])
 
         return redirect('/', RedirectType.replace)
