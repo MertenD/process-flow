@@ -49,7 +49,7 @@ export default function LandingPage() {
             {/* Navigation */}
             <nav className="navbar fixed top-0 w-full z-50 border-b border-border/40 bg-background/80 backdrop-blur-sm">
                 <div className="container flex h-16 items-center justify-between">
-                    <Link href="/" className="flex items-center space-x-2">
+                    <Link href="/landing" className="flex items-center space-x-2">
                         <Image src="/assets/icon.png" alt="Logo" width={32} height={32} />
                         <span className="font-bold">ProcessFlow</span>
                     </Link>

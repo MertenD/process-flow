@@ -26,7 +26,7 @@ export default async function AppRootLayout({children,}: Readonly<{ children: Re
     const messages = await getMessages()
 
     return (
-        <html lang={locale}>
+        <html lang={locale} className="!scroll-smooth">
         <head>
             <link rel="icon" href="/favicon.ico" sizes="any"/>
             <link
