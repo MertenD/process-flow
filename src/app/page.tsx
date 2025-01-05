@@ -1,12 +1,12 @@
 import {MacbookScroll} from "@/components/ui/macbook-scroll"
 import {Award, BarChart3, Edit3, ShieldCheck, Star, Users} from 'lucide-react'
 import {LinkButton} from "@/components/ui/link-button";
-import FeatureCard from "@/components/homepage/FeatureCard";
-import Footer from "@/components/homepage/Footer";
-import FAQ from "@/components/homepage/FAQ";
-import PricingSection from "@/components/homepage/PricingSection";
+import FeatureCard from "@/components/landing/FeatureCard";
+import Footer from "@/components/landing/Footer";
+import FAQ from "@/components/landing/FAQ";
+import PricingSection from "@/components/landing/PricingSection";
 import {AnimatedTooltip} from "@/components/ui/animated-tooltip";
-import HomepageNavigation from "@/components/homepage/HomepageNavigation";
+import HomepageNavigation from "@/components/landing/HomepageNavigation";
 
 export default function LandingPage() {
 

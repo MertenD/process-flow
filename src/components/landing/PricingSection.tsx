@@ -1,4 +1,4 @@
-import PricingCard from "@/components/homepage/PricingCard";
+import PricingCard from "@/components/landing/PricingCard";
 
 export default function PricingSection() {
 
