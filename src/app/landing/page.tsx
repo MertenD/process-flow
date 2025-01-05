@@ -1,6 +1,4 @@
 import {MacbookScroll} from "@/components/ui/macbook-scroll"
-import Image from "next/image"
-import Link from "next/link"
 import {Award, BarChart3, Edit3, ShieldCheck, Star, Users} from 'lucide-react'
 import {LinkButton} from "@/components/ui/link-button";
 import FeatureCard from "@/components/homepage/FeatureCard";
@@ -8,6 +6,7 @@ import Footer from "@/components/homepage/Footer";
 import FAQ from "@/components/homepage/FAQ";
 import PricingSection from "@/components/homepage/PricingSection";
 import {AnimatedTooltip} from "@/components/ui/animated-tooltip";
+import HomepageNavigation from "@/components/homepage/HomepageNavigation";
 
 export default function LandingPage() {
 
@@ -46,39 +45,7 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-background text-foreground">
-            {/* Navigation */}
-            <nav className="navbar fixed top-0 w-full z-50 border-b border-border/40 bg-background/80 backdrop-blur-sm">
-                <div className="container flex h-16 items-center justify-between">
-                    <Link href="/landing" className="flex items-center space-x-2">
-                        <Image src="/assets/icon.png" alt="Logo" width={32} height={32} />
-                        <span className="font-bold">ProcessFlow</span>
-                    </Link>
-
-                    <div className="hidden md:flex items-center space-x-8">
-                        <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                            Features
-                        </Link>
-                        <Link href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                            Pricing
-                        </Link>
-                        <Link href="#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                            FAQ
-                        </Link>
-                        <Link href="#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                            Contact
-                        </Link>
-                        <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                            Docs
-                        </Link>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                        <LinkButton href="/authenticate" className="hidden md:flex">
-                            Sign in
-                        </LinkButton>
-                    </div>
-                </div>
-            </nav>
+            <HomepageNavigation isFixed />
 
             {/* Hero Section */}
             <section className="pt-32 pb-16 md:pt-40 md:pb-24">

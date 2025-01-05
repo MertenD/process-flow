@@ -17,7 +17,6 @@ export default function Footer() {
                     <h3 className="font-semibold mb-4">Company</h3>
                     <ul className="space-y-2">
                         <li><Link href="#" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Careers</Link></li>
                         <li><Link href="#" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
                     </ul>
                 </div>
@@ -25,9 +24,8 @@ export default function Footer() {
                     <h3 className="font-semibold mb-4">Resources</h3>
                     <ul className="space-y-2">
                         <li><Link href="#" className="text-muted-foreground hover:text-foreground">Blog</Link></li>
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Documentation</Link>
+                        <li><Link href="/docs" className="text-muted-foreground hover:text-foreground">Documentation</Link>
                         </li>
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Community</Link></li>
                     </ul>
                 </div>
                 <div>
@@ -37,8 +35,6 @@ export default function Footer() {
                         </li>
                         <li><Link href="#" className="text-muted-foreground hover:text-foreground">Terms of
                             Service</Link></li>
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Cookie Policy</Link>
-                        </li>
                     </ul>
                 </div>
             </div>
