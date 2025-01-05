@@ -6,7 +6,7 @@ import React from "react";
 import Link from "next/link";
 
 export default function HomeButton() {
-    return <Link href={"/"}>
+    return <Link href={"/dashboard"}>
         <Button variant="outline" size="icon" className={"mr-6"}>
             <Home className="h-[1.2rem] w-[1.2rem]" />
         </Button>
