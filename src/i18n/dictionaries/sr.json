@@ -50,7 +50,8 @@
       "stats": "Statistike",
       "settings": "Podešavanja",
       "monitoring": "Praćenje",
-      "tasks": "Zadaci"
+      "tasks": "Zadaci",
+      "shop": "Prodavnica"
     },
     "userNav": {
       "settings": "Podešavanja",
@@ -315,6 +316,36 @@
       "processDeletedSuccessfullyDescription": "Proces je uspešno obrisan.",
       "processCreatedErrorTitle": "Greška prilikom kreiranja procesa",
       "processCreatedErrorDescription": "Proces nije mogao biti kreiran."
+    }
+  },
+  "shop": {
+    "sidebar": {
+      "title": "Prodavnica aktivnosti",
+      "shopNavLabel": "Prodavnica",
+      "addedNodesNavLabel": "Dodate aktivnosti"
+    },
+    "shopPage": {
+      "title": "Prodavnica"
+    },
+    "addedNodesPage": {
+      "title": "Dodate aktivnosti",
+      "noNodes": "Nema dodatih aktivnosti"
+    },
+    "search": {
+      "searchPlaceholder": "Pretraži aktivnosti",
+      "noActivitiesFound": "Nema pronađenih aktivnosti",
+      "allCategories": "Sve kategorije"
+    },
+    "node": {
+      "viewDetails": "Pogledaj detalje",
+      "details": {
+        "addToEditor": "Dodaj u editor",
+        "removeFromEditor": "Ukloni iz editora",
+        "documentationTitle": "Dokumentacija",
+        "nodePreview": "Pregled",
+        "SettingsPreview": "Podešavanja",
+        "taskPreview": "Prikaz zadataka"
+      }
     }
   }
 }

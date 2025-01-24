@@ -52,7 +52,7 @@ export default async function HeaderBarWrapper({ selectedTeamId }: Readonly<Head
     const allowedPages: Page[] = await getAllowedPages(selectedTeamId, userData.user.id)
 
     return <header>
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
             <DesktopHeaderBar
                 selectedTeamId={selectedTeamId}
                 user={userData.user}
@@ -61,7 +61,7 @@ export default async function HeaderBarWrapper({ selectedTeamId }: Readonly<Head
                 allowedPages={allowedPages}
             />
         </div>
-        <div className="block md:hidden">
+        <div className="block lg:hidden">
             <MobileHeaderBar
                 selectedTeamId={selectedTeamId}
                 user={userData.user}

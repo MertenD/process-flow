@@ -50,7 +50,8 @@
       "stats": "Statistiken",
       "settings": "Einstellungen",
       "monitoring": "Monitoring",
-      "tasks": "Aufgaben"
+      "tasks": "Aufgaben",
+      "shop": "Shop"
     },
     "userNav": {
       "settings": "Einstellungen",
@@ -315,6 +316,36 @@
         "processDeletedSuccessfullyDescription": "Der Prozess wurde erfolgreich gelöscht.",
         "processCreatedErrorTitle": "Fehler beim Erstellen des Prozesses",
         "processCreatedErrorDescription": "Der Prozess konnte nicht erstellt werden."
+    }
+  },
+  "shop": {
+    "sidebar": {
+      "title": "Aktivitäten Shop",
+      "shopNavLabel": "Shop",
+      "addedNodesNavLabel": "Hinzugefügte Aktivitäten"
+    },
+    "shopPage": {
+      "title": "Shop"
+    },
+    "addedNodesPage": {
+      "title": "Hinzugefügte Aktivitäten",
+      "noNodes": "Keine Aktivitäten hinzugefügt"
+    },
+    "search": {
+      "searchPlaceholder": "Suche nach Aktivitäten",
+      "noActivitiesFound": "Keine Aktivitäten gefunden",
+      "allCategories": "Alle Kategorien"
+    },
+    "node": {
+      "viewDetails": "Details anzeigen",
+      "details": {
+        "addToEditor": "Zum Editor hinzufügen",
+        "removeFromEditor": "Vom Editor entfernen",
+        "documentationTitle": "Dokumentation",
+        "nodePreview": "Vorschau",
+        "SettingsPreview": "Einstellungen",
+        "taskPreview": "Aufgaben Ansicht"
+      }
     }
   }
 }

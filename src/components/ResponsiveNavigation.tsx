@@ -23,6 +23,7 @@ export default function ResponsiveNavigation({ className, allowedPages, selected
         { page: "Team", path: `/${selectedTeamId}/team`, label: t("team") },
         { page: "Stats", path: `/${selectedTeamId}/stats`, label: t("stats") },
         { page: "Settings", path: `/${selectedTeamId}/settings`, label: t("settings") },
+        { page: "Shop", path: `/${selectedTeamId}/shop`, label: t("shop") }
     ]
 
     return (
