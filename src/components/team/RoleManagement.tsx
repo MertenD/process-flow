@@ -21,7 +21,7 @@ export interface RoleManagementProps {
     teamId: number
 }
 
-const availablePages: Page[] = ["Editor", "Tasks", "Monitoring", "Team"]
+const availablePages: Page[] = ["Editor", "Tasks", "Monitoring", "Team", "Shop"]
 
 export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) {
 

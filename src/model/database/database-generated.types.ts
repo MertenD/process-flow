@@ -678,27 +678,27 @@ export type Database = {
       statistics: {
         Row: {
           badges: Json
-          coins: number | null
+          coins: number
           created_at: string
-          experience: number | null
+          experience: number
           id: number
           profile_id: string
           team_id: number
         }
         Insert: {
           badges?: Json
-          coins?: number | null
+          coins?: number
           created_at?: string
-          experience?: number | null
+          experience?: number
           id?: number
           profile_id: string
           team_id: number
         }
         Update: {
           badges?: Json
-          coins?: number | null
+          coins?: number
           created_at?: string
-          experience?: number | null
+          experience?: number
           id?: number
           profile_id?: string
           team_id?: number
@@ -783,8 +783,6 @@ export type Database = {
           status:
             | Database["public"]["Enums"]["flow_element_instance_status"]
             | null
-          task_description: string | null
-          task_title: string | null
           type: Database["public"]["Enums"]["node_type"] | null
         }
         Relationships: [
@@ -980,7 +978,7 @@ export type Database = {
         | "endNode"
         | "infoNode"
         | "gamificationEventNode"
-      page: "Editor" | "Tasks" | "Monitoring" | "Team" | "Stats"
+      page: "Editor" | "Tasks" | "Monitoring" | "Team" | "Stats" | "Shop"
       point_type: "Experience" | "Coins"
       points_application_method: "setTo" | "incrementBy" | "decrementBy"
       process_instance_status: "Running" | "Completed" | "Error"
