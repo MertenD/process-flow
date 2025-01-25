@@ -140,5 +140,8 @@ export default async function getNodeDefinition(): Promise<NodeDefinition> {
         } as OptionsSelect
     )
 
+    // TODO Replace with actual database call
+    nodeDefinition.id = "1"
+
     return nodeDefinition
 }

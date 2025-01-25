@@ -283,7 +283,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                 case OptionsStructureType.TEXT:
                     const textOption = option as OptionsText
                     return (
-                        <p className="text-sm">
+                        <p className="text-sm w-full">
                             { textOption.text }
                         </p>
                     )
@@ -291,7 +291,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                     const inputOption = option as OptionsInput
                     const listId = `suggestions-${inputOption.label.toLowerCase().replace(" ", "-")}`
                     return (
-                        <div className="space-y-2">
+                        <div className="space-y-2 w-full">
                             <Label htmlFor={`${inputOption.label}-input`}>{inputOption.label}</Label>
                             <Input
                                 id={`${inputOption.label}-input`}
@@ -320,7 +320,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                 case OptionsStructureType.VARIABLE_NAME_INPUT:
                     const variableNameInputOption = option as OptionsInput
                     return (
-                        <div className="space-y-2">
+                        <div className="space-y-2 w-full">
                             <Label htmlFor={`${variableNameInputOption.label}-input`}>{variableNameInputOption.label}</Label>
                             <Input
                                 id={`${variableNameInputOption.label}-input`}
@@ -346,7 +346,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                 case OptionsStructureType.MULTIPLE_VARIABLE_NAME_INPUT:
                     const multipleVariableNameInputOption = option as OptionsInput;
                     return (
-                        <div className="space-y-2">
+                        <div className="space-y-2 w-full">
                             <Label>{multipleVariableNameInputOption.label}</Label>
                             {variableNamesInput.map((name, idx) => (
                                 <div key={idx} className="flex flex-row space-x-2">
@@ -391,7 +391,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                             }) : []
 
                     return <>
-                        <div className="space-y-2">
+                        <div className="space-y-2 w-full">
                             <Label>{selectOption.label}</Label>
                             <Select
                                 defaultValue={getValueFromData(selectOption.keyString)}
@@ -446,7 +446,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                         }) : []
 
                     return <>
-                        <div className="space-y-2">
+                        <div className="space-y-2 w-full">
                             <Label>{selectWithCustomOption.label}</Label>
                             <Select
                                 defaultValue={(() => {
@@ -509,7 +509,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                 case OptionsStructureType.TEXTAREA:
                     const textareaOption = option as OptionsTextarea
                     return (
-                        <div className="space-y-2">
+                        <div className="space-y-2 w-full">
                             <Label htmlFor={`${textareaOption.label}-text-area`}>{textareaOption.label}</Label>
                             <Textarea
                                 id={`${textareaOption.label}-text-area`}
@@ -526,7 +526,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                 case OptionsStructureType.CHECKBOX:
                     const checkboxOption = option as OptionsCheckbox
                     return <>
-                        <div className="flex flex-row items-center space-x-2 space-y-2">
+                        <div className="flex flex-row items-center space-x-2 space-y-2 w-full">
                             <Checkbox
                                 id={`${checkboxOption.label}-checkbox`}
                                 ref={el => {
@@ -565,7 +565,7 @@ export default function DynamicOptions({ optionsDefinition, teamId }: Readonly<{
                 case OptionsStructureType.ROW:
                     const rowOption = option as OptionsRow
                     return (
-                        <div className="flex flex-row space-x-2">
+                        <div className="flex flex-row space-x-2 w-full">
                             { renderOptions(rowOption.structure) }
                         </div>
                     )

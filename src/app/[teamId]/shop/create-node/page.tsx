@@ -1,14 +1,20 @@
 "use client"
 
-import React, { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { PlusCircle, Save } from "lucide-react"
-import {NestedOptionsBase, OptionsBase, OptionsDefinition, OptionsStructureType} from "@/model/OptionsModel";
+import React, {useState} from "react"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {Textarea} from "@/components/ui/textarea"
+import {Card, CardContent} from "@/components/ui/card"
+import {PlusCircle, Save} from "lucide-react"
+import {
+    NestedOptionsBase,
+    OptionsBase,
+    OptionsDefinition,
+    OptionsRow,
+    OptionsStructureType
+} from "@/model/OptionsModel";
 import OptionEditor from "@/components/shop/create-node/OptionEditor";
 import {toCamelCase} from "@/utils/shop/stringUtils";
 import {ExecutionMode} from "@/model/database/database.types";
@@ -107,6 +113,10 @@ export default function OptionsDefinitionEditor() {
                 processedOption.keyString = keyString
             } else {
                 processedOption.keyString = undefined
+            }
+
+            if (option.type === OptionsStructureType.ROW && "structure" in option) {
+                (processedOption as OptionsRow).structure = processNestedStructure((option as OptionsRow).structure)
             }
 
             if ("options" in option && Array.isArray(option.options)) {

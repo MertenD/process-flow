@@ -345,7 +345,8 @@
         "documentationTitle": "Dokumentacija",
         "nodePreview": "Pregled",
         "SettingsPreview": "Podešavanja",
-        "taskPreview": "Prikaz zadataka"
+        "taskPreview": "Prikaz zadataka",
+        "back": "Nazad"
       }
     },
     "createNodePage": {

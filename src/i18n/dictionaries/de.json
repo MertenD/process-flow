@@ -345,7 +345,8 @@
         "documentationTitle": "Dokumentation",
         "nodePreview": "Vorschau",
         "SettingsPreview": "Einstellungen",
-        "taskPreview": "Aufgaben Ansicht"
+        "taskPreview": "Aufgaben Ansicht",
+        "back": "Zurück"
       }
     },
     "createNodePage": {
