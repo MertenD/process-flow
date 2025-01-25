@@ -1,0 +1,126 @@
+{
+  "name": "Single Choice Node",
+  "shortDescription": "This is a single choice node",
+  "markdownDocumentation": "# Single Choice Node\n\nThis node allows you to create a single choice question in your process. Users will be presented with the options you define and must select one answer.\n\n## Usage\n\nUse this node when you need to gather a specific choice from a user within your process flow.\n\n## Configuration\n\nTo set up a Single Choice Node:\n\n1. Set a clear title that describes the choice to be made\n2. Provide a detailed description to guide users\n3. Define the choices that will be presented\n4. Specify the variable name to store the selected answer\n5. Assign the appropriate role for access control\n\n## Best Practices\n\n- Keep choices clear and mutually exclusive\n- Use consistent naming for save variables\n- Consider the flow of your process when setting roles\n\n## Example\n\n```json\n{\n  \"title\": \"Preferred Contact Method\",\n  \"description\": \"How would you like us to contact you?\",\n  \"choices\": [\"Email\", \"Phone\", \"SMS\"],\n  \"saveAs\": \"contactPreference\",\n  \"role\": \"user\"\n}\n```\n\nThis example creates a single choice question asking users for their preferred contact method.",
+  "executionMode": "Manual",
+  "serverUrl": "http://localhost:3000",
+  "optionsDefinition": {
+    "title": "",
+    "nodeId": "",
+    "structure": [
+      {
+        "type": "row",
+        "structure": [
+          {
+            "type": "input",
+            "label": "Input"
+          },
+          {
+            "type": "select",
+            "options": [
+              {
+                "values": [
+                  "Option 1"
+                ],
+                "dependentStructure": [
+                  {
+                    "type": "text",
+                    "text": "Option 1 wurde ausgewählt"
+                  }
+                ]
+              },
+              {
+                "values": [
+                  "Option 2"
+                ],
+                "dependentStructure": []
+              }
+            ],
+            "label": "Select",
+            "defaultValue": "Option 2"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "options": [
+          {
+            "values": [
+              "Option 1"
+            ],
+            "dependentStructure": [
+              {
+                "type": "text",
+                "text": "Option 1 Selected"
+              },
+              {
+                "type": "select",
+                "label": "Select nested",
+                "options": [
+                  {
+                    "values": [
+                      "Option 1.1"
+                    ],
+                    "dependentStructure": [
+                      {
+                        "type": "text",
+                        "text": "Option 1.1 selected"
+                      }
+                    ]
+                  },
+                  {
+                    "values": [
+                      "Option 1.2"
+                    ],
+                    "dependentStructure": [
+                      {
+                        "type": "text",
+                        "text": "Option 1.2 selected"
+                      }
+                    ]
+                  }
+                ],
+                "defaultValue": "Option 1.1",
+                "keyString": "selectNested"
+              }
+            ]
+          },
+          {
+            "values": [
+              "Option 2"
+            ],
+            "dependentStructure": [
+              {
+                "type": "text",
+                "text": "Option 2 Selected"
+              }
+            ]
+          },
+          {
+            "values": [
+              "None"
+            ],
+            "dependentStructure": [
+              {
+                "type": "row",
+                "structure": [
+                  {
+                    "type": "text",
+                    "text": "1"
+                  },
+                  {
+                    "type": "text",
+                    "text": "2"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "label": "Select 2",
+        "defaultValue": "None",
+        "keyString": "select2"
+      }
+    ]
+  }
+}

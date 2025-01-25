@@ -27,46 +27,7 @@ const nodeDetails = {
         role: "admin",
         gamification: "None",
     },
-    documentation: `
-# Single Choice Node
-
-This node allows you to create a single choice question in your process. Users will be presented with the options you define and must select one answer.
-
-## Usage
-
-Use this node when you need to gather a specific choice from a user within your process flow.
-
-## Configuration
-
-To set up a Single Choice Node:
-
-1. Set a clear title that describes the choice to be made
-2. Provide a detailed description to guide users
-3. Define the choices that will be presented
-4. Specify the variable name to store the selected answer
-5. Assign the appropriate role for access control
-
-## Best Practices
-
-- Keep choices clear and mutually exclusive
-- Use consistent naming for save variables
-- Consider the flow of your process when setting roles
-
-## Example
-
-\`\`\`json
-{
-  "title": "Preferred Contact Method",
-  "description": "How would you like us to contact you?jsndfffffffffffffffffffffffffffffffffffff",
-  "choices": ["Email", "Phone", "SMS"],
-  "saveAs": "contactPreference",
-  "role": "user"
-}
-\`\`\`
-
-
-This example creates a single choice question asking users for their preferred contact method.
-  `,
+    documentation: '# Single Choice Node\n\nThis node allows you to create a single choice question in your process. Users will be presented with the options you define and must select one answer.\n\n## Usage\n\nUse this node when you need to gather a specific choice from a user within your process flow.\n\n## Configuration\n\nTo set up a Single Choice Node:\n\n1. Set a clear title that describes the choice to be made\n2. Provide a detailed description to guide users\n3. Define the choices that will be presented\n4. Specify the variable name to store the selected answer\n5. Assign the appropriate role for access control\n\n## Best Practices\n\n- Keep choices clear and mutually exclusive\n- Use consistent naming for save variables\n- Consider the flow of your process when setting roles\n\n## Example\n\n```json\n{\n  "title": "Preferred Contact Method",\n  "description": "How would you like us to contact you?",\n  "choices": ["Email", "Phone", "SMS"],\n  "saveAs": "contactPreference",\n  "role": "user"\n}\n```\n\nThis example creates a single choice question asking users for their preferred contact method.',
 }
 
 export default function NodeDetails() {

@@ -21,6 +21,8 @@ import {PointsType} from "@/model/PointsType";
 import {BadgeType} from "@/model/BadgeType";
 import {Comparisons} from "@/model/Comparisons";
 import {PointsApplicationMethod} from "@/model/PointsApplicationMethod";
+import {NodeDefinition} from "@/model/NodeDefinition";
+import getNodeDefinition from "@/actions/get-node-definition";
 
 export type ActivityNodeData = {
     backgroundColor?: string,
@@ -47,205 +49,17 @@ export type ActivityNodeData = {
     }
 }
 
-export function getActivityOptionsDefinition(nodeId: string): OptionsDefinition {
-    return {
-        title: "Activity Options",
-        nodeId: nodeId,
-        structure: [
-            {
-                type: OptionsStructureType.INPUT,
-                label: "Title",
-                placeholder: "Activity title",
-                keyString: "task"
-            } as OptionsInput,
-            {
-                type: OptionsStructureType.TEXTAREA,
-                label: "Description",
-                placeholder: "Activity description",
-                keyString: "description"
-            } as OptionsTextarea,
-            {
-                type: OptionsStructureType.SEPARATOR,
-            } as OptionsSeparator,
-            {
-                type: OptionsStructureType.SELECT,
-                label: "Activity type",
-                defaultValue: ActivityType.TEXT_INPUT,
-                keyString: "activityType",
-                options: [
-                    {
-                        values: [ActivityType.TEXT_INPUT],
-                        dependentStructure: [
-                            {
-                                type: OptionsStructureType.INPUT,
-                                label: "Input regex",
-                                placeholder: "[0-9]+",
-                                suggestions: [
-                                    "[0-9]+",
-                                    "[a-zA-Z .,-_]+",
-                                    "[a-zA-Z .,-_0-9]+",
-                                    "[a-zA-Z]+"
-                                ],
-                                keyString: "inputRegex"
-                            } as OptionsInput,
-                            {
-                                type: OptionsStructureType.VARIABLE_NAME_INPUT,
-                                label: "Save input as",
-                                placeholder: "input1",
-                                keyString: "outputs.userInputVariableName"
-                            } as OptionsVariableNameInput
-                        ]
-                    },
-                    {
-                        values: [ActivityType.SINGLE_CHOICE, ActivityType.MULTIPLE_CHOICE],
-                        dependentStructure: [
-                            {
-                                type: OptionsStructureType.INPUT,
-                                label: "Choices",
-                                placeholder: "choice 1,choice 2,...",
-                                keyString: "choices"
-                            } as OptionsInput,
-                            {
-                                type: OptionsStructureType.VARIABLE_NAME_INPUT,
-                                label: "Save input as",
-                                placeholder: "input1",
-                                keyString: "outputs.userInputVariableName"
-                            } as OptionsVariableNameInput
-                        ]
-                    },
-                    {
-                        values: [ActivityType.INFO],
-                        dependentStructure: [
-                            {
-                                type: OptionsStructureType.TEXTAREA,
-                                label: "Info text",
-                                placeholder: "This is an info text",
-                                keyString: "infoText"
-                            }
-                        ]
-                    }
-                ]
-            } as OptionsSelect,
-            {
-                type: OptionsStructureType.SEPARATOR
-            } as OptionsSeparator,
-            {
-                type: OptionsStructureType.SELECT,
-                label: "Assigned role",
-                defaultValue: "",
-                keyString: "assignedRole",
-                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_ROLES ] } ]
-            },
-            {
-                type: OptionsStructureType.SEPARATOR
-            } as OptionsSeparator,
-            {
-                type: OptionsStructureType.SELECT,
-                label: "Gamification type",
-                defaultValue: GamificationType.NONE,
-                keyString: "gamificationType",
-                options: [
-                    {
-                        values: [GamificationType.NONE],
-                        dependentStructure: []
-                    },
-                    {
-                        values: [GamificationType.POINTS],
-                        dependentStructure: [
-                            {
-                                type: OptionsStructureType.SELECT,
-                                label: "Points type",
-                                defaultValue: PointsType.EXPERIENCE,
-                                keyString: "gamificationOptions.pointType",
-                                options: [
-                                    { values: Object.values(PointsType) }
-                                ]
-                            } as OptionsSelect,
-                            {
-                                type: OptionsStructureType.ROW,
-                                structure: [
-                                    {
-                                        type: OptionsStructureType.SELECT,
-                                        label: "Effect",
-                                        defaultValue: PointsApplicationMethod.INCREMENT_BY,
-                                        keyString: "gamificationOptions.pointsApplicationMethod",
-                                        options: [
-                                            { values: Object.values(PointsApplicationMethod) }
-                                        ]
-                                    } as OptionsSelect,
-                                    {
-                                        type: OptionsStructureType.INPUT,
-                                        label: "Amount",
-                                        placeholder: "20",
-                                        keyString: "gamificationOptions.pointsForSuccess"
-                                    } as OptionsInput
-                                ]
-                            } as OptionsRow,
-                            {
-                                type: OptionsStructureType.SEPARATOR
-                            } as OptionsSeparator,
-                            {
-                                type: OptionsStructureType.CHECKBOX,
-                                defaultValue: false,
-                                label: "Gamification condition",
-                                keyString: "gamificationOptions.hasCondition",
-                                options: [
-                                    {
-                                        values: [true],
-                                        dependentStructure: [
-                                            {
-                                                type: OptionsStructureType.SELECT_WITH_CUSTOM,
-                                                label: "Value 1",
-                                                keyString: "gamificationOptions.value1",
-                                                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_VARIABLES ] } ]
-                                            } as OptionsSelectWithCustom,
-                                            {
-                                                type: OptionsStructureType.SELECT,
-                                                label: "Comparison",
-                                                keyString: "gamificationOptions.comparison",
-                                                defaultValue: Comparisons.EQUALS,
-                                                options: [ { values: Object.values(Comparisons) } ]
-                                            } as OptionsSelect,
-                                            {
-                                                type: OptionsStructureType.SELECT_WITH_CUSTOM,
-                                                label: "Value 2",
-                                                keyString: "gamificationOptions.value2",
-                                                options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_VARIABLES ] } ]
-                                            } as OptionsSelectWithCustom
-                                        ]
-                                    }
-                                ]
-                            } as OptionsCheckbox,
-                        ]
-                    },
-                    {
-                        values: [GamificationType.BADGES],
-                        dependentStructure: [
-                            {
-                                type: OptionsStructureType.INPUT,
-                                label: "Badge type",
-                                keyString: "gamificationOptions.badgeType",
-                                suggestions: Object.values(BadgeType),
-                            } as OptionsInput
-                        ]
-                    }
-                ]
-            } as OptionsSelect,
-        ]
-    } as OptionsDefinition
-}
-
 export default function ActivityNode({ id, selected, data }: NodeProps<ActivityNodeData>) {
     
     const updateNodeData = useStore((state) => state.updateNodeData)
     
     useEffect(() => {
-        const optionsDefinition = getActivityOptionsDefinition(id);
-        const updatedData = { ...data };
-        setDefaultValues(optionsDefinition.structure, updatedData);
-        updateNodeData<ActivityNodeData>(id, updatedData);
+        getNodeDefinition().then((nodeDefinition: NodeDefinition) => {
+            const updatedData = { ...data };
+            setDefaultValues(nodeDefinition.optionsDefinition.structure, updatedData);
+            updateNodeData<ActivityNodeData>(id, updatedData);
+        })
     }, [])
-
 
     return (
         <div style={{

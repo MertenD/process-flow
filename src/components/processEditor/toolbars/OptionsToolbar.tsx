@@ -1,12 +1,13 @@
 "use client"
 
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Node, useOnSelectionChange} from "reactflow";
-import {getActivityOptionsDefinition} from "@/components/processEditor/nodes/ActivityNode";
 import {NodeTypes} from "@/model/NodeTypes";
 import DynamicOptions from "@/components/processEditor/toolbars/dynamicOptions/DynamicOptions";
 import {getGatewayOptionsDefinition} from "@/components/processEditor/nodes/GatewayNode";
 import {getStartOptionsDefinition} from "@/components/processEditor/nodes/StartNode";
+import {OptionsDefinition} from "@/model/OptionsModel";
+import getNodeDefinition from "@/actions/get-node-definition";
 
 export interface OptionsToolbarProps {
     teamId: number
@@ -15,7 +16,20 @@ export interface OptionsToolbarProps {
 export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
 
     const [selectedNode, setSelectedNode] = useState<Node | undefined>(undefined);
-
+    const [activityOptionsDefinition, setActivityOptionsDefinition] = useState<OptionsDefinition | null>(null);
+    
+    useEffect(() => {
+        if (selectedNode && selectedNode.type === NodeTypes.ACTIVITY_NODE) {
+            getNodeDefinition().then((nodeDefinition) => {
+                const optionsDefinition = {
+                    ...nodeDefinition.optionsDefinition,
+                    nodeId: selectedNode.id
+                }
+                setActivityOptionsDefinition(optionsDefinition);
+            })
+        }
+    }, [selectedNode]);
+    
     useOnSelectionChange({
         onChange: ({ nodes, edges }) => {
             if (nodes && nodes.length === 1) {
@@ -25,16 +39,16 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
             }
         },
     });
-
-    if (!selectedNode) {
+    
+    if (!selectedNode || !activityOptionsDefinition) {
         return <></>
     }
 
-    let options = <></>
+    let options: React.JSX.Element
     switch (selectedNode.type) {
         // TODO Add all nodes
         case NodeTypes.ACTIVITY_NODE:
-            options = <DynamicOptions optionsDefinition={ getActivityOptionsDefinition(selectedNode.id) } teamId={teamId} />
+            options = <DynamicOptions optionsDefinition={ activityOptionsDefinition } teamId={teamId} />
             break
         case NodeTypes.GATEWAY_NODE:
             options = <DynamicOptions optionsDefinition={ getGatewayOptionsDefinition(selectedNode.id) } teamId={teamId} />
@@ -47,7 +61,7 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
             break
     }
 
-    return <aside className="w-[300px] h-full p-3 border-l overflow-y-auto overflow-x-hidden">
+    return <aside className="w-[400px] h-full p-3 border-l overflow-y-auto overflow-x-hidden">
         { options }
     </aside>
 }
