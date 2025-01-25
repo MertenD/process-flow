@@ -322,7 +322,8 @@
     "sidebar": {
       "title": "Prodavnica aktivnosti",
       "shopNavLabel": "Prodavnica",
-      "addedNodesNavLabel": "Dodate aktivnosti"
+      "addedNodesNavLabel": "Dodate aktivnosti",
+      "createNodeNavLabel": "Kreiraj aktivnost"
     },
     "shopPage": {
       "title": "Prodavnica"
@@ -346,6 +347,40 @@
         "SettingsPreview": "Podešavanja",
         "taskPreview": "Prikaz zadataka"
       }
+    },
+    "createNodePage": {
+      "title": "Kreiraj aktivnost",
+      "nameLabel": "Naziv",
+      "namePlaceholder": "Naziv aktivnosti",
+      "shortDescriptionLabel": "Kratak opis",
+      "shortDescriptionPlaceholder": "Kratak opis aktivnosti",
+      "markdownDocumentationLabel": "Dokumentacija",
+      "markdownDocumentationPlaceholder": "Dokumentacija aktivnosti u Markdown formatu",
+      "executionModeLabel": "Režim izvršenja",
+      "executionModePlaceholder": "Izaberite režim izvršenja",
+      "serverUrlLabel": "URL servera",
+      "serverUrlPlaceholder": "URL sa putanjom do krajnje tačke servera koji izvršava aktivnost",
+      "addNewOptionLabel": "Dodaj novu opciju",
+      "addNewOptionPlaceholder": "Izaberite opciju",
+      "addButton": "Dodaj",
+      "saveNodeButton": "Sačuvaj definiciju aktivnosti",
+      "labelLabel": "Oznaka",
+      "labelPlaceholder": "Naslov opcije",
+      "defaultValueLabel": "Podrazumevana vrednost",
+      "defaultValuePlaceholder": "Podrazumevana vrednost opcije",
+      "selectValues": "Opcije izbora",
+      "newValueValue": "Vrednost nove opcije",
+      "textLabel": "Tekst",
+      "textPlaceholder": "Tekst koji se prikazuje",
+      "placeholderLabel": "Placeholder",
+      "placeholderPlaceholder": "Placeholder koji se prikazuje",
+      "orientationLabel": "Orijentacija",
+      "orientationPlaceholder": "Orijentacija elementa (horizontalno/vertikalno)",
+      "horizontal": "Horizontalno",
+      "vertical": "Vertikalno",
+      "selectDependentStructure": "Odaberite opcije zavisne strukture",
+      "rowElements": "Elementi u redu",
+      "selectRowElements": "Odaberite element za dodavanje"
     }
   }
 }

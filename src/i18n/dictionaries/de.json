@@ -322,13 +322,14 @@
     "sidebar": {
       "title": "Aktivitäten Shop",
       "shopNavLabel": "Shop",
-      "addedNodesNavLabel": "Hinzugefügte Aktivitäten"
+      "addedNodesNavLabel": "Gespeicherte Aktivitäten",
+      "createNodeNavLabel": "Aktivität erstellen"
     },
     "shopPage": {
       "title": "Shop"
     },
     "addedNodesPage": {
-      "title": "Hinzugefügte Aktivitäten",
+      "title": "Gespeicherte Aktivitäten",
       "noNodes": "Keine Aktivitäten hinzugefügt"
     },
     "search": {
@@ -346,6 +347,40 @@
         "SettingsPreview": "Einstellungen",
         "taskPreview": "Aufgaben Ansicht"
       }
+    },
+    "createNodePage": {
+      "title": "Aktivität erstellen",
+      "nameLabel": "Name",
+      "namePlaceholder": "Aktivitätsname",
+      "shortDescriptionLabel": "Kurze Beschreibung",
+      "shortDescriptionPlaceholder": "Kurze Beschreibung der Aktivität",
+      "markdownDocumentationLabel": "Dokumentation",
+      "markdownDocumentationPlaceholder": "Dokumentation der Aktivität im Markdown Format",
+      "executionModeLabel": "Ausführungsmodus",
+      "executionModePlaceholder": "Wähle den Ausführungsmodus",
+      "serverUrlLabel": "Server URL",
+      "serverUrlPlaceholder": "URL mit Pfad zum Endpunkt des Servers, der die Aktivität ausführt",
+      "addNewOptionLabel": "Neue Option hinzufügen",
+      "addNewOptionPlaceholder": "Wähle eine Option aus",
+      "addButton": "Hinzufügen",
+      "saveNodeButton": "Aktivitätsdefinition speichern",
+      "labelLabel": "Label",
+      "labelPlaceholder": "Überschrift der Option",
+      "defaultValueLabel": "Standardwert",
+      "defaultValuePlaceholder": "Standardwert der Option",
+      "selectValues": "Auswahlmöglichkeiten",
+      "newValueValue": "Wert der neuen Auswahlmöglichkeit",
+      "textLabel": "Text",
+      "textPlaceholder": "Text der angezeigt wird",
+      "placeholderLabel": "Platzhalter",
+      "placeholderPlaceholder": "Platzhalter der angezeigt wird",
+      "orientationLabel": "Ausrichtung",
+      "orientationPlaceholder": "Ausrichtung des Elements (horizontal/vertical)",
+      "horizontal": "Horizontal",
+      "vertical": "Vertikal",
+      "selectDependentStructure": "Abhängige Struktur Optionen auswählen",
+      "rowElements": "Elemente in der Reihe",
+      "selectRowElements": "Element zum Hinzufügen auswählen"
     }
   }
 }

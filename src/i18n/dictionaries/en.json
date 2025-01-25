@@ -322,7 +322,8 @@
     "sidebar": {
       "title": "Activities Shop",
       "shopNavLabel": "Shop",
-      "addedNodesNavLabel": "Added Activities"
+      "addedNodesNavLabel": "Saved Activities",
+      "createNodeNavLabel": "Create Activity"
     },
     "shopPage": {
       "title": "Shop"
@@ -346,6 +347,40 @@
         "SettingsPreview": "Settings",
         "taskPreview": "Task view"
       }
+    },
+    "createNodePage": {
+      "title": "Create Activity",
+      "nameLabel": "Name",
+      "namePlaceholder": "Activity name",
+      "shortDescriptionLabel": "Short Description",
+      "shortDescriptionPlaceholder": "Short description of the activity",
+      "markdownDocumentationLabel": "Documentation",
+      "markdownDocumentationPlaceholder": "Documentation of the activity in Markdown format",
+      "executionModeLabel": "Execution mode",
+      "executionModePlaceholder": "Choose the execution mode",
+      "serverUrlLabel": "Server URL",
+      "serverUrlPlaceholder": "URL with the path to the endpoint of the server that executes the activity",
+      "addNewOptionLabel": "Add new option",
+      "addNewOptionPlaceholder": "Choose an option",
+      "addButton": "Add",
+      "saveNodeButton": "Save activity definition",
+      "labelLabel": "Label",
+      "labelPlaceholder": "Option heading",
+      "defaultValueLabel": "Default value",
+      "defaultValuePlaceholder": "Default value of the option",
+      "selectValues": "Choices",
+      "newValueValue": "Value of the new choice",
+      "textLabel": "Text",
+      "textPlaceholder": "Text that is displayed",
+      "placeholderLabel": "Placeholder",
+      "placeholderPlaceholder": "Placeholder that is displayed",
+      "orientationLabel": "Orientation",
+      "orientationPlaceholder": "Orientation of the element (horizontal/vertical)",
+      "horizontal": "Horizontal",
+      "vertical": "Vertical",
+      "selectDependentStructure": "Select dependent structure options",
+      "rowElements": "Elements in the row",
+      "selectRowElements": "Select element to add"
     }
   }
 }

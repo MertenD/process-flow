@@ -4,7 +4,7 @@ import Link from "next/link"
 import {usePathname} from "next/navigation"
 import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
-import {Home, PlusCircle} from "lucide-react";
+import {Database, Home, PencilRuler, PlusCircle} from "lucide-react";
 import {useTranslations} from "next-intl";
 
 export interface ShopSidebarProps {
@@ -17,7 +17,8 @@ export default function ShopSidebar({ teamId }: Readonly<ShopSidebarProps>) {
 
     const navItems = [
         { href: `/${teamId}/shop`, icon: Home, label: t("shopNavLabel") },
-        { href: `/${teamId}/shop/added-nodes`, icon: PlusCircle, label: t("addedNodesNavLabel") },
+        { href: `/${teamId}/shop/added-nodes`, icon: Database, label: t("addedNodesNavLabel") },
+        { href: `/${teamId}/shop/create-node`, icon: PencilRuler, label: t("createNodeNavLabel") },
     ]
 
     return (
