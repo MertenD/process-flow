@@ -784,6 +784,42 @@ export type Database = {
           },
         ]
       }
+      teams_node_definitions: {
+        Row: {
+          created_at: string
+          id: number
+          node_definition_id: number | null
+          team_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          node_definition_id?: number | null
+          team_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          node_definition_id?: number | null
+          team_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_teams_node_definitions_node_definition_id_fkey"
+            columns: ["node_definition_id"]
+            isOneToOne: false
+            referencedRelation: "node_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_teams_node_definitions_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       manual_task: {

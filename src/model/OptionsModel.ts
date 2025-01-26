@@ -1,3 +1,5 @@
+import {Key} from "react";
+
 export enum OptionsStructureType {
     TEXT = "text",
     INPUT = "input",
@@ -30,7 +32,7 @@ export interface OptionsBase {
 
 export interface NestedOptionsBase extends OptionsBase {
     options: {
-        values: string[] | number[] | boolean[],
+        values: any[],
         dependentStructure?: OptionsBase[]
     }[]
 }

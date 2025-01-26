@@ -7,7 +7,7 @@ import {getTranslations} from "next-intl/server";
 import PreviewDynamicOptions from "@/components/shop/details/PreviewDynamicOptions";
 import AddOrRemoveNodeButton from "@/components/shop/details/AddOrRemoveNodeButton";
 
-export default async function NodeDetails({ params }: { params: { nodeDefinitionId: number } }) {
+export default async function NodeDetails({ params }: { params: { teamId: number, nodeDefinitionId: number } }) {
 
     const t = await getTranslations("shop.node.details")
 
@@ -36,7 +36,7 @@ export default async function NodeDetails({ params }: { params: { nodeDefinition
                         <p className="text-muted-foreground">{nodeDefinition.shortDescription}</p>
                     </div>
 
-                    <AddOrRemoveNodeButton nodeDefinitionId={params.nodeDefinitionId} />
+                    <AddOrRemoveNodeButton teamId={params.teamId} nodeDefinitionId={params.nodeDefinitionId} />
 
                     <Card>
                         <CardHeader>

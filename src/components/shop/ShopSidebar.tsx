@@ -17,7 +17,7 @@ export default function ShopSidebar({ teamId }: Readonly<ShopSidebarProps>) {
 
     const navItems = [
         { href: `/${teamId}/shop`, icon: Home, label: t("shopNavLabel") },
-        { href: `/${teamId}/shop/added-nodes`, icon: Database, label: t("addedNodesNavLabel") },
+        { href: `/${teamId}/shop/saved-nodes`, icon: Database, label: t("addedNodesNavLabel") },
         { href: `/${teamId}/shop/create-node`, icon: PencilRuler, label: t("createNodeNavLabel") },
     ]
 
