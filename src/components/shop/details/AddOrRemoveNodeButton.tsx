@@ -6,10 +6,10 @@ import {useTranslations} from "next-intl";
 import {useState} from "react";
 
 interface AddOrRemoveNodeProps {
-    nodeId: string
+    nodeDefinitionId: number
 }
 
-export default function AddOrRemoveNodeButton({ nodeId }: AddOrRemoveNodeProps) {
+export default function AddOrRemoveNodeButton({ nodeDefinitionId }: AddOrRemoveNodeProps) {
     const t = useTranslations("shop.node.details")
 
     // TODO Get Information from Database and change isAdded accordingly

@@ -4,6 +4,7 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {useTranslations} from "next-intl";
+import {ExecutionMode} from "@/model/database/database.types";
 
 interface SearchAndFilterProps {
     searchTerm: string
@@ -11,6 +12,8 @@ interface SearchAndFilterProps {
     selectedCategory: string
     setSelectedCategory: (category: string) => void
 }
+
+const executionModes: ExecutionMode[] = ["Manual", "Automatic"]
 
 export default function SearchAndFilter({
     searchTerm,
@@ -39,10 +42,9 @@ export default function SearchAndFilter({
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">{ t("allCategories") }</SelectItem>
-                        <SelectItem value="input">Input Nodes</SelectItem>
-                        <SelectItem value="process">Process Nodes</SelectItem>
-                        <SelectItem value="decision">Decision Nodes</SelectItem>
-                        <SelectItem value="output">Output Nodes</SelectItem>
+                        { executionModes.map((mode) => (
+                            <SelectItem key={mode} value={mode}>{ mode }</SelectItem>
+                        )) }
                     </SelectContent>
                 </Select>
             </div>

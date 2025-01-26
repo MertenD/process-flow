@@ -2,16 +2,28 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {MarkdownContent} from "@/components/MarkdownContent";
 import BackButton from "@/components/BackButton";
 import {NodeDefinition} from "@/model/NodeDefinition";
-import getNodeDefinition from "@/actions/get-node-definition";
+import getNodeDefinition from "@/actions/shop/get-node-definition";
 import {getTranslations} from "next-intl/server";
 import PreviewDynamicOptions from "@/components/shop/details/PreviewDynamicOptions";
 import AddOrRemoveNodeButton from "@/components/shop/details/AddOrRemoveNodeButton";
 
-export default async function NodeDetails({ params }: { params: { nodeId: string } }) {
+export default async function NodeDetails({ params }: { params: { nodeDefinitionId: number } }) {
 
     const t = await getTranslations("shop.node.details")
 
-    const nodeDefinition: NodeDefinition = await getNodeDefinition()
+    let nodeDefinition: NodeDefinition | null = null
+    try {
+        nodeDefinition = await getNodeDefinition(params.nodeDefinitionId)
+    } catch (error) {
+        console.log("Error while getting node definition for node ", params.nodeDefinitionId, error)
+    }
+
+    if (!nodeDefinition) {
+        return <div className="container mx-auto px-4 py-6">
+            <BackButton className="pl-2 mb-4" title={ t("back") }/>
+            Es konnte keine Aktivität mit dieser Id gefunden werden.
+        </div>
+    }
 
     return (
         <div className="container mx-auto px-4 py-6">
@@ -24,7 +36,7 @@ export default async function NodeDetails({ params }: { params: { nodeId: string
                         <p className="text-muted-foreground">{nodeDefinition.shortDescription}</p>
                     </div>
 
-                    <AddOrRemoveNodeButton nodeId={params.nodeId} />
+                    <AddOrRemoveNodeButton nodeDefinitionId={params.nodeDefinitionId} />
 
                     <Card>
                         <CardHeader>

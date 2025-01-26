@@ -22,7 +22,7 @@ import {BadgeType} from "@/model/BadgeType";
 import {Comparisons} from "@/model/Comparisons";
 import {PointsApplicationMethod} from "@/model/PointsApplicationMethod";
 import {NodeDefinition} from "@/model/NodeDefinition";
-import getNodeDefinition from "@/actions/get-node-definition";
+import getNodeDefinition from "@/actions/shop/get-node-definition";
 
 export type ActivityNodeData = {
     backgroundColor?: string,
@@ -54,7 +54,8 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
     const updateNodeData = useStore((state) => state.updateNodeData)
     
     useEffect(() => {
-        getNodeDefinition().then((nodeDefinition: NodeDefinition) => {
+        // TODO Replace with actual node definition id from database which this activity should represent
+        getNodeDefinition(1).then((nodeDefinition: NodeDefinition) => {
             const updatedData = { ...data };
             setDefaultValues(nodeDefinition.optionsDefinition.structure, updatedData);
             updateNodeData<ActivityNodeData>(id, updatedData);

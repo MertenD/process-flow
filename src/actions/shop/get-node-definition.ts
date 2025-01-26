@@ -14,19 +14,28 @@ import {PointsType} from "@/model/PointsType";
 import {PointsApplicationMethod} from "@/model/PointsApplicationMethod";
 import {Comparisons} from "@/model/Comparisons";
 import {BadgeType} from "@/model/BadgeType";
+import {cookies} from "next/headers";
+import {createClient} from "@/utils/supabase/server";
 
-export default async function getNodeDefinition(): Promise<NodeDefinition> {
-    // TODO Replace with actual database call
-    const response = await fetch(`${process.env.APP_URL}/assets/activityNodeExample.json`)
+export default async function getNodeDefinition(nodeDefinitionId: number): Promise<NodeDefinition> {
+    const cookieStore = cookies()
+    const supabase = createClient(cookieStore)
 
-    if (!response.ok) {
-        throw new Error("Failed to fetch node definition")
+    const { data: result, error } = await supabase
+        .from("node_definition")
+        .select("definition")
+        .eq("id", nodeDefinitionId)
+        .single<{ definition: NodeDefinition }>()
+
+    if (error || !result) {
+        throw new Error("Failed to fetch node definition with id 1")
     }
 
-    const nodeDefinition = (await response.json()) as NodeDefinition
+    const nodeDefinition = result.definition
 
     // Add role selection for manual nodes
     if (nodeDefinition.executionMode === "Manual") {
+        console.log("Adding role selection")
         nodeDefinition.optionsDefinition.structure.push(
             {
                 type: OptionsStructureType.SEPARATOR
@@ -39,6 +48,7 @@ export default async function getNodeDefinition(): Promise<NodeDefinition> {
                 options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_ROLES ] } ]
             } as OptionsSelect
         )
+        console.log(nodeDefinition)
     }
 
     // Add gamification options

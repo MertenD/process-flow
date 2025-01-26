@@ -325,6 +325,24 @@ export type Database = {
           },
         ]
       }
+      node_definition: {
+        Row: {
+          created_at: string
+          definition: Json
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          definition?: Json
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          definition?: Json
+          id?: number
+        }
+        Relationships: []
+      }
       process_instance: {
         Row: {
           completed_at: string | null

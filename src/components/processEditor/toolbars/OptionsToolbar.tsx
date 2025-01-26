@@ -7,7 +7,7 @@ import DynamicOptions from "@/components/processEditor/toolbars/dynamicOptions/D
 import {getGatewayOptionsDefinition} from "@/components/processEditor/nodes/GatewayNode";
 import {getStartOptionsDefinition} from "@/components/processEditor/nodes/StartNode";
 import {OptionsDefinition} from "@/model/OptionsModel";
-import getNodeDefinition from "@/actions/get-node-definition";
+import getNodeDefinition from "@/actions/shop/get-node-definition";
 
 export interface OptionsToolbarProps {
     teamId: number
@@ -20,7 +20,8 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
     
     useEffect(() => {
         if (selectedNode && selectedNode.type === NodeTypes.ACTIVITY_NODE) {
-            getNodeDefinition().then((nodeDefinition) => {
+            // TODO Replace with actual node definition id from database which this activity should represent
+            getNodeDefinition(1).then((nodeDefinition) => {
                 const optionsDefinition = {
                     ...nodeDefinition.optionsDefinition,
                     nodeId: selectedNode.id
