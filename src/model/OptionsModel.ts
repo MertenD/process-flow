@@ -30,7 +30,7 @@ export interface OptionsBase {
 
 export interface NestedOptionsBase extends OptionsBase {
     options: {
-        values: any[],
+        values: string[] | number[] | boolean[],
         dependentStructure?: OptionsBase[]
     }[]
 }
