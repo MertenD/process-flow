@@ -2,7 +2,7 @@
 
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
+import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism"
 
 interface MarkdownContentProps {
     content: string
@@ -28,7 +28,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
                         <div className="overflow-x-auto py-2">
                             <SyntaxHighlighter
                                 // @ts-ignore
-                                style={vscDarkPlus}
+                                style={darcula}
                                 language={match[1]}
                                 PreTag="div"
                                 customStyle={{
