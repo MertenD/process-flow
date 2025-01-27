@@ -7,7 +7,7 @@ import {
     OptionsSelect, OptionsSelectWithCustom,
     OptionsSeparator,
     OptionsStructureSpecialValues,
-    OptionsStructureType
+    OptionsStructureType, OptionsTextarea
 } from "@/model/OptionsModel";
 import {GamificationType} from "@/model/GamificationType";
 import {PointsType} from "@/model/PointsType";
@@ -32,6 +32,25 @@ export default async function getNodeDefinition(nodeDefinitionId: number): Promi
     }
 
     const nodeDefinition = result.definition
+
+    nodeDefinition.optionsDefinition.structure = [
+        {
+            type: OptionsStructureType.INPUT,
+            label: "Title",
+            placeholder: "Activity title",
+            keyString: "task"
+        } as OptionsInput,
+        {
+            type: OptionsStructureType.TEXTAREA,
+            label: "Description",
+            placeholder: "Activity description",
+            keyString: "description"
+        } as OptionsTextarea,
+        {
+            type: OptionsStructureType.SEPARATOR,
+        } as OptionsSeparator,
+        ...nodeDefinition.optionsDefinition.structure
+    ]
 
     // Add role selection for manual nodes
     if (nodeDefinition.executionMode === "Manual") {
