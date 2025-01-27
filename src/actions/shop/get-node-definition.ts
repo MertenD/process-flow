@@ -150,8 +150,5 @@ export default async function getNodeDefinition(nodeDefinitionId: number): Promi
         } as OptionsSelect
     )
 
-    // TODO Replace with actual database call
-    nodeDefinition.id = "1"
-
     return nodeDefinition
 }

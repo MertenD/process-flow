@@ -1,31 +1,15 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Handle, NodeProps, Position} from 'reactflow';
-import useStore, {handleStyle, selectedColor} from "@/stores/store";
+import {handleStyle, selectedColor} from "@/stores/store";
 import {GamificationType} from "@/model/GamificationType";
 import {ActivityType} from "@/model/ActivityType";
-import {
-    OptionsCheckbox,
-    OptionsDefinition,
-    OptionsInput,
-    OptionsRow,
-    OptionsSelect,
-    OptionsSelectWithCustom,
-    OptionsSeparator,
-    OptionsStructureSpecialValues,
-    OptionsStructureType,
-    OptionsTextarea,
-    OptionsVariableNameInput
-} from "@/model/OptionsModel";
-import {setDefaultValues} from "@/components/processEditor/toolbars/dynamicOptions/DynamicOptions";
 import {PointsType} from "@/model/PointsType";
 import {BadgeType} from "@/model/BadgeType";
 import {Comparisons} from "@/model/Comparisons";
-import {PointsApplicationMethod} from "@/model/PointsApplicationMethod";
-import {NodeDefinition} from "@/model/NodeDefinition";
-import getNodeDefinition from "@/actions/shop/get-node-definition";
 
 export type ActivityNodeData = {
     backgroundColor?: string,
+    nodeDefinitionId?: number,
     task?: string,
     description?: string,
     activityType?: ActivityType
@@ -50,17 +34,6 @@ export type ActivityNodeData = {
 }
 
 export default function ActivityNode({ id, selected, data }: NodeProps<ActivityNodeData>) {
-    
-    const updateNodeData = useStore((state) => state.updateNodeData)
-    
-    useEffect(() => {
-        // TODO Replace with actual node definition id from database which this activity should represent
-        getNodeDefinition(1).then((nodeDefinition: NodeDefinition) => {
-            const updatedData = { ...data };
-            setDefaultValues(nodeDefinition.optionsDefinition.structure, updatedData);
-            updateNodeData<ActivityNodeData>(id, updatedData);
-        })
-    }, [])
 
     return (
         <div style={{
