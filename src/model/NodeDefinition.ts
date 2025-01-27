@@ -6,6 +6,7 @@ export interface NodeDefinitionPreview {
     name: string
     shortDescription: string
     executionMode: ExecutionMode
+    executionUrl: string
 }
 
 export interface NodeDefinition extends NodeDefinitionPreview {

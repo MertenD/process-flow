@@ -26,11 +26,6 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
 
         const executionMode = node.type === NodeTypes.ACTIVITY_NODE ? "Manual" : "Automatic"
 
-        let executionUrl: string | undefined = undefined
-        if (node.type === NodeTypes.ACTIVITY_NODE) {
-            executionUrl = `${process.env.APP_URL || window.location.origin}/instance/task/activity`
-        }
-
         const insertedElement = await supabase.from("flow_element").upsert({
             // @ts-ignore
             id: id,
@@ -43,7 +38,6 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
             parent_flow_element_id: node.parentId || null,
             z_index: node.zIndex,
             execution_mode: executionMode,
-            execution_url: executionUrl,
             data: node.data || {}
         }, {onConflict: "id"}).select()
 
