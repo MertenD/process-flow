@@ -70,6 +70,21 @@ export type Database = {
           },
         ]
       }
+      config: {
+        Row: {
+          key: string
+          value: string
+        }
+        Insert: {
+          key: string
+          value: string
+        }
+        Update: {
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       data_object_instance: {
         Row: {
           created_at: string
@@ -132,8 +147,6 @@ export type Database = {
         Row: {
           created_at: string
           data: Json
-          execution_mode: Database["public"]["Enums"]["execution_mode"]
-          execution_url: string | null
           height: number | null
           id: number
           model_id: number
@@ -147,8 +160,6 @@ export type Database = {
         Insert: {
           created_at?: string
           data: Json
-          execution_mode: Database["public"]["Enums"]["execution_mode"]
-          execution_url?: string | null
           height?: number | null
           id?: number
           model_id: number
@@ -162,8 +173,6 @@ export type Database = {
         Update: {
           created_at?: string
           data?: Json
-          execution_mode?: Database["public"]["Enums"]["execution_mode"]
-          execution_url?: string | null
           height?: number | null
           id?: number
           model_id?: number
@@ -940,7 +949,7 @@ export type Database = {
         Args: {
           flow_element_instance_id_param: number
           output_data: Json
-          completed_by_param: string
+          completed_by_param?: string
         }
         Returns: boolean
       }

@@ -3,7 +3,7 @@
 import {createClient} from "@/utils/supabase/server";
 import {cookies} from "next/headers";
 
-export default async function(flowElementInstanceId: number, outputData: any, completedBy: string): Promise<boolean> {
+export default async function(flowElementInstanceId: number, outputData: any, completedBy: string | undefined): Promise<boolean> {
 
     // TODO Das soll in eine einzelne Transaktion zusammengefasst werden
 
@@ -21,15 +21,17 @@ export default async function(flowElementInstanceId: number, outputData: any, co
         throw Error(error?.message || "Error completing flow element instance")
     }
 
-    let { data: _ , error: gamificationOptionsError } = await supabase
-        .rpc('apply_gamification', {
-            "profile_id_param": completedBy,
-            "flow_element_instance_id_param": flowElementInstanceId,
-        }).single()
+    if (completedBy !== null && completedBy !== undefined && completedBy !== "") {
+        let {data: _, error: gamificationOptionsError} = await supabase
+            .rpc('apply_gamification', {
+                "profile_id_param": completedBy,
+                "flow_element_instance_id_param": flowElementInstanceId,
+            }).single()
 
-    if (gamificationOptionsError) {
-        console.log(gamificationOptionsError)
-        throw Error(gamificationOptionsError.message)
+        if (gamificationOptionsError) {
+            console.log(gamificationOptionsError)
+            throw Error(gamificationOptionsError.message)
+        }
     }
 
     return data

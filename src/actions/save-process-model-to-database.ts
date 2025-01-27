@@ -24,8 +24,6 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
 
         const id = node.id.toString().includes("-") ? undefined : node.id.toString()
 
-        const executionMode = node.type === NodeTypes.ACTIVITY_NODE ? "Manual" : "Automatic"
-
         const insertedElement = await supabase.from("flow_element").upsert({
             // @ts-ignore
             id: id,
@@ -37,7 +35,6 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
             height: node.data.height,
             parent_flow_element_id: node.parentId || null,
             z_index: node.zIndex,
-            execution_mode: executionMode,
             data: node.data || {}
         }, {onConflict: "id"}).select()
 
