@@ -30,7 +30,6 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
             return null
         }
 
-        // TODO URL encode values and keys in task.data to prevent errors in the URL query string (e.g. if a value contains a "+")
         taskUrl += Object.entries(task.data)
             .filter(([key, value]) =>
                 key !== "gamificationOptions" &&
@@ -38,7 +37,7 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
                 key !== "outputs"
             )
             .concat(Object.entries((task.outputs) || {}))
-            .map(([key, value]) => `${key}=${value}`).join("&")
+            .map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join("&")
 
         taskUrl += `&responsePath=${encodeURIComponent(`${process.env.APP_URL}/api/instance/complete`)}`
         taskUrl += `&flowElementInstanceId=${task.id}`
