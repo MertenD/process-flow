@@ -74,7 +74,7 @@ app.post("/chatgpt", async (req, res) => {
             }
         );
 
-        const poem = openAiResponse.data.choices[0].message.content.split("</think>")[1].trim().split("```")[1];
+        const poem = openAiResponse.data.choices[0].message.content.split("</think>")[1].trim();
 
         await axios.post(responsePath, {
             flowElementInstanceId,
