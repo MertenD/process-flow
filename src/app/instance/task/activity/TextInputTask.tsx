@@ -8,6 +8,7 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import {MarkdownContent} from "@/components/MarkdownContent";
 
 export interface TextInputTaskProps {
     task: string
@@ -57,9 +58,11 @@ export default function TextInputTask({ task, description, inputRegex, responseP
         <Card className="w-2/3">
             <CardHeader>
                 <CardTitle>{task}</CardTitle>
-                <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent>
+                <div className="mb-4">
+                    <MarkdownContent content={description}/>
+                </div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField

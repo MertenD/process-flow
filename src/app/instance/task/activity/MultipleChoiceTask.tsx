@@ -8,6 +8,7 @@ import {useForm} from "react-hook-form";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import React from "react";
 import {Checkbox} from "@/components/ui/checkbox";
+import {MarkdownContent} from "@/components/MarkdownContent";
 
 export interface SingleChoiceTaskProps {
     task: string
@@ -56,9 +57,11 @@ export default function MultipleChoiceTask({ task, description, choices, respons
         <Card>
             <CardHeader>
                 <CardTitle>{ task }</CardTitle>
-                <CardDescription>{ description }</CardDescription>
             </CardHeader>
             <CardContent>
+                <div className="mb-4">
+                    <MarkdownContent content={description}/>
+                </div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <FormField
@@ -71,7 +74,7 @@ export default function MultipleChoiceTask({ task, description, choices, respons
                                             key={choice}
                                             control={form.control}
                                             name="choices"
-                                            render={({ field }) => {
+                                            render={({field}) => {
                                                 return (
                                                     <FormItem
                                                         key={choice}
@@ -100,7 +103,7 @@ export default function MultipleChoiceTask({ task, description, choices, respons
                                             }}
                                         />
                                     ))}
-                                    <FormMessage />
+                                    <FormMessage/>
                                 </FormItem>
                             )}
                         />

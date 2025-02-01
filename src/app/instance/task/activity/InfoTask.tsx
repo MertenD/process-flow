@@ -3,6 +3,7 @@
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import React from "react";
+import {MarkdownContent} from "@/components/MarkdownContent";
 
 export interface InfoTaskProps {
     task: string
@@ -38,10 +39,14 @@ export default function InfoTask({ task, description, infoText, flowElementInsta
         <Card className="w-2/3">
             <CardHeader>
                 <CardTitle>{task}</CardTitle>
-                <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent>
-                <p className="mb-4">{ infoText }</p>
+                <div className="mb-4">
+                    <MarkdownContent content={description}/>
+                </div>
+                <div className="mb-4">
+                    <MarkdownContent content={infoText}/>
+                </div>
                 <Button onClick={onFinish}>Finish</Button>
             </CardContent>
         </Card>

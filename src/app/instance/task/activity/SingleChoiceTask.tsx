@@ -8,6 +8,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import React from "react";
+import {MarkdownContent} from "@/components/MarkdownContent";
 
 export interface SingleChoiceTaskProps {
     task: string
@@ -55,9 +56,11 @@ export default function SingleChoiceTask({ task, description, choices, responseP
         <Card>
             <CardHeader>
                 <CardTitle>{ task }</CardTitle>
-                <CardDescription>{ description }</CardDescription>
             </CardHeader>
             <CardContent>
+                <div className="mb-4">
+                    <MarkdownContent content={description} />
+                </div>
                 <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
                     <FormField
