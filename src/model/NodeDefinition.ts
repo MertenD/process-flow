@@ -2,7 +2,7 @@ import {OptionsDefinition} from "@/model/OptionsModel";
 import {ExecutionMode} from "@/model/database/database.types";
 
 export interface NodeDefinitionPreview {
-    id: number
+    id: number | undefined
     name: string
     shortDescription: string
     executionMode: ExecutionMode

@@ -19,15 +19,7 @@ import OptionEditor from "@/components/shop/create-node/OptionEditor";
 import {toCamelCase} from "@/utils/shop/stringUtils";
 import {ExecutionMode} from "@/model/database/database.types";
 import {useTranslations} from "next-intl";
-
-interface NodeDefinition {
-    name: string
-    shortDescription: string
-    markdownDocumentation: string
-    executionMode: "Manual" | "Automatic"
-    serverUrl: string
-    optionsDefinition: OptionsDefinition
-}
+import {NodeDefinition} from "@/model/NodeDefinition";
 
 const executionModes: ExecutionMode[] = ["Manual", "Automatic"]
 
@@ -35,16 +27,17 @@ export default function OptionsDefinitionEditor() {
     const t = useTranslations("shop.createNodePage")
 
     const [nodeDefinition, setNodeDefinition] = useState<NodeDefinition>({
+        id: undefined,
         name: "",
         shortDescription: "",
         markdownDocumentation: "",
         executionMode: "Manual",
-        serverUrl: "",
+        executionUrl: "",
         optionsDefinition: {
             title: "",
             nodeId: "",
             structure: [],
-        },
+        }
     })
     const [selectedOptionType, setSelectedOptionType] = useState<OptionsStructureType | null>(null)
 
@@ -204,13 +197,13 @@ export default function OptionsDefinitionEditor() {
                         </Select>
                     </div>
                     <div>
-                        <Label htmlFor="serverUrl" className="text-sm font-medium">
+                        <Label htmlFor="executionUrl" className="text-sm font-medium">
                             {t("serverUrlLabel")}
                         </Label>
                         <Input
-                            id="serverUrl"
-                            value={nodeDefinition.serverUrl}
-                            onChange={(e) => updateNodeDefinition("serverUrl", e.target.value)}
+                            id="executionUrl"
+                            value={nodeDefinition.executionUrl}
+                            onChange={(e) => updateNodeDefinition("executionUrl", e.target.value)}
                             placeholder={t("serverUrlPlaceholder")}
                             className="mt-1"
                         />
