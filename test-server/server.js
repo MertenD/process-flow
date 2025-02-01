@@ -60,11 +60,11 @@ app.post("/chatgpt", async (req, res) => {
         const openAiResponse = await axios.post(
             openAiUrl,
             {
-                model: "deepseek-r1-distill-qwen-7b",
+                model: "deepseek-r1-distill-qwen-14b",
                 messages: [
                     {
                         role: "system",
-                        content: "Du bist ein kreativer Dichter, der Gedichte über beliebige Themen verfassen kann. Gib niemals zweimal nacheinander das gleiche Gedicht aus, sondern verändere es jedes Mal",
+                        content: "Du bist ein kreativer Dichter, der Gedichte über beliebige Themen verfassen kann. Gib niemals zweimal nacheinander das gleiche Gedicht aus, sondern verändere es jedes Mal. Erstelle maximal 3 Strophen.",
                     },
                     {
                         role: "user",
