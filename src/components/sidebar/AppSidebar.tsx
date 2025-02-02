@@ -4,13 +4,13 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
+    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuSub,
-    SidebarMenuSubButton,
-    SidebarMenuSubItem, SidebarSeparator
+    SidebarRail,
+    SidebarSeparator
 } from "@/components/ui/sidebar";
 import TeamSwitcher from "@/components/sidebar/TeamSwitcher";
 import {createClient} from "@/utils/supabase/server";
@@ -18,10 +18,12 @@ import {redirect} from "next/navigation";
 import {Page, Profile} from "@/model/database/database.types";
 import getAllowedPages from "@/actions/get-allowed-pages";
 import {getTranslations} from "next-intl/server";
+import type {LucideIcon} from "lucide-react"
 import {
     Award,
     ChartColumn,
-    Database, Home,
+    Database,
+    Home,
     ListTodo,
     PencilRuler,
     Settings,
@@ -41,6 +43,13 @@ export type TeamWithColorSchema = {
         colorSchemeFrom: string,
         colorSchemeTo: string
     }
+}
+
+interface NavItemProps {
+    key: string
+    name: string
+    href: string
+    icon: LucideIcon
 }
 
 interface AppSidebarProps {
@@ -63,40 +72,40 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
             {
                 key: "Editor",
                 name: t("editor"),
-                url: `/${teamId}/editor`,
-                icon: <Workflow />
+                href: `/${teamId}/editor`,
+                icon: Workflow
             },
             {
                 key: "Tasks",
                 name: t("tasks"),
-                url: `/${teamId}/tasks`,
-                icon: <ListTodo />
+                href: `/${teamId}/tasks`,
+                icon: ListTodo
             },
             {
                 key: "Monitoring",
                 name: t("monitoring"),
-                url: `/${teamId}/monitoring`,
-                icon: <ChartColumn />
+                href: `/${teamId}/monitoring`,
+                icon: ChartColumn
             },
             {
                 key: "Team",
                 name: t("team"),
-                url: `/${teamId}/team`,
-                icon: <Users />
+                href: `/${teamId}/team`,
+                icon: Users
             },
             {
                 key: "Stats",
                 name: t("stats"),
-                url: `/${teamId}/stats`,
-                icon: <Award />
+                href: `/${teamId}/stats`,
+                icon: Award
             },
             {
                 key: "Settings",
                 name: t("settings"),
-                url: `/${teamId}/settings`,
-                icon: <Settings />
+                href: `/${teamId}/settings`,
+                icon: Settings
             }
-        ]
+        ] as NavItemProps[]
     }
 
     const { data: teams } = await supabase
@@ -124,10 +133,10 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
             <TeamSwitcher ownTeams={ownTeams} otherTeams={otherTeams} selectedTeamId={teamId}/>
         </SidebarHeader>
         <SidebarContent>
-            <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+            <SidebarGroup>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
+                        <SidebarMenuButton asChild tooltip={t("dashboard")}>
                             <Link href="/dashboard">
                                 <Home />
                                 <span>{ t("dashboard") }</span>
@@ -137,7 +146,7 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
                 </SidebarMenu>
             </SidebarGroup>
             <SidebarSeparator />
-            <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+            <SidebarGroup>
                 <SidebarMenu>
                     {navData.main.filter(item =>
                         item.key === "Stats" ||
@@ -145,9 +154,9 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
                         allowedPages.includes(item.key as Page)
                     ).map((item) => (
                         <SidebarMenuItem key={item.key}>
-                            <SidebarMenuButton asChild>
-                                <Link href={item.url}>
-                                    { item.icon }
+                            <SidebarMenuButton asChild tooltip={item.name}>
+                                <Link href={item.href}>
+                                    { item.icon && <item.icon /> }
                                     <span>{item.name}</span>
                                 </Link>
                             </SidebarMenuButton>
@@ -156,33 +165,32 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
                 </SidebarMenu>
             </SidebarGroup>
             <SidebarSeparator />
-            <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+            <SidebarGroup>
+                <SidebarGroupLabel>{ t("shopGroupTitle") }</SidebarGroupLabel>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
+                        <SidebarMenuButton asChild tooltip={t("shop")}>
                             <Link href={`/${teamId}/shop`}>
                                 <ShoppingBasket />
                                 <span>{ t("shop") }</span>
                             </Link>
                         </SidebarMenuButton>
-                        <SidebarMenuSub>
-                            <SidebarMenuSubItem>
-                                <SidebarMenuSubButton asChild>
-                                    <Link href={`/${teamId}/shop/saved-nodes`}>
-                                        <Database />
-                                        <span>{ t("addedNodes") }</span>
-                                    </Link>
-                                </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                            <SidebarMenuSubItem>
-                                <SidebarMenuSubButton asChild>
-                                    <Link href={`/${teamId}/shop/create-node`}>
-                                        <PencilRuler />
-                                        <span>{ t("createNode") }</span>
-                                    </Link>
-                                </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                        </SidebarMenuSub>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip={t("addedNodes")}>
+                            <Link href={`/${teamId}/shop/saved-nodes`}>
+                                <Database />
+                                <span>{ t("addedNodes") }</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip={t("createNode")}>
+                            <Link href={`/${teamId}/shop/create-node`}>
+                                <PencilRuler />
+                                <span>{ t("createNode") }</span>
+                            </Link>
+                        </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarGroup>
@@ -190,5 +198,6 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
         <SidebarFooter>
             <SidebarUserNav profile={profile} teamId={teamId}/>
         </SidebarFooter>
+        <SidebarRail />
     </Sidebar>
 }
