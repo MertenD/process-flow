@@ -27,16 +27,17 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
 
     useEffect(() => {
         async function fetchBreadcrumbs() {
-            const tasksPath = `/${teamId}/tasks`;
-            const editorPath = `/${teamId}/editor`;
+            const tasksPath = `/${teamId}/tasks`
+            const editorPath = `/${teamId}/editor`
             const monitoringPath = `/${teamId}/monitoring`
             const teamPath = `/${teamId}/team`
-            const statsPath = `/${teamId}/stats`;
+            const statsPath = `/${teamId}/stats`
+            const settingsPath = `/${teamId}/settings`
             const shopPath = `/${teamId}/shop`
             const shopSavedNodesPath = `/${teamId}/shop/saved-nodes`
             const shopCreateNodePath = `/${teamId}/shop/create-node`
 
-            const newBreadcrumbs: BreadcrumbModel[] = [];
+            const newBreadcrumbs: BreadcrumbModel[] = []
 
             if (!pathname) {
                 setBreadcrumbs(newBreadcrumbs);
@@ -97,6 +98,11 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
                 newBreadcrumbs.push({
                     name: t('stats'),
                     href: statsPath
+                });
+            } else if (pathname.startsWith(settingsPath)) {
+                newBreadcrumbs.push({
+                    name: t('settings'),
+                    href: settingsPath
                 });
             } else if (pathname.startsWith(shopPath)) {
                 newBreadcrumbs.push({
