@@ -173,15 +173,17 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
 
     const tasksData: FlowElementInstanceWithFlowElement[] = processModels?.map(model => model.process_instance).flat().map(instance => instance.flow_element_instance).flat() || [];
 
-    return <div className="container mx-auto p-4 flex flex-col space-y-6">
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
-        <GeneralMonitoringStatistics
-            totalCompleted={totalCompleted}
-            totalOnHold={totalOnHold}
-            totalInstances={totalInstances}
-            totalInProgress={totalInProgress}
-            trendData={trendData}
-        />
-        <ProcessModelsStatistics modelData={modelData} tasksData={tasksData}/>
+    return <div className="w-full h-full overflow-y-auto">
+        <div className="container mx-auto p-4 flex flex-col space-y-6">
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <GeneralMonitoringStatistics
+                totalCompleted={totalCompleted}
+                totalOnHold={totalOnHold}
+                totalInstances={totalInstances}
+                totalInProgress={totalInProgress}
+                trendData={trendData}
+            />
+            <ProcessModelsStatistics modelData={modelData} tasksData={tasksData}/>
+        </div>
     </div>
 }

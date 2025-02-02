@@ -23,7 +23,7 @@ import SaveButton from "@/components/processEditor/toolbars/buttons/SaveButton";
 import CreateInstanceButton from "@/components/processEditor/toolbars/buttons/CreateInstanceButton";
 import "@/styles/globals.css";
 import OptionsToolbar from "@/components/processEditor/toolbars/OptionsToolbar";
-import DeleteProcessButton from "@/components/processEditor/toolbars/buttons/DeleteProcessButton";
+import DeleteProcessButton from "@/components/processEditor/processList/DeleteProcessButton";
 import loadProcessModelFromDatabase from "@/actions/load-process-model-from-database";
 import ExportButton from "@/components/processEditor/toolbars/buttons/ExportButton";
 import UndoButton from "@/components/processEditor/toolbars/buttons/UndoButton";
@@ -255,12 +255,8 @@ export default function BpmnEditor({ processModelId, processModelName, teamId }:
                         <SaveButton processModelId={processModelId}/>
                         <CreateInstanceButton processModelId={processModelId}/>
                         <ExportButton/>
-                        <div className="h-10 w-1 bg-secondary rounded-2xl"/>
                         <UndoButton/>
                         <RedoButton/>
-                        <div className="h-10 w-1 bg-secondary rounded-2xl"/>
-                        <DeleteProcessButton teamId={teamId} processModelId={processModelId}
-                                             processModelName={processModelName}/>
                     </div>
                     <div className="w-full h-full pl-2 bg-accent">
                         <DragAndDropFlow processModelId={processModelId}/>

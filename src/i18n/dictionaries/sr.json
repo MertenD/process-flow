@@ -270,6 +270,19 @@
     }
   },
   "editor": {
+    "processList": {
+      "edit": "Uredi",
+      "delete": "Obriši",
+      "openProcess": "Otvori proces",
+      "editProcess": {
+        "title": "Uredi proces",
+        "description": "Uredite model procesa za vaš tim.",
+        "processUpdatedTitle": "Proces ažuriran",
+        "processUpdatedDescription": "Proces je uspešno ažuriran.",
+        "processUpdateErrorTitle": "Greška prilikom ažuriranja procesa",
+        "processUpdateErrorDescription": "Proces nije mogao biti ažuriran."
+      }
+    },
     "title": "Procesi",
     "createProcess": "Kreiraj proces",
     "cannotEditProcessesDialogTitle": "Ne može se uređivati procesi",

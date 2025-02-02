@@ -17,10 +17,7 @@ export default async function EditorPage({ params }: Readonly<{ params: { teamId
         redirect("/authenticate")
     }
 
-    return <div className="flex flex-col h-full">
-        <h1 className="text-3xl font-bold p-3">{t("title")}</h1>
-        <div className="flex-1 overflow-y-auto">
-            <ProcessList teamId={params.teamId} userId={userData.user.id}/>
-        </div>
+    return <div className="w-full h-full overflow-y-auto">
+        <ProcessList teamId={params.teamId} userId={userData.user.id}/>
     </div>
 }

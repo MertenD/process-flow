@@ -271,6 +271,19 @@
     }
   },
   "editor": {
+    "processList": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "openProcess": "Prozess öffnen",
+      "editProcess": {
+        "title": "Prozess bearbeiten",
+        "description": "Prozessdetails bearbeiten",
+        "processUpdatedTitle": "Prozess aktualisiert",
+        "processUpdatedDescription": "Der Prozess wurde erfolgreich aktualisiert.",
+        "processUpdateErrorTitle": "Fehler beim Aktualisieren",
+        "processUpdateErrorDescription": "Beim Aktualisieren des Prozesses ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      }
+    },
     "title": "Prozesse",
     "cannotEditProcessesDialogTitle": "Prozesse können nicht bearbeitet werden",
     "cannotEditProcessesDialogDescription": "Die Bearbeitung von Prozessen ist auf schmalen Bildschirmen nicht möglich. Bitte benutzen Sie ein Gerät mit breiterem Bildschirm.",

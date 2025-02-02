@@ -17,6 +17,7 @@ import {toast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
 import {Textarea} from "@/components/ui/textarea";
 import {useTranslations} from "next-intl";
+import {CirclePlus, Plus} from "lucide-react";
 
 export interface CreateProcessButtonProps {
     userId: string
@@ -32,7 +33,8 @@ export default function CreateProcessButton({userId, teamId}: Readonly<CreatePro
 
     return <Dialog open={showCreateProcessDialog} onOpenChange={setShowCreateProcessDialog}>
         <Button onClick={() => setShowCreateProcessDialog(true)}>
-            {t("createProcess")}
+            <Plus />
+            <span className="pl-2 text-center">{t("createProcess")}</span>
         </Button>
         <DialogContent>
             <DialogHeader>

@@ -271,6 +271,19 @@
     }
   },
   "editor": {
+    "processList": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "openProcess": "Open Process",
+      "editProcess": {
+        "title": "Edit Process",
+        "description": "Edit the process model.",
+        "processUpdatedTitle": "Process Updated",
+        "processUpdatedDescription": "The process was successfully updated.",
+        "processUpdateErrorTitle": "Error Updating Process",
+        "processUpdateErrorDescription": "The process could not be updated. Please try again."
+      }
+    },
     "title": "Processes",
     "createProcess": "Create Process",
     "cannotEditProcessesDialogTitle": "Cannot edit processes",

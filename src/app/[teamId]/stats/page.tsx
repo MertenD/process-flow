@@ -21,8 +21,10 @@ export default async function StatsPage({ params }: Readonly<{ params: { teamId:
         return null
     })
 
-    return userStats ? ( <div className="container mx-auto p-4 flex flex-col space-y-6">
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
-        <UserStatsDashboard stats={userStats}/>
-    </div> ) : <div className="w-full h-full flex justify-center items-center">{t("noStats")}</div>
+    return userStats ? (<div className="w-full h-full overflow-y-auto">
+        <div className="container mx-auto p-4 flex flex-col space-y-6">
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <UserStatsDashboard stats={userStats}/>
+        </div>
+    </div>) : <div className="w-full h-full flex justify-center items-center">{t("noStats")}</div>
 }

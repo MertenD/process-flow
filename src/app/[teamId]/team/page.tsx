@@ -16,10 +16,12 @@ export default async function TeamPage({ params }: Readonly<{ params: { teamId: 
         redirect("/authenticate")
     }
 
-    return <div className="container mx-auto p-4 flex flex-col space-y-6">
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
-        <InviteMember teamId={params.teamId} />
-        <RoleManagement teamId={params.teamId} />
-        <MemberManagement teamId={params.teamId} />
+    return <div className="h-full w-full overflow-y-auto">
+        <div className="container mx-auto p-4 flex flex-col space-y-6">
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <InviteMember teamId={params.teamId} />
+            <RoleManagement teamId={params.teamId} />
+            <MemberManagement teamId={params.teamId} />
+        </div>
     </div>
 }

@@ -11,8 +11,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
 import {useTranslations} from "next-intl";
+import {Button} from "@/components/ui/button";
 
 interface ConfirmationDialogProps {
   isOpen: boolean
@@ -47,9 +47,7 @@ export function ConfirmationDialog({
           <AlertDialogCancel asChild>
             <Button variant="outline" onClick={onClose}>{cancelLabel || t("cancel")}</Button>
           </AlertDialogCancel>
-          <AlertDialogAction asChild>
-            <Button variant="destructive" onClick={onConfirm}>{confirmLabel || t("confirm")}</Button>
-          </AlertDialogAction>
+          <Button variant="destructive" onClick={onConfirm}>{confirmLabel || t("confirm")}</Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

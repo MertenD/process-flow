@@ -10,10 +10,9 @@ import {useTranslations} from "next-intl";
 export interface DeleteProcessButtonProps {
     teamId: number
     processModelId: number
-    processModelName: string
 }
 
-export default function DeleteProcessButton({ teamId, processModelId, processModelName }: DeleteProcessButtonProps) {
+export default function DeleteProcessButton({ teamId, processModelId }: DeleteProcessButtonProps) {
 
     const t = useTranslations("editor.delete")
 
@@ -23,7 +22,8 @@ export default function DeleteProcessButton({ teamId, processModelId, processMod
 
     const router = useRouter();
 
-    const handleDeleteClick = () => {
+    const handleDeleteClick = (e: React.MouseEvent) => {
+        e.stopPropagation()
         setIsConfirmDialogOpen(true);
     };
 
@@ -50,8 +50,8 @@ export default function DeleteProcessButton({ teamId, processModelId, processMod
     };
 
     return <>
-        <Button variant="destructive" onClick={handleDeleteClick}>
-            <Trash2 className="mr-2 h-4 w-4" /> {t("deleteButton")}
+        <Button variant="ghost" className="" size="icon" onClick={(e: React.MouseEvent) => handleDeleteClick(e)}>
+            <Trash2 className="h-4 w-4" />
         </Button>
         <ConfirmationDialog
             isOpen={isConfirmDialogOpen}
