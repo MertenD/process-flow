@@ -1,12 +1,6 @@
 import React from "react";
-import ShopSidebar from "@/components/shop/ShopSidebar";
 
-export default function ShopLayout({ children, params }: Readonly<{ children: React.ReactNode, params: { teamId: number } }>) {
-    return (
-        <div className="flex">
-            <ShopSidebar teamId={params.teamId} />
-            <main className="flex-1 overflow-y-auto">{children}</main>
-        </div>
-    )
+export default function ShopLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+    return <main className="container mx-auto p-4 space-y-6 overflow-y-auto">{children}</main>
 }
 

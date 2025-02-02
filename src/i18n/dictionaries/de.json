@@ -322,12 +322,6 @@
     }
   },
   "shop": {
-    "sidebar": {
-      "title": "Aktivitäten Shop",
-      "shopNavLabel": "Shop",
-      "addedNodesNavLabel": "Gespeicherte Aktivitäten",
-      "createNodeNavLabel": "Aktivität erstellen"
-    },
     "shopPage": {
       "title": "Shop"
     },

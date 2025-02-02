@@ -134,118 +134,116 @@ export default function OptionsDefinitionEditor() {
         console.log(JSON.stringify(definitionWithKeyStrings, null, 2))
     }
 
-    return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-6">{t("title")}</h1>
-            <Card className="mb-6 pt-4">
-                <CardContent className="space-y-4">
-                    <div>
-                        <Label htmlFor="name" className="text-sm font-medium">
-                            {t("nameLabel")}
-                        </Label>
-                        <Input
-                            id="name"
-                            value={nodeDefinition.name}
-                            onChange={(e) => updateNodeDefinition("name", e.target.value)}
-                            placeholder={t("namePlaceholder")}
-                            className="mt-1"
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="shortDescription" className="text-sm font-medium">
-                            {t("shortDescriptionLabel")}
-                        </Label>
-                        <Input
-                            id="shortDescription"
-                            value={nodeDefinition.shortDescription}
-                            onChange={(e) => updateNodeDefinition("shortDescription", e.target.value)}
-                            placeholder={t("shortDescriptionPlaceholder")}
-                            className="mt-1"
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="markdownDocumentation" className="text-sm font-medium">
-                            {t("markdownDocumentationLabel")}
-                        </Label>
-                        <Textarea
-                            id="markdownDocumentation"
-                            value={nodeDefinition.markdownDocumentation}
-                            onChange={(e) => updateNodeDefinition("markdownDocumentation", e.target.value)}
-                            placeholder={t("markdownDocumentationPlaceholder")}
-                            className="mt-1"
-                            rows={10}
-                        />
-                    </div>
-                    <div>
-                        <Label htmlFor="executionMode" className="text-sm font-medium">
-                            {t("executionModeLabel")}
-                        </Label>
-                        <Select
-                            value={nodeDefinition.executionMode}
-                            onValueChange={(value) => updateNodeDefinition("executionMode", value as ExecutionMode)}
-                        >
+    return <>
+        <h1 className="text-3xl font-bold mb-6">{t("title")}</h1>
+        <Card className="mb-6 pt-4">
+            <CardContent className="space-y-4">
+                <div>
+                    <Label htmlFor="name" className="text-sm font-medium">
+                        {t("nameLabel")}
+                    </Label>
+                    <Input
+                        id="name"
+                        value={nodeDefinition.name}
+                        onChange={(e) => updateNodeDefinition("name", e.target.value)}
+                        placeholder={t("namePlaceholder")}
+                        className="mt-1"
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="shortDescription" className="text-sm font-medium">
+                        {t("shortDescriptionLabel")}
+                    </Label>
+                    <Input
+                        id="shortDescription"
+                        value={nodeDefinition.shortDescription}
+                        onChange={(e) => updateNodeDefinition("shortDescription", e.target.value)}
+                        placeholder={t("shortDescriptionPlaceholder")}
+                        className="mt-1"
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="markdownDocumentation" className="text-sm font-medium">
+                        {t("markdownDocumentationLabel")}
+                    </Label>
+                    <Textarea
+                        id="markdownDocumentation"
+                        value={nodeDefinition.markdownDocumentation}
+                        onChange={(e) => updateNodeDefinition("markdownDocumentation", e.target.value)}
+                        placeholder={t("markdownDocumentationPlaceholder")}
+                        className="mt-1"
+                        rows={10}
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="executionMode" className="text-sm font-medium">
+                        {t("executionModeLabel")}
+                    </Label>
+                    <Select
+                        value={nodeDefinition.executionMode}
+                        onValueChange={(value) => updateNodeDefinition("executionMode", value as ExecutionMode)}
+                    >
+                        <SelectTrigger className="mt-1">
+                            <SelectValue placeholder={t("executionModePlaceholder")}/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            {executionModes.map((mode) => (
+                                <SelectItem key={mode} value={mode}>
+                                    {mode}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div>
+                    <Label htmlFor="executionUrl" className="text-sm font-medium">
+                        {t("serverUrlLabel")}
+                    </Label>
+                    <Input
+                        id="executionUrl"
+                        value={nodeDefinition.executionUrl}
+                        onChange={(e) => updateNodeDefinition("executionUrl", e.target.value)}
+                        placeholder={t("serverUrlPlaceholder")}
+                        className="mt-1"
+                    />
+                </div>
+                <div className="flex items-end space-x-2">
+                    <div className="flex-grow">
+                        <Label className="text-sm font-medium">{t("addNewOptionLabel")}</Label>
+                        <Select onValueChange={(value: OptionsStructureType) => setSelectedOptionType(value)}>
                             <SelectTrigger className="mt-1">
-                                <SelectValue placeholder={t("executionModePlaceholder")}/>
+                                <SelectValue placeholder={t("addNewOptionPlaceholder")}/>
                             </SelectTrigger>
                             <SelectContent>
-                                {executionModes.map((mode) => (
-                                    <SelectItem key={mode} value={mode}>
-                                        {mode}
+                                {Object.values(OptionsStructureType).map((type) => (
+                                    <SelectItem key={type} value={type}>
+                                        {type.charAt(0).toUpperCase() + type.slice(1)}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
                     </div>
-                    <div>
-                        <Label htmlFor="executionUrl" className="text-sm font-medium">
-                            {t("serverUrlLabel")}
-                        </Label>
-                        <Input
-                            id="executionUrl"
-                            value={nodeDefinition.executionUrl}
-                            onChange={(e) => updateNodeDefinition("executionUrl", e.target.value)}
-                            placeholder={t("serverUrlPlaceholder")}
-                            className="mt-1"
-                        />
-                    </div>
-                    <div className="flex items-end space-x-2">
-                        <div className="flex-grow">
-                            <Label className="text-sm font-medium">{t("addNewOptionLabel")}</Label>
-                            <Select onValueChange={(value: OptionsStructureType) => setSelectedOptionType(value)}>
-                                <SelectTrigger className="mt-1">
-                                    <SelectValue placeholder={t("addNewOptionPlaceholder")}/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {Object.values(OptionsStructureType).map((type) => (
-                                        <SelectItem key={type} value={type}>
-                                            {type.charAt(0).toUpperCase() + type.slice(1)}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <Button onClick={addOption} disabled={!selectedOptionType} className="ml-2">
-                            <PlusCircle className="mr-2 h-4 w-4"/>
-                            {t("addButton")}
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
-            <div className="space-y-4 mb-6">
-                {nodeDefinition.optionsDefinition.structure.map((option, index) => (
-                    <OptionEditor
-                        key={index}
-                        option={option}
-                        onUpdate={(updatedOption) => updateOption(index, updatedOption)}
-                        onRemove={() => removeOption(index)}
-                    />
-                ))}
-            </div>
-            <Button onClick={logNodeDefinition} className="w-full">
-                <Save className="mr-2 h-4 w-4"/>
-                {t("saveNodeButton")}
-            </Button>
+                    <Button onClick={addOption} disabled={!selectedOptionType} className="ml-2">
+                        <PlusCircle className="mr-2 h-4 w-4"/>
+                        {t("addButton")}
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+        <div className="space-y-4 mb-6">
+            {nodeDefinition.optionsDefinition.structure.map((option, index) => (
+                <OptionEditor
+                    key={index}
+                    option={option}
+                    onUpdate={(updatedOption) => updateOption(index, updatedOption)}
+                    onRemove={() => removeOption(index)}
+                />
+            ))}
         </div>
-    )
+        <Button onClick={logNodeDefinition} className="w-full">
+            <Save className="mr-2 h-4 w-4"/>
+            {t("saveNodeButton")}
+        </Button>
+    </>
 }
 

@@ -321,12 +321,6 @@
     }
   },
   "shop": {
-    "sidebar": {
-      "title": "Prodavnica aktivnosti",
-      "shopNavLabel": "Prodavnica",
-      "addedNodesNavLabel": "Dodate aktivnosti",
-      "createNodeNavLabel": "Kreiraj aktivnost"
-    },
     "shopPage": {
       "title": "Prodavnica"
     },

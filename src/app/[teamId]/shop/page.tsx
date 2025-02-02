@@ -6,10 +6,6 @@ export default async function ShopPage({ params }: { params: { teamId: number } 
 
     const nodeDefinitions = await getNodeDefinitionPreviews()
 
-    console.log(nodeDefinitions)
-
-    return <div className="container mx-auto p-4 space-y-6">
-        <Shop teamId={params.teamId} nodeDefinitions={nodeDefinitions} />
-    </div>
+    return <Shop teamId={params.teamId} nodeDefinitions={nodeDefinitions} />
 }
 

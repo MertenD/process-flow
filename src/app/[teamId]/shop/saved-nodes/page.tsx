@@ -7,10 +7,8 @@ export default async function AddedNodesPage({ params }: { params: { teamId: num
 
     const savedNodes = await getSavedNodeDefinitions(params.teamId)
 
-    return (
-        <div className="container mx-auto p-4 space-y-6">
-            <h2 className="text-3xl font-bold">{ t("title") }</h2>
-            <SavedNodes teamId={params.teamId} initialSavedNodes={savedNodes} />
-        </div>
-    )
+    return <>
+        <h2 className="text-3xl font-bold">{ t("title") }</h2>
+        <SavedNodes teamId={params.teamId} initialSavedNodes={savedNodes} />
+    </>
 }
