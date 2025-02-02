@@ -12,12 +12,11 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem, SidebarSeparator
 } from "@/components/ui/sidebar";
-import TeamSwitcher from "@/components/headerbar/TeamSwitcher";
+import TeamSwitcher from "@/components/sidebar/TeamSwitcher";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
 import {Page, Profile} from "@/model/database/database.types";
 import getAllowedPages from "@/actions/get-allowed-pages";
-import {TeamWithColorSchema} from "@/components/headerbar/HeaderBarWrapper";
 import {getTranslations} from "next-intl/server";
 import {
     Award,
@@ -31,9 +30,18 @@ import {
     Workflow
 } from 'lucide-react';
 import Link from "next/link";
-import UserNav from "@/components/sidebar/UserNav";
-import HomeButton from "@/components/headerbar/HomeButton";
-import {Button} from "@/components/ui/button";
+import SidebarUserNav from "@/components/sidebar/SidebarUserNav";
+
+export type TeamWithColorSchema = {
+    profileId: string,
+    teamId: string,
+    team: {
+        name: string,
+        createdBy: string,
+        colorSchemeFrom: string,
+        colorSchemeTo: string
+    }
+}
 
 interface AppSidebarProps {
     teamId: number;
@@ -180,7 +188,7 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
             </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-            <UserNav profile={profile} teamId={teamId}/>
+            <SidebarUserNav profile={profile} teamId={teamId}/>
         </SidebarFooter>
     </Sidebar>
 }

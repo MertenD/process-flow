@@ -4,11 +4,11 @@ import React from "react";
 import {TeamsOverview} from "@/components/dashboard/TeamsOverview";
 import Link from "next/link";
 import {TeamInfo} from "@/model/TeamInfo";
-import {InvitationWithTeam} from "@/model/database/database.types";
+import {InvitationWithTeam, Profile} from "@/model/database/database.types";
 import getTeams from "@/actions/get-teams";
 import getInvitations from "@/actions/get-invitations";
-import {UserNav} from "@/components/headerbar/UserNav";
 import {getTranslations} from "next-intl/server";
+import {UserNav} from "@/components/dashboard/UserNav";
 
 export default async function Home() {
 
@@ -23,9 +23,9 @@ export default async function Home() {
 
     const { data: profile, error: usernameError } = await supabase
         .from("profiles")
-        .select("username")
+        .select("id, username, email, avatar")
         .eq("id", userData.user.id)
-        .single<{ username: string }>()
+        .single<Profile>()
 
     const teams: TeamInfo[] = await getTeams(userData.user.id)
     const invitations: InvitationWithTeam[] = await getInvitations(userData.user.email || "")
@@ -43,7 +43,7 @@ export default async function Home() {
                             <h2 className="text-2xl font-bold">{t("teamDashboardTitle")}</h2>
                             <div className="flex items-center gap-4">
                                 Hey{ profile ? `, ${profile.username}` : "" }!
-                                <UserNav/>
+                                <UserNav />
                             </div>
                         </div>
                         <TeamsOverview

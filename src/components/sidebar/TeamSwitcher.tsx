@@ -4,8 +4,7 @@ import React from 'react';
 
 import {cn} from "@/lib/utils";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,} from "@/components/ui/command";
-import {Dialog,} from "@/components/ui/dialog";
-import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
+import {PopoverTrigger,} from "@/components/ui/popover";
 import {Check, ChevronsUpDown} from "lucide-react";
 import {useTranslations} from "next-intl";
 import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@/components/ui/sidebar";

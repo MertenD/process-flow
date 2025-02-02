@@ -22,11 +22,11 @@ import {useTranslations} from "next-intl";
 import MiniatureLevelCard from "@/components/stats/MiniatureLevelCard";
 
 interface UserNavProps {
-    teamId: number
+    teamId: number | null
     profile: Profile | null
 }
 
-export default function UserNav({ teamId, profile }: UserNavProps) {
+export default function SidebarUserNav({ teamId, profile }: UserNavProps) {
 
     const { isMobile } = useSidebar()
     const t =  useTranslations("Header.userNav")
