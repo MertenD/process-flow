@@ -39,6 +39,7 @@
   },
   "Header": {
     "TeamSwitcher": {
+      "tooltip": "Promeni tim",
       "search": "Pretraga...",
       "noTeamsFound": "Nema pronađenih timova",
       "ownTeams": "Vaši timovi",
@@ -51,6 +52,7 @@
       "settings": "Podešavanja",
       "monitoring": "Praćenje",
       "tasks": "Zadaci",
+      "shopGroupTitle": "Prodavnica",
       "shop": "Prodavnica",
       "addedNodes": "Dodate aktivnosti",
       "createNode": "Kreiraj aktivnost"
@@ -58,7 +60,8 @@
     "userNav": {
       "settings": "Podešavanja",
       "logout": "Odjavi se",
-      "login": "Prijavi se"
+      "login": "Prijavi se",
+      "tooltip": "Korisnički meni"
     }
   },
   "settings": {

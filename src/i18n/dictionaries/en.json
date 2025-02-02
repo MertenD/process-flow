@@ -39,6 +39,7 @@
   },
   "Header": {
     "TeamSwitcher": {
+      "tooltip": "Switch Team",
       "search": "Search...",
       "noTeamsFound": "No teams found",
       "ownTeams": "Your Teams",
@@ -52,14 +53,16 @@
       "settings": "Settings",
       "monitoring": "Monitoring",
       "tasks": "Tasks",
-      "shop": "Shop",
+      "shopGroupTitle": "Shop",
+      "shop": "Browse Activities",
       "addedNodes": "Saved Activities",
       "createNode": "Create Activity"
     },
     "userNav": {
       "settings": "Settings",
       "logout": "Logout",
-      "login": "Login"
+      "login": "Login",
+      "tooltip": "User Menu"
     }
   },
   "settings": {
@@ -323,7 +326,7 @@
   },
   "shop": {
     "shopPage": {
-      "title": "Shop"
+      "title": "Browse Activities"
     },
     "addedNodesPage": {
       "title": "Added Activities",

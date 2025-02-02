@@ -55,6 +55,7 @@ export default function TeamSwitcher({ className, ownTeams, otherTeams, selected
                         role="combobox"
                         aria-label="Select a team"
                         className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                        tooltip={t("tooltip")}
                     >
                         <div
                             className={`flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br ${selectedTeam.colorSchema.from} ${selectedTeam.colorSchema.to} text-sidebar-primary-foreground`}>
