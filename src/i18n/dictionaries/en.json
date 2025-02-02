@@ -45,13 +45,16 @@
       "otherTeams": "Other Teams"
     },
     "nav": {
+      "dashboard": "Dashboard",
       "editor": "Editor",
       "team": "Team",
       "stats": "Statistics",
       "settings": "Settings",
       "monitoring": "Monitoring",
       "tasks": "Tasks",
-      "shop": "Shop"
+      "shop": "Shop",
+      "addedNodes": "Saved Activities",
+      "createNode": "Create Activity"
     },
     "userNav": {
       "settings": "Settings",

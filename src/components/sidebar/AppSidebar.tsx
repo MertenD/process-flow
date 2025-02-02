@@ -122,7 +122,7 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
                         <SidebarMenuButton asChild>
                             <Link href="/dashboard">
                                 <Home />
-                                <span>Dashboard</span>
+                                <span>{ t("dashboard") }</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -147,6 +147,7 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
                     ))}
                 </SidebarMenu>
             </SidebarGroup>
+            <SidebarSeparator />
             <SidebarGroup className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenu>
                     <SidebarMenuItem>

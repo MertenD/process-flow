@@ -45,6 +45,7 @@
       "otherTeams": "Andere Teams"
     },
     "nav": {
+      "dashboard": "Dashboard",
       "editor": "Editor",
       "team": "Team",
       "stats": "Statistiken",

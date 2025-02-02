@@ -51,7 +51,9 @@
       "settings": "Podešavanja",
       "monitoring": "Praćenje",
       "tasks": "Zadaci",
-      "shop": "Prodavnica"
+      "shop": "Prodavnica",
+      "addedNodes": "Dodate aktivnosti",
+      "createNode": "Kreiraj aktivnost"
     },
     "userNav": {
       "settings": "Podešavanja",
