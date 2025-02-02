@@ -7,6 +7,7 @@ import {useTranslations} from 'next-intl';
 import Link from "next/link";
 import {createClient} from "@/utils/supabase/client";
 import getTasks from "@/actions/get-tasks";
+import getNodeDefinition from "@/actions/shop/get-node-definition";
 
 interface BreadcrumbModel {
     name: string;
@@ -36,6 +37,7 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
             const shopPath = `/${teamId}/shop`
             const shopSavedNodesPath = `/${teamId}/shop/saved-nodes`
             const shopCreateNodePath = `/${teamId}/shop/create-node`
+            const shopDetailsPath = `/${teamId}/shop/node`
 
             const newBreadcrumbs: BreadcrumbModel[] = []
 
@@ -49,7 +51,6 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
                     name: t('tasks'),
                     href: tasksPath
                 });
-                // Extrahiere taskId aus der URL, z. B. /{teamId}/tasks/123
                 const parts = pathname.split('/');
                 const taskId = Number(parts[3] || null);
                 if (taskId) {
@@ -119,6 +120,19 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
                         name: t('createNode'),
                         href: shopCreateNodePath
                     })
+                } else if (pathname.startsWith(shopDetailsPath)) {
+                    const parts = pathname.split('/');
+                    const nodeDefinitionId = Number(parts[4] || null);
+                    if (nodeDefinitionId) {
+                        const nodeDefinition = await getNodeDefinition(nodeDefinitionId)
+
+                        if (nodeDefinition && nodeDefinition.name) {
+                            newBreadcrumbs.push({
+                                name: nodeDefinition.name,
+                                href: `${shopDetailsPath}/${nodeDefinitionId}`
+                            })
+                        }
+                    }
                 }
             }
 
