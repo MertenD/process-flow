@@ -49,7 +49,7 @@ export default function MiniatureLevelCard({ userId, teamId }: MiniatureLevelCar
         }
     }, [level, userStats]);
 
-    return userStats && <div className="w-32 flex flex-col space-y-1">
+    return userStats && <div className="w-full flex flex-col space-y-1">
         <div className="flex flex-row justify-between">
             <p className="text-xs font-semibold">Level { level }</p>
             <p className="text-xs font-semibold">{ userStats.experience } / { pointsToReachNextLevel } XP</p>

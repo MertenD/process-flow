@@ -1,14 +1,15 @@
 "use client"
 
-import React, {useEffect} from 'react';
+import React from 'react';
 
 import {cn} from "@/lib/utils";
-import {Button} from "@/components/ui/button";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,} from "@/components/ui/command";
 import {Dialog,} from "@/components/ui/dialog";
 import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
 import {Check, ChevronsUpDown} from "lucide-react";
 import {useTranslations} from "next-intl";
+import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@/components/ui/sidebar";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 
 export type Team = {
     label: string;
@@ -28,6 +29,7 @@ interface TeamSwitcherProps extends PopoverTriggerProps {
 
 export default function TeamSwitcher({ className, ownTeams, otherTeams, selectedTeamId }: Readonly<TeamSwitcherProps>) {
 
+    const { isMobile } = useSidebar()
     const t = useTranslations("Header.TeamSwitcher");
 
     const groups = [
@@ -41,32 +43,40 @@ export default function TeamSwitcher({ className, ownTeams, otherTeams, selected
         }
     ]
 
-    const [open, setOpen] = React.useState(false);
-    const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
     const [selectedTeam, setSelectedTeam] = React.useState<Team>(
         [...ownTeams, ...otherTeams].find(team => team.value.toString() === selectedTeamId?.toString()) || ownTeams[0] // TODO ownTeams[0] ist hier suboptimal, aber es darf eigentlich nicht eintreten
     );
 
-    return (
-        <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
-            <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                    <Button
-                        variant="outline"
+    return <SidebarMenu>
+        <SidebarMenuItem>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <SidebarMenuButton
+                        size="lg"
                         role="combobox"
-                        aria-expanded={open}
                         aria-label="Select a team"
-                        className={cn("w-[200px] justify-between", className)}
+                        className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     >
-                        <div className={`mr-2 h-5 w-5 rounded-full shrink-0 bg-gradient-to-br ${selectedTeam.colorSchema.from} ${selectedTeam.colorSchema.to}`} />
-                        {selectedTeam.label}
-                        <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className={cn("w-[200px] p-0", className)}>
+                        <div
+                            className={`flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br ${selectedTeam.colorSchema.from} ${selectedTeam.colorSchema.to} text-sidebar-primary-foreground`}>
+                        </div>
+                        <div className="grid flex-1 text-left text-sm leading-tight">
+                            <span className="truncate font-semibold">
+                                {selectedTeam.label}
+                            </span>
+                        </div>
+                        <ChevronsUpDown className="ml-auto"/>
+                    </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                    side={isMobile ? "bottom" : "right"}
+                    align="end"
+                    sideOffset={4}
+                >
                     <Command>
                         <CommandList>
-                            <CommandInput placeholder={t("search")} />
+                            <CommandInput placeholder={t("search")}/>
                             <CommandEmpty>{t("noTeamsFound")}</CommandEmpty>
                             {groups.map((group) => (
                                 <CommandGroup key={group.label} heading={group.label}>
@@ -75,7 +85,6 @@ export default function TeamSwitcher({ className, ownTeams, otherTeams, selected
                                             key={team.value}
                                             onSelect={() => {
                                                 setSelectedTeam(team);
-                                                setOpen(false);
                                                 window.location.href = window.location.href.replace(/\/\d+\//, `/${team.value}/`)
                                             }}
                                             className="text-sm"
@@ -96,8 +105,8 @@ export default function TeamSwitcher({ className, ownTeams, otherTeams, selected
                             ))}
                         </CommandList>
                     </Command>
-                </PopoverContent>
-            </Popover>
-        </Dialog>
-    )
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </SidebarMenuItem>
+    </SidebarMenu>
 }

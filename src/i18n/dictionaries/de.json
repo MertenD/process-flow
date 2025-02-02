@@ -51,7 +51,9 @@
       "settings": "Einstellungen",
       "monitoring": "Monitoring",
       "tasks": "Aufgaben",
-      "shop": "Shop"
+      "shop": "Shop",
+      "addedNodes": "Gespeicherte Aktivitäten",
+      "createNode": "Aktivität erstellen"
     },
     "userNav": {
       "settings": "Einstellungen",
