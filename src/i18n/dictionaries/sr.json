@@ -47,6 +47,7 @@
     },
     "nav": {
       "editor": "Editor",
+      "workspaceGroupTitle": "Radni prostor",
       "team": "Tim",
       "stats": "Statistike",
       "settings": "Podešavanja",

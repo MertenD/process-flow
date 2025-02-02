@@ -47,6 +47,7 @@
     },
     "nav": {
       "dashboard": "Dashboard",
+      "workspaceGroupTitle": "Arbeitsbereich",
       "editor": "Editor",
       "team": "Team",
       "stats": "Statistiken",

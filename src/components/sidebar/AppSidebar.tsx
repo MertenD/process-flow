@@ -147,6 +147,7 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
             </SidebarGroup>
             <SidebarSeparator />
             <SidebarGroup>
+                <SidebarGroupLabel>{ t("workspaceGroupTitle") }</SidebarGroupLabel>
                 <SidebarMenu>
                     {navData.main.filter(item =>
                         item.key === "Stats" ||
