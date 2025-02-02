@@ -52,8 +52,8 @@ export async function UserNav({ selectedTeamId }: Readonly<UserNavProps>) {
     return profile ? (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
+                <Button variant="ghost" className="relative h-8 w-8 rounded-lg">
+                    <Avatar className="h-8 w-8 rounded-lg">
                         <AvatarImage src={profile.avatar || ""} alt="@shadcn" />
                         <AvatarFallback>{ profile.username.slice(0,2).toUpperCase() }</AvatarFallback>
                     </Avatar>

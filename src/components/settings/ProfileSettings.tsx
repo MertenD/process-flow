@@ -72,7 +72,7 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
         <CardContent>
             <form onSubmit={handleProfileSubmit} className="space-y-6">
                 <div className="flex items-center space-x-4">
-                    <Avatar className="h-20 w-20">
+                    <Avatar className="h-20 w-20 rounded-2xl">
                         <AvatarImage src={avatarSrc} alt="Profilbild"/>
                         <AvatarFallback>{ username.slice(0,2).toUpperCase() }</AvatarFallback>
                     </Avatar>
