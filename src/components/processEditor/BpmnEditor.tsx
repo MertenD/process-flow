@@ -2,7 +2,8 @@
 
 import ReactFlow, {
     Background,
-    BackgroundVariant, Connection,
+    BackgroundVariant,
+    Connection,
     Controls,
     Edge,
     MiniMap,
@@ -19,17 +20,12 @@ import NodesToolbar from "./toolbars/NodesToolbar";
 import {v4 as uuidv4} from 'uuid';
 import OnCanvasNodesToolbar from "./toolbars/OnCanvasNodesSelector";
 import {NodeTypes} from "@/model/NodeTypes";
-import SaveButton from "@/components/processEditor/toolbars/buttons/SaveButton";
-import CreateInstanceButton from "@/components/processEditor/toolbars/buttons/CreateInstanceButton";
 import "@/styles/globals.css";
 import OptionsToolbar from "@/components/processEditor/toolbars/OptionsToolbar";
-import DeleteProcessButton from "@/components/processEditor/processList/DeleteProcessButton";
 import loadProcessModelFromDatabase from "@/actions/load-process-model-from-database";
-import ExportButton from "@/components/processEditor/toolbars/buttons/ExportButton";
-import UndoButton from "@/components/processEditor/toolbars/buttons/UndoButton";
 import useUndoRedo from "@/components/processEditor/hooks/useUndoRedo";
-import RedoButton from "@/components/processEditor/toolbars/buttons/RedoButton";
 import useStore, {edgeStyle} from "@/stores/store";
+import {EditorToolbar} from "@/components/processEditor/toolbars/EditorToolbar";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,
@@ -251,13 +247,7 @@ export default function BpmnEditor({ processModelId, processModelName, teamId }:
         <ReactFlowProvider>
             <div className="flex flex-row w-full h-full">
                 <div className="w-full h-full flex flex-col">
-                    <div className="w-full p-3 flex flex-row flex-wrap items-center gap-2 border-b">
-                        <SaveButton processModelId={processModelId}/>
-                        <CreateInstanceButton processModelId={processModelId}/>
-                        <ExportButton/>
-                        <UndoButton/>
-                        <RedoButton/>
-                    </div>
+                    <EditorToolbar processModelId={processModelId} />
                     <div className="w-full h-full pl-2 bg-accent">
                         <DragAndDropFlow processModelId={processModelId}/>
                     </div>

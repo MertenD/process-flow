@@ -48,9 +48,8 @@ export default function StartNode({ id, selected, data}: NodeProps<StartNodeData
     return (
         <div style={{
             ...startNodeShapeStyle,
-            backgroundColor: data.backgroundColor,
-            borderColor: selected ? selectedColor : undefined
-        }} className="bg-background border-2 border-foreground">
+            backgroundColor: data.backgroundColor
+        }} className={`bg-background border-2 border-foreground ${ selected ? "border-primary" : "" }`}>
             <Handle style={handleStyle} type="source" position={Position.Right} />
         </div>
     )

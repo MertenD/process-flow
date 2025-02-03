@@ -10,7 +10,7 @@ import {
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogTitle
+    DialogTitle, DialogTrigger
 } from "@/components/ui/dialog";
 import getProcessInputVariableNames from "@/actions/get-process-input-variable-names";
 import {Label} from "@/components/ui/label";
@@ -18,6 +18,8 @@ import {Input} from "@/components/ui/input";
 import {CopyableUrlField} from "@/components/ui/copyable-url-field";
 import {Separator} from "@/components/ui/separator";
 import {useTranslations} from "next-intl";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {DialogActions} from "@mui/material";
 
 export interface CreateInstanceButtonProps {
     processModelId: number
@@ -65,45 +67,59 @@ export default function CreateInstanceButton({ processModelId }: Readonly<Create
             })
     }
 
-    return <Dialog open={showCreateInstanceDialog} onOpenChange={setShowCreateInstanceDialog}>
-        <Button onClick={() => {
-            getProcessInputVariableNames(processModelId)
-                .then(setInputVariableNames)
-                .then(() => setShowCreateInstanceDialog(true))
-        }}>
-            <GitBranchPlus className="mr-2 h-4 w-4" /> {t("instanceButton")}
-        </Button>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>{t("createNewInstanceTitle")}</DialogTitle>
-                <DialogDescription>{t("createNewInstanceDescription")}</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-2">
-                { inputVariableNames.map((inputVariableName) => {
-                    return <div key={inputVariableName} className="space-y-2">
-                        <Label htmlFor={inputVariableName}>{ inputVariableName }</Label>
-                        <Input id={inputVariableName} placeholder={ inputVariableName } />
+    return <TooltipProvider delayDuration={250}>
+        <Dialog open={showCreateInstanceDialog} onOpenChange={setShowCreateInstanceDialog}>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <DialogTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-9 w-9 p-0"
+                            onClick={() => getProcessInputVariableNames(processModelId).then(setInputVariableNames)}
+                        >
+                            <GitBranchPlus className="h-4 w-4" />
+                            <span className="sr-only">{t("instanceButton")}</span>
+                        </Button>
+                    </DialogTrigger>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{t("instanceButton")}</p>
+                </TooltipContent>
+            </Tooltip>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{t("createNewInstanceTitle")}</DialogTitle>
+                    <DialogDescription>{t("createNewInstanceDescription")}</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                    {inputVariableNames.map((name) => (
+                        <div key={name} className="space-y-2">
+                            <Label htmlFor={name}>{name}</Label>
+                            <Input id={name} placeholder={name} />
+                        </div>
+                    ))}
+                    <div className="pt-6 space-y-4">
+                        <Separator />
+                        <h2 className="text-lg font-semibold">{t("instanceAPIExplanation")}</h2>
+                        <CopyableUrlField url={`${origin}${createInstancePath}`} />
                     </div>
-                }) }
-                <div className="pt-8 space-y-4">
-                    <Separator/>
-                    <h2 className="text-md">{t("instanceAPIExplanation")}</h2>
-                    <CopyableUrlField url={`${origin}${createInstancePath}`}/>
                 </div>
-            </div>
-            <DialogFooter>
-                <Button variant="outline" onClick={() => setShowCreateInstanceDialog(false)}>
-                    {t("cancel")}
-                </Button>
-                <Button type="submit" onClick={() => {
-                    const inputs: {[key: string]: string} = {}
-                    inputVariableNames.forEach((inputVariableName) => {
-                        inputs[inputVariableName] = (document.getElementById(inputVariableName) as HTMLInputElement).value
-                    })
-                    handleCreateInstance(inputs)
-                    setShowCreateInstanceDialog(false)
-                }}>{t("create")}</Button>
-            </DialogFooter>
-        </DialogContent>
-    </Dialog>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setShowCreateInstanceDialog(false)}>{t("cancel")}</Button>
+                    <Button
+                        onClick={() => {
+                            const inputs = Object.fromEntries(
+                                inputVariableNames.map((name) => [name, (document.getElementById(name) as HTMLInputElement).value]),
+                            )
+                            handleCreateInstance(inputs)
+                            setShowCreateInstanceDialog(false)
+                        }}
+                    >
+                        {t("create")}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    </TooltipProvider>
 }

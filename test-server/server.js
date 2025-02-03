@@ -93,7 +93,7 @@ app.post("/chatgpt", async (req, res) => {
     }
 });
 
-const PORT = 3000;
+const PORT = 3030;
 const server = app.listen(PORT, () => {
     console.log(`Server läuft auf Port ${PORT}`);
 });

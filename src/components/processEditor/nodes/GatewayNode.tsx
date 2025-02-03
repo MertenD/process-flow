@@ -94,9 +94,8 @@ export default function GatewayNode({ id, selected, data }: NodeProps<GatewayNod
             </div>
             <div style={{
                 ...GatewayShapeStyle,
-                backgroundColor: data.backgroundColor,
-                borderColor: selected ? selectedColor : undefined
-            }} className="bg-background border-2 border-foreground" >
+                backgroundColor: data.backgroundColor
+            }} className={`bg-background border-2 border-foreground ${ selected ? "border-primary" : "" }`} >
                 <X style={{ transform: "rotate(-45deg)" }} className="pt-3" />
             </div>
             <Handle style={handleStyle} type="target" position={Position.Left} id="a"/>
