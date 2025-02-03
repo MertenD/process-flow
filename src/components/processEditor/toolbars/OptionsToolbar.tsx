@@ -113,10 +113,10 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
                 </SelectTrigger>
                 <SelectContent>
                     {savedNodeDefinitions.map((savedNodeDefinition) => (
-                        <SelectItem key={`nodeDefinitionId-${savedNodeDefinition.id}`}
+                        savedNodeDefinition.id ? <SelectItem key={`nodeDefinitionId-${savedNodeDefinition.id}`}
                                     value={savedNodeDefinition.id.toString()}>
                             {savedNodeDefinition.name}
-                        </SelectItem>
+                        </SelectItem> : null
                     ))}
                 </SelectContent>
             </Select>
