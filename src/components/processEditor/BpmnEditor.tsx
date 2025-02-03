@@ -26,6 +26,7 @@ import loadProcessModelFromDatabase from "@/actions/load-process-model-from-data
 import useUndoRedo from "@/components/processEditor/hooks/useUndoRedo";
 import useStore, {edgeStyle} from "@/stores/store";
 import {EditorToolbar} from "@/components/processEditor/toolbars/EditorToolbar";
+import {NodeDefinitionPreview} from "@/model/NodeDefinition";
 
 const selector = (state: any) => ({
     getNextNodeId: state.getNextNodeId,
@@ -41,9 +42,10 @@ const selector = (state: any) => ({
 
 export interface DragAndDropFlowProps {
     processModelId: number
+    nodeDefinitionPreviews: NodeDefinitionPreview[]
 }
 
-function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
+function DragAndDropFlow({ processModelId, nodeDefinitionPreviews }: Readonly<DragAndDropFlowProps>) {
     const { takeSnapshot } = useUndoRedo();
 
     const { nodes, edges, onNodesChange, onEdgesChange, onConnect, nodeTypes, getNodeById, updateNodeParent } = useStore(selector, shallow);
@@ -209,7 +211,7 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
             <Controls />
             <Background variant={BackgroundVariant.Dots} />
             <Panel position="top-left">
-                <NodesToolbar />
+                <NodesToolbar nodeDefinitionPreviews={nodeDefinitionPreviews} />
             </Panel>
             <MiniMap nodeColor={(node) => {
                 return node.data.backgroundColor || "gray"
@@ -239,16 +241,17 @@ function DragAndDropFlow({ processModelId }: Readonly<DragAndDropFlowProps>) {
 export interface BpmnEditorProps {
     processModelId: number
     teamId: number
+    nodeDefinitionPreviews: NodeDefinitionPreview[]
 }
 
-export default function BpmnEditor({ processModelId, teamId }: Readonly<BpmnEditorProps>) {
+export default function BpmnEditor({ processModelId, teamId, nodeDefinitionPreviews }: Readonly<BpmnEditorProps>) {
     return (
         <ReactFlowProvider>
             <div className="flex flex-row w-full h-full">
                 <div className="w-full h-full flex flex-col">
                     <EditorToolbar processModelId={processModelId} />
                     <div className="w-full h-full pl-2 bg-accent">
-                        <DragAndDropFlow processModelId={processModelId}/>
+                        <DragAndDropFlow processModelId={processModelId} nodeDefinitionPreviews={nodeDefinitionPreviews} />
                     </div>
                 </div>
                 <OptionsToolbar teamId={teamId} />

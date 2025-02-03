@@ -1,17 +1,21 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { activityShapeStyle } from "../nodes/ActivityNode"
-import { startNodeShapeStyle } from "../nodes/StartNode"
-import { GatewayShapeStyle } from "../nodes/GatewayNode"
-import { endNodeShapeStyle } from "../nodes/EndNode"
-import { NodeTypes } from "@/model/NodeTypes"
+import React, {useEffect, useState} from 'react'
+import {Card, CardContent} from "@/components/ui/card"
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
+import {activityShapeStyle} from "../nodes/ActivityNode"
+import {startNodeShapeStyle} from "../nodes/StartNode"
+import {GatewayShapeStyle} from "../nodes/GatewayNode"
+import {endNodeShapeStyle} from "../nodes/EndNode"
+import {NodeTypes} from "@/model/NodeTypes"
 import useStore from "@/stores/store"
+import {NodeDefinitionPreview} from "@/model/NodeDefinition";
 
-export default function NodesToolbar() {
+interface NodesToolbarProps {
+    nodeDefinitionPreviews: NodeDefinitionPreview[]
+}
+
+export default function NodesToolbar({ nodeDefinitionPreviews }: Readonly<NodesToolbarProps>) {
     const onDragStart = (event: React.DragEvent, nodeType: string, nodeData: any) => {
         event.dataTransfer.setData('application/reactflow', JSON.stringify({ nodeType, nodeData }))
         event.dataTransfer.effectAllowed = 'move'
@@ -65,11 +69,17 @@ export default function NodesToolbar() {
                     style={endNodeShapeStyle}
                     nodeType={NodeTypes.END_NODE}
                 />
-                <NodeItem
-                    label="Activity"
-                    style={activityShapeStyle}
-                    nodeType={NodeTypes.ACTIVITY_NODE}
-                />
+                { nodeDefinitionPreviews.map((nodeDefinitionPreview) => (
+                    <NodeItem
+                        key={`Activity-Node-${nodeDefinitionPreview.id}`}
+                        label={nodeDefinitionPreview.name}
+                        style={activityShapeStyle}
+                        nodeType={NodeTypes.ACTIVITY_NODE}
+                        nodeData={{
+                            nodeDefinitionId: nodeDefinitionPreview.id,
+                        }}
+                    />
+                )) }
                 <NodeItem
                     label="Gateway"
                     style={GatewayShapeStyle}

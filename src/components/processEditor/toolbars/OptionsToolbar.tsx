@@ -8,10 +8,6 @@ import {getGatewayOptionsDefinition} from "@/components/processEditor/nodes/Gate
 import {getStartOptionsDefinition} from "@/components/processEditor/nodes/StartNode";
 import {OptionsDefinition} from "@/model/OptionsModel";
 import getNodeDefinition from "@/actions/shop/get-node-definition";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {NodeDefinitionPreview} from "@/model/NodeDefinition";
-import getSavedNodeDefinitions from "@/actions/shop/get-saved-node-definitions";
-import {Separator} from "@/components/ui/separator";
 import useStore from "@/stores/store";
 import {ActivityNodeData} from "@/components/processEditor/nodes/ActivityNode";
 
@@ -23,7 +19,6 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
 
     const [selectedNode, setSelectedNode] = useState<Node | undefined>(undefined);
 
-    const [savedNodeDefinitions, setSavedNodeDefinitions] = useState<NodeDefinitionPreview[]>([]);
     const [activityOptionsDefinition, setActivityOptionsDefinition] = useState<OptionsDefinition | null>(null);
 
     const updateNodeData = useStore((state) => state.updateNodeData)
@@ -45,14 +40,6 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
             updateNodeData<ActivityNodeData>(selectedNode.id, updatedData);
         })
     }, [updateNodeData]);
-    
-    useEffect(() => {
-        if (selectedNode && selectedNode.type === NodeTypes.ACTIVITY_NODE) {
-            getSavedNodeDefinitions(teamId).then((nodeDefinition) => {
-                setSavedNodeDefinitions(nodeDefinition);
-            })
-        }
-    }, [selectedNode, teamId]);
 
     useEffect(() => {
         const selectedNodeDefinitionId = (selectedNode?.data as ActivityNodeData)?.nodeDefinitionId;
@@ -99,29 +86,6 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
     }
 
     return <aside className="w-[400px] h-full p-3 border-l overflow-y-auto overflow-x-hidden space-y-4">
-        { selectedNode.type === NodeTypes.ACTIVITY_NODE && <div>
-            <h2 className="text-lg font-bold mb-2">Select Activity type</h2>
-            <Select
-                defaultValue={(selectedNode?.data as ActivityNodeData)?.nodeDefinitionId?.toString() || ""}
-                onValueChange={(newValue) => {
-                    updateActivityOptionsDefinition(Number(newValue), selectedNode);
-                }}
-
-            >
-                <SelectTrigger>
-                    <SelectValue placeholder="Please select"/>
-                </SelectTrigger>
-                <SelectContent>
-                    {savedNodeDefinitions.map((savedNodeDefinition) => (
-                        savedNodeDefinition.id ? <SelectItem key={`nodeDefinitionId-${savedNodeDefinition.id}`}
-                                    value={savedNodeDefinition.id.toString()}>
-                            {savedNodeDefinition.name}
-                        </SelectItem> : null
-                    ))}
-                </SelectContent>
-            </Select>
-        </div> }
-        { selectedNode.type === NodeTypes.ACTIVITY_NODE && <Separator orientation="horizontal"/> }
         { options }
     </aside>
 }
