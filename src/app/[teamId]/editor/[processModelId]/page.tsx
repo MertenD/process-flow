@@ -24,6 +24,6 @@ export default async function EditorProcessPage({ params }: Readonly<{ params: {
     }
 
     return <div className="w-full h-full">
-        <BpmnEditor processModelId={params.processModelId} processModelName={processModel.name} teamId={params.teamId} /> : <div>Select a process model to edit</div>
+        <BpmnEditor processModelId={params.processModelId} teamId={params.teamId} /> : <div>Select a process model to edit</div>
     </div>
 }
