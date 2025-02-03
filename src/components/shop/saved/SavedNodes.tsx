@@ -68,7 +68,11 @@ export default function SavedNodes({ teamId, initialSavedNodes }: Readonly<Added
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => removeNodeFromTeam(teamId, node.id)}
+                                onClick={() => {
+                                    if (node.id) {
+                                        removeNodeFromTeam(teamId, node.id)
+                                    }
+                                }}
                                 className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
                             >
                                 <Trash2 className="h-4 w-4" />
