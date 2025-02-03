@@ -15,6 +15,7 @@ export default async function (): Promise<NodeDefinitionPreview[]> {
         .from("node_definition")
         .select("id, " +
             "name: definition->name, " +
+            "icon: definition->icon, " +
             "shortDescription: definition->shortDescription, " +
             "executionMode: definition->executionMode"
         )

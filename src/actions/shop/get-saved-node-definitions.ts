@@ -16,6 +16,7 @@ export default async function (teamId: number): Promise<NodeDefinitionPreview[]>
         .select("team_id, node_definition(" +
             "id, " +
             "name: definition->name, " +
+            "icon: definition->icon, " +
             "shortDescription: definition->shortDescription, " +
             "executionMode: definition->executionMode)"
         )

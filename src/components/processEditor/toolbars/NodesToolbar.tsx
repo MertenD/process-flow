@@ -1,52 +1,64 @@
 "use client"
 
-import React, {useEffect, useState} from 'react'
+import type React from "react"
+import {useEffect, useState} from "react"
 import {Card, CardContent} from "@/components/ui/card"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
+import {Input} from "@/components/ui/input"
 import {activityShapeStyle} from "../nodes/ActivityNode"
 import {startNodeShapeStyle} from "../nodes/StartNode"
 import {GatewayShapeStyle} from "../nodes/GatewayNode"
 import {endNodeShapeStyle} from "../nodes/EndNode"
 import {NodeTypes} from "@/model/NodeTypes"
 import useStore from "@/stores/store"
-import {NodeDefinitionPreview} from "@/model/NodeDefinition";
+import type {NodeDefinitionPreview} from "@/model/NodeDefinition"
+import DynamicIcon from "@/components/DynamicIcon";
+import {Flag, Play, Plus} from "lucide-react";
 
 interface NodesToolbarProps {
     nodeDefinitionPreviews: NodeDefinitionPreview[]
 }
 
-export default function NodesToolbar({ nodeDefinitionPreviews }: Readonly<NodesToolbarProps>) {
-    const onDragStart = (event: React.DragEvent, nodeType: string, nodeData: any) => {
-        event.dataTransfer.setData('application/reactflow', JSON.stringify({ nodeType, nodeData }))
-        event.dataTransfer.effectAllowed = 'move'
-    }
-
+export default function NodesToolbar({nodeDefinitionPreviews}: Readonly<NodesToolbarProps>) {
     const nodes = useStore((state) => state.nodes)
     const [isStartAlreadyPlaced, setIsStartAlreadyPlaced] = useState<boolean>(false)
+    const [searchTerm, setSearchTerm] = useState<string>("")
+    const [filteredActivities, setFilteredActivities] = useState<NodeDefinitionPreview[]>(nodeDefinitionPreviews)
 
     useEffect(() => {
-        setIsStartAlreadyPlaced(nodes.filter(node => node.type === NodeTypes.START_NODE).length !== 0)
+        setIsStartAlreadyPlaced(nodes.filter((node) => node.type === NodeTypes.START_NODE).length !== 0)
     }, [nodes])
 
-    const NodeItem = ({ label, style, nodeType, nodeData = {}, disabled = false, isMarginBottomDisabled = false }: {
-        label: string,
-        style: any,
-        nodeType: string,
-        nodeData?: any,
-        disabled?: boolean,
-        isMarginBottomDisabled?: boolean
+    useEffect(() => {
+        setFilteredActivities(
+            nodeDefinitionPreviews.filter((activity) => activity.name.toLowerCase().includes(searchTerm.toLowerCase())),
+        )
+    }, [searchTerm, nodeDefinitionPreviews])
+
+    const onDragStart = (event: React.DragEvent, nodeType: string, nodeData: any) => {
+        event.dataTransfer.setData("application/reactflow", JSON.stringify({nodeType, nodeData}))
+        event.dataTransfer.effectAllowed = "move"
+    }
+
+    const NodeItem = ({ label, icon, style, nodeType, nodeData = {}, disabled = false,}: {
+        label?: string
+        icon?: React.ReactNode
+        style: any
+        nodeType: string
+        nodeData?: any
+        disabled?: boolean
     }) => (
-        <TooltipProvider>
+        <TooltipProvider delayDuration={100}>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <div className={`flex flex-col items-center ${isMarginBottomDisabled ? "" : "mb-4"}`}>
                         <div
                             draggable={!disabled}
-                            style={{ ...style, opacity: disabled ? 0.5 : 1 }}
-                            className="border-2 border-primary cursor-move"
+                            style={{...style, opacity: disabled ? 0.5 : 1}}
+                            className="flex justify-center items-center border-2 border-primary cursor-move"
                             onDragStart={(event) => !disabled && onDragStart(event, nodeType, nodeData)}
-                        />
-                    </div>
+                        >
+                            { icon }
+                        </div>
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>{disabled ? `Already placed ${label}` : `${label}`}</p>
@@ -56,36 +68,67 @@ export default function NodesToolbar({ nodeDefinitionPreviews }: Readonly<NodesT
     )
 
     return (
-        <Card className="w-20">
+        <Card className="max-w-[220px]">
             <CardContent className="p-4">
-                <NodeItem
-                    label="Start"
-                    style={startNodeShapeStyle}
-                    nodeType={NodeTypes.START_NODE}
-                    disabled={isStartAlreadyPlaced}
-                />
-                <NodeItem
-                    label="End"
-                    style={endNodeShapeStyle}
-                    nodeType={NodeTypes.END_NODE}
-                />
-                { nodeDefinitionPreviews.map((nodeDefinitionPreview) => (
-                    <NodeItem
-                        key={`Activity-Node-${nodeDefinitionPreview.id}`}
-                        label={nodeDefinitionPreview.name}
-                        style={activityShapeStyle}
-                        nodeType={NodeTypes.ACTIVITY_NODE}
-                        nodeData={{
-                            nodeDefinitionId: nodeDefinitionPreview.id,
-                        }}
+                <div className="mb-6">
+                    <h3 className="text-sm font-semibold mb-4">Start/End</h3>
+                    <div className="flex flex-row gap-x-4 gap-y-4 flex-wrap">
+                        <NodeItem
+                            label="Start"
+                            icon={<Play className="w-4 h-4 stroke-primary"/>}
+                            style={startNodeShapeStyle}
+                            nodeType={NodeTypes.START_NODE}
+                            disabled={isStartAlreadyPlaced}
+                        />
+                        <NodeItem
+                            label="End"
+                            icon={<Flag className="w-4 h-4 stroke-primary"/>}
+                            style={endNodeShapeStyle}
+                            nodeType={NodeTypes.END_NODE}
+                        />
+                    </div>
+                </div>
+
+                <div className="mb-6">
+                    <h3 className="text-sm font-semibold mb-4">Gateway</h3>
+                    <div className="flex flex-row gap-x-4 gap-y-4 flex-wrap">
+                        <NodeItem
+                            label="Gateway"
+                            icon={<Plus className="stroke-primary" />}
+                            style={GatewayShapeStyle}
+                            nodeType={NodeTypes.GATEWAY_NODE}
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <h3 className="text-sm font-semibold mb-2">Activities</h3>
+                    <Input
+                        type="text"
+                        placeholder="Search activities..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="mb-4"
                     />
-                )) }
-                <NodeItem
-                    label="Gateway"
-                    style={GatewayShapeStyle}
-                    nodeType={NodeTypes.GATEWAY_NODE}
-                />
+                    <div className="max-h-60 overflow-y-auto">
+                        <div className="flex flex-row gap-x-4 gap-y-4 flex-wrap">
+                            {[...filteredActivities].map((nodeDefinitionPreview) => (
+                                <NodeItem
+                                    key={`Activity-Node-${nodeDefinitionPreview.id}`}
+                                    label={nodeDefinitionPreview.name}
+                                    icon={<DynamicIcon name={nodeDefinitionPreview.icon} className="stroke-primary" />}
+                                    style={activityShapeStyle}
+                                    nodeType={NodeTypes.ACTIVITY_NODE}
+                                    nodeData={{
+                                        nodeDefinitionId: nodeDefinitionPreview.id,
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </CardContent>
         </Card>
     )
 }
+

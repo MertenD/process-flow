@@ -8,13 +8,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Textarea} from "@/components/ui/textarea"
 import {Card, CardContent} from "@/components/ui/card"
 import {PlusCircle, Save} from "lucide-react"
-import {
-    NestedOptionsBase,
-    OptionsBase,
-    OptionsDefinition,
-    OptionsRow,
-    OptionsStructureType
-} from "@/model/OptionsModel";
+import {NestedOptionsBase, OptionsBase, OptionsRow, OptionsStructureType} from "@/model/OptionsModel";
 import OptionEditor from "@/components/shop/create-node/OptionEditor";
 import {toCamelCase} from "@/utils/shop/stringUtils";
 import {ExecutionMode} from "@/model/database/database.types";
@@ -29,6 +23,7 @@ export default function OptionsDefinitionEditor() {
     const [nodeDefinition, setNodeDefinition] = useState<NodeDefinition>({
         id: undefined,
         name: "",
+        icon: undefined,
         shortDescription: "",
         markdownDocumentation: "",
         executionMode: "Manual",
@@ -159,6 +154,18 @@ export default function OptionsDefinitionEditor() {
                         value={nodeDefinition.shortDescription}
                         onChange={(e) => updateNodeDefinition("shortDescription", e.target.value)}
                         placeholder={t("shortDescriptionPlaceholder")}
+                        className="mt-1"
+                    />
+                </div>
+                <div>
+                    <Label htmlFor="icon" className="text-sm font-medium">
+                        {t("iconLabel")}
+                    </Label>
+                    <Input
+                        id="icon"
+                        value={nodeDefinition.icon}
+                        onChange={(e) => updateNodeDefinition("icon", e.target.value)}
+                        placeholder={t("iconPlaceholder")}
                         className="mt-1"
                     />
                 </div>
