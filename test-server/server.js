@@ -5,7 +5,7 @@ const app = express();
 app.use((req, res, next) => {
     const origin = req.headers.origin;
 
-    if (origin === 'http://10.105.11.42') {
+    if (origin === 'http://10.105.11.42' || origin === "https://processflow.mertendieckmann.de") {
         res.header('Access-Control-Allow-Origin', origin);
         res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -93,7 +93,7 @@ app.post("/chatgpt", async (req, res) => {
     }
 });
 
-const PORT = 3030;
+const PORT = 3000;
 const server = app.listen(PORT, () => {
     console.log(`Server läuft auf Port ${PORT}`);
 });
