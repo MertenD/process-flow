@@ -73,6 +73,7 @@
     "react-syntax-highlighter": "^15.6.1",
     "reactflow": "^11.11.3",
     "recharts": "^2.12.7",
+    "sharp": "^0.33.5",
     "supabase": "^1.176.10",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
