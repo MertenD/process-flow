@@ -21,6 +21,10 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
     const tasks = await getTasks(params.teamId, userData.user.id)
     const currentTask = tasks?.find(task => task.id.toString() === params.taskId)
 
+    if (currentTask && currentTask.status && currentTask?.status !== "Todo") {
+        redirect(`/${params.teamId}/tasks`)
+    }
+
     async function buildTaskUrl(task: ManualTaskWithOutputs | undefined, userId: string): Promise<string | null> {
         if (task == null) return null
         let taskUrl = task.execution_url
