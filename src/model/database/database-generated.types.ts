@@ -984,6 +984,13 @@ export type Database = {
         }
         Returns: number
       }
+      fail_flow_element_instance: {
+        Args: {
+          flow_element_instance_id_param: number
+          error_message: string
+        }
+        Returns: undefined
+      }
       get_manual_tasks_with_replaced_data: {
         Args: {
           team_id: number
@@ -1028,6 +1035,7 @@ export type Database = {
         | "Todo"
         | "In Progress"
         | "Completed"
+        | "Error"
       flow_element_instance_status__old_version_to_be_dropped:
         | "Created"
         | "In Progress"
