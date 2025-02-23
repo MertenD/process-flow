@@ -15,6 +15,7 @@ import {
 import {Button} from "@/components/ui/button"
 import {ArrowUpDown} from "lucide-react"
 import {FlowElementInstanceWithFlowElement} from "@/app/[teamId]/monitoring/page";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 
 const columns: ColumnDef<FlowElementInstanceWithFlowElement>[] = [
     {
@@ -79,15 +80,23 @@ const columns: ColumnDef<FlowElementInstanceWithFlowElement>[] = [
         },
         cell: ({row}) => {
             const status = row.getValue("status") as string
-            return (
-                <div className={`px-2 py-1 rounded-full text-xs font-medium
-          ${status === 'Completed' ? 'bg-[#00C49F]' :
-                    status === 'In Progress' ? 'bg-[#0088FE]' :
-                        status === 'Todo' ? 'bg-[#0088FE]' :
-                            'bg-[#FFBB28]'}`}>
-                    {status}
-                </div>
-            )
+            const statusMessage = row.original.status_message as string | null
+            return <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <div className={`px-2 py-1 rounded-full text-xs font-medium
+                  ${status === 'Completed' ? 'bg-[#00C49F]' :
+                            status === 'In Progress' ? 'bg-[#0088FE]' :
+                                status === 'Todo' ? 'bg-[#0088FE]' :
+                                    'bg-[#FFBB28]'}`}>
+                            {status}
+                        </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        { statusMessage ? statusMessage : "" }
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
         },
     },
     {

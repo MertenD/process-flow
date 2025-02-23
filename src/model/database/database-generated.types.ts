@@ -209,6 +209,7 @@ export type Database = {
           instance_of: number
           is_part_of: number
           status: Database["public"]["Enums"]["flow_element_instance_status"]
+          status_message: string | null
         }
         Insert: {
           completed_at?: string | null
@@ -218,6 +219,7 @@ export type Database = {
           instance_of: number
           is_part_of: number
           status?: Database["public"]["Enums"]["flow_element_instance_status"]
+          status_message?: string | null
         }
         Update: {
           completed_at?: string | null
@@ -227,6 +229,7 @@ export type Database = {
           instance_of?: number
           is_part_of?: number
           status?: Database["public"]["Enums"]["flow_element_instance_status"]
+          status_message?: string | null
         }
         Relationships: [
           {
@@ -1036,10 +1039,6 @@ export type Database = {
         | "In Progress"
         | "Completed"
         | "Error"
-      flow_element_instance_status__old_version_to_be_dropped:
-        | "Created"
-        | "In Progress"
-        | "Completed"
       gamification_type: "None" | "Points" | "Badges"
       node_type:
         | "challengeNode"
