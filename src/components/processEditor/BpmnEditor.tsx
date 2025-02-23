@@ -219,11 +219,12 @@ function DragAndDropFlow({ processModelId, nodeDefinitionPreviews }: Readonly<Dr
             <OnCanvasNodesToolbar
                 open={openOnCanvasNodeSelector}
                 position={lastEventPosition}
-                onClose={(nodeType: NodeTypes | null) => {
+                nodeDefinitionPreviews={nodeDefinitionPreviews}
+                onClose={(nodeType: NodeTypes | null, nodeData?: any) => {
                     setOpenOnCanvasNodeSelector(false)
 
                     if (nodeType !== null && connectStartParams.current !== null && connectStartParams.current?.nodeId !== null) {
-                        const id = addNodeAtPosition(reactFlowInstance.project(lastEventPosition), nodeType, processModelId)
+                        const id = addNodeAtPosition(reactFlowInstance.project(lastEventPosition), nodeType, nodeData)
                         reactFlowInstance.addEdges({
                             id,
                             source: connectStartParams.current.nodeId,
