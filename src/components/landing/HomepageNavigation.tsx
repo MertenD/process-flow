@@ -22,9 +22,6 @@ export default function HomepageNavigation({ isFixed }: HomepageNavigationProps)
                       className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     Features
                 </Link>
-                <Link href="/#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    Pricing
-                </Link>
                 <Link href="/#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     FAQ
                 </Link>
@@ -34,7 +31,7 @@ export default function HomepageNavigation({ isFixed }: HomepageNavigationProps)
             </div>
 
             <div className="flex items-center space-x-4">
-                <LinkButton href="/authenticate" className="hidden md:flex">
+                <LinkButton href="/authenticate">
                     Sign in
                 </LinkButton>
             </div>
