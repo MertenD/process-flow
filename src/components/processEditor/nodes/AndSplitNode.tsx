@@ -44,8 +44,8 @@ export default function AndSplitNode({ id, selected, data }: NodeProps<AndSplitN
                 <X className="w-6 h-6" />
             </div>
             <Handle style={handleStyle} type="target" position={Position.Left} id="a"/>
-            <Handle style={handleStyle} type="source" position={Position.Top} id="b"/>
-            <Handle style={handleStyle} type="source" position={Position.Bottom} id="c"/>
+            <Handle style={handleStyle} type="source" position={Position.Top} id="1"/>
+            <Handle style={handleStyle} type="source" position={Position.Bottom} id="2"/>
         </div>
     )
 }
