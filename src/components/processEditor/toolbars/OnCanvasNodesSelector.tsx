@@ -12,7 +12,9 @@ import { NodeTypes } from "@/model/NodeTypes"
 import {Input} from "@/components/ui/input";
 import DynamicIcon from "@/components/DynamicIcon";
 import type {NodeDefinitionPreview} from "@/model/NodeDefinition";
-import {Flag, Plus} from "lucide-react";
+import {Flag, Merge, Plus, Split} from "lucide-react";
+import {AndSplitShapeStyle} from "@/components/processEditor/nodes/AndSplitNode";
+import {AndJoinShapeStyle} from "@/components/processEditor/nodes/AndJoinNode";
 
 export interface OnCanvasNodesToolbarProps {
     open: boolean
@@ -60,7 +62,7 @@ export default function OnCanvasNodesToolbar(props: OnCanvasNodesToolbarProps) {
     const NodeItem = (
         { label, style, nodeType, icon, nodeData }: { label: string, style: any, icon?: React.ReactNode, nodeType: NodeTypes, nodeData?: any }
     ) => (
-        <TooltipProvider>
+        <TooltipProvider delayDuration={0}>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button
@@ -76,7 +78,7 @@ export default function OnCanvasNodesToolbar(props: OnCanvasNodesToolbarProps) {
                         </div>
                     </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="bg-primary">
                     <p>Add {label} node</p>
                 </TooltipContent>
             </Tooltip>
@@ -111,6 +113,18 @@ export default function OnCanvasNodesToolbar(props: OnCanvasNodesToolbarProps) {
                         style={GatewayShapeStyle}
                         icon={<Plus className="w-4 h-4 stroke-primary" />}
                         nodeType={NodeTypes.GATEWAY_NODE}
+                    />
+                    <NodeItem
+                        label={"AND Split"}
+                        icon={<Split name="and-split" className="stroke-primary" />}
+                        style={AndSplitShapeStyle}
+                        nodeType={NodeTypes.AND_SPLIT_NODE}
+                    />
+                    <NodeItem
+                        label={"AND Join"}
+                        icon={<Merge name="and-join" className="stroke-primary" />}
+                        style={AndJoinShapeStyle}
+                        nodeType={NodeTypes.AND_JOIN_NODE}
                     />
                     <div>
                         <h3 className="text-sm font-semibold mb-2">Activities</h3>
