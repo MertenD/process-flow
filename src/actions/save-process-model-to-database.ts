@@ -97,6 +97,8 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
                 next_flow_element_id_1: targetNodeIds[0],
                 next_flow_element_id_2: targetNodeIds[1]
             }, {onConflict: "flow_element_id"})
+        } else if (nodeType === NodeTypes.AND_JOIN_NODE) {
+            // TODO Implement
         } else if (nodeType === NodeTypes.START_NODE) {
             const outgoingEdge = edges.find(edge => edge.source === node.id)
             let targetNodeId = null

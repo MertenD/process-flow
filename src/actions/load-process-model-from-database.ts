@@ -104,6 +104,8 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                     .single()
 
                 nodeData = flowElementData?.data
+            } else if (nodeType === NodeTypes.AND_JOIN_NODE) {
+                // TODO Implement
             } else if (nodeType === NodeTypes.START_NODE) {
                 const { data: startElementData } = await supabase
                     .from("start_element")
