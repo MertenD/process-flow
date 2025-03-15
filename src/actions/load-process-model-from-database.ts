@@ -29,9 +29,10 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
             if (nodeType === NodeTypes.ACTIVITY_NODE) {
                 const { data: activityElementData } = await supabase
                     .from("activity_element")
-                    .select("next_flow_element_id")
+                    .select("next_flow_element_id, next_flow_element_handle")
                     .eq("flow_element_id", node.id)
                     .single()
+
                 nextFlowElementId = activityElementData?.next_flow_element_id
 
                 const { data: flowElementData } = await supabase
@@ -44,7 +45,8 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                 edges.push({
                     id: `${node.id}-${nextFlowElementId}`,
                     source: node.id.toString(),
-                    target: nextFlowElementId?.toString()
+                    target: nextFlowElementId?.toString(),
+                    targetHandle: activityElementData?.next_flow_element_handle
                 } as Edge)
             } else if (nodeType === NodeTypes.GATEWAY_NODE) {
                 const {data} = await supabase
@@ -58,14 +60,16 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                     id: `${node.id}-${falseFlowElementId}`,
                     source: node.id.toString(),
                     target: falseFlowElementId?.toString() || "",
-                    sourceHandle: "False"
+                    sourceHandle: "False",
+                    targetHandle: data?.next_flow_element_false_handle
                 })
                 const trueFlowElementId = data?.next_flow_element_true_id
                 edges.push({
                     id: `${node.id}-${trueFlowElementId}`,
                     source: node.id.toString(),
                     target: trueFlowElementId?.toString() || "",
-                    sourceHandle: "True"
+                    sourceHandle: "True",
+                    targetHandle: data?.next_flow_element_true_handle
                 })
 
                 const {data: flowElementData} = await supabase
@@ -87,14 +91,16 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                     id: `${node.id}-${nextFlowElementId1}`,
                     source: node.id.toString(),
                     target: nextFlowElementId1?.toString() || "",
-                    sourceHandle: "1"
+                    sourceHandle: "1",
+                    targetHandle: data?.next_flow_element_handle_1
                 })
                 const nextFlowElementId2 = data?.next_flow_element_id_2
                 edges.push({
                     id: `${node.id}-${nextFlowElementId2}`,
                     source: node.id.toString(),
                     target: nextFlowElementId2?.toString() || "",
-                    sourceHandle: "2"
+                    sourceHandle: "2",
+                    targetHandle: data?.next_flow_element_handle_2
                 })
 
                 const {data: flowElementData} = await supabase
@@ -105,7 +111,21 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
 
                 nodeData = flowElementData?.data
             } else if (nodeType === NodeTypes.AND_JOIN_NODE) {
-                // TODO Implement
+                const {data} = await supabase
+                    .from("and_join_element")
+                    .select("*")
+                    .eq("flow_element_id", node.id)
+                    .single()
+
+                const nextFlowElementId = data?.next_flow_element_id
+                if (nextFlowElementId) {
+                    edges.push({
+                        id: `${node.id}-${nextFlowElementId}`,
+                        source: node.id.toString(),
+                        target: nextFlowElementId?.toString() || "",
+                        targetHandle: data?.next_flow_element_handle
+                    })
+                }
             } else if (nodeType === NodeTypes.START_NODE) {
                 const { data: startElementData } = await supabase
                     .from("start_element")
@@ -124,7 +144,8 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                 edges.push({
                     id: `${node.id}-${nextFlowElementId}`,
                     source: node.id.toString(),
-                    target: nextFlowElementId?.toString()
+                    target: nextFlowElementId?.toString(),
+                    targetHandle: startElementData?.next_flow_element_handle
                 } as Edge)
             } else if (nodeType === NodeTypes.END_NODE) {
                 // No data to load

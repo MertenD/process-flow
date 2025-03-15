@@ -43,8 +43,8 @@ export default function AndJoinNode({ id, selected, data }: NodeProps<AndJoinNod
                 <X className="w-6 h-6" />
             </div>
             <Handle style={handleStyle} type="source" position={Position.Right} id="a"/>
-            <Handle style={handleStyle} type="target" position={Position.Top} id="b"/>
-            <Handle style={handleStyle} type="target" position={Position.Bottom} id="c"/>
+            <Handle style={handleStyle} type="target" position={Position.Top} id="1"/>
+            <Handle style={handleStyle} type="target" position={Position.Bottom} id="2"/>
         </div>
     )
 }

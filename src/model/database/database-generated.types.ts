@@ -39,18 +39,21 @@ export type Database = {
           created_at: string
           flow_element_id: number
           id: number
+          next_flow_element_handle: string | null
           next_flow_element_id: number | null
         }
         Insert: {
           created_at?: string
           flow_element_id: number
           id?: number
+          next_flow_element_handle?: string | null
           next_flow_element_id?: number | null
         }
         Update: {
           created_at?: string
           flow_element_id?: number
           id?: number
+          next_flow_element_handle?: string | null
           next_flow_element_id?: number | null
         }
         Relationships: [
@@ -70,11 +73,72 @@ export type Database = {
           },
         ]
       }
+      and_join_element: {
+        Row: {
+          created_at: string
+          flow_element_id: number
+          id: number
+          next_flow_element_handle: string | null
+          next_flow_element_id: number | null
+          previous_flow_element_id_1: number | null
+          previous_flow_element_id_2: number | null
+        }
+        Insert: {
+          created_at?: string
+          flow_element_id: number
+          id?: number
+          next_flow_element_handle?: string | null
+          next_flow_element_id?: number | null
+          previous_flow_element_id_1?: number | null
+          previous_flow_element_id_2?: number | null
+        }
+        Update: {
+          created_at?: string
+          flow_element_id?: number
+          id?: number
+          next_flow_element_handle?: string | null
+          next_flow_element_id?: number | null
+          previous_flow_element_id_1?: number | null
+          previous_flow_element_id_2?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_and_join_element_flow_element_id_fkey"
+            columns: ["flow_element_id"]
+            isOneToOne: true
+            referencedRelation: "flow_element"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_and_join_element_next_flow_element_id_fkey"
+            columns: ["next_flow_element_id"]
+            isOneToOne: false
+            referencedRelation: "flow_element"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_and_join_element_previous_flow_element_id_1_fkey"
+            columns: ["previous_flow_element_id_1"]
+            isOneToOne: false
+            referencedRelation: "flow_element"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_and_join_element_previous_flow_element_id_2_fkey"
+            columns: ["previous_flow_element_id_2"]
+            isOneToOne: false
+            referencedRelation: "flow_element"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       and_split_element: {
         Row: {
           created_at: string
           flow_element_id: number
           id: number
+          next_flow_element_handle_1: string | null
+          next_flow_element_handle_2: string | null
           next_flow_element_id_1: number | null
           next_flow_element_id_2: number | null
         }
@@ -82,6 +146,8 @@ export type Database = {
           created_at?: string
           flow_element_id: number
           id?: number
+          next_flow_element_handle_1?: string | null
+          next_flow_element_handle_2?: string | null
           next_flow_element_id_1?: number | null
           next_flow_element_id_2?: number | null
         }
@@ -89,6 +155,8 @@ export type Database = {
           created_at?: string
           flow_element_id?: number
           id?: number
+          next_flow_element_handle_1?: string | null
+          next_flow_element_handle_2?: string | null
           next_flow_element_id_1?: number | null
           next_flow_element_id_2?: number | null
         }
@@ -313,21 +381,27 @@ export type Database = {
           created_at: string
           flow_element_id: number
           id: number
+          next_flow_element_false_handle: string | null
           next_flow_element_false_id: number | null
+          next_flow_element_true_handle: string | null
           next_flow_element_true_id: number | null
         }
         Insert: {
           created_at?: string
           flow_element_id: number
           id?: number
+          next_flow_element_false_handle?: string | null
           next_flow_element_false_id?: number | null
+          next_flow_element_true_handle?: string | null
           next_flow_element_true_id?: number | null
         }
         Update: {
           created_at?: string
           flow_element_id?: number
           id?: number
+          next_flow_element_false_handle?: string | null
           next_flow_element_false_id?: number | null
+          next_flow_element_true_handle?: string | null
           next_flow_element_true_id?: number | null
         }
         Relationships: [
@@ -720,18 +794,21 @@ export type Database = {
           created_at: string
           flow_element_id: number
           id: number
+          next_flow_element_handle: string | null
           next_flow_element_id: number | null
         }
         Insert: {
           created_at?: string
           flow_element_id: number
           id?: number
+          next_flow_element_handle?: string | null
           next_flow_element_id?: number | null
         }
         Update: {
           created_at?: string
           flow_element_id?: number
           id?: number
+          next_flow_element_handle?: string | null
           next_flow_element_id?: number | null
         }
         Relationships: [

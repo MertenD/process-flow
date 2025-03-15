@@ -64,6 +64,7 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
                 // @ts-ignore
                 flow_element_id: oldNewIdMapping.get(node.id),
                 next_flow_element_id: targetNodeId,
+                next_flow_element_handle: outgoingEdge?.targetHandle
             }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.GATEWAY_NODE) {
             const outgoingEdges = edges.filter(edge => edge.source === node.id)
@@ -84,21 +85,40 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
                 // @ts-ignore
                 flow_element_id: oldNewIdMapping.get(node.id),
                 next_flow_element_false_id: falseTargetNodeId,
-                next_flow_element_true_id: trueTargetNodeId
+                next_flow_element_false_handle: falseOutgoingEdge?.targetHandle,
+                next_flow_element_true_id: trueTargetNodeId,
+                next_flow_element_true_handle: trueOutgoingEdge?.targetHandle
             }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.AND_SPLIT_NODE) {
             const outgoingEdges = edges.filter(edge => edge.source === node.id)
 
             const targetNodeIds = outgoingEdges.map(edge => oldNewIdMapping.get(edge.target))
 
-            const res = await supabase.from("and_split_element").upsert({
+            await supabase.from("and_split_element").upsert({
                 // @ts-ignore
                 flow_element_id: oldNewIdMapping.get(node.id),
                 next_flow_element_id_1: targetNodeIds[0],
-                next_flow_element_id_2: targetNodeIds[1]
+                next_flow_element_handle_1: outgoingEdges[0]?.targetHandle,
+                next_flow_element_id_2: targetNodeIds[1],
+                next_flow_element_handle_2: outgoingEdges[1]?.targetHandle
             }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.AND_JOIN_NODE) {
-            // TODO Implement
+            const outgoingEdge = edges.find(edge => edge.source === node.id)
+
+            console.log("AND JOIN NODE", node.id, edges.filter(edge => edge.target === node.id))
+
+            const incomingEdge1 = edges.filter(edge => edge.target === node.id).find(edge => edge.targetHandle === "1")
+            const incomingEdge2 = edges.filter(edge => edge.target === node.id).find(edge => edge.targetHandle === "2")
+
+            await supabase.from("and_join_element").upsert({
+                // @ts-ignore
+                flow_element_id: oldNewIdMapping.get(node.id),
+                next_flow_element_id: outgoingEdge ? oldNewIdMapping.get(outgoingEdge.target) : null,
+                next_flow_element_handle: outgoingEdge?.targetHandle,
+                previous_flow_element_id_1: incomingEdge1 ? oldNewIdMapping.get(incomingEdge1.source) : null,
+                previous_flow_element_id_2: incomingEdge2 ? oldNewIdMapping.get(incomingEdge2.source) : null
+            }, { onConflict: "flow_element_id" })
+
         } else if (nodeType === NodeTypes.START_NODE) {
             const outgoingEdge = edges.find(edge => edge.source === node.id)
             let targetNodeId = null
@@ -109,7 +129,8 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
             await supabase.from("start_element").upsert({
                 // @ts-ignore
                 flow_element_id: oldNewIdMapping.get(node.id),
-                next_flow_element_id: targetNodeId
+                next_flow_element_id: targetNodeId,
+                next_flow_element_handle: outgoingEdge?.targetHandle
             }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.END_NODE) {
             await supabase.from("end_element").upsert({
