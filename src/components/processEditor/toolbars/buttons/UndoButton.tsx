@@ -23,7 +23,7 @@ export default function UndoButton() {
                     <span className="sr-only">{t("undoButton")}</span>
                 </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="bg-primary">
                 <p>{t("undoButton")}</p>
             </TooltipContent>
         </Tooltip>
