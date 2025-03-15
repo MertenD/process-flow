@@ -47,7 +47,7 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                     target: nextFlowElementId?.toString()
                 } as Edge)
             } else if (nodeType === NodeTypes.GATEWAY_NODE) {
-                const { data } = await supabase
+                const {data} = await supabase
                     .from("gateway_element")
                     .select("*")
                     .eq("flow_element_id", node.id)
@@ -68,7 +68,36 @@ export default async function (processModelId: number): Promise<{ nodes: Node[],
                     sourceHandle: "True"
                 })
 
-                const { data: flowElementData } = await supabase
+                const {data: flowElementData} = await supabase
+                    .from("flow_element")
+                    .select("data")
+                    .eq("id", node.id)
+                    .single()
+
+                nodeData = flowElementData?.data
+            } else if (nodeType === NodeTypes.AND_SPLIT_NODE) {
+                const {data} = await supabase
+                    .from("and_split_element")
+                    .select("*")
+                    .eq("flow_element_id", node.id)
+                    .single()
+
+                const nextFlowElementId1 = data?.next_flow_element_id_1
+                edges.push({
+                    id: `${node.id}-${nextFlowElementId1}`,
+                    source: node.id.toString(),
+                    target: nextFlowElementId1?.toString() || "",
+                    sourceHandle: "1"
+                })
+                const nextFlowElementId2 = data?.next_flow_element_id_2
+                edges.push({
+                    id: `${node.id}-${nextFlowElementId2}`,
+                    source: node.id.toString(),
+                    target: nextFlowElementId2?.toString() || "",
+                    sourceHandle: "2"
+                })
+
+                const {data: flowElementData} = await supabase
                     .from("flow_element")
                     .select("data")
                     .eq("id", node.id)

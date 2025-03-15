@@ -70,6 +70,52 @@ export type Database = {
           },
         ]
       }
+      and_split_element: {
+        Row: {
+          created_at: string
+          flow_element_id: number
+          id: number
+          next_flow_element_id_1: number | null
+          next_flow_element_id_2: number | null
+        }
+        Insert: {
+          created_at?: string
+          flow_element_id: number
+          id?: number
+          next_flow_element_id_1?: number | null
+          next_flow_element_id_2?: number | null
+        }
+        Update: {
+          created_at?: string
+          flow_element_id?: number
+          id?: number
+          next_flow_element_id_1?: number | null
+          next_flow_element_id_2?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_and_split_element_flow_element_id_fkey"
+            columns: ["flow_element_id"]
+            isOneToOne: true
+            referencedRelation: "flow_element"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_and_split_element_next_flow_element_id_1_fkey"
+            columns: ["next_flow_element_id_1"]
+            isOneToOne: false
+            referencedRelation: "flow_element"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_and_split_element_next_flow_element_id_2_fkey"
+            columns: ["next_flow_element_id_2"]
+            isOneToOne: false
+            referencedRelation: "flow_element"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       config: {
         Row: {
           key: string
@@ -1048,6 +1094,8 @@ export type Database = {
         | "endNode"
         | "infoNode"
         | "gamificationEventNode"
+        | "andSplitNode"
+        | "andJoinNode"
       page: "Editor" | "Tasks" | "Monitoring" | "Team" | "Stats" | "Shop"
       point_type: "Experience" | "Coins"
       points_application_method: "setTo" | "incrementBy" | "decrementBy"

@@ -86,6 +86,17 @@ export default async function(nodes: Node[], edges: Edge[], processModelId: numb
                 next_flow_element_false_id: falseTargetNodeId,
                 next_flow_element_true_id: trueTargetNodeId
             }, {onConflict: "flow_element_id"})
+        } else if (nodeType === NodeTypes.AND_SPLIT_NODE) {
+            const outgoingEdges = edges.filter(edge => edge.source === node.id)
+
+            const targetNodeIds = outgoingEdges.map(edge => oldNewIdMapping.get(edge.target))
+
+            const res = await supabase.from("and_split_element").upsert({
+                // @ts-ignore
+                flow_element_id: oldNewIdMapping.get(node.id),
+                next_flow_element_id_1: targetNodeIds[0],
+                next_flow_element_id_2: targetNodeIds[1]
+            }, {onConflict: "flow_element_id"})
         } else if (nodeType === NodeTypes.START_NODE) {
             const outgoingEdge = edges.find(edge => edge.source === node.id)
             let targetNodeId = null
