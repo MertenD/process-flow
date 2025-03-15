@@ -83,7 +83,7 @@ export default function CreateInstanceButton({ processModelId }: Readonly<Create
                         </Button>
                     </DialogTrigger>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="bg-primary">
                     <p>{t("instanceButton")}</p>
                 </TooltipContent>
             </Tooltip>

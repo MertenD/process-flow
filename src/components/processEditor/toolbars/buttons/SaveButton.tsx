@@ -69,7 +69,7 @@ export default function SaveButton({ processModelId }: SaveButtonProps) {
                     <span className="sr-only">{t("saveButton")}</span>
                 </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="bg-primary">
                 <p>{t("saveButton")}</p>
             </TooltipContent>
         </Tooltip>

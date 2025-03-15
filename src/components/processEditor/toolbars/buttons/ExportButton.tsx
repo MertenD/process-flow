@@ -27,7 +27,7 @@ export default function ExportButton() {
                     <a id="downloadExport" style={{ display: "none" }}></a>
                 </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="bg-primary">
                 <p>{t("exportButton")}</p>
             </TooltipContent>
         </Tooltip>

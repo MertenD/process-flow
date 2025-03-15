@@ -22,7 +22,7 @@ export default function RedoButton() {
                     <span className="sr-only">{t("redoButton")}</span>
                 </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="bg-primary">
                 <p>{t("redoButton")}</p>
             </TooltipContent>
         </Tooltip>

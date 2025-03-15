@@ -19,6 +19,8 @@ import GatewayNode from "../components/processEditor/nodes/GatewayNode";
 import EndNode from "../components/processEditor/nodes/EndNode";
 import {NodeTypes} from "@/model/NodeTypes";
 import {PointsType} from "@/model/PointsType";
+import AndSplitNode from "@/components/processEditor/nodes/AndSplitNode";
+import AndJoinNode from "@/components/processEditor/nodes/AndJoinNode";
 
 export type RFState = {
     nodes: Node[];
@@ -61,7 +63,9 @@ export const useStore = createWithEqualityFn<RFState>((set, get) => ({
         activityNode: ActivityNode,
         startNode: StartNode,
         endNode: EndNode,
-        gatewayNode: GatewayNode
+        gatewayNode: GatewayNode,
+        andSplitNode: AndSplitNode,
+        andJoinNode: AndJoinNode
     },
     onNodesChange: (changes: NodeChange[]) => {
         set({

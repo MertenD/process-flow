@@ -10,6 +10,8 @@ import {OptionsDefinition} from "@/model/OptionsModel";
 import getNodeDefinition from "@/actions/shop/get-node-definition";
 import useStore from "@/stores/store";
 import {ActivityNodeData} from "@/components/processEditor/nodes/ActivityNode";
+import {getAndSplitOptions} from "@/components/processEditor/nodes/AndSplitNode";
+import {getAndJoinOptions} from "@/components/processEditor/nodes/AndJoinNode";
 
 export interface OptionsToolbarProps {
     teamId: number
@@ -79,6 +81,12 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
             break
         case NodeTypes.START_NODE:
             options = <DynamicOptions optionsDefinition={getStartOptionsDefinition(selectedNode.id)} teamId={teamId}/>
+            break
+        case NodeTypes.AND_SPLIT_NODE:
+            options = <DynamicOptions optionsDefinition={getAndSplitOptions(selectedNode.id)} teamId={teamId}/>
+            break
+        case NodeTypes.AND_JOIN_NODE:
+            options = <DynamicOptions optionsDefinition={getAndJoinOptions(selectedNode.id)} teamId={teamId}/>
             break
         default:
             options = <h2 className="text-2xl font-semibold">{selectedNode.type}</h2>
