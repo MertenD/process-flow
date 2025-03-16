@@ -1,25 +1,19 @@
 "use client"
 
-import React, {useState} from "react"
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Label} from "@/components/ui/label"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
-import {Textarea} from "@/components/ui/textarea"
-import {Card, CardContent} from "@/components/ui/card"
-import {PlusCircle, Save} from "lucide-react"
-import {NestedOptionsBase, OptionsBase, OptionsRow, OptionsStructureType} from "@/model/OptionsModel";
-import OptionEditor from "@/components/shop/create-node/OptionEditor";
-import {toCamelCase} from "@/utils/shop/stringUtils";
-import {ExecutionMode} from "@/model/database/database.types";
-import {useTranslations} from "next-intl";
-import {NodeDefinition} from "@/model/NodeDefinition";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import type { NodeDefinition } from "@/model/NodeDefinition"
+import { OptionsStructureType } from "@/model/OptionsModel"
+import { StepInfo } from "@/components/shop/create-node/StepInfo"
+import { StepGeneralInfo } from "@/components/shop/create-node/StepGeneralInfo"
+import { StepOptionsConfig } from "@/components/shop/create-node/StepOptionsConfig"
+import { StepServerConfig } from "@/components/shop/create-node/StepServerConfig"
+import { Progress } from "@/components/ui/progress"
+import { Check, ChevronLeft, ChevronRight, Save } from "lucide-react"
 
-const executionModes: ExecutionMode[] = ["Manual", "Automatic"]
-
-export default function OptionsDefinitionEditor() {
-    const t = useTranslations("shop.createNodePage")
-
+export default function CreateNodePage() {
+    const [currentStep, setCurrentStep] = useState(1)
     const [nodeDefinition, setNodeDefinition] = useState<NodeDefinition>({
         id: undefined,
         name: "",
@@ -32,62 +26,26 @@ export default function OptionsDefinitionEditor() {
             title: "",
             nodeId: "",
             structure: [],
-        }
+        },
     })
-    const [selectedOptionType, setSelectedOptionType] = useState<OptionsStructureType | null>(null)
 
-    const updateNodeDefinition = (field: keyof NodeDefinition, value: string) => {
-        setNodeDefinition((prev) => {
-            const updated = { ...prev, [field]: value }
-            if (field === "name") {
-                updated.optionsDefinition = { ...updated.optionsDefinition, title: value }
-            }
-            return updated
-        })
+    const updateNodeDefinition = (updatedDefinition: NodeDefinition) => {
+        setNodeDefinition(updatedDefinition)
     }
 
-    const addOption = () => {
-        if (selectedOptionType) {
-            const newOption: OptionsBase = {
-                type: selectedOptionType,
-                ...(selectedOptionType === OptionsStructureType.SELECT ||
-                selectedOptionType === OptionsStructureType.SELECT_WITH_CUSTOM ||
-                selectedOptionType === OptionsStructureType.CHECKBOX
-                    ? { options: [] }
-                    : {}),
-            }
-            setNodeDefinition((prev) => ({
-                ...prev,
-                optionsDefinition: {
-                    ...prev.optionsDefinition,
-                    structure: [...prev.optionsDefinition.structure, newOption],
-                },
-            }))
-            setSelectedOptionType(null)
+    const handleNext = () => {
+        if (currentStep < 4) {
+            setCurrentStep(currentStep + 1)
         }
     }
 
-    const updateOption = (index: number, updatedOption: OptionsBase) => {
-        setNodeDefinition((prev) => ({
-            ...prev,
-            optionsDefinition: {
-                ...prev.optionsDefinition,
-                structure: prev.optionsDefinition.structure.map((option, i) => (i === index ? updatedOption : option)),
-            },
-        }))
+    const handlePrevious = () => {
+        if (currentStep > 1) {
+            setCurrentStep(currentStep - 1)
+        }
     }
 
-    const removeOption = (index: number) => {
-        setNodeDefinition((prev) => ({
-            ...prev,
-            optionsDefinition: {
-                ...prev.optionsDefinition,
-                structure: prev.optionsDefinition.structure.filter((_, i) => i !== index),
-            },
-        }))
-    }
-
-    const processNestedStructure = (structure: OptionsBase[]): OptionsBase[] => {
+    const processNestedStructure = (structure: any[]): any[] => {
         return structure.map((option) => {
             const processedOption = { ...option }
             if ("label" in option && option.label) {
@@ -104,11 +62,11 @@ export default function OptionsDefinitionEditor() {
             }
 
             if (option.type === OptionsStructureType.ROW && "structure" in option) {
-                (processedOption as OptionsRow).structure = processNestedStructure((option as OptionsRow).structure)
+                processedOption.structure = processNestedStructure(option.structure)
             }
 
             if ("options" in option && Array.isArray(option.options)) {
-                (processedOption as NestedOptionsBase).options = option.options.map((opt) => ({
+                processedOption.options = option.options.map((opt: { dependentStructure: any[] }) => ({
                     ...opt,
                     dependentStructure: opt.dependentStructure ? processNestedStructure(opt.dependentStructure) : undefined,
                 }))
@@ -118,7 +76,7 @@ export default function OptionsDefinitionEditor() {
         })
     }
 
-    const logNodeDefinition = () => {
+    const saveNodeDefinition = () => {
         const definitionWithKeyStrings = {
             ...nodeDefinition,
             optionsDefinition: {
@@ -129,128 +87,98 @@ export default function OptionsDefinitionEditor() {
         console.log(JSON.stringify(definitionWithKeyStrings, null, 2))
     }
 
-    return <>
-        <h1 className="text-3xl font-bold mb-6">{t("title")}</h1>
-        <Card className="mb-6 pt-4">
-            <CardContent className="space-y-4">
-                <div>
-                    <Label htmlFor="name" className="text-sm font-medium">
-                        {t("nameLabel")}
-                    </Label>
-                    <Input
-                        id="name"
-                        value={nodeDefinition.name}
-                        onChange={(e) => updateNodeDefinition("name", e.target.value)}
-                        placeholder={t("namePlaceholder")}
-                        className="mt-1"
+    return (
+        <div className="container mx-auto py-8 px-4 max-w-6xl">
+            <h1 className="text-3xl font-bold mb-6">Create Node</h1>
+
+            <div className="mb-8">
+                <div className="flex justify-between mb-2">
+                    {[1, 2, 3, 4].map((step) => (
+                        <div
+                            key={step}
+                            className={`flex items-center ${currentStep === step ? "text-primary font-medium" : "text-muted-foreground"}`}
+                        >
+                            <div
+                                className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 
+                ${
+                                    currentStep > step
+                                        ? "bg-primary text-primary-foreground"
+                                        : currentStep === step
+                                            ? "border-2 border-primary text-primary"
+                                            : "border-2 border-muted-foreground text-muted-foreground"
+                                }`}
+                            >
+                                {currentStep > step ? <Check className="h-4 w-4" /> : step}
+                            </div>
+                            {step === 1 && "Information"}
+                            {step === 2 && "General Details"}
+                            {step === 3 && "Options"}
+                            {step === 4 && "Server Config"}
+                        </div>
+                    ))}
+                </div>
+                <Progress value={(currentStep / 4) * 100} className="h-2" />
+            </div>
+
+            <Card className="p-6">
+                {currentStep === 1 && <StepInfo onNext={handleNext} />}
+
+                {currentStep === 2 && (
+                    <StepGeneralInfo
+                        nodeDefinition={nodeDefinition}
+                        updateNodeDefinition={updateNodeDefinition}
+                        onNext={handleNext}
+                        onPrevious={handlePrevious}
                     />
-                </div>
-                <div>
-                    <Label htmlFor="shortDescription" className="text-sm font-medium">
-                        {t("shortDescriptionLabel")}
-                    </Label>
-                    <Input
-                        id="shortDescription"
-                        value={nodeDefinition.shortDescription}
-                        onChange={(e) => updateNodeDefinition("shortDescription", e.target.value)}
-                        placeholder={t("shortDescriptionPlaceholder")}
-                        className="mt-1"
+                )}
+
+                {currentStep === 3 && (
+                    <StepOptionsConfig
+                        nodeDefinition={nodeDefinition}
+                        updateNodeDefinition={updateNodeDefinition}
+                        onNext={handleNext}
+                        onPrevious={handlePrevious}
                     />
-                </div>
-                <div>
-                    <Label htmlFor="icon" className="text-sm font-medium">
-                        {t("iconLabel")}
-                    </Label>
-                    <Input
-                        id="icon"
-                        value={nodeDefinition.icon}
-                        onChange={(e) => updateNodeDefinition("icon", e.target.value)}
-                        placeholder={t("iconPlaceholder")}
-                        className="mt-1"
+                )}
+
+                {currentStep === 4 && (
+                    <StepServerConfig
+                        nodeDefinition={nodeDefinition}
+                        updateNodeDefinition={updateNodeDefinition}
+                        onPrevious={handlePrevious}
+                        onSave={saveNodeDefinition}
                     />
-                </div>
-                <div>
-                    <Label htmlFor="markdownDocumentation" className="text-sm font-medium">
-                        {t("markdownDocumentationLabel")}
-                    </Label>
-                    <Textarea
-                        id="markdownDocumentation"
-                        value={nodeDefinition.markdownDocumentation}
-                        onChange={(e) => updateNodeDefinition("markdownDocumentation", e.target.value)}
-                        placeholder={t("markdownDocumentationPlaceholder")}
-                        className="mt-1"
-                        rows={10}
-                    />
-                </div>
-                <div>
-                    <Label htmlFor="executionMode" className="text-sm font-medium">
-                        {t("executionModeLabel")}
-                    </Label>
-                    <Select
-                        value={nodeDefinition.executionMode}
-                        onValueChange={(value) => updateNodeDefinition("executionMode", value as ExecutionMode)}
-                    >
-                        <SelectTrigger className="mt-1">
-                            <SelectValue placeholder={t("executionModePlaceholder")}/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {executionModes.map((mode) => (
-                                <SelectItem key={mode} value={mode}>
-                                    {mode}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div>
-                    <Label htmlFor="executionUrl" className="text-sm font-medium">
-                        {t("serverUrlLabel")}
-                    </Label>
-                    <Input
-                        id="executionUrl"
-                        value={nodeDefinition.executionUrl}
-                        onChange={(e) => updateNodeDefinition("executionUrl", e.target.value)}
-                        placeholder={t("serverUrlPlaceholder")}
-                        className="mt-1"
-                    />
-                </div>
-                <div className="flex items-end space-x-2">
-                    <div className="flex-grow">
-                        <Label className="text-sm font-medium">{t("addNewOptionLabel")}</Label>
-                        <Select onValueChange={(value: OptionsStructureType) => setSelectedOptionType(value)}>
-                            <SelectTrigger className="mt-1">
-                                <SelectValue placeholder={t("addNewOptionPlaceholder")}/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {Object.values(OptionsStructureType).map((type) => (
-                                    <SelectItem key={type} value={type}>
-                                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <Button onClick={addOption} disabled={!selectedOptionType} className="ml-2">
-                        <PlusCircle className="mr-2 h-4 w-4"/>
-                        {t("addButton")}
+                )}
+            </Card>
+
+            <div className="flex justify-between mt-6">
+                <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 1}>
+                    <ChevronLeft className="mr-2 h-4 w-4" />
+                    Previous
+                </Button>
+
+                {currentStep < 4 ? (
+                    <Button onClick={handleNext}>
+                        Next
+                        <ChevronRight className="ml-2 h-4 w-4" />
                     </Button>
-                </div>
-            </CardContent>
-        </Card>
-        <div className="space-y-4 mb-6">
-            {nodeDefinition.optionsDefinition.structure.map((option, index) => (
-                <OptionEditor
-                    key={index}
-                    option={option}
-                    onUpdate={(updatedOption) => updateOption(index, updatedOption)}
-                    onRemove={() => removeOption(index)}
-                />
-            ))}
+                ) : (
+                    <Button onClick={saveNodeDefinition}>
+                        <Save className="mr-2 h-4 w-4" />
+                        Save Node
+                    </Button>
+                )}
+            </div>
         </div>
-        <Button onClick={logNodeDefinition} className="w-full">
-            <Save className="mr-2 h-4 w-4"/>
-            {t("saveNodeButton")}
-        </Button>
-    </>
+    )
+}
+
+// Helper function
+function toCamelCase(str: string): string {
+    return str
+        .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+            return index === 0 ? word.toLowerCase() : word.toUpperCase()
+        })
+        .replace(/\s+/g, "")
 }
 

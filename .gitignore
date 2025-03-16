@@ -45,3 +45,5 @@ yarn-error.log*
 next-env.d.ts
 
 certificates
+
+test-server/node_modules

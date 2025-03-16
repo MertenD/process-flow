@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react"
+"use client"
+
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -6,8 +8,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PlusCircle, Trash2, ChevronDown, ChevronUp } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {NestedOptionsBase, OptionsBase, OptionsRow, OptionsSelect, OptionsStructureType} from "@/model/OptionsModel"
-import {useTranslations} from "next-intl";
+import {
+    type NestedOptionsBase,
+    type OptionsBase,
+    type OptionsRow,
+    type OptionsSelect,
+    OptionsStructureType,
+} from "@/model/OptionsModel"
 
 interface OptionEditorProps {
     option: OptionsBase
@@ -17,14 +24,15 @@ interface OptionEditorProps {
 }
 
 export default function OptionEditor({ option, onUpdate, onRemove, isNested = false }: OptionEditorProps) {
-    const t = useTranslations("shop.createNodePage")
-
     const [newOptionValue, setNewOptionValue] = useState("")
     const [selectedOptionType, setSelectedOptionType] = useState<OptionsStructureType | null>(null)
     const [isExpanded, setIsExpanded] = useState(true)
 
     useEffect(() => {
-        if (option.type === OptionsStructureType.CHECKBOX && (!("options" in option) || (option as NestedOptionsBase).options.length === 0)) {
+        if (
+            option.type === OptionsStructureType.CHECKBOX &&
+            (!("options" in option) || (option as NestedOptionsBase).options.length === 0)
+        ) {
             onUpdate({
                 ...option,
                 options: [
@@ -137,7 +145,7 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
     }
 
     return (
-        <Card className={`${isNested ? "mt-2" : ""}`}>
+        <Card className={`${isNested ? "mt-2" : ""} border-l-4 ${getBorderColorForType(option.type)}`}>
             <CardHeader className="py-3">
                 <CardTitle className="text-lg flex justify-between items-center">
                     <span>{option.type.charAt(0).toUpperCase() + option.type.slice(1)}</span>
@@ -155,12 +163,12 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                 <CardContent className="py-2">
                     {option.type === OptionsStructureType.TEXT && (
                         <div className="space-y-2">
-                            <Label htmlFor="text">{ t("textLabel") }</Label>
+                            <Label htmlFor="text">Text</Label>
                             <Input
                                 id="text"
                                 value={(option as any).text || ""}
                                 onChange={(e) => updateField("text", e.target.value)}
-                                placeholder={ t("textPlaceholder") }
+                                placeholder="Enter text content"
                             />
                         </div>
                     )}
@@ -172,12 +180,12 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                         option.type === OptionsStructureType.SELECT_WITH_CUSTOM ||
                         option.type === OptionsStructureType.CHECKBOX) && (
                         <div className="space-y-2">
-                            <Label htmlFor="label">{ t("labelLabel") }</Label>
+                            <Label htmlFor="label">Label</Label>
                             <Input
                                 id="label"
                                 value={(option as any).label || ""}
                                 onChange={(e) => updateField("label", e.target.value)}
-                                placeholder={ t("labelPlaceholder") }
+                                placeholder="Enter label text"
                             />
                         </div>
                     )}
@@ -186,12 +194,12 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                         option.type === OptionsStructureType.MULTIPLE_VARIABLE_NAME_INPUT ||
                         option.type === OptionsStructureType.TEXTAREA) && (
                         <div className="space-y-2 mt-2">
-                            <Label htmlFor="placeholder">{ t("placeholderLabel") }</Label>
+                            <Label htmlFor="placeholder">Placeholder</Label>
                             <Input
                                 id="placeholder"
                                 value={(option as any).placeholder || ""}
                                 onChange={(e) => updateField("placeholder", e.target.value)}
-                                placeholder={ t("placeholderPlaceholder") }
+                                placeholder="Enter placeholder text"
                             />
                         </div>
                     )}
@@ -199,7 +207,7 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                         option.type === OptionsStructureType.SELECT_WITH_CUSTOM ||
                         option.type === OptionsStructureType.CHECKBOX) && (
                         <div className="flex flex-row items-center space-x-2 mt-2">
-                            <Label htmlFor="defaultValue">{ t("defaultValueLabel") }:</Label>
+                            <Label htmlFor="defaultValue">Default Value:</Label>
                             {option.type === OptionsStructureType.CHECKBOX ? (
                                 <Checkbox
                                     checked={(option as any).defaultValue || false}
@@ -210,25 +218,25 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                                     id="defaultValue"
                                     value={(option as any).defaultValue || ""}
                                     onChange={(e) => updateField("defaultValue", e.target.value)}
-                                    placeholder={ t("defaultValuePlaceholder") }
+                                    placeholder="Default value"
                                 />
                             )}
                         </div>
                     )}
                     {option.type === OptionsStructureType.SEPARATOR && (
                         <div className="space-y-2 mt-2">
-                            <Label htmlFor="orientation">{ t("orientationLabel") }</Label>
+                            <Label htmlFor="orientation">Orientation</Label>
                             <Select
                                 name="orientation"
                                 value={(option as any).orientation || ""}
                                 onValueChange={(value) => updateField("orientation", value)}
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder={ t("orientationPlaceholder") } />
+                                    <SelectValue placeholder="Select orientation" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="horizontal">{ t("horizontal") }</SelectItem>
-                                    <SelectItem value="vertical">{ t("vertical") }</SelectItem>
+                                    <SelectItem value="horizontal">Horizontal</SelectItem>
+                                    <SelectItem value="vertical">Vertical</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -237,7 +245,7 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                         option.type === OptionsStructureType.SELECT_WITH_CUSTOM ||
                         option.type === OptionsStructureType.CHECKBOX) && (
                         <div className="space-y-4 mt-4">
-                            <Label>{ t("selectValues") }</Label>
+                            <Label>Options</Label>
                             {(option as NestedOptionsBase).options?.map((opt, index) => (
                                 <div key={index} className="pl-4 border-l-2 border-gray-200 space-y-2">
                                     <div className="flex items-center space-x-2">
@@ -274,7 +282,7 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                                         <div className="flex-grow">
                                             <Select onValueChange={(value: OptionsStructureType) => setSelectedOptionType(value)}>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder={ t("selectDependentStructure") } />
+                                                    <SelectValue placeholder="Add dependent option" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {Object.values(OptionsStructureType).map((type) => (
@@ -287,7 +295,7 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                                         </div>
                                         <Button onClick={() => addDependentStructure(index)} disabled={!selectedOptionType} size="sm">
                                             <PlusCircle className="mr-2 h-4 w-4" />
-                                            { t("addButton") }
+                                            Add
                                         </Button>
                                     </div>
                                 </div>
@@ -296,13 +304,13 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                                 option.type === OptionsStructureType.SELECT_WITH_CUSTOM) && (
                                 <div className="flex items-center space-x-2">
                                     <Input
-                                        placeholder={ t("newValueValue" )}
+                                        placeholder="New option value"
                                         value={newOptionValue}
                                         onChange={(e) => setNewOptionValue(e.target.value)}
                                     />
                                     <Button onClick={addNestedOption} disabled={!newOptionValue}>
                                         <PlusCircle className="mr-2 h-4 w-4" />
-                                        { t("addButton") }
+                                        Add
                                     </Button>
                                 </div>
                             )}
@@ -310,7 +318,7 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                     )}
                     {option.type === OptionsStructureType.ROW && (
                         <div className="space-y-4 mt-4">
-                            <Label>{ t("rowElements") }</Label>
+                            <Label>Row Elements</Label>
                             {(option as OptionsRow).structure?.map((element, index) => (
                                 <div key={index} className="pl-4 border-l-2 border-gray-200">
                                     <OptionEditor
@@ -325,7 +333,7 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                                 <div className="flex-grow">
                                     <Select onValueChange={(value: OptionsStructureType) => setSelectedOptionType(value)}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder={ t("selectRowElements") } />
+                                            <SelectValue placeholder="Add row element" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {Object.values(OptionsStructureType).map((type) => (
@@ -338,7 +346,7 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
                                 </div>
                                 <Button onClick={addRowElement} disabled={!selectedOptionType} size="sm">
                                     <PlusCircle className="mr-2 h-4 w-4" />
-                                    { t("addButton") }
+                                    Add
                                 </Button>
                             </div>
                         </div>
@@ -347,5 +355,30 @@ export default function OptionEditor({ option, onUpdate, onRemove, isNested = fa
             )}
         </Card>
     )
+}
+
+// Helper function to get border color based on option type
+function getBorderColorForType(type: OptionsStructureType): string {
+    switch (type) {
+        case OptionsStructureType.INPUT:
+        case OptionsStructureType.VARIABLE_NAME_INPUT:
+        case OptionsStructureType.MULTIPLE_VARIABLE_NAME_INPUT:
+            return "border-blue-400"
+        case OptionsStructureType.SELECT:
+        case OptionsStructureType.SELECT_WITH_CUSTOM:
+            return "border-purple-400"
+        case OptionsStructureType.CHECKBOX:
+            return "border-green-400"
+        case OptionsStructureType.TEXTAREA:
+            return "border-orange-400"
+        case OptionsStructureType.TEXT:
+            return "border-gray-400"
+        case OptionsStructureType.ROW:
+            return "border-indigo-400"
+        case OptionsStructureType.SEPARATOR:
+            return "border-teal-400"
+        default:
+            return "border-gray-300"
+    }
 }
 
