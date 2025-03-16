@@ -34,9 +34,24 @@ export function CodeEditor({ code, language, fileName, onCopy, copied }: CodeEdi
 
     return (
         <div className="relative h-full">
-            <div className="absolute top-2 right-2 z-10">
-                <Button variant="ghost" size="sm" onClick={() => onCopy(code, fileName)}>
-                    {copied === fileName ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+            <div className="absolute top-3 right-7 z-10">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onCopy(code, fileName)}
+                    className="shadow-sm"
+                >
+                    {copied === fileName ? (
+                        <>
+                            <Check className="h-3.5 w-3.5 mr-1.5" />
+                            Copied
+                        </>
+                    ) : (
+                        <>
+                            <Copy className="h-3.5 w-3.5 mr-1.5" />
+                            Copy
+                        </>
+                    )}
                 </Button>
             </div>
             <div className="h-full overflow-auto">
@@ -46,13 +61,13 @@ export function CodeEditor({ code, language, fileName, onCopy, copied }: CodeEdi
                     showLineNumbers={true}
                     customStyle={{
                         margin: 0,
-                        padding: "1rem",
+                        padding: "1.5rem",
                         height: "100%",
-                        fontSize: "0.75rem",
+                        fontSize: "0.875rem",
                         fontFamily:
                             'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
                         backgroundColor: "#1e1e1e",
-                        borderRadius: "0.375rem",
+                        borderRadius: "0",
                     }}
                     lineNumberStyle={{
                         minWidth: "2.5em",
