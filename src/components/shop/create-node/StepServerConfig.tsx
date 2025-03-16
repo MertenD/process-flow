@@ -12,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { CodeEditor } from "@/components/shop/create-node/CodeEditor"
 import { FileTree } from "@/components/shop/create-node/FileTree"
 import { generateNodeJSFiles, generatePythonFiles, type ProjectFile } from "@/utils/shop/project-generators"
+import {generateAndDownloadZip} from "@/utils/shop/zipUtils";
 
 interface StepServerConfigProps {
     nodeDefinition: NodeDefinition
@@ -34,6 +35,7 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
         src: true,
     })
     const [selectedFile, setSelectedFile] = useState<string>("src/server.js")
+    const [isDownloading, setIsDownloading] = useState(false)
 
     const updateField = (field: keyof NodeDefinition, value: string) => {
         updateNodeDefinition({
@@ -148,10 +150,21 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
         return file ? file.language : "plaintext"
     }
 
-    const downloadProject = () => {
-        // In a real implementation, this would create a ZIP file
-        // For now, we'll just show an alert
-        alert(`Project download functionality would be implemented here for ${selectedLanguage}`)
+    const downloadProject = async () => {
+        try {
+            setIsDownloading(true)
+            const files = getProjectFiles()
+            const projectName =
+                nodeDefinition.name.toLowerCase().replace(/\s+/g, "-") ||
+                (selectedLanguage === "python" ? "flask-service" : "node-service")
+
+            await generateAndDownloadZip(files, projectName)
+        } catch (error) {
+            console.error("Error downloading project:", error)
+            alert("Failed to download project. Please try again.")
+        } finally {
+            setIsDownloading(false)
+        }
     }
 
     const fileTree = buildFileTree(projectFiles)
@@ -229,9 +242,9 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
                                 <TabsTrigger value="python">Python</TabsTrigger>
                             </TabsList>
 
-                            <Button variant="outline" size="sm" onClick={downloadProject}>
+                            <Button variant="outline" size="sm" onClick={downloadProject} disabled={isDownloading}>
                                 <Download className="h-4 w-4 mr-2" />
-                                Download Project
+                                {isDownloading ? "Downloading..." : "Download Project"}
                             </Button>
                         </div>
 
