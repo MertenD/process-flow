@@ -121,7 +121,7 @@ export default function CreateNodePage() {
                         </div>
                     ))}
                 </div>
-                <Progress value={(currentStep / 4) * 100} className="h-2" />
+                <Progress value={(currentStep / 4) * 100} indicatorColor="bg-primary" className="h-2" />
             </div>
 
             <Card className="p-8 shadow-sm">
