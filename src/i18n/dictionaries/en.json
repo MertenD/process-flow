@@ -363,39 +363,123 @@
         "back": "Back"
       }
     },
-    "createNodePage": {
-      "title": "Create Activity",
-      "nameLabel": "Name",
-      "namePlaceholder": "Activity name",
-      "shortDescriptionLabel": "Short Description",
-      "shortDescriptionPlaceholder": "Short description of the activity",
-      "markdownDocumentationLabel": "Documentation",
-      "markdownDocumentationPlaceholder": "Documentation of the activity in Markdown format",
-      "executionModeLabel": "Execution mode",
-      "executionModePlaceholder": "Choose the execution mode",
-      "serverUrlLabel": "Server URL",
-      "serverUrlPlaceholder": "URL with the path to the endpoint of the server that executes the activity",
-      "addNewOptionLabel": "Add new option",
-      "addNewOptionPlaceholder": "Choose an option",
-      "addButton": "Add",
-      "saveNodeButton": "Save activity definition",
-      "labelLabel": "Label",
-      "labelPlaceholder": "Option heading",
-      "defaultValueLabel": "Default value",
-      "defaultValuePlaceholder": "Default value of the option",
-      "selectValues": "Choices",
-      "newValueValue": "Value of the new choice",
-      "textLabel": "Text",
-      "textPlaceholder": "Text that is displayed",
-      "placeholderLabel": "Placeholder",
-      "placeholderPlaceholder": "Placeholder that is displayed",
-      "orientationLabel": "Orientation",
-      "orientationPlaceholder": "Orientation of the element (horizontal/vertical)",
-      "horizontal": "Horizontal",
-      "vertical": "Vertical",
-      "selectDependentStructure": "Select dependent structure options",
-      "rowElements": "Elements in the row",
-      "selectRowElements": "Select element to add"
+    "create-node": {
+      "title": "Create Node",
+      "steps": {
+        "information": "Information",
+        "general-details": "General Details",
+        "options": "Options",
+        "server-config": "Server Config"
+      },
+      "navigation": {
+        "previous": "Previous",
+        "next": "Next",
+        "save": "Save Node",
+        "get-started": "Get Started"
+      }
+    },
+    "step-info": {
+      "title": "Welcome to the Node Creator",
+      "subtitle": "This wizard will guide you through creating a new node for your business process. Follow the four simple steps below to configure your node.",
+      "cards": {
+        "general-details": {
+          "title": "1. General Details",
+          "description": "Define the basic information about your node, including name, description, and documentation."
+        },
+        "options": {
+          "title": "2. Options",
+          "description": "Create the input fields, selections, and other options that users will interact with."
+        },
+        "server-setup": {
+          "title": "3. Server Setup",
+          "description": "Configure the server URL for your backend implementation."
+        },
+        "code-templates": {
+          "title": "4. Code Templates",
+          "description": "Get ready-to-use code templates for your backend implementation that you can copy and customize."
+        }
+      }
+    },
+    "step-general-info": {
+      "title": "General Node Information",
+      "subtitle": "Define the basic details of your node",
+      "basic-info": {
+        "title": "Basic Information",
+        "node-name": {
+          "label": "Node Name",
+          "placeholder": "Enter node name"
+        },
+        "short-description": {
+          "label": "Short Description",
+          "placeholder": "Brief description of what this node does"
+        },
+        "icon": {
+          "label": "Icon",
+          "placeholder": "Icon name or path"
+        },
+        "execution-mode": {
+          "label": "Execution Mode",
+          "placeholder": "Select execution mode"
+        }
+      },
+      "documentation": {
+        "title": "Documentation",
+        "label": "Documentation (Markdown)",
+        "placeholder": "Write detailed documentation using Markdown",
+        "help-text": "Use Markdown syntax to format your documentation. This will be displayed to users when they view details about this node."
+      },
+      "info-note": "The information you provide here will be displayed to users when they browse available nodes. Make sure to provide clear and concise descriptions to help users understand what your node does."
+    },
+    "step-options-config": {
+      "title": "Node Options Configuration",
+      "subtitle": "Configure the options and fields that users will interact with",
+      "add-option": {
+        "title": "Add New Option",
+        "option-type": "Option Type",
+        "placeholder": "Select option type",
+        "button": "Add Option"
+      },
+      "no-options": "No options added yet. Use the dropdown above to add options to your node.",
+      "configured-options": "Configured Options",
+      "option-types-info": {
+        "title": "Options define how users will interact with your node:",
+        "input-textarea": "Use Input and Textarea for simple text input",
+        "variable-name-input": "Use VariableNameInput for naming data objects which will contain the results from the node",
+        "select": "Use Select for dropdown menus with predefined options and SelectWithCustom for dropdown menus where the user can add his own values",
+        "checkbox": "Use Checkbox for boolean options",
+        "row-separator": "Use Row and Separator to group options together."
+      }
+    },
+    "step-server-config": {
+      "title": "Server Configuration",
+      "subtitle": "Configure the server URL and get code templates for your implementation",
+      "server-url": {
+        "title": "Server URL Configuration",
+        "label": "Server URL",
+        "placeholder": "https://your-server-url.com/endpoint",
+        "help-text": "This is the URL where your server will receive requests from the workflow engine."
+      },
+      "important-note": {
+        "title": "Important",
+        "content": "Your server must be publicly accessible and able to receive POST requests. Make sure to implement proper error handling and response formatting."
+      },
+      "templates": {
+        "title": "Server Implementation Templates",
+        "subtitle": "These templates help you implement the server-side functionality for your node. They are not executed within this application - they're just for reference.",
+        "download-button": "Download Project",
+        "downloading": "Downloading...",
+        "project-files": "Project Files"
+      },
+      "implementation-notes": {
+        "title": "Implementation Notes",
+        "notes": {
+          "note1": "Your server must respond quickly to avoid timeouts (return 200 immediately)",
+          "note2": "Process the request asynchronously and send the result to the provided response path",
+          "note3": "Always include the flowElementInstanceId in your responses",
+          "note4": "Handle errors gracefully and send them to the errorResponsePath",
+          "note5": "The server must be accessible from the internet"
+        }
+      }
     }
   }
 }

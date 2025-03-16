@@ -6,13 +6,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {Download, Server, Globe, Check, Copy} from "lucide-react"
+import { Download, Server, Globe } from "lucide-react"
 import type { NodeDefinition } from "@/model/NodeDefinition"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { CodeEditor } from "@/components/shop/create-node/CodeEditor"
-import { FileTree } from "@/components/shop/create-node/FileTree"
-import { generateNodeJSFiles, generatePythonFiles, type ProjectFile } from "@/utils/shop/project-generators"
+import {useTranslations} from "next-intl";
+import {generateNodeJSFiles, generatePythonFiles, ProjectFile} from "@/utils/shop/project-generators";
 import {generateAndDownloadZip} from "@/utils/shop/zipUtils";
+import {FileTree} from "@/components/shop/create-node/FileTree";
+import {CodeEditor} from "@/components/shop/create-node/CodeEditor";
 
 interface StepServerConfigProps {
     nodeDefinition: NodeDefinition
@@ -29,6 +30,7 @@ interface FileTreeItem {
 }
 
 export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevious, onSave }: StepServerConfigProps) {
+    const t = useTranslations("shop.step-server-config")
     const [copied, setCopied] = useState<string | null>(null)
     const [selectedLanguage, setSelectedLanguage] = useState("nodejs")
     const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
@@ -172,10 +174,8 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
     return (
         <div className="space-y-8">
             <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold">Server Configuration</h2>
-                <p className="text-muted-foreground mt-2">
-                    Configure the server URL and get code templates for your implementation
-                </p>
+                <h2 className="text-2xl font-bold">{t("title")}</h2>
+                <p className="text-muted-foreground mt-2">{t("subtitle")}</p>
             </div>
 
             {/* Server URL Configuration Section */}
@@ -183,37 +183,32 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
                 <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center">
                         <Globe className="mr-2 h-5 w-5 text-primary" />
-                        Server URL Configuration
+                        {t("server-url.title")}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <Label htmlFor="executionUrl" className="text-sm font-medium">
-                                Server URL
+                                {t("server-url.label")}
                             </Label>
                             <div className="flex mt-2">
                                 <Input
                                     id="executionUrl"
                                     value={nodeDefinition.executionUrl}
                                     onChange={(e) => updateField("executionUrl", e.target.value)}
-                                    placeholder="https://your-server-url.com/endpoint"
+                                    placeholder={t("server-url.placeholder")}
                                     className="flex-grow"
                                 />
                             </div>
-                            <p className="text-sm text-muted-foreground mt-2">
-                                This is the URL where your server will receive requests from the workflow engine.
-                            </p>
+                            <p className="text-sm text-muted-foreground mt-2">{t("server-url.help-text")}</p>
                         </div>
 
                         <div>
                             <Alert className="border-amber-200">
                                 <Server className="h-4 w-4 stroke-amber-200" />
-                                <AlertTitle className="text-amber-200">Important</AlertTitle>
-                                <AlertDescription className="text-amber-200">
-                                    Your server must be publicly accessible and able to receive POST requests. Make sure to implement
-                                    proper error handling and response formatting.
-                                </AlertDescription>
+                                <AlertTitle className="text-amber-200">{t("important-note.title")}</AlertTitle>
+                                <AlertDescription className="text-amber-200">{t("important-note.content")}</AlertDescription>
                             </Alert>
                         </div>
                     </div>
@@ -226,34 +221,28 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
                     <div className="flex justify-between items-center">
                         <CardTitle className="text-lg flex items-center">
                             <Server className="mr-2 h-5 w-5 text-primary" />
-                            Server Implementation Templates
+                            {t("templates.title")}
                         </CardTitle>
+                        <Button variant="outline" size="sm" onClick={downloadProject} disabled={isDownloading}>
+                            <Download className="h-4 w-4 mr-2" />
+                            {isDownloading ? t("templates.downloading") : t("templates.download-button")}
+                        </Button>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-2">
-                        These templates help you implement the server-side functionality for your node. They are not executed within
-                        this application - they&apos;re just for reference.
-                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">{t("templates.subtitle")}</p>
                 </CardHeader>
                 <CardContent className="p-0">
                     <Tabs defaultValue="nodejs" value={selectedLanguage} onValueChange={handleLanguageChange} className="p-4">
-                        <div className="flex flex-row justify-between">
-                            <TabsList className="mb-4 grid grid-cols-2 w-[200px]">
-                                <TabsTrigger value="nodejs">Node.js</TabsTrigger>
-                                <TabsTrigger value="python">Python</TabsTrigger>
-                            </TabsList>
-
-                            <Button variant="outline" size="sm" onClick={downloadProject} disabled={isDownloading}>
-                                <Download className="h-4 w-4 mr-2" />
-                                {isDownloading ? "Downloading..." : "Download Project"}
-                            </Button>
-                        </div>
+                        <TabsList className="mb-4 grid grid-cols-2 w-[200px]">
+                            <TabsTrigger value="nodejs">Node.js</TabsTrigger>
+                            <TabsTrigger value="python">Python</TabsTrigger>
+                        </TabsList>
 
                         <TabsContent value="nodejs" className="mt-0 space-y-4">
                             <div className="border rounded-md overflow-hidden">
                                 <div className="grid grid-cols-12 h-[550px]">
                                     {/* File tree */}
                                     <div className="col-span-3 border-r bg-muted/30">
-                                        <div className="p-3 border-b bg-muted/50 font-medium text-sm">Project Files</div>
+                                        <div className="p-3 border-b bg-muted/50 font-medium text-sm">{t("templates.project-files")}</div>
                                         <FileTree
                                             items={fileTree}
                                             expandedFolders={expandedFolders}
@@ -287,7 +276,7 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
                                 <div className="grid grid-cols-12 h-[550px]">
                                     {/* File tree */}
                                     <div className="col-span-3 border-r bg-muted/30">
-                                        <div className="p-3 border-b bg-muted/50 font-medium text-sm">Project Files</div>
+                                        <div className="p-3 border-b bg-muted/50 font-medium text-sm">{t("templates.project-files")}</div>
                                         <FileTree
                                             items={fileTree}
                                             expandedFolders={expandedFolders}
@@ -322,15 +311,15 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
             {/* Implementation Notes */}
             <Card className="bg-muted/30 border-muted">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Implementation Notes</CardTitle>
+                    <CardTitle className="text-base">{t("implementation-notes.title")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <ul className="list-disc pl-5 space-y-1 text-sm">
-                        <li>Your server must respond quickly to avoid timeouts (return 200 immediately)</li>
-                        <li>Process the request asynchronously and send the result to the provided response path</li>
-                        <li>Always include the flowElementInstanceId in your responses</li>
-                        <li>Handle errors gracefully and send them to the errorResponsePath</li>
-                        <li>The server must be accessible from the internet</li>
+                        <li>{t("implementation-notes.notes.note1")}</li>
+                        <li>{t("implementation-notes.notes.note2")}</li>
+                        <li>{t("implementation-notes.notes.note3")}</li>
+                        <li>{t("implementation-notes.notes.note4")}</li>
+                        <li>{t("implementation-notes.notes.note5")}</li>
                     </ul>
                 </CardContent>
             </Card>

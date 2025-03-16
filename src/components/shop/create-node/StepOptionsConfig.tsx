@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import type { NodeDefinition } from "@/model/NodeDefinition"
 import { type OptionsBase, OptionsStructureType } from "@/model/OptionsModel"
 import OptionEditor from "@/components/shop/create-node/OptionEditor"
+import {useTranslations} from "next-intl";
 
 interface StepOptionsConfigProps {
     nodeDefinition: NodeDefinition
@@ -24,6 +25,7 @@ export function StepOptionsConfig({
   onNext,
   onPrevious,
 }: StepOptionsConfigProps) {
+    const t = useTranslations("shop.step-options-config")
     const [selectedOptionType, setSelectedOptionType] = useState<OptionsStructureType | null>(null)
 
     const addOption = () => {
@@ -74,24 +76,24 @@ export function StepOptionsConfig({
     return (
         <div className="space-y-8">
             <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold">Node Options Configuration</h2>
-                <p className="text-muted-foreground mt-2">Configure the options and fields that users will interact with</p>
+                <h2 className="text-2xl font-bold">{t("title")}</h2>
+                <p className="text-muted-foreground mt-2">{t("subtitle")}</p>
             </div>
 
             <Card>
                 <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center">
                         <ListChecks className="mr-2 h-5 w-5 text-primary" />
-                        Add New Option
+                        {t("add-option.title")}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-end space-x-3">
                         <div className="flex-grow">
-                            <Label className="text-sm font-medium mb-2 block">Option Type</Label>
+                            <Label className="text-sm font-medium mb-2 block">{t("add-option.option-type")}</Label>
                             <Select onValueChange={(value: OptionsStructureType) => setSelectedOptionType(value)}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select option type" />
+                                    <SelectValue placeholder={t("add-option.placeholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {Object.values(OptionsStructureType)
@@ -106,16 +108,14 @@ export function StepOptionsConfig({
                         </div>
                         <Button onClick={addOption} disabled={!selectedOptionType} className="ml-2 h-10">
                             <PlusCircle className="mr-2 h-4 w-4" />
-                            Add Option
+                            {t("add-option.button")}
                         </Button>
                     </div>
 
                     {nodeDefinition.optionsDefinition.structure.length === 0 && (
                         <Alert className="mt-6 bg-muted/50 border-muted">
                             <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                            <AlertDescription className="text-muted-foreground">
-                                No options added yet. Use the dropdown above to add options to your node.
-                            </AlertDescription>
+                            <AlertDescription className="text-muted-foreground">{t("no-options")}</AlertDescription>
                         </Alert>
                     )}
                 </CardContent>
@@ -126,7 +126,7 @@ export function StepOptionsConfig({
                     <CardHeader className="pb-3">
                         <CardTitle className="text-lg flex items-center">
                             <ListChecks className="mr-2 h-5 w-5 text-primary" />
-                            Configured Options
+                            {t("configured-options")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
@@ -147,23 +147,13 @@ export function StepOptionsConfig({
                     <div className="flex items-start">
                         <AlertCircle className="h-5 w-5 text-muted-foreground mr-2 mt-0.5" />
                         <div className="text-sm text-muted-foreground">
-                            <p className="mb-2">Options define how users will interact with your node:</p>
+                            <p className="mb-2">{t("option-types-info.title")}</p>
                             <ul className="list-disc pl-5 space-y-1">
-                                <li>
-                                    Use <strong>Input</strong> and <strong>Textarea</strong> for simple text input
-                                </li>
-                                <li>
-                                    Use <strong>VariableNameInput</strong> for naming data objects which will contain the results from the node
-                                </li>
-                                <li>
-                                    Use <strong>Select</strong> for dropdown menus with predefined options and <strong>SelectWithCustom</strong> for dropdown menus where the user can add his own values
-                                </li>
-                                <li>
-                                    Use <strong>Checkbox</strong> for boolean options
-                                </li>
-                                <li>
-                                    Use <strong>Row</strong> and <strong>Separator</strong> to group options together.
-                                </li>
+                                <li>{ t("option-types-info.input-textarea") }</li>
+                                <li>{ t("option-types-info.variable-name-input") }</li>
+                                <li>{ t("option-types-info.select") }</li>
+                                <li>{ t("option-types-info.checkbox") }</li>
+                                <li>{ t("option-types-info.row-separator") }</li>
                             </ul>
                         </div>
                     </div>

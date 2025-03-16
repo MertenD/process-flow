@@ -11,8 +11,10 @@ import { StepOptionsConfig } from "@/components/shop/create-node/StepOptionsConf
 import { StepServerConfig } from "@/components/shop/create-node/StepServerConfig"
 import { Progress } from "@/components/ui/progress"
 import { Check, ChevronLeft, ChevronRight, Save } from "lucide-react"
+import {useTranslations} from "next-intl";
 
 export default function CreateNodePage() {
+    const t = useTranslations("shop.create-node")
     const [currentStep, setCurrentStep] = useState(1)
     const [nodeDefinition, setNodeDefinition] = useState<NodeDefinition>({
         id: undefined,
@@ -89,7 +91,7 @@ export default function CreateNodePage() {
 
     return (
         <div className="container mx-auto py-10 px-4 max-w-6xl">
-            <h1 className="text-3xl font-bold mb-8 text-center">Create Node</h1>
+            <h1 className="text-3xl font-bold mb-8 text-center">{t("title")}</h1>
 
             <div className="mb-10">
                 <div className="flex justify-between mb-3">
@@ -111,10 +113,10 @@ export default function CreateNodePage() {
                                 {currentStep > step ? <Check className="h-5 w-5" /> : step}
                             </div>
                             <span className="hidden sm:inline">
-                {step === 1 && "Information"}
-                                {step === 2 && "General Details"}
-                                {step === 3 && "Options"}
-                                {step === 4 && "Server Config"}
+                {step === 1 && t("steps.information")}
+                                {step === 2 && t("steps.general-details")}
+                                {step === 3 && t("steps.options")}
+                                {step === 4 && t("steps.server-config")}
               </span>
                         </div>
                     ))}
@@ -156,18 +158,18 @@ export default function CreateNodePage() {
             <div className="flex justify-between mt-8">
                 <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 1} size="lg" className="px-6">
                     <ChevronLeft className="mr-2 h-5 w-5" />
-                    Previous
+                    {t("navigation.previous")}
                 </Button>
 
                 {currentStep < 4 ? (
                     <Button onClick={handleNext} size="lg" className="px-6">
-                        Next
+                        {t("navigation.next")}
                         <ChevronRight className="ml-2 h-5 w-5" />
                     </Button>
                 ) : (
                     <Button onClick={saveNodeDefinition} size="lg" className="px-6 bg-green-600 hover:bg-green-700">
                         <Save className="mr-2 h-5 w-5" />
-                        Save Node
+                        {t("navigation.save")}
                     </Button>
                 )}
             </div>

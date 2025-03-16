@@ -362,39 +362,123 @@
         "back": "Nazad"
       }
     },
-    "createNodePage": {
-      "title": "Kreiraj aktivnost",
-      "nameLabel": "Naziv",
-      "namePlaceholder": "Naziv aktivnosti",
-      "shortDescriptionLabel": "Kratak opis",
-      "shortDescriptionPlaceholder": "Kratak opis aktivnosti",
-      "markdownDocumentationLabel": "Dokumentacija",
-      "markdownDocumentationPlaceholder": "Dokumentacija aktivnosti u Markdown formatu",
-      "executionModeLabel": "Režim izvršenja",
-      "executionModePlaceholder": "Izaberite režim izvršenja",
-      "serverUrlLabel": "URL servera",
-      "serverUrlPlaceholder": "URL sa putanjom do krajnje tačke servera koji izvršava aktivnost",
-      "addNewOptionLabel": "Dodaj novu opciju",
-      "addNewOptionPlaceholder": "Izaberite opciju",
-      "addButton": "Dodaj",
-      "saveNodeButton": "Sačuvaj definiciju aktivnosti",
-      "labelLabel": "Oznaka",
-      "labelPlaceholder": "Naslov opcije",
-      "defaultValueLabel": "Podrazumevana vrednost",
-      "defaultValuePlaceholder": "Podrazumevana vrednost opcije",
-      "selectValues": "Opcije izbora",
-      "newValueValue": "Vrednost nove opcije",
-      "textLabel": "Tekst",
-      "textPlaceholder": "Tekst koji se prikazuje",
-      "placeholderLabel": "Placeholder",
-      "placeholderPlaceholder": "Placeholder koji se prikazuje",
-      "orientationLabel": "Orijentacija",
-      "orientationPlaceholder": "Orijentacija elementa (horizontalno/vertikalno)",
-      "horizontal": "Horizontalno",
-      "vertical": "Vertikalno",
-      "selectDependentStructure": "Odaberite opcije zavisne strukture",
-      "rowElements": "Elementi u redu",
-      "selectRowElements": "Odaberite element za dodavanje"
+    "create-node": {
+      "title": "Kreiraj čvor",
+      "steps": {
+        "information": "Informacije",
+        "general-details": "Opšti detalji",
+        "options": "Opcije",
+        "server-config": "Konfiguracija servera"
+      },
+      "navigation": {
+        "previous": "Nazad",
+        "next": "Dalje",
+        "save": "Sačuvaj čvor",
+        "get-started": "Započni"
+      }
+    },
+    "step-info": {
+      "title": "Dobrodošli u kreator čvorova",
+      "subtitle": "Ovaj asistent vas vodi kroz proces kreiranja novog čvora za vaš poslovni proces. Pratite četiri jednostavna koraka ispod kako biste konfigurisali svoj čvor.",
+      "cards": {
+        "general-details": {
+          "title": "1. Opšti detalji",
+          "description": "Definišite osnovne informacije o svom čvoru, uključujući ime, opis i dokumentaciju."
+        },
+        "options": {
+          "title": "2. Opcije",
+          "description": "Kreirajte polja za unos, izbore i druge opcije s kojima će korisnici stupati u interakciju."
+        },
+        "server-setup": {
+          "title": "3. Podešavanje servera",
+          "description": "Konfigurišite URL servera za implementaciju pozadinskog sistema."
+        },
+        "code-templates": {
+          "title": "4. Šabloni koda",
+          "description": "Dobijte spremne šablone koda za implementaciju pozadinskog sistema koje možete kopirati i prilagoditi."
+        }
+      }
+    },
+    "step-general-info": {
+      "title": "Opšte informacije o čvoru",
+      "subtitle": "Definišite osnovne detalje vašeg čvora",
+      "basic-info": {
+        "title": "Osnovne informacije",
+        "node-name": {
+          "label": "Naziv čvora",
+          "placeholder": "Unesite naziv čvora"
+        },
+        "short-description": {
+          "label": "Kratak opis",
+          "placeholder": "Kratak opis čemu ovaj čvor služi"
+        },
+        "icon": {
+          "label": "Ikonica",
+          "placeholder": "Naziv ili putanja ikonice"
+        },
+        "execution-mode": {
+          "label": "Režim izvršavanja",
+          "placeholder": "Izaberite režim izvršavanja"
+        }
+      },
+      "documentation": {
+        "title": "Dokumentacija",
+        "label": "Dokumentacija (Markdown)",
+        "placeholder": "Napišite detaljnu dokumentaciju koristeći Markdown",
+        "help-text": "Koristite Markdown sintaksu za formatiranje dokumentacije. Korisnici će ovo videti prilikom pregleda detalja o čvoru."
+      },
+      "info-note": "Informacije navedene ovde će biti prikazane korisnicima kada pregledaju dostupne čvorove. Potrudite se da date jasne i precizne opise kako bi korisnici razumeli svrhu vašeg čvora."
+    },
+    "step-options-config": {
+      "title": "Konfiguracija opcija čvora",
+      "subtitle": "Konfigurišite opcije i polja s kojima će korisnici stupati u interakciju",
+      "add-option": {
+        "title": "Dodaj novu opciju",
+        "option-type": "Tip opcije",
+        "placeholder": "Izaberite tip opcije",
+        "button": "Dodaj opciju"
+      },
+      "no-options": "Još nisu dodate opcije. Koristite padajući meni iznad da dodate opcije vašem čvoru.",
+      "configured-options": "Konfigurisane opcije",
+      "option-types-info": {
+        "title": "Opcije određuju kako će korisnici stupati u interakciju s vašim čvorom:",
+        "input-textarea": "Koristite Input i Textarea za jednostavan unos teksta",
+        "variable-name-input": "Koristite VariableNameInput za imenovanje objekata koji će sadržati rezultate iz čvora",
+        "select": "Koristite Select za padajuće menije sa predefinisanim opcijama, i SelectWithCustom za menije gde korisnici mogu dodavati svoje vrednosti",
+        "checkbox": "Koristite Checkbox za logičke (boolean) opcije",
+        "row-separator": "Koristite Row i Separator za grupisanje opcija."
+      }
+    },
+    "step-server-config": {
+      "title": "Konfiguracija servera",
+      "subtitle": "Konfigurišite URL servera i dobijte šablone koda za implementaciju",
+      "server-url": {
+        "title": "Konfiguracija URL-a servera",
+        "label": "URL servera",
+        "placeholder": "https://vasa-server-url.com/putanja",
+        "help-text": "Ovo je URL gde vaš server prima zahteve od workflow mehanizma."
+      },
+      "important-note": {
+        "title": "Važno",
+        "content": "Vaš server mora biti javno dostupan i moći da prima POST zahteve. Uverite se da ste implementirali pravilno rukovanje greškama i formatiranje odgovora."
+      },
+      "templates": {
+        "title": "Šabloni za implementaciju servera",
+        "subtitle": "Ovi šabloni pomažu u implementaciji serverske funkcionalnosti za vaš čvor. Oni se ne izvršavaju unutar ove aplikacije – služe samo kao referenca.",
+        "download-button": "Preuzmi projekat",
+        "downloading": "Preuzimanje...",
+        "project-files": "Datoteke projekta"
+      },
+      "implementation-notes": {
+        "title": "Napomene za implementaciju",
+        "notes": {
+          "note1": "Vaš server mora brzo odgovarati da izbegne timeout (odmah vratiti 200)",
+          "note2": "Zahtev obrađujte asinhrono i pošaljite rezultat na dati put za odgovor",
+          "note3": "Uvek uključite flowElementInstanceId u svoje odgovore",
+          "note4": "Rukujte greškama pravilno i šaljite ih na errorResponsePath",
+          "note5": "Server mora biti dostupan preko interneta"
+        }
+      }
     }
   }
 }

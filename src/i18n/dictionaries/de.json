@@ -363,39 +363,123 @@
         "back": "Zurück"
       }
     },
-    "createNodePage": {
-      "title": "Aktivität erstellen",
-      "nameLabel": "Name",
-      "namePlaceholder": "Aktivitätsname",
-      "shortDescriptionLabel": "Kurze Beschreibung",
-      "shortDescriptionPlaceholder": "Kurze Beschreibung der Aktivität",
-      "markdownDocumentationLabel": "Dokumentation",
-      "markdownDocumentationPlaceholder": "Dokumentation der Aktivität im Markdown Format",
-      "executionModeLabel": "Ausführungsmodus",
-      "executionModePlaceholder": "Wähle den Ausführungsmodus",
-      "serverUrlLabel": "Server URL",
-      "serverUrlPlaceholder": "URL mit Pfad zum Endpunkt des Servers, der die Aktivität ausführt",
-      "addNewOptionLabel": "Neue Option hinzufügen",
-      "addNewOptionPlaceholder": "Wähle eine Option aus",
-      "addButton": "Hinzufügen",
-      "saveNodeButton": "Aktivitätsdefinition speichern",
-      "labelLabel": "Label",
-      "labelPlaceholder": "Überschrift der Option",
-      "defaultValueLabel": "Standardwert",
-      "defaultValuePlaceholder": "Standardwert der Option",
-      "selectValues": "Auswahlmöglichkeiten",
-      "newValueValue": "Wert der neuen Auswahlmöglichkeit",
-      "textLabel": "Text",
-      "textPlaceholder": "Text der angezeigt wird",
-      "placeholderLabel": "Platzhalter",
-      "placeholderPlaceholder": "Platzhalter der angezeigt wird",
-      "orientationLabel": "Ausrichtung",
-      "orientationPlaceholder": "Ausrichtung des Elements (horizontal/vertical)",
-      "horizontal": "Horizontal",
-      "vertical": "Vertikal",
-      "selectDependentStructure": "Abhängige Struktur Optionen auswählen",
-      "rowElements": "Elemente in der Reihe",
-      "selectRowElements": "Element zum Hinzufügen auswählen"
+    "create-node": {
+      "title": "Node erstellen",
+      "steps": {
+        "information": "Informationen",
+        "general-details": "Allgemeine Details",
+        "options": "Optionen",
+        "server-config": "Server-Konfiguration"
+      },
+      "navigation": {
+        "previous": "Zurück",
+        "next": "Weiter",
+        "save": "Node speichern",
+        "get-started": "Loslegen"
+      }
+    },
+    "step-info": {
+      "title": "Willkommen beim Node-Creator",
+      "subtitle": "Dieser Assistent führt Sie durch die Erstellung eines neuen Nodes für Ihren Geschäftsprozess. Folgen Sie den vier einfachen Schritten unten, um Ihren Node zu konfigurieren.",
+      "cards": {
+        "general-details": {
+          "title": "1. Allgemeine Details",
+          "description": "Definieren Sie die grundlegenden Informationen über Ihren Node, einschließlich Name, Beschreibung und Dokumentation."
+        },
+        "options": {
+          "title": "2. Optionen",
+          "description": "Erstellen Sie Eingabefelder, Auswahlmöglichkeiten und andere Optionen, mit denen Benutzer interagieren werden."
+        },
+        "server-setup": {
+          "title": "3. Server-Einrichtung",
+          "description": "Konfigurieren Sie die Server-URL für Ihre Backend-Implementierung."
+        },
+        "code-templates": {
+          "title": "4. Code-Vorlagen",
+          "description": "Erhalten Sie gebrauchsfertige Code-Vorlagen für Ihre Backend-Implementierung, die Sie kopieren und anpassen können."
+        }
+      }
+    },
+    "step-general-info": {
+      "title": "Allgemeine Node-Informationen",
+      "subtitle": "Definieren Sie die grundlegenden Details Ihres Nodes",
+      "basic-info": {
+        "title": "Grundlegende Informationen",
+        "node-name": {
+          "label": "Node-Name",
+          "placeholder": "Node-Namen eingeben"
+        },
+        "short-description": {
+          "label": "Kurzbeschreibung",
+          "placeholder": "Kurze Beschreibung, was dieser Node tut"
+        },
+        "icon": {
+          "label": "Symbol",
+          "placeholder": "Symbolname oder -pfad"
+        },
+        "execution-mode": {
+          "label": "Ausführungsmodus",
+          "placeholder": "Ausführungsmodus auswählen"
+        }
+      },
+      "documentation": {
+        "title": "Dokumentation",
+        "label": "Dokumentation (Markdown)",
+        "placeholder": "Schreiben Sie detaillierte Dokumentation mit Markdown",
+        "help-text": "Verwenden Sie Markdown-Syntax, um Ihre Dokumentation zu formatieren. Dies wird Benutzern angezeigt, wenn sie Details zu diesem Node ansehen."
+      },
+      "info-note": "Die hier angegebenen Informationen werden Benutzern angezeigt, wenn sie verfügbare Nodes durchsuchen. Stellen Sie sicher, dass Sie klare und präzise Beschreibungen angeben, um Benutzern zu helfen, zu verstehen, was Ihr Node tut."
+    },
+    "step-options-config": {
+      "title": "Node-Optionen-Konfiguration",
+      "subtitle": "Konfigurieren Sie die Optionen und Felder, mit denen Benutzer interagieren werden",
+      "add-option": {
+        "title": "Neue Option hinzufügen",
+        "option-type": "Optionstyp",
+        "placeholder": "Optionstyp auswählen",
+        "button": "Option hinzufügen"
+      },
+      "no-options": "Noch keine Optionen hinzugefügt. Verwenden Sie das Dropdown-Menü oben, um Optionen zu Ihrem Node hinzuzufügen.",
+      "configured-options": "Konfigurierte Optionen",
+      "option-types-info": {
+        "title": "Optionen definieren, wie Benutzer mit Ihrem Node interagieren werden:",
+        "input-textarea": "Verwenden Sie Input und Textarea für einfache Texteingabe",
+        "variable-name-input": "Verwenden Sie VariableNameInput zur Benennung von Datenobjekten, die die Ergebnisse vom Node enthalten werden",
+        "select": "Verwenden Sie Select für Dropdown-Menüs mit vordefinierten Optionen und SelectWithCustom für Dropdown-Menüs, in denen der Benutzer eigene Werte hinzufügen kann",
+        "checkbox": "Verwenden Sie Checkbox für boolesche Optionen",
+        "row-separator": "Verwenden Sie Row und Separator, um Optionen zu gruppieren."
+      }
+    },
+    "step-server-config": {
+      "title": "Server-Konfiguration",
+      "subtitle": "Konfigurieren Sie die Server-URL und erhalten Sie Code-Vorlagen für Ihre Implementierung",
+      "server-url": {
+        "title": "Server-URL-Konfiguration",
+        "label": "Server-URL",
+        "placeholder": "https://ihre-server-url.com/endpunkt",
+        "help-text": "Dies ist die URL, an der Ihr Server Anfragen von der Workflow-Engine empfängt."
+      },
+      "important-note": {
+        "title": "Wichtig",
+        "content": "Ihr Server muss öffentlich zugänglich sein und POST-Anfragen empfangen können. Stellen Sie sicher, dass Sie eine ordnungsgemäße Fehlerbehandlung und Antwortformatierung implementieren."
+      },
+      "templates": {
+        "title": "Server-Implementierungsvorlagen",
+        "subtitle": "Diese Vorlagen helfen Ihnen bei der Implementierung der serverseitigen Funktionalität für Ihren Node. Sie werden nicht innerhalb dieser Anwendung ausgeführt - sie dienen nur als Referenz.",
+        "download-button": "Projekt herunterladen",
+        "downloading": "Wird heruntergeladen...",
+        "project-files": "Projektdateien"
+      },
+      "implementation-notes": {
+        "title": "Implementierungshinweise",
+        "notes": {
+          "note1": "Ihr Server muss schnell antworten, um Timeouts zu vermeiden (sofort 200 zurückgeben)",
+          "note2": "Verarbeiten Sie die Anfrage asynchron und senden Sie das Ergebnis an den angegebenen Antwortpfad",
+          "note3": "Fügen Sie immer die flowElementInstanceId in Ihre Antworten ein",
+          "note4": "Behandeln Sie Fehler ordnungsgemäß und senden Sie sie an den errorResponsePath",
+          "note5": "Der Server muss vom Internet aus zugänglich sein"
+        }
+      }
     }
   }
 }

@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Info, FileText, Tag } from "lucide-react"
 import type { NodeDefinition } from "@/model/NodeDefinition"
 import type { ExecutionMode } from "@/model/database/database.types"
+import {useTranslations} from "next-intl";
 
 interface StepGeneralInfoProps {
     nodeDefinition: NodeDefinition
@@ -19,6 +20,8 @@ interface StepGeneralInfoProps {
 const executionModes: ExecutionMode[] = ["Manual", "Automatic"]
 
 export function StepGeneralInfo({ nodeDefinition, updateNodeDefinition, onNext, onPrevious }: StepGeneralInfoProps) {
+    const t = useTranslations("shop.step-general-info")
+
     const updateField = (field: keyof NodeDefinition, value: string) => {
         const updated = { ...nodeDefinition, [field]: value }
         if (field === "name") {
@@ -30,8 +33,8 @@ export function StepGeneralInfo({ nodeDefinition, updateNodeDefinition, onNext, 
     return (
         <div className="space-y-8">
             <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold">General Node Information</h2>
-                <p className="text-muted-foreground mt-2">Define the basic details of your node</p>
+                <h2 className="text-2xl font-bold">{t("title")}</h2>
+                <p className="text-muted-foreground mt-2">{t("subtitle")}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -39,59 +42,59 @@ export function StepGeneralInfo({ nodeDefinition, updateNodeDefinition, onNext, 
                     <CardHeader className="pb-3">
                         <CardTitle className="text-lg flex items-center">
                             <Info className="mr-2 h-5 w-5 text-primary" />
-                            Basic Information
+                            {t("basic-info.title")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
                             <Label htmlFor="name" className="text-sm font-medium">
-                                Node Name
+                                {t("basic-info.node-name.label")}
                             </Label>
                             <Input
                                 id="name"
                                 value={nodeDefinition.name}
                                 onChange={(e) => updateField("name", e.target.value)}
-                                placeholder="Enter node name"
+                                placeholder={t("basic-info.node-name.placeholder")}
                                 className="mt-2"
                             />
                         </div>
 
                         <div>
                             <Label htmlFor="shortDescription" className="text-sm font-medium">
-                                Short Description
+                                {t("basic-info.short-description.label")}
                             </Label>
                             <Input
                                 id="shortDescription"
                                 value={nodeDefinition.shortDescription}
                                 onChange={(e) => updateField("shortDescription", e.target.value)}
-                                placeholder="Brief description of what this node does"
+                                placeholder={t("basic-info.short-description.placeholder")}
                                 className="mt-2"
                             />
                         </div>
 
                         <div>
                             <Label htmlFor="icon" className="text-sm font-medium">
-                                Icon
+                                {t("basic-info.icon.label")}
                             </Label>
                             <Input
                                 id="icon"
                                 value={nodeDefinition.icon}
                                 onChange={(e) => updateField("icon", e.target.value)}
-                                placeholder="Icon name or path"
+                                placeholder={t("basic-info.icon.placeholder")}
                                 className="mt-2"
                             />
                         </div>
 
                         <div>
                             <Label htmlFor="executionMode" className="text-sm font-medium">
-                                Execution Mode
+                                {t("basic-info.execution-mode.label")}
                             </Label>
                             <Select
                                 value={nodeDefinition.executionMode}
                                 onValueChange={(value) => updateField("executionMode", value as ExecutionMode)}
                             >
                                 <SelectTrigger className="mt-2">
-                                    <SelectValue placeholder="Select execution mode" />
+                                    <SelectValue placeholder={t("basic-info.execution-mode.placeholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {executionModes.map((mode) => (
@@ -109,24 +112,21 @@ export function StepGeneralInfo({ nodeDefinition, updateNodeDefinition, onNext, 
                     <CardHeader className="pb-3">
                         <CardTitle className="text-lg flex items-center">
                             <FileText className="mr-2 h-5 w-5 text-primary" />
-                            Documentation
+                            {t("documentation.title")}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Label htmlFor="markdownDocumentation" className="text-sm font-medium">
-                            Documentation (Markdown)
+                            {t("documentation.label")}
                         </Label>
                         <Textarea
                             id="markdownDocumentation"
                             value={nodeDefinition.markdownDocumentation}
                             onChange={(e) => updateField("markdownDocumentation", e.target.value)}
-                            placeholder="Write detailed documentation using Markdown"
+                            placeholder={t("documentation.placeholder")}
                             className="mt-2 h-[280px] resize-none"
                         />
-                        <p className="text-xs text-muted-foreground mt-2">
-                            Use Markdown syntax to format your documentation. This will be displayed to users when they view details
-                            about this node.
-                        </p>
+                        <p className="text-xs text-muted-foreground mt-2">{t("documentation.help-text")}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -135,10 +135,7 @@ export function StepGeneralInfo({ nodeDefinition, updateNodeDefinition, onNext, 
                 <CardContent className="py-4 px-6">
                     <div className="flex items-start">
                         <Tag className="h-5 w-5 text-muted-foreground mr-2 mt-0.5" />
-                        <p className="text-sm text-muted-foreground">
-                            The information you provide here will be displayed to users when they browse available nodes. Make sure to
-                            provide clear and concise descriptions to help users understand what your node does.
-                        </p>
+                        <p className="text-sm text-muted-foreground">{t("info-note")}</p>
                     </div>
                 </CardContent>
             </Card>
