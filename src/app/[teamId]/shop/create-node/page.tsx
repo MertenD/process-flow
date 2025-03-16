@@ -88,18 +88,18 @@ export default function CreateNodePage() {
     }
 
     return (
-        <div className="container mx-auto py-8 px-4 max-w-6xl">
-            <h1 className="text-3xl font-bold mb-6">Create Node</h1>
+        <div className="container mx-auto py-10 px-4 max-w-6xl">
+            <h1 className="text-3xl font-bold mb-8 text-center">Create Node</h1>
 
-            <div className="mb-8">
-                <div className="flex justify-between mb-2">
+            <div className="mb-10">
+                <div className="flex justify-between mb-3">
                     {[1, 2, 3, 4].map((step) => (
                         <div
                             key={step}
                             className={`flex items-center ${currentStep === step ? "text-primary font-medium" : "text-muted-foreground"}`}
                         >
                             <div
-                                className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 
+                                className={`flex items-center justify-center w-10 h-10 rounded-full mr-2 
                 ${
                                     currentStep > step
                                         ? "bg-primary text-primary-foreground"
@@ -108,19 +108,21 @@ export default function CreateNodePage() {
                                             : "border-2 border-muted-foreground text-muted-foreground"
                                 }`}
                             >
-                                {currentStep > step ? <Check className="h-4 w-4" /> : step}
+                                {currentStep > step ? <Check className="h-5 w-5" /> : step}
                             </div>
-                            {step === 1 && "Information"}
-                            {step === 2 && "General Details"}
-                            {step === 3 && "Options"}
-                            {step === 4 && "Server Config"}
+                            <span className="hidden sm:inline">
+                {step === 1 && "Information"}
+                                {step === 2 && "General Details"}
+                                {step === 3 && "Options"}
+                                {step === 4 && "Server Config"}
+              </span>
                         </div>
                     ))}
                 </div>
                 <Progress value={(currentStep / 4) * 100} className="h-2" />
             </div>
 
-            <Card className="p-6">
+            <Card className="p-8 shadow-sm">
                 {currentStep === 1 && <StepInfo onNext={handleNext} />}
 
                 {currentStep === 2 && (
@@ -151,20 +153,20 @@ export default function CreateNodePage() {
                 )}
             </Card>
 
-            <div className="flex justify-between mt-6">
-                <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 1}>
-                    <ChevronLeft className="mr-2 h-4 w-4" />
+            <div className="flex justify-between mt-8">
+                <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 1} size="lg" className="px-6">
+                    <ChevronLeft className="mr-2 h-5 w-5" />
                     Previous
                 </Button>
 
                 {currentStep < 4 ? (
-                    <Button onClick={handleNext}>
+                    <Button onClick={handleNext} size="lg" className="px-6">
                         Next
-                        <ChevronRight className="ml-2 h-4 w-4" />
+                        <ChevronRight className="ml-2 h-5 w-5" />
                     </Button>
                 ) : (
-                    <Button onClick={saveNodeDefinition}>
-                        <Save className="mr-2 h-4 w-4" />
+                    <Button onClick={saveNodeDefinition} size="lg" className="px-6 bg-green-600 hover:bg-green-700">
+                        <Save className="mr-2 h-5 w-5" />
                         Save Node
                     </Button>
                 )}
