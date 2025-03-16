@@ -223,19 +223,21 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
                             <Server className="mr-2 h-5 w-5 text-primary" />
                             {t("templates.title")}
                         </CardTitle>
-                        <Button variant="outline" size="sm" onClick={downloadProject} disabled={isDownloading}>
-                            <Download className="h-4 w-4 mr-2" />
-                            {isDownloading ? t("templates.downloading") : t("templates.download-button")}
-                        </Button>
                     </div>
                     <p className="text-sm text-muted-foreground mt-2">{t("templates.subtitle")}</p>
                 </CardHeader>
                 <CardContent className="p-0">
                     <Tabs defaultValue="nodejs" value={selectedLanguage} onValueChange={handleLanguageChange} className="p-4">
-                        <TabsList className="mb-4 grid grid-cols-2 w-[200px]">
-                            <TabsTrigger value="nodejs">Node.js</TabsTrigger>
-                            <TabsTrigger value="python">Python</TabsTrigger>
-                        </TabsList>
+                        <div className="flex flex-row justify-between">
+                            <TabsList className="mb-4 grid grid-cols-2 w-[200px]">
+                                <TabsTrigger value="nodejs">Node.js</TabsTrigger>
+                                <TabsTrigger value="python">Python</TabsTrigger>
+                            </TabsList>
+                            <Button variant="outline" size="sm" onClick={downloadProject} disabled={isDownloading}>
+                                <Download className="h-4 w-4 mr-2" />
+                                {isDownloading ? t("templates.downloading") : t("templates.download-button")}
+                            </Button>
+                        </div>
 
                         <TabsContent value="nodejs" className="mt-0 space-y-4">
                             <div className="border rounded-md overflow-hidden">
