@@ -93,7 +93,7 @@ export default function OptionsToolbar({ teamId }: OptionsToolbarProps) {
             break
     }
 
-    return <aside className="w-[400px] h-full p-3 border-l overflow-y-auto overflow-x-hidden space-y-4">
+    return <aside className="w-[400px] h-full p-3 border-l overflow-y-auto overflow-x-hidden space-y-4 bg-card">
         { options }
     </aside>
 }

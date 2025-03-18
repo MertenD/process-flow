@@ -50,7 +50,7 @@ export default function StartNode({ id, selected, data}: NodeProps<StartNodeData
             ...startNodeShapeStyle,
             backgroundColor: data.backgroundColor,
             boxShadow: selected ? `0px 0px 5px 1px #14803c` : undefined
-        }} className={`bg-background border-2 border-foreground ${ selected ? "border-primary" : "" }`}>
+        }} className={`bg-card border-2 border-foreground ${ selected ? "border-primary" : "" }`}>
             <Handle style={handleStyle} type="source" position={Position.Right} />
         </div>
     )

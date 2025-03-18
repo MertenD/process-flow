@@ -205,10 +205,10 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
                         </div>
 
                         <div>
-                            <Alert className="border-amber-200">
-                                <Server className="h-4 w-4 stroke-amber-200" />
-                                <AlertTitle className="text-amber-200">{t("important-note.title")}</AlertTitle>
-                                <AlertDescription className="text-amber-200">{t("important-note.content")}</AlertDescription>
+                            <Alert className="border-warning bg-warning-foreground">
+                                <Server className="h-4 w-4 stroke-warning" />
+                                <AlertTitle className="text-warning">{t("important-note.title")}</AlertTitle>
+                                <AlertDescription className="text-warning">{t("important-note.content")}</AlertDescription>
                             </Alert>
                         </div>
                     </div>

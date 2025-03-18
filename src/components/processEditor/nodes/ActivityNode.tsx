@@ -55,7 +55,7 @@ export default function ActivityNode({ id, selected, data }: NodeProps<ActivityN
             ...activityShapeStyle,
             backgroundColor: data.backgroundColor,
             boxShadow: selected ? `0px 0px 5px 1px #14803c` : undefined
-        }} className={`flex flex-row gap-x-2 p-2 items-center bg-background border-2 border-foreground ${ selected ? "border-primary" : "" }`} >
+        }} className={`flex flex-row gap-x-2 p-2 items-center bg-card border-2 border-foreground ${ selected ? "border-primary" : "" }`} >
             <Handle style={handleStyle} type="source" position={Position.Right}/>
             <Handle style={handleStyle} type="target" position={Position.Left}/>
             <DynamicIcon name={nodeDefinition?.icon} className={`${selected ? "text-primary" : ""}`} />

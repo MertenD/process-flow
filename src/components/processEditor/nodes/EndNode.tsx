@@ -13,7 +13,7 @@ export default function EndNode({ id, selected, data}: NodeProps<EndNodeData>) {
             ...endNodeShapeStyle,
             backgroundColor: data.backgroundColor,
             boxShadow: selected ? `0px 0px 5px 1px #14803c` : undefined
-        }} className={`bg-background border-2 border-foreground ${ selected ? "border-primary" : "" }`}>
+        }} className={`bg-card border-2 border-foreground ${ selected ? "border-primary" : "" }`}>
             <Handle style={{...handleStyle }} type="target" position={Position.Left} />
         </div>
     )

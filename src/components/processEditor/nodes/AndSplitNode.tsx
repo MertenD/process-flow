@@ -40,7 +40,7 @@ export default function AndSplitNode({ id, selected, data }: NodeProps<AndSplitN
                 ...AndSplitShapeStyle,
                 backgroundColor: data.backgroundColor,
                 boxShadow: selected ? `0px 0px 5px 1px #14803c` : undefined
-            }} className={`flex justify-center items-center bg-background border-2 border-foreground ${ selected ? "border-primary" : "" }`} >
+            }} className={`flex justify-center items-center bg-card border-2 border-foreground ${ selected ? "border-primary" : "" }`} >
                 <X className="w-6 h-6" />
             </div>
             <Handle style={handleStyle} type="target" position={Position.Left} id="a"/>

@@ -22,7 +22,7 @@ export function StepInfo({ onNext }: StepInfoProps) {
                 <Card className="border-l-4 border-l-primary hover:shadow-md transition-shadow">
                     <CardContent className="pt-6 pb-6">
                         <div className="flex flex-col items-center text-center">
-                            <div className="bg-accent p-4 rounded-full mb-4">
+                            <div className="bg-background p-4 rounded-full mb-4">
                                 <Settings className="h-6 w-6 text-primary" />
                             </div>
                             <h3 className="font-medium text-lg mb-3">{t("cards.general-details.title")}</h3>
@@ -34,7 +34,7 @@ export function StepInfo({ onNext }: StepInfoProps) {
                 <Card className="border-l-4 border-l-primary hover:shadow-md transition-shadow">
                     <CardContent className="pt-6 pb-6">
                         <div className="flex flex-col items-center text-center">
-                            <div className="bg-accent p-4 rounded-full mb-4">
+                            <div className="bg-background p-4 rounded-full mb-4">
                                 <ListChecks className="h-6 w-6 text-primary" />
                             </div>
                             <h3 className="font-medium text-lg mb-3">{t("cards.options.title")}</h3>
@@ -46,7 +46,7 @@ export function StepInfo({ onNext }: StepInfoProps) {
                 <Card className="border-l-4 border-l-primary hover:shadow-md transition-shadow">
                     <CardContent className="pt-6 pb-6">
                         <div className="flex flex-col items-center text-center">
-                            <div className="bg-accent p-4 rounded-full mb-4">
+                            <div className="bg-background p-4 rounded-full mb-4">
                                 <FileCode className="h-6 w-6 text-primary" />
                             </div>
                             <h3 className="font-medium text-lg mb-3">{t("cards.server-setup.title")}</h3>
@@ -58,7 +58,7 @@ export function StepInfo({ onNext }: StepInfoProps) {
                 <Card className="border-l-4 border-l-primary hover:shadow-md transition-shadow">
                     <CardContent className="pt-6 pb-6">
                         <div className="flex flex-col items-center text-center">
-                            <div className="bg-accent p-4 rounded-full mb-4">
+                            <div className="bg-background p-4 rounded-full mb-4">
                                 <Server className="h-6 w-6 text-primary" />
                             </div>
                             <h3 className="font-medium text-lg mb-3">{t("cards.code-templates.title")}</h3>

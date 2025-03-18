@@ -205,7 +205,6 @@ function DragAndDropFlow({ processModelId, nodeDefinitionPreviews }: Readonly<Dr
                 type: "smoothstep",
             }}
             deleteKeyCode={["Backspace", "Delete"]}
-            className="bg-accent"
             snapToGrid
         >
             <Controls />
@@ -215,7 +214,7 @@ function DragAndDropFlow({ processModelId, nodeDefinitionPreviews }: Readonly<Dr
             </Panel>
             <MiniMap nodeColor={(node) => {
                 return node.data.backgroundColor || "gray"
-            }} nodeStrokeWidth={3} zoomable pannable className="bg-accent" />
+            }} nodeStrokeWidth={3} zoomable pannable className="bg-fd-background" />
             <OnCanvasNodesToolbar
                 open={openOnCanvasNodeSelector}
                 position={lastEventPosition}
@@ -251,7 +250,7 @@ export default function BpmnEditor({ processModelId, teamId, nodeDefinitionPrevi
             <div className="flex flex-row w-full h-full">
                 <div className="w-full h-full flex flex-col">
                     <EditorToolbar processModelId={processModelId} />
-                    <div className="w-full h-full pl-2 bg-accent">
+                    <div className="w-full h-full pl-2">
                         <DragAndDropFlow processModelId={processModelId} nodeDefinitionPreviews={nodeDefinitionPreviews} />
                     </div>
                 </div>
