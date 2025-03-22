@@ -214,7 +214,7 @@ function DragAndDropFlow({ processModelId, nodeDefinitionPreviews }: Readonly<Dr
             </Panel>
             <MiniMap nodeColor={(node) => {
                 return node.data.backgroundColor || "gray"
-            }} nodeStrokeWidth={3} zoomable pannable className="bg-background" />
+            }} nodeStrokeWidth={3} zoomable pannable />
             <OnCanvasNodesToolbar
                 open={openOnCanvasNodeSelector}
                 position={lastEventPosition}
