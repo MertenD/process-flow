@@ -339,7 +339,8 @@
   },
   "shop": {
     "shopPage": {
-      "title": "Prodavnica"
+      "title": "Prodavnica",
+      "createActivity": "Kreiraj aktivnost"
     },
     "addedNodesPage": {
       "title": "Dodate aktivnosti",

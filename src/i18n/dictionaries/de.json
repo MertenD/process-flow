@@ -55,7 +55,7 @@
       "monitoring": "Monitoring",
       "tasks": "Aufgaben",
       "shopGroupTitle": "Shop",
-      "shop": "Aktivitäten entdecken",
+      "shop": "Shop",
       "addedNodes": "Gespeicherte Aktivitäten",
       "createNode": "Aktivität erstellen"
     },
@@ -340,7 +340,8 @@
   },
   "shop": {
     "shopPage": {
-      "title": "Aktivitäten entdecken"
+      "title": "Aktivitäten entdecken",
+      "createActivity": "Aktivität erstellen"
     },
     "addedNodesPage": {
       "title": "Gespeicherte Aktivitäten",

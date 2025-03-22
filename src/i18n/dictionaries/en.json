@@ -55,7 +55,7 @@
       "monitoring": "Monitoring",
       "tasks": "Tasks",
       "shopGroupTitle": "Shop",
-      "shop": "Browse Activities",
+      "shop": "Shop",
       "addedNodes": "Saved Activities",
       "createNode": "Create Activity"
     },
@@ -340,7 +340,8 @@
   },
   "shop": {
     "shopPage": {
-      "title": "Browse Activities"
+      "title": "Browse Activities",
+      "createActivity": "Create Activity"
     },
     "addedNodesPage": {
       "title": "Added Activities",

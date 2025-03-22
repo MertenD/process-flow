@@ -5,6 +5,9 @@ import {useTranslations} from "next-intl";
 import SearchAndFilter from "@/components/shop/SearchAndFilter";
 import NodeList from "@/components/shop/NodeList";
 import {NodeDefinitionPreview} from "@/model/NodeDefinition";
+import {Button} from "@/components/ui/button";
+import {Plus} from "lucide-react";
+import Link from "next/link";
 
 interface ShopProps {
     teamId: number
@@ -26,7 +29,15 @@ export default function Shop({ teamId, nodeDefinitions }: Readonly<ShopProps>) {
     })
 
     return <>
-        <h2 className="text-3xl font-bold">{ t("title") }</h2>
+        <div className="flex flex-row justify-between">
+            <h2 className="text-3xl font-bold">{ t("title") }</h2>
+            <Link href={`/${teamId}/shop/create-node`}>
+                <Button variant="default">
+                    <Plus />
+                    <span className="pl-2 text-center">{t("createActivity")}</span>
+                </Button>
+            </Link>
+        </div>
         <SearchAndFilter
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
