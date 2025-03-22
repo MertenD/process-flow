@@ -100,11 +100,15 @@ main {
   fill: hsl(var(--background)) !important;
 }
 
+.react-flow__controls button:hover svg {
+  fill: hsl(var(--background)) !important;
+}
+
 .react-flow__controls {
   border-width: 0 !important;
 }
 
-.react-flow__minimap {
+.react-flow .react-flow__minimap {
   background-color: hsl(var(--background)) !important;
   border-width: 0 !important;
 }
