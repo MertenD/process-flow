@@ -205,7 +205,6 @@ function DragAndDropFlow({ processModelId, nodeDefinitionPreviews }: Readonly<Dr
                 type: "smoothstep",
             }}
             deleteKeyCode={["Backspace", "Delete"]}
-            snapToGrid
         >
             <Controls />
             <Background variant={BackgroundVariant.Dots} />
