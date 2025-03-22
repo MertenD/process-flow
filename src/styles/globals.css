@@ -86,26 +86,30 @@ main {
   height: 100%;
 }
 
-/*noinspection ALL,CssUnusedSymbol*/
 .react-flow__controls-button {
-  @apply bg-card border border-foreground fill-foreground border-b-0;
+  background-color: hsl(var(--card)) !important;
+  fill: hsl(var(--foreground)) !important;
+  border-bottom: 0 !important;
 }
 
-/*noinspection ALL,CssUnusedSymbol*/
 .react-flow__controls-button:hover {
-  @apply bg-accent dark:bg-primary;
+  background-color: hsl(var(--accent)) !important;
+}
+
+.react-flow__controls-button:hover svg {
+  fill: hsl(var(--background)) !important;
 }
 
 .react-flow__controls {
-  @apply border-0;
+  border-width: 0 !important;
 }
 
 .react-flow__minimap {
-    @apply border-0;
+  border-width: 0 !important;
 }
 
 .react-flow__minimap svg path {
-  @apply fill-card;
+  fill: hsl(var(--card)) !important;
 }
 
 .react-flow__attribution {
