@@ -1,17 +1,18 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import type { NodeDefinition } from "@/model/NodeDefinition"
-import { OptionsStructureType } from "@/model/OptionsModel"
-import { StepInfo } from "@/components/shop/create-node/StepInfo"
-import { StepGeneralInfo } from "@/components/shop/create-node/StepGeneralInfo"
-import { StepOptionsConfig } from "@/components/shop/create-node/StepOptionsConfig"
-import { StepServerConfig } from "@/components/shop/create-node/StepServerConfig"
-import { Progress } from "@/components/ui/progress"
-import { Check, ChevronLeft, ChevronRight, Save } from "lucide-react"
+import {useState} from "react"
+import {Button} from "@/components/ui/button"
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
+import type {NodeDefinition} from "@/model/NodeDefinition"
+import {OptionsStructureType} from "@/model/OptionsModel"
+import {StepInfo} from "@/components/shop/create-node/StepInfo"
+import {StepGeneralInfo} from "@/components/shop/create-node/StepGeneralInfo"
+import {StepOptionsConfig} from "@/components/shop/create-node/StepOptionsConfig"
+import {StepServerConfig} from "@/components/shop/create-node/StepServerConfig"
+import {Progress} from "@/components/ui/progress"
+import {Check, ChevronLeft, ChevronRight, Save} from "lucide-react"
 import {useTranslations} from "next-intl";
+import PreviewDynamicOptions from "@/components/shop/details/PreviewDynamicOptions";
 
 export default function CreateNodePage() {
     const t = useTranslations("shop.create-node")
@@ -124,42 +125,53 @@ export default function CreateNodePage() {
                 <Progress value={(currentStep / 4) * 100} indicatorColor="bg-primary" className="h-2" />
             </div>
 
-            <Card className="p-8 shadow-sm">
-                {currentStep === 1 && <StepInfo onNext={handleNext} />}
+            <div className="flex flex-row space-x-4">
+                <Card className="p-8 shadow-sm">
+                    {currentStep === 1 && <StepInfo onNext={handleNext} />}
 
-                {currentStep === 2 && (
-                    <StepGeneralInfo
-                        nodeDefinition={nodeDefinition}
-                        updateNodeDefinition={updateNodeDefinition}
-                        onNext={handleNext}
-                        onPrevious={handlePrevious}
-                    />
-                )}
+                    {currentStep === 2 && (
+                        <StepGeneralInfo
+                            nodeDefinition={nodeDefinition}
+                            updateNodeDefinition={updateNodeDefinition}
+                            onNext={handleNext}
+                            onPrevious={handlePrevious}
+                        />
+                    )}
 
-                {currentStep === 3 && (
-                    <StepOptionsConfig
-                        nodeDefinition={nodeDefinition}
-                        updateNodeDefinition={updateNodeDefinition}
-                        onNext={handleNext}
-                        onPrevious={handlePrevious}
-                    />
-                )}
+                    {currentStep === 3 && (
+                        <StepOptionsConfig
+                            nodeDefinition={nodeDefinition}
+                            updateNodeDefinition={updateNodeDefinition}
+                            onNext={handleNext}
+                            onPrevious={handlePrevious}
+                        />
+                    )}
 
-                {currentStep === 4 && (
-                    <StepServerConfig
-                        nodeDefinition={nodeDefinition}
-                        updateNodeDefinition={updateNodeDefinition}
-                        onPrevious={handlePrevious}
-                        onSave={saveNodeDefinition}
-                    />
-                )}
-            </Card>
+                    {currentStep === 4 && (
+                        <StepServerConfig
+                            nodeDefinition={nodeDefinition}
+                            updateNodeDefinition={updateNodeDefinition}
+                            onPrevious={handlePrevious}
+                            onSave={saveNodeDefinition}
+                        />
+                    )}
+                </Card>
+
+                { currentStep === 3 && <Card className="pt-4 shadow-sm w-[500px]">
+                    <CardHeader>
+                        <CardTitle>Preview</CardTitle>
+                    </CardHeader>
+                    <CardContent className="overscroll-y-auto">
+                        <PreviewDynamicOptions optionsDefinition={nodeDefinition.optionsDefinition} />
+                    </CardContent>
+                </Card> }
+            </div>
 
             <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 1} size="lg" className="px-6">
+                { currentStep !== 1 ? <Button variant="outline" onClick={handlePrevious} size="lg" className="px-6">
                     <ChevronLeft className="mr-2 h-5 w-5" />
                     {t("navigation.previous")}
-                </Button>
+                </Button> : <div></div> }
 
                 {currentStep < 4 ? (
                     <Button onClick={handleNext} size="lg" className="px-6">
