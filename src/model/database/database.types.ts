@@ -60,3 +60,5 @@ export type Theme = Enums<"theme">
 export type FlowElementInstanceState = Enums<"flow_element_instance_status">
 
 export type ExecutionMode = Enums<"execution_mode">
+
+export type NodeDefinitionVisibility = Enums<"node_definition_visibility">

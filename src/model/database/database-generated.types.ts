@@ -460,20 +460,51 @@ export type Database = {
       node_definition: {
         Row: {
           created_at: string
+          created_by: string | null
           definition: Json
           id: number
+          team_id: number | null
+          visibility: Database["public"]["Enums"]["node_definition_visibility"]
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           definition?: Json
           id?: number
+          team_id?: number | null
+          visibility?: Database["public"]["Enums"]["node_definition_visibility"]
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           definition?: Json
           id?: number
+          team_id?: number | null
+          visibility?: Database["public"]["Enums"]["node_definition_visibility"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "public_node_definition_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_node_definition_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles_with_roles"
+            referencedColumns: ["profile_id"]
+          },
+          {
+            foreignKeyName: "public_node_definition_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       process_instance: {
         Row: {
@@ -1163,6 +1194,7 @@ export type Database = {
         | "Completed"
         | "Error"
       gamification_type: "None" | "Points" | "Badges"
+      node_definition_visibility: "Public" | "Team"
       node_type:
         | "challengeNode"
         | "activityNode"
