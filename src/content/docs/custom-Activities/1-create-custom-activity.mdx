@@ -1,0 +1,155 @@
+---
+title: Creating Custom Activities
+description: How to develop, configure, and deploy custom manual or automatic activities for your process flows.
+---
+
+It is possible to create your own activities that can be used in the editor and then executed on your own server when they are reached in the process. These activities can be either **manual tasks**—made available to users in their worklists for processing—or **automatic activities**, which run immediately without user interaction.
+
+In this walk‑through we build an automatic **ChatGPT** activity. In the editor you will be able to supply a *system prompt* and a *user input*. At runtime the node calls the OpenAI API and writes ChatGPT’s reply back into the workflow. The sample process lets a user enter a topic, asks ChatGPT to explain it, and finally shows the explanation to the user.
+
+![Final Process Preview](/assets/custom-node/final-process.png)
+
+## Step 1 – General Details
+
+Open **`Shop → Create Activity`**. The wizard shows all steps you will complete.
+
+![Step 1 – Introduction](/assets/custom-node/step-1.png)
+
+In the second screen provide the basic metadata:
+
+1. **Display name** shown in the editor
+2. **Short description** for the shop
+3. **Icon name** (see the catalogue at [Lucide.dev](https://lucide.dev/icons/))
+4. **Execution mode** – *Manual* (user works on a form your server renders) or *Automatic* (logic runs on your server without user input)
+5. **Detailed description** (Markdown allowed)—use this to document what the node does and how to configure it.
+
+![Step 2 – General Information](/assets/custom-node/step-2.png)
+
+## Step 2 – Editor Options
+
+Define which **configuration fields** the editor should show when someone drops your activity onto the canvas. The values entered there are sent to your server at runtime.
+
+![Step 3 – Editor Options](/assets/custom-node/step-3-1.png)
+
+Click **Add new Option** to insert a field. The list below the button lets you configure each option; the preview on the right shows how the panel will appear in the editor.
+
+![Step 3 – Options Example](/assets/custom-node/step-3-2.png)
+
+Available option types:
+
+| Type | Purpose |
+| --- | --- |
+| **Text** | Static explanatory text shown between fields. |
+| **Input / Textarea** | Single‑line or multi‑line text input. |
+| **Select / Select with custom** | Drop‑down list. You can nest further options that appear depending on the selected value. *Select with custom* additionally lets the editor user type their own value. Tip: use `{availableVariables}` as an option value to let users pick any existing process variable. |
+| **Checkbox** | Boolean switch; nested options can depend on its state. |
+| **Variable Name Input** | Text field where the editor user defines the **target variable** that will receive the node’s output. |
+| **Separator** | Horizontal rule to visually group fields. |
+| **Row** | Container that arranges child options side by side. |
+
+> **Important**   Every option needs a *label*—internally the label is used as its key.
+
+## Step 3 – Set Up Your Server Endpoint
+
+Tell the wizard where the workflow engine should send the webhook when the node runs.
+
+![Step 4 – Endpoint Setup](/assets/custom-node/step-4-2.png)
+
+The next page offers **downloadable code templates** (ZIP) already wired with your chosen options:
+
+- **Automatic mode** – Node.js and Python stubs implementing an API endpoint that responds to the engine.
+- **Manual mode** – A Next.js component that receives the instance data and renders a simple UI.
+
+Make sure you adjust the endpoint URL inside the template if necessary and to implement your business logic.
+
+![Step 4 – Code Samples](/assets/custom-node/step-4-3.png)
+
+### Payload contract
+
+Your server receives the option values **plus** three technical fields:
+
+| Field | Meaning |
+| --- | --- |
+| `responsePath` | POST your success payload here. |
+| `errorResponsePath` | POST error details here. |
+| `flowElementInstanceId` | Correlates your reply with the running activity. |
+
+💡 Always return **HTTP 200 OK immediately** to avoid workflow timeouts.
+
+### Example – ChatGPT server (Node.js)
+
+```javascript
+const express = require('express');
+const axios = require('axios');
+const app = express();
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+app.use(express.json());
+
+app.post('/call', async (req, res) => {
+  // 1 — acknowledge immediately
+  res.sendStatus(200);
+
+  const { responsePath, errorResponsePath, flowElementInstanceId } = req.body;
+  const { openAIAPIKey, prompt, additionalData, outputs } = req.body.data;
+  const outputVar = outputs.outputVariableName;
+
+  try {
+    const openAiResp = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: 'gpt-4o',
+        messages: [
+          { role: 'system', content: prompt },
+          { role: 'user', content: additionalData },
+        ],
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${openAIAPIKey}`,
+        },
+      },
+    );
+
+    await axios.post(responsePath, {
+      flowElementInstanceId,
+      data: { [outputVar]: openAiResp.data.choices[0].message.content },
+    });
+  } catch (err) {
+    await axios.post(errorResponsePath, {
+      flowElementInstanceId,
+      errorMessage: `ChatGPT call failed: ${err.message}`,
+    });
+  }
+});
+
+app.listen(process.env.PORT || 3030, () =>
+  console.log('ChatGPT node listening …'),
+);
+```
+
+## Step 4 – Use the Activity
+
+Once saved, the activity appears for everyone under **Shop**. The detail page shows its metadata and an option preview. Click **➕ Add to Editor** to make it available in the **Editor**. Your own created nodes are listed under **My Activities** and your saved nodes for the editor can be managed under **Saved Activities**.
+
+![Step 5 – Shop Detail](/assets/custom-node/details-in-shop.png)
+
+In the sample workflow below, a previous node stores the user‑entered topic in the variable `{input}`. The ChatGPT node reads this value via the **Additional Data** field.
+
+![Step 6 – Editor Usage](/assets/custom-node/create-process-2.png)
+
+Finally, the process shows ChatGPT’s reply (`{chatGPTAnswer}`) to the user in an info‑text task.
+
+![Step 7 – Display Result](/assets/custom-node/create-process-3.png)
+
+---
+
+By following these steps you can package any custom logic—whether a simple webhook or a complex external service—into reusable activities for your processes.
+

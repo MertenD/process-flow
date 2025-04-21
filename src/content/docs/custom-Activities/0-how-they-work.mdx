@@ -1,0 +1,86 @@
+---
+title: How Custom Activities Work
+description: Architecture, communication pattern, and error handling for custom activities at runtime.
+---
+
+This document explains **what happens inside the engine** when a running workflow reaches a *custom activity* and how your service must react.
+
+---
+## 1 – Sequence Overview
+
+1. **Process instance arrives at the custom node**.
+The engine pauses execution and prepares an HTTP request for your service.
+2. **Engine → Your endpoint** (HTTP POST). The payload contains:
+- `responsePath` – URL to call when the activity succeeds.
+- `errorResponsePath` – URL to call when the activity fails.
+- `flowElementInstanceId` – Correlates replies with the running instance.
+- `data` – All process variables referenced by this activity.
+3. **Your service immediately returns `200 OK`** to acknowledge receipt and avoid time‑outs.
+4. **Your service performs its business logic** (e.g. calls an external API).
+5. **Your service → `responsePath`** (HTTP POST) on success, sending:
+```json
+{
+  "flowElementInstanceId": "<id>",
+  "data": {
+    "<variableName>": "<value>",
+    "...": "..."
+  }
+}
+   ```
+6. **Engine resumes the workflow**. New/updated variables are now available to downstream nodes.
+7. **Error handling** – If something goes wrong call **`errorResponsePath`** instead:
+```json
+{
+  "flowElementInstanceId": "<id>",
+  "errorMessage": "<human‑readable error>"
+}
+   ```
+The incident is logged and shown in the monitoring UI.
+
+This process is equivalent with manual activities, where the engine waits for user input. The only difference is that the engine does not wait for a human to respond, but for your service to call back.
+
+---
+## 2 – Payload Reference
+
+| Field | Direction | Type | Description |
+| --- | --- | --- | --- |
+| `responsePath` | Engine → Service | `string (URL)` | Callback for successful completion. |
+| `errorResponsePath` | Engine → Service | `string (URL)` | Callback for error reporting. |
+| `flowElementInstanceId` | Both ways | `string` | Uniquely identifies this node execution. |
+| `data` | Engine → Service | `object` | Key–value map of all variables the node needs. |
+| `data` | Service → Engine | `object` | Key–value map with **only** the variables you want to create or update. |
+| `errorMessage` | Service → Engine | `string` | Human‑readable reason for failure (error path only). |
+
+---
+## 3 – Best Practices
+
+- **Respond fast** – Return `200 OK` before you start lengthy work. The engine handles the callback asynchronously.
+- **Idempotency** – Your callback endpoints may be retried; make them safe to call twice.
+- **Error detail** – Keep `errorMessage` concise yet actionable. Users will see it in the monitoring UI.
+
+---
+## 4 – Example Timeline
+
+```text
+┌─────────────────────────────┐
+│  Workflow Engine            │
+└──────────────┬──────────────┘
+               │ POST /my‑activity
+               │ body: {responsePath, errorResponsePath, ...}
+┌──────────────▼──────────────┐
+│  Your Service               │
+└──────────────┬──────────────┘
+               │ 200 OK (immediate)
+               │
+               │ [Business logic]
+               │
+               │ POST responsePath  — success
+               │   or
+               │ POST errorResponsePath — failure
+┌──────────────▼──────────────┐
+│  Workflow Engine            │
+└─────────────────────────────┘
+```
+
+With this flow in mind you can reliably integrate any external system or custom logic into your automated processes.
+
