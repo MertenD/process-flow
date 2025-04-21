@@ -15,7 +15,7 @@ export default function Footer() {
                 <div>
                     <h3 className="font-semibold mb-4">Project</h3>
                     <ul className="space-y-2">
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
+                        <li><Link href="#about" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
                     </ul>
                 </div>
                 <div>
@@ -29,11 +29,6 @@ export default function Footer() {
                     <h3 className="font-semibold mb-4">Legal</h3>
                     <ul className="space-y-2">
                         <li><Link href="/imprint" className="text-muted-foreground hover:text-foreground">Imprint</Link></li>
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Privacy
-                            Policy</Link>
-                        </li>
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Terms of
-                            Service</Link></li>
                     </ul>
                 </div>
             </div>
