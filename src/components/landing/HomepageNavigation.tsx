@@ -25,6 +25,9 @@ export default function HomepageNavigation({ isFixed }: HomepageNavigationProps)
                 <Link href="/#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     FAQ
                 </Link>
+                <Link href="/#about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    About
+                </Link>
                 <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                     Docs
                 </Link>

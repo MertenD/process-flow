@@ -1,5 +1,6 @@
 import FeatureCard from "@/components/landing/FeatureCard";
-import {Award, BarChart3, Edit3, ShieldCheck, Users} from "lucide-react";
+import {Award, BarChart3, Edit3, PencilRuler, ShieldCheck, Users} from "lucide-react";
+import React from "react";
 
 export default function FeatureSection() {
 
@@ -35,6 +36,12 @@ export default function FeatureSection() {
                     icon={<ShieldCheck className="h-8 w-8 text-primary"/>}
                     title="Role-Based Permissions"
                     description="Restrict or grant access to specific sections of the app."
+                />
+                <FeatureCard
+                    icon={<PencilRuler className="h-8 w-8 text-primary"/>}
+                    title="Custom Activities"
+                    description="Create and use custom activities tailored to your needs."
+                    image="/assets/shop-node-details.png"
                 />
             </div>
         </div>
