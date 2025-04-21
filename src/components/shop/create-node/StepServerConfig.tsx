@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,7 +10,12 @@ import { Download, Server, Globe } from "lucide-react"
 import type { NodeDefinition } from "@/model/NodeDefinition"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {useTranslations} from "next-intl";
-import {generateNodeJSFiles, generatePythonFiles, ProjectFile} from "@/utils/shop/project-generators";
+import {
+    generateNextJsFiles,
+    generateNodeJSFiles,
+    generatePythonFiles,
+    ProjectFile
+} from "@/utils/shop/project-generators";
 import {generateAndDownloadZip} from "@/utils/shop/zipUtils";
 import {FileTree} from "@/components/shop/create-node/FileTree";
 import {CodeEditor} from "@/components/shop/create-node/CodeEditor";
@@ -32,11 +37,12 @@ interface FileTreeItem {
 export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevious, onSave }: StepServerConfigProps) {
     const t = useTranslations("shop.step-server-config")
     const [copied, setCopied] = useState<string | null>(null)
-    const [selectedLanguage, setSelectedLanguage] = useState("nodejs")
+    const [selectedLanguage, setSelectedLanguage] = useState(nodeDefinition.executionMode === "Automatic" ? "nodejs" : "nextjs")
     const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
         src: true,
+        app: true
     })
-    const [selectedFile, setSelectedFile] = useState<string>("src/server.js")
+    const [selectedFile, setSelectedFile] = useState<string>(nodeDefinition.executionMode === "Automatic" ? "src/server.js" : "app/ExampleActivity.tsx")
     const [isDownloading, setIsDownloading] = useState(false)
 
     const updateField = (field: keyof NodeDefinition, value: string) => {
@@ -64,8 +70,10 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
             case "python":
                 return generatePythonFiles(nodeDefinition)
             case "nodejs":
-            default:
                 return generateNodeJSFiles(nodeDefinition)
+            case "nextjs":
+            default:
+                return generateNextJsFiles(nodeDefinition)
         }
     }
 
@@ -76,8 +84,10 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
         // Set default selected file based on language
         if (language === "python") {
             setSelectedFile("app.py")
-        } else {
+        } else if (language === "nodejs") {
             setSelectedFile("src/server.js")
+        } else if (language === "nextjs") {
+            setSelectedFile("app/ExampleActivity.tsx")
         }
     }
 
@@ -170,6 +180,22 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
     }
 
     const fileTree = buildFileTree(projectFiles)
+    
+    useEffect(() => {
+        const path = nodeDefinition.executionUrl ? nodeDefinition.executionUrl?.split(".")[1]?.split("/").slice(1).join("/") + "/" : ""
+
+        if (path && path !== "/") {
+            setExpandedFolders(prev => ({
+                ...prev,
+                [`app/${path}`.slice(0, -1)]: true,
+            }))
+            if (selectedLanguage === "nextjs" && selectedFile.endsWith("ExampleActivity.tsx")) {
+                setSelectedFile(`app/${path}ExampleActivity.tsx`)
+            }
+        } else if (selectedLanguage === "nextjs" && selectedFile.endsWith("ExampleActivity.tsx")) {
+            setSelectedFile("app/ExampleActivity.tsx")
+        }
+    }, [nodeDefinition.executionUrl, selectedFile, selectedLanguage])
 
     return (
         <div className="space-y-8">
@@ -230,8 +256,9 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
                     <Tabs defaultValue="nodejs" value={selectedLanguage} onValueChange={handleLanguageChange} className="p-4">
                         <div className="flex flex-row justify-between">
                             <TabsList className="mb-4 grid grid-cols-2 w-[200px]">
-                                <TabsTrigger value="nodejs">Node.js</TabsTrigger>
-                                <TabsTrigger value="python">Python</TabsTrigger>
+                                { nodeDefinition.executionMode === "Automatic" && <TabsTrigger value="nodejs">Node.js</TabsTrigger> }
+                                { nodeDefinition.executionMode === "Automatic" && <TabsTrigger value="python">Python</TabsTrigger> }
+                                { nodeDefinition.executionMode === "Manual" && <TabsTrigger value="nextjs">Next.js</TabsTrigger> }
                             </TabsList>
                             <Button variant="outline" size="sm" onClick={downloadProject} disabled={isDownloading}>
                                 <Download className="h-4 w-4 mr-2" />
@@ -274,6 +301,40 @@ export function StepServerConfig({ nodeDefinition, updateNodeDefinition, onPrevi
                         </TabsContent>
 
                         <TabsContent value="python" className="mt-0 space-y-4">
+                            <div className="border rounded-md overflow-hidden">
+                                <div className="grid grid-cols-12 h-[550px]">
+                                    {/* File tree */}
+                                    <div className="col-span-3 border-r bg-muted/30">
+                                        <div className="p-3 border-b bg-muted/50 font-medium text-sm">{t("templates.project-files")}</div>
+                                        <FileTree
+                                            items={fileTree}
+                                            expandedFolders={expandedFolders}
+                                            selectedFile={selectedFile}
+                                            onToggleFolder={toggleFolder}
+                                            onSelectFile={setSelectedFile}
+                                        />
+                                    </div>
+
+                                    {/* Code editor */}
+                                    <div className="col-span-9">
+                                        <div className="p-3 border-b bg-muted/50 font-medium text-sm flex justify-between items-center">
+                                            <span>{selectedFile}</span>
+                                        </div>
+                                        <div className="h-[500px] overflow-y-auto">
+                                            <CodeEditor
+                                                code={getSelectedFileContent()}
+                                                language={getSelectedFileLanguage()}
+                                                fileName={selectedFile}
+                                                onCopy={copyToClipboard}
+                                                copied={copied}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="nextjs" className="mt-0 space-y-4">
                             <div className="border rounded-md overflow-hidden">
                                 <div className="grid grid-cols-12 h-[550px]">
                                     {/* File tree */}

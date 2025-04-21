@@ -387,3 +387,64 @@ docker run -p 5000:5000 ${nodeDefinition.name.toLowerCase() || "flask-service"}
         },
     ]
 }
+
+export function generateNextJsFiles(nodeDefinition: NodeDefinition): ProjectFile[] {
+    const variables = getVariableNames(nodeDefinition)
+    const nodeName = nodeDefinition.name || "ExampleActivity"
+
+    const varHtmlExamples = variables
+        .filter(v => !v.isOutput)
+        .map(v => `<p>Received value for ${v.name}: {searchParams.${v.name}}</p>`)
+        .join("\n")
+
+    // Only include output variables in the response
+    const outputVars = variables.filter((v) => v.isOutput)
+    const varResponses = outputVars.map((v) => `                [${v.name}]: "Example value for ${v.name}",`).join("\n")
+
+    const path = nodeDefinition.executionUrl ? nodeDefinition.executionUrl?.split(".")[1]?.split("/").slice(1).join("/") : ""
+
+    return [
+        {
+            path: `app/${path ? path + "/": ""}ExampleActivity.tsx`,
+            language: "typescript",
+            content: `export interface ActivitySearchParams {
+    ${variables.map((v) => `${v.name}: string`).join("\n    ")}
+    responsePath: string
+    flowElementInstanceId: string
+    userId: string
+}
+
+export default function ${nodeName}({ searchParams }: { searchParams: ActivitySearchParams }) {
+    function onSubmit(data: any) {
+        fetch(searchParams.responsePath, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                flowElementInstanceId: searchParams.flowElementInstanceId,
+                data: {
+                    // TODO Replace this with actual data that should be the output of this activity
+    ${varResponses}
+                },
+                completedBy: searchParams.userId
+            })
+        }).then(() => {
+            console.log("submitted")
+        }).catch((error) => {
+            console.error("error while submitting")
+        })
+    }
+    
+    // TODO This is just an example component which displays all received values
+    return <div className="w-full h-full">
+        <h1>Activity Title</h1>
+        ${varHtmlExamples}
+        <form onSubmit={onSubmit} className="space-y-6">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+}`
+        }
+    ]
+}
