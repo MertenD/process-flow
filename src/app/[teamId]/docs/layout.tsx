@@ -12,18 +12,20 @@ export default function Layout({ children, params }: { children: ReactNode, para
 
     const source = getInTeamSource(params.teamId);
 
-    return <RootProvider
-        search={{
-            options: {
-                api: `/api/search/${params.teamId}`,
-            },
-        }}
-    >
-        <ScrollToTop />
-        <DocsLayout tree={source.pageTree} {...baseOptions} disableThemeSwitch sidebar={{
-            collapsible: false,
-        }}>
-            {children}
-        </DocsLayout>
-    </RootProvider>
+    return <div className="overscroll-y-hidden">
+        <RootProvider
+            search={{
+                options: {
+                    api: `/api/search/${params.teamId}`,
+                },
+            }}
+        >
+            <ScrollToTop />
+            <DocsLayout tree={source.pageTree} {...baseOptions} disableThemeSwitch sidebar={{
+                collapsible: false,
+            }}>
+                {children}
+            </DocsLayout>
+        </RootProvider>
+    </div>
 }
