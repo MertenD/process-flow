@@ -4,7 +4,7 @@ import { loader } from 'fumadocs-core/source';
 
 export const landingSource = loader({
     baseUrl: '/docs',
-    source: createMDXSource(docs, meta),
+    source: createMDXSource(docs, meta)
 });
 
 export function getInTeamSource(teamId: number) {
