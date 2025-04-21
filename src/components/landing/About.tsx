@@ -31,7 +31,7 @@ export default function AboutSection() {
                     <div>
                         <h3 className="text-xl font-bold text-white mb-2">The Project</h3>
                         <p>
-                            ProcessFlow is a software project developed as part of my Master's degree in Software
+                            ProcessFlow is a software project developed as part of my Master&apos;s degree in Software
                             Engineering at Ulm
                             University. It aims to create a customizable and gamified business process management tool
                             that includes features like a drag & drop editor, a process engine, customizable activities,
@@ -43,7 +43,7 @@ export default function AboutSection() {
                         <h3 className="text-xl font-bold text-white mb-2">My Background</h3>
                         <p>
                             I work part-time as a Fullstack Software Engineer at Mercedes-Benz Tech Innovation while
-                            pursuing my Master's degree at Ulm University. In my freetime I enjoy bulding hobby software projects.
+                            pursuing my Master&apos;s degree at Ulm University. In my freetime I enjoy bulding hobby software projects.
                         </p>
                     </div>
 
