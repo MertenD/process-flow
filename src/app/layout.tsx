@@ -40,20 +40,18 @@ export default async function AppRootLayout({children,}: Readonly<{ children: Re
             "min-h-screen bg-background font-sans antialiased",
             fontSans.variable
         )}>
-            <RootProvider>
-                <NextIntlClientProvider messages={messages}>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme={"system"}
-                        enableSystem
-                        disableTransitionOnChange
-                    >
-                        <ThemeSetter />
-                        <Toaster/>
-                        {children}
-                    </ThemeProvider>
-                </NextIntlClientProvider>
-            </RootProvider>
+            <NextIntlClientProvider messages={messages}>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme={"system"}
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <ThemeSetter />
+                    <Toaster/>
+                    {children}
+                </ThemeProvider>
+            </NextIntlClientProvider>
         </body>
         </html>
     );

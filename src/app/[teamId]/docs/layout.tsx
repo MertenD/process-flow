@@ -13,7 +13,6 @@ export default function Layout({ children, params }: { children: ReactNode, para
         search={{
             options: {
                 api: `/api/search/${params.teamId}`,
-
             },
         }}
     >
