@@ -14,16 +14,22 @@ import {Check, ChevronLeft, ChevronRight, Save} from "lucide-react"
 import {useTranslations} from "next-intl";
 import PreviewDynamicOptions from "@/components/shop/details/PreviewDynamicOptions";
 import createNodeDefinition from "@/actions/create-node-definition";
+import updateNodeDefinition from "@/actions/shop/update-node-definition";
+import {toast} from "@/components/ui/use-toast";
+import {useRouter} from "next/navigation";
 
 interface CreateNodePageProps {
     teamId: number
     userId: string
+    initialNodeDefinition?: NodeDefinition
+    nodeDefinitionId?: number
 }
 
-export default function CreateNodePage({ teamId, userId }: CreateNodePageProps) {
+export default function CreateNodePage({ teamId, userId, initialNodeDefinition, nodeDefinitionId }: CreateNodePageProps) {
     const t = useTranslations("shop.create-node")
+    const router = useRouter()
     const [currentStep, setCurrentStep] = useState(1)
-    const [nodeDefinition, setNodeDefinition] = useState<NodeDefinition>({
+    const [nodeDefinition, setNodeDefinition] = useState<NodeDefinition>(initialNodeDefinition ? initialNodeDefinition : {
         id: undefined,
         name: "",
         icon: undefined,
@@ -38,7 +44,7 @@ export default function CreateNodePage({ teamId, userId }: CreateNodePageProps) 
         },
     })
 
-    const updateNodeDefinition = (updatedDefinition: NodeDefinition) => {
+    const updateLocalNodeDefinition = (updatedDefinition: NodeDefinition) => {
         setNodeDefinition(updatedDefinition)
     }
 
@@ -95,12 +101,33 @@ export default function CreateNodePage({ teamId, userId }: CreateNodePageProps) 
         }
         console.log(JSON.stringify(definitionWithKeyStrings, null, 2))
 
-        createNodeDefinition(nodeDefinition, userId, teamId, "Public")
+        if (!initialNodeDefinition) {
+            createNodeDefinition(nodeDefinition, userId, teamId, "Public").then((nodeDefinitionId) => {
+                router.replace(`/${teamId}/shop/node/${nodeDefinitionId}`)
+            }).catch(() => {
+                toast({
+                    variant: "destructive",
+                    title: t("toast.createNodeErrorTitle"),
+                    description: t("toast.createNodeErrorDescription"),
+                })
+            })
+        } else if (nodeDefinitionId) {
+            updateNodeDefinition(nodeDefinitionId, nodeDefinition, userId, teamId, "Public").then(() => {
+                router.replace(`/${teamId}/shop/node/${nodeDefinitionId}`)
+            }).catch(() => {
+                toast({
+                    variant: "destructive",
+                    title: t("toast.updateNodeErrorTitle"),
+                    description: t("toast.updateNodeErrorDescription"),
+                })
+            })
+        }
     }
 
     return (
         <div className="container mx-auto py-10 px-4 max-w-6xl">
-            <h1 className="text-3xl font-bold mb-8 text-center">{t("title")}</h1>
+            {!initialNodeDefinition && <h1 className="text-3xl font-bold mb-8 text-center">{t("title")}</h1>}
+            {initialNodeDefinition && <h1 className="text-3xl font-bold mb-8 text-center">{t("title-edit").replace("{name}", nodeDefinition.name)}</h1>}
 
             <div className="mb-10">
                 <div className="flex justify-between mb-3">
@@ -140,7 +167,7 @@ export default function CreateNodePage({ teamId, userId }: CreateNodePageProps) 
                     {currentStep === 2 && (
                         <StepGeneralInfo
                             nodeDefinition={nodeDefinition}
-                            updateNodeDefinition={updateNodeDefinition}
+                            updateNodeDefinition={updateLocalNodeDefinition}
                             onNext={handleNext}
                             onPrevious={handlePrevious}
                         />
@@ -149,7 +176,7 @@ export default function CreateNodePage({ teamId, userId }: CreateNodePageProps) 
                     {currentStep === 3 && (
                         <StepOptionsConfig
                             nodeDefinition={nodeDefinition}
-                            updateNodeDefinition={updateNodeDefinition}
+                            updateNodeDefinition={updateLocalNodeDefinition}
                             onNext={handleNext}
                             onPrevious={handlePrevious}
                         />
@@ -158,7 +185,7 @@ export default function CreateNodePage({ teamId, userId }: CreateNodePageProps) 
                     {currentStep === 4 && (
                         <StepServerConfig
                             nodeDefinition={nodeDefinition}
-                            updateNodeDefinition={updateNodeDefinition}
+                            updateNodeDefinition={updateLocalNodeDefinition}
                             onPrevious={handlePrevious}
                             onSave={saveNodeDefinition}
                         />
@@ -189,7 +216,8 @@ export default function CreateNodePage({ teamId, userId }: CreateNodePageProps) 
                 ) : (
                     <Button onClick={saveNodeDefinition} size="lg" className="px-6 bg-green-600 hover:bg-green-700">
                         <Save className="mr-2 h-5 w-5" />
-                        {t("navigation.save")}
+                        {!initialNodeDefinition && t("navigation.save")}
+                        {initialNodeDefinition && t("navigation.update")}
                     </Button>
                 )}
             </div>

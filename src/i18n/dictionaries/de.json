@@ -60,7 +60,8 @@
       "addedNodes": "Gespeicherte Aktivitäten",
       "createNode": "Aktivität erstellen",
       "ownNodes": "Eigene Aktivitäten",
-      "docs": "Dokumentation"
+      "docs": "Dokumentation",
+      "editNode": "\"{nodeName}\" bearbeiten"
     },
     "userNav": {
       "settings": "Einstellungen",
@@ -367,10 +368,12 @@
         "SettingsPreview": "Einstellungen",
         "taskPreview": "Aufgaben Ansicht",
         "back": "Zurück"
-      }
+      },
+      "editNodeDescription": "Aktivität bearbeiten"
     },
     "create-node": {
       "title": "Node erstellen",
+      "title-edit": "Node bearbeiten",
       "steps": {
         "information": "Informationen",
         "general-details": "Allgemeine Details",
@@ -381,7 +384,12 @@
         "previous": "Zurück",
         "next": "Weiter",
         "save": "Node speichern",
+        "update": "Node aktualisieren",
         "get-started": "Loslegen"
+      },
+      "toast": {
+        "updateNodeErrorTitle": "Fehler beim Aktualisieren des Nodes",
+        "updateNodeErrorDescription": "Der Node konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut."
       }
     },
     "step-info": {

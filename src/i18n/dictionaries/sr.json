@@ -59,7 +59,8 @@
       "addedNodes": "Dodate aktivnosti",
       "createNode": "Kreiraj aktivnost",
       "ownNodes": "Moje aktivnosti",
-      "docs": "Dokumentacija"
+      "docs": "Dokumentacija",
+      "editNode": "Uredi aktivnost"
     },
     "userNav": {
       "settings": "Podešavanja",
@@ -366,10 +367,12 @@
         "SettingsPreview": "Podešavanja",
         "taskPreview": "Prikaz zadataka",
         "back": "Nazad"
-      }
+      },
+      "editNodeDescription": "Uredite svoju aktivnost"
     },
     "create-node": {
       "title": "Kreiraj čvor",
+      "title-edit": "Uredi čvor",
       "steps": {
         "information": "Informacije",
         "general-details": "Opšti detalji",
@@ -380,7 +383,12 @@
         "previous": "Nazad",
         "next": "Dalje",
         "save": "Sačuvaj čvor",
+        "update": "Ažuriraj čvor",
         "get-started": "Započni"
+      },
+      "toast": {
+        "updateNodeErrorTitle": "Greška prilikom ažuriranja čvora",
+        "updateNodeErrorDescription": "Čvor nije mogao biti ažuriran. Molimo pokušajte ponovo."
       }
     },
     "step-info": {

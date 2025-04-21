@@ -6,7 +6,7 @@ import {NodeDefinitionPreview} from "@/model/NodeDefinition";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Badge} from "@/components/ui/badge";
 import Link from "next/link";
-import {ArrowRight, Trash2} from "lucide-react";
+import {ArrowRight, Pencil, Trash2} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {getTranslations} from "next-intl/server";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
@@ -56,24 +56,39 @@ export default async function OwnNodesPage({ params }: { params: { teamId: numbe
                                 {t("node.viewDetails")}
                                 <ArrowRight className="ml-1 h-4 w-4"/>
                             </Link>
-                            {node.id && <form action={handleRemoveNode.bind(null, node.id)} method="POST">
+                            <div className="flex flex-row space-x-2">
                                 <Tooltip delayDuration={0}>
                                     <TooltipTrigger>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            type="submit"
-                                            className="h-8 w-8 text-muted-foreground hover:bg-destructive transition-colors"
-                                        >
-                                            <Trash2 className="h-4 w-4"/>
-                                            <span className="sr-only">Remove node</span>
-                                        </Button>
+                                        <Link href={`/${params.teamId}/shop/update-node/${node.id}`}>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-secondary">
+                                                <Pencil className="h-4 w-4"/>
+                                                <span className="sr-only">{t("node.editNode")}</span>
+                                            </Button>
+                                        </Link>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        {t("node.removeNodePermanently")}
+                                        {t("node.editNodeDescription")}
                                     </TooltipContent>
                                 </Tooltip>
-                            </form>}
+                                {node.id && <form action={handleRemoveNode.bind(null, node.id)} method="POST">
+                                    <Tooltip delayDuration={0}>
+                                        <TooltipTrigger>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                type="submit"
+                                                className="h-8 w-8 text-muted-foreground hover:bg-destructive transition-colors"
+                                            >
+                                                <Trash2 className="h-4 w-4"/>
+                                                <span className="sr-only">Remove node</span>
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {t("node.removeNodePermanently")}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </form>}
+                            </div>
                         </div>
                     </CardContent>
                 </Card>

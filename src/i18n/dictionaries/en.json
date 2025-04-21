@@ -60,7 +60,8 @@
       "addedNodes": "Saved Activities",
       "createNode": "Create Activity",
       "ownNodes": "My Activities",
-      "docs": "Documentation"
+      "docs": "Documentation",
+      "editNode": "Edit \"{nodeName}\""
     },
     "userNav": {
       "settings": "Settings",
@@ -367,10 +368,12 @@
         "SettingsPreview": "Settings",
         "taskPreview": "Task view",
         "back": "Back"
-      }
+      },
+      "editNodeDescription": "Edit the activity"
     },
     "create-node": {
       "title": "Create Node",
+      "title-edit": "Edit Node",
       "steps": {
         "information": "Information",
         "general-details": "General Details",
@@ -381,7 +384,12 @@
         "previous": "Previous",
         "next": "Next",
         "save": "Save Node",
+        "update": "Update Node",
         "get-started": "Get Started"
+      },
+      "toast": {
+        "updateNodeErrorTitle": "Error Updating Node",
+        "updateNodeErrorDescription": "The node could not be updated. Please try again."
       }
     },
     "step-info": {

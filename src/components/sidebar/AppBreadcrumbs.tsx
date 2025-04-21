@@ -40,6 +40,7 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
             const shopDetailsPath = `/${teamId}/shop/node`
             const shopOwnNodesPath = `/${teamId}/shop/own-nodes`
             const docsPath = `/${teamId}/docs`
+            const updateNodePath = `/${teamId}/shop/update-node`
 
             const newBreadcrumbs: BreadcrumbModel[] = []
 
@@ -140,6 +141,23 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
                         name: t('ownNodes'),
                         href: shopOwnNodesPath
                     });
+                } else if (pathname.startsWith(updateNodePath)) {
+                    const parts = pathname.split('/');
+                    const nodeDefinitionId = Number(parts[4] || null);
+                    if (nodeDefinitionId) {
+                        const nodeDefinition = await getNodeDefinition(nodeDefinitionId)
+
+                        if (nodeDefinition && nodeDefinition.name) {
+                            newBreadcrumbs.push({
+                                name: t('ownNodes'),
+                                href: shopOwnNodesPath
+                            })
+                            newBreadcrumbs.push({
+                                name: t('editNode', { nodeName: nodeDefinition.name }),
+                                href: `${updateNodePath}/${nodeDefinitionId}`
+                            })
+                        }
+                    }
                 }
             } else if (pathname.startsWith(docsPath)) {
                 newBreadcrumbs.push({
