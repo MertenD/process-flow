@@ -13,16 +13,14 @@ export default function Footer() {
                     </ul>
                 </div>
                 <div>
-                    <h3 className="font-semibold mb-4">Company</h3>
+                    <h3 className="font-semibold mb-4">Project</h3>
                     <ul className="space-y-2">
                         <li><Link href="#" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
                     </ul>
                 </div>
                 <div>
                     <h3 className="font-semibold mb-4">Resources</h3>
                     <ul className="space-y-2">
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Blog</Link></li>
                         <li><Link href="/docs" className="text-muted-foreground hover:text-foreground">Documentation</Link>
                         </li>
                     </ul>
@@ -30,7 +28,9 @@ export default function Footer() {
                 <div>
                     <h3 className="font-semibold mb-4">Legal</h3>
                     <ul className="space-y-2">
-                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link>
+                        <li><Link href="/imprint" className="text-muted-foreground hover:text-foreground">Imprint</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-foreground">Privacy
+                            Policy</Link>
                         </li>
                         <li><Link href="#" className="text-muted-foreground hover:text-foreground">Terms of
                             Service</Link></li>

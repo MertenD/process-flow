@@ -4,6 +4,7 @@ import {baseOptions} from '@/app/layout.config';
 import {source} from '@/lib/source';
 import HomepageNavigation from "@/components/landing/HomepageNavigation";
 import ScrollToTop from "@/app/docs/ScrollToTop";
+import Footer from "@/components/landing/Footer";
 
 export default function Layout({ children }: { children: ReactNode }) {
 
@@ -13,5 +14,6 @@ export default function Layout({ children }: { children: ReactNode }) {
         <DocsLayout tree={source.pageTree} {...baseOptions} disableThemeSwitch>
             {children}
         </DocsLayout>
+        <Footer />
     </div>
 }
