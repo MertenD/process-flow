@@ -5,6 +5,9 @@ import {getInTeamSource} from '@/lib/source';
 import ScrollToTop from "@/app/docs/ScrollToTop";
 import {RootProvider} from "fumadocs-ui/provider";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default function Layout({ children, params }: { children: ReactNode, params: { teamId: number } }) {
 
     const source = getInTeamSource(params.teamId);

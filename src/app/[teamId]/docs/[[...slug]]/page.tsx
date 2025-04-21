@@ -8,6 +8,9 @@ import {
 import { notFound } from 'next/navigation';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default async function Page(props: {
     params: Promise<{ slug?: string[], teamId: number }>;
 }) {
