@@ -57,7 +57,8 @@
       "shopGroupTitle": "Shop",
       "shop": "Shop",
       "addedNodes": "Gespeicherte Aktivitäten",
-      "createNode": "Aktivität erstellen"
+      "createNode": "Aktivität erstellen",
+      "ownNodes": "Eigene Aktivitäten"
     },
     "userNav": {
       "settings": "Einstellungen",
@@ -354,6 +355,8 @@
     },
     "node": {
       "viewDetails": "Details anzeigen",
+      "own-nodes": "Eigene Aktivitäten",
+      "removeNodePermanently": "Aktivität dauerhaft entfernen",
       "details": {
         "addToEditor": "Zum Editor hinzufügen",
         "removeFromEditor": "Vom Editor entfernen",

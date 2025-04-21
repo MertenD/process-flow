@@ -1,0 +1,83 @@
+import getNodeDefinitionsFromUser from "@/actions/shop/get-node-definition-previews-from-user";
+import {cookies} from "next/headers";
+import {createClient} from "@/utils/supabase/server";
+import {redirect} from "next/navigation";
+import {NodeDefinitionPreview} from "@/model/NodeDefinition";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Badge} from "@/components/ui/badge";
+import Link from "next/link";
+import {ArrowRight, Trash2} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {getTranslations} from "next-intl/server";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
+import removeNodeDefinitionPermanently from "@/actions/shop/remove-node-definition-permanently";
+
+export default async function OwnNodesPage({ params }: { params: { teamId: number } }) {
+
+    const t =  await getTranslations("shop")
+
+    const cookieStore = cookies()
+    const supabase = createClient(cookieStore)
+    const {data: userData, error} = await supabase.auth.getUser()
+    if (error || !userData.user || !userData.user.id) {
+        redirect("/authenticate")
+    }
+
+    const nodeDefinitions = await getNodeDefinitionsFromUser(userData.user.id, params.teamId)
+
+    async function handleRemoveNode(nodeId: number) {
+        "use server"
+
+        removeNodeDefinitionPermanently(nodeId).then(() => {
+            console.log("Node removed successfully")
+        })
+
+        console.log("Removing node with id: ", nodeId)
+    }
+
+    return <>
+        <h2 className="text-3xl font-bold">{t("node.own-nodes")}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {nodeDefinitions.map((node: NodeDefinitionPreview) => (
+                <Card key={node.id} className="group hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                        <div className="flex items-start justify-between">
+                            <div>
+                                <CardTitle className="text-lg">{node.name}</CardTitle>
+                                <CardDescription>{node.shortDescription}</CardDescription>
+                            </div>
+                            <Badge variant="secondary">{node.executionMode}</Badge>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex items-center justify-between">
+                            <Link href={`/${params.teamId}/shop/node/${node.id}`}
+                                  className="inline-flex items-center text-sm text-primary hover:underline">
+                                {t("node.viewDetails")}
+                                <ArrowRight className="ml-1 h-4 w-4"/>
+                            </Link>
+                            {node.id && <form action={handleRemoveNode.bind(null, node.id)} method="POST">
+                                <Tooltip delayDuration={0}>
+                                    <TooltipTrigger>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            type="submit"
+                                            className="h-8 w-8 text-muted-foreground hover:bg-destructive transition-colors"
+                                        >
+                                            <Trash2 className="h-4 w-4"/>
+                                            <span className="sr-only">Remove node</span>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {t("node.removeNodePermanently")}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </form>}
+                        </div>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
+    </>
+}

@@ -56,7 +56,8 @@
       "shopGroupTitle": "Prodavnica",
       "shop": "Prodavnica",
       "addedNodes": "Dodate aktivnosti",
-      "createNode": "Kreiraj aktivnost"
+      "createNode": "Kreiraj aktivnost",
+      "ownNodes": "Moje aktivnosti"
     },
     "userNav": {
       "settings": "Podešavanja",
@@ -353,6 +354,8 @@
     },
     "node": {
       "viewDetails": "Pogledaj detalje",
+      "own-nodes": "Moje aktivnosti",
+      "removeNodePermanently": "Trajno ukloni aktivnost",
       "details": {
         "addToEditor": "Dodaj u editor",
         "removeFromEditor": "Ukloni iz editora",

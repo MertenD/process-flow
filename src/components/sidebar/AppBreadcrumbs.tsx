@@ -38,6 +38,7 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
             const shopSavedNodesPath = `/${teamId}/shop/saved-nodes`
             const shopCreateNodePath = `/${teamId}/shop/create-node`
             const shopDetailsPath = `/${teamId}/shop/node`
+            const shopOwnNodesPath = `/${teamId}/shop/own-nodes`
 
             const newBreadcrumbs: BreadcrumbModel[] = []
 
@@ -133,6 +134,11 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
                             })
                         }
                     }
+                } else if (pathname.startsWith(shopOwnNodesPath)) {
+                    newBreadcrumbs.push({
+                        name: t('ownNodes'),
+                        href: shopOwnNodesPath
+                    });
                 }
             }
 
