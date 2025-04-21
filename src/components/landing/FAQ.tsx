@@ -6,6 +6,15 @@ export default function FAQ() {
         <div className="container">
             <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
             <Accordion type="single" collapsible className="w-full max-w-3xl mx-auto">
+                <AccordionItem value="item-0">
+                    <AccordionTrigger>What is ProcessFlow?</AccordionTrigger>
+                    <AccordionContent>
+                        ProcessFlow aims to simplify the creation and management of gamified business processes.
+                        It provides a visual tool for modeling and controlling business processes,
+                        making it easier to design and implement complex workflows. It also enables you to create and use
+                        custom activities, which can be used to automate tasks and improve efficiency.
+                    </AccordionContent>
+                </AccordionItem>
                 <AccordionItem value="item-1">
                     <AccordionTrigger>How does ProcessFlow&apos;s gamification work?</AccordionTrigger>
                     <AccordionContent>
@@ -17,15 +26,14 @@ export default function FAQ() {
                 <AccordionItem value="item-2">
                     <AccordionTrigger>Can I integrate ProcessFlow with other tools?</AccordionTrigger>
                     <AccordionContent>
-                        Yes, ProcessFlow offers integrations with popular tools like Slack, Trello, and Google
-                        Workspace. We also provide an API for custom integrations with your existing systems.
+                        Yes, you can create your own integrations or use integrations from other users.
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3">
-                    <AccordionTrigger>Is my data secure with ProcessFlow?</AccordionTrigger>
+                    <AccordionTrigger>Is process-flow ready for production use?</AccordionTrigger>
                     <AccordionContent>
-                        Absolutely. We use industry-standard encryption and security practices to protect your data. Our
-                        systems are regularly audited and comply with GDPR and other data protection regulations.
+                        Currently, process-flow is under active development and is not recommended for production environments.
+                        The project is evolving, and changes may occur as development progresses.
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-4">
@@ -37,11 +45,11 @@ export default function FAQ() {
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-5">
-                    <AccordionTrigger>Do you offer onboarding and training?</AccordionTrigger>
+                    <AccordionTrigger>What kind of activities are supported</AccordionTrigger>
                     <AccordionContent>
-                        Yes, we provide comprehensive onboarding and training for all plans. Our Pro and Enterprise
-                        plans include personalized onboarding sessions and ongoing training to ensure your team gets the
-                        most out of ProcessFlow.
+                        ProcessFlow supports two kinds of activities: Manual and Automated. Manual activities can be executed
+                        by users, who can be assigned to them. Automated activities are executed by the system and can be triggered
+                        inside the process.
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
