@@ -1,4 +1,4 @@
-import { landingSource } from '@/lib/source';
+import { getInTeamSource } from '@/lib/source';
 import {
     DocsPage,
     DocsBody,
@@ -9,10 +9,10 @@ import { notFound } from 'next/navigation';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 
 export default async function Page(props: {
-    params: Promise<{ slug?: string[] }>;
+    params: Promise<{ slug?: string[], teamId: number }>;
 }) {
     const params = await props.params;
-    const page = landingSource.getPage(params.slug);
+    const page = getInTeamSource(params.teamId).getPage(params.slug);
     if (!page) notFound();
 
     const MDX = page.data.body;
@@ -28,15 +28,17 @@ export default async function Page(props: {
     );
 }
 
-export async function generateStaticParams() {
-    return landingSource.generateParams();
+export async function generateStaticParams(props: {
+    params: { slug?: string[], teamId: number };
+}) {
+    return getInTeamSource(props.params.teamId).generateParams();
 }
 
 export async function generateMetadata(props: {
-    params: Promise<{ slug?: string[] }>;
+    params: Promise<{ slug?: string[], teamId: number }>;
 }) {
     const params = await props.params;
-    const page = landingSource.getPage(params.slug);
+    const page = getInTeamSource(params.teamId).getPage(params.slug);
     if (!page) notFound();
 
     return {

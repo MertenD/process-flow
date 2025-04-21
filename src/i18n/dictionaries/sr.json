@@ -48,6 +48,7 @@
     "nav": {
       "editor": "Editor",
       "workspaceGroupTitle": "Radni prostor",
+      "docsGroupTitle": "Dokumentacija",
       "team": "Tim",
       "stats": "Statistike",
       "settings": "Podešavanja",
@@ -57,7 +58,8 @@
       "shop": "Prodavnica",
       "addedNodes": "Dodate aktivnosti",
       "createNode": "Kreiraj aktivnost",
-      "ownNodes": "Moje aktivnosti"
+      "ownNodes": "Moje aktivnosti",
+      "docs": "Dokumentacija"
     },
     "userNav": {
       "settings": "Podešavanja",

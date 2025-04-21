@@ -39,6 +39,7 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
             const shopCreateNodePath = `/${teamId}/shop/create-node`
             const shopDetailsPath = `/${teamId}/shop/node`
             const shopOwnNodesPath = `/${teamId}/shop/own-nodes`
+            const docsPath = `/${teamId}/docs`
 
             const newBreadcrumbs: BreadcrumbModel[] = []
 
@@ -140,6 +141,11 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
                         href: shopOwnNodesPath
                     });
                 }
+            } else if (pathname.startsWith(docsPath)) {
+                newBreadcrumbs.push({
+                    name: t('docs'),
+                    href: docsPath
+                });
             }
 
             setBreadcrumbs(newBreadcrumbs);

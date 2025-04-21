@@ -18,7 +18,7 @@ import {redirect} from "next/navigation";
 import {Page, Profile} from "@/model/database/database.types";
 import getAllowedPages from "@/actions/get-allowed-pages";
 import {getTranslations} from "next-intl/server";
-import {BookUser, LucideIcon} from "lucide-react"
+import {BookOpenText, BookUser, LucideIcon} from "lucide-react"
 import {
     Award,
     ChartColumn,
@@ -198,6 +198,20 @@ export default async function AppSidebar({ teamId, profile, ...props }: AppSideb
                             <Link href={`/${teamId}/shop/own-nodes`}>
                                 <BookUser />
                                 <span>{ t("ownNodes") }</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarGroup>
+            <SidebarSeparator />
+            <SidebarGroup>
+                <SidebarGroupLabel>{ t("docsGroupTitle") }</SidebarGroupLabel>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip={t("docs")}>
+                            <Link href={`/${teamId}/docs`}>
+                                <BookOpenText />
+                                <span>{ t("docs") }</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

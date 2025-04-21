@@ -48,6 +48,7 @@
     "nav": {
       "dashboard": "Dashboard",
       "workspaceGroupTitle": "Arbeitsbereich",
+      "docsGroupTitle": "Dokumentation",
       "editor": "Editor",
       "team": "Team",
       "stats": "Statistiken",
@@ -58,7 +59,8 @@
       "shop": "Shop",
       "addedNodes": "Gespeicherte Aktivitäten",
       "createNode": "Aktivität erstellen",
-      "ownNodes": "Eigene Aktivitäten"
+      "ownNodes": "Eigene Aktivitäten",
+      "docs": "Dokumentation"
     },
     "userNav": {
       "settings": "Einstellungen",
