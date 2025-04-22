@@ -1,0 +1,33 @@
+---
+title: End Node
+description: The end node is the last node in a workflow. It is the exit point for all processes.
+---
+
+import {Flag} from "lucide-react";
+import PreviewDynamicOptions from "../../../components/shop/details/PreviewDynamicOptions";
+import {OptionsStructureType} from "../../../model/OptionsModel";
+
+## Structure
+
+The **End node** is the final node in a process. It serves as the exit point for all processes. An End node has **no outgoing connections** and at least **one incoming connection**. Each process model can contain **any number of** End nodes. As soon as the engine reaches an End node, it terminates the process instance. The End node does not have any options. It is used to indicate that the process has reached its conclusion.
+
+<div className="flex flex-row justify-between gap-8 flex-wrap my-16">
+    <div style={{
+        borderRadius: "50%",
+        boxShadow: `0px 0px 5px 1px #14803c`
+    }} className="flex flex-shrink-0 justify-center items-center h-14 w-14 bg-card border-2 border-primary">
+        <Flag></Flag>
+    </div>
+    <div className="flex-1 p-3 bg-card rounded-xl">
+        <PreviewDynamicOptions optionsDefinition={{
+            title: "End Options",
+            nodeId: "-1",
+            structure: [
+                {
+                    type: OptionsStructureType.TEXT,
+                    text: "End nodes do not have any options."
+                }
+            ]
+        }} />
+    </div>
+</div>

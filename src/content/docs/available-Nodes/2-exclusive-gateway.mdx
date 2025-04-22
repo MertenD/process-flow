@@ -1,0 +1,73 @@
+---
+title: Exclusive Gateway
+description: The exclusive gateway is a decision point in a workflow. It allows you to control the process flow based on conditions.
+---
+
+import { X } from "lucide-react";
+import PreviewDynamicOptions from "../../../components/shop/details/PreviewDynamicOptions";
+import {OptionsStructureSpecialValues, OptionsStructureType} from "../../../model/OptionsModel";
+import {Comparisons} from "../../../model/Comparisons";
+
+## Structure
+
+The **Exclusive Gateway** is a decision point in a process. It allows you to control the process flow based on a condition. An exclusive gateway has **one incoming connection** and **two outgoing connections**. Each outgoing connection is associated with either the condition being true or false. The engine evaluates the condition and follows the corresponding outgoing connection.
+
+<div className="flex flex-row items-start justify-between gap-8 flex-wrap my-16">
+    <div className="flex flex-row items-center gap-6">
+        <div className="flex flex-col items-center">
+            <p>True</p>
+            <div style={{
+                transform: "rotateY(0deg) rotate(45deg)",
+                borderRadius: 6,
+                boxShadow: "0px 0px 5px 1px #14803c"
+            }} className="flex h-14 w-14 justify-center items-center border-2 border-primary" >
+                <X style={{ transform: "rotate(-45deg)" }} className="w-6 h-6" />
+            </div>
+            <p>False</p>
+        </div>
+        <p>{"{varA} == value2"}</p>
+    </div>
+    <div className="flex-1 p-3 bg-card rounded-xl">
+        <PreviewDynamicOptions optionsDefinition={ {
+            title: "Gateway Options",
+            nodeId: "-1",
+            structure: [
+                {
+                    type: OptionsStructureType.SELECT_WITH_CUSTOM,
+                    label: "Value 1",
+                    keyString: "value1",
+                    options: [ { values:  [OptionsStructureSpecialValues.AVAILABLE_VARIABLES] } ],
+                    defaultValue: "varA"
+                },
+                {
+                    type: OptionsStructureType.SELECT,
+                    label: "Comparison",
+                    keyString: "comparison",
+                    defaultValue: Comparisons.EQUALS,
+                    options: [ { values: Object.values(Comparisons) } ]
+                },
+                {
+                    type: OptionsStructureType.SELECT_WITH_CUSTOM,
+                    label: "Value 2",
+                    keyString: "value2",
+                    options: [ { values:  [OptionsStructureSpecialValues.AVAILABLE_VARIABLES] } ],
+                    defaultValue: "value2"
+                }
+            ]
+        }} />
+    </div>
+</div>
+
+💡 **Tip**: It is possible to chain multiple exclusive gateways in order to create more complex decisions.
+
+## Options
+
+The **Exclusive Gateway** has the following options:
+
+| Option | Description |
+| --- | --- |
+| **Value 1** | The first value to compare. This can be a variable or a static value. |
+| **Comparison** | The comparison operator to use. This can be one of the following: `==`, `!=`, `<`, `<=`, `>`, `>=`. |
+| **Value 2** | The second value to compare. This can be a variable or a static value. |
+| **True Connection** | The outgoing connection to follow if the condition is true. |
+| **False Connection** | The outgoing connection to follow if the condition is false. |
