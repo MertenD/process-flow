@@ -1,0 +1,78 @@
+---
+title: Start Node
+description: The start node is the first node in a workflow. It is the entry point for all processes.
+---
+
+import {Play} from "lucide-react";
+import PreviewDynamicOptions from "../../../components/shop/details/PreviewDynamicOptions";
+import {OptionsStructureType} from "../../../model/OptionsModel";
+
+## Structure
+
+The **Start node** is the initial node of every process. It serves as the single entry point—execution begins here as soon as a process instance is created. A Start node has **no incoming connections** and exactly **one outgoing connection**. Each process model can contain **at most one** Start node.
+
+The Start node’s *Options* panel inside the editor lets you declare any number of **input variables**. Every variable defined here must be provided with a value when the workflow instance is launched. These variables are then available to all downstream nodes.
+
+<div className="flex flex-row justify-between gap-8 flex-wrap my-16">
+    <div style={{
+        borderRadius: "50%",
+        boxShadow: `0px 0px 5px 1px #14803c`
+    }} className="flex flex-shrink-0 justify-center items-center h-14 w-14 bg-card border-2 border-primary">
+        <Play></Play>
+    </div>
+    <div className="flex-1 p-3 bg-card rounded-xl">
+        <PreviewDynamicOptions optionsDefinition={{
+            title: "Start Options",
+            nodeId: "-1",
+            structure: [
+                {
+                    type: OptionsStructureType.MULTIPLE_VARIABLE_NAME_INPUT,
+                    label: "Input Variable Names",
+                    placeholder: "Enter a variable name",
+                    keyString: "outputs.inputVariableNames",
+                }
+            ]
+        }} />
+    </div>
+</div>
+
+## Launching a Workflow Instance
+
+You can start a process instance in **two ways**. In both cases you must supply the input variables defined in the Start node.
+
+1. **Manually via the UI** – In the editor, click **Create Instance**. A dialog opens where you can enter the required input variables. The values you provide are passed to the newly created instance.
+
+    <div className="flex flex-row gap-8">
+        <div>
+            ![create Instance Button im Editor](/assets/create-instance-icon.png)
+        </div>
+        <div>
+            ![create Instance Dialog](/assets/create-instance-dialog.png)
+        </div>
+    </div>
+
+2. **Via the API** – You can also launch an instance by sending a `POST` request to the API endpoint shown in the dialog. The request body must include the input variables inside the `inputs` object. The `processModelId` field identifies the workflow you want to start.
+
+    ```json
+    {
+        "processModelId": "id",
+        "inputs": {
+            "variableKey": "value",
+            "variable2Key": "value2"
+        }
+    }
+    ```
+
+    An example `curl` request that starts the process with the ID `68d83b73-5083-4e47-970b-053f9ed37a2b` and the input variables `address` and `city` looks like this:
+
+    ```bash
+    curl --location --request POST 'http://processflow.mertendieckmann.de/api/instance/create' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "processModelId": "68d83b73-5083-4e47-970b-053f9ed37a2b",
+        "inputs": {
+            "address": "Memminger Straße 35",
+            "city": "Neu-Ulm"
+        }
+    }'
+    ```
