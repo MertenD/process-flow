@@ -2,8 +2,8 @@
   "title": "Meta",
   "pages": [
     "index",
+    "tour",
     "available-nodes",
-    "custom-activities",
-    "tour"
+    "custom-activities"
   ]
 }
