@@ -1,0 +1,10 @@
+{
+  "title": "Available Nodes",
+  "pages": [
+    "start-node",
+    "end-node",
+    "exclusive-gateway",
+    "parallel-gateway",
+    "activity"
+  ]
+}
