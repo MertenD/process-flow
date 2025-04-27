@@ -1,0 +1,374 @@
+---
+title: Activity
+description: The Activity node is used to represent a task or action that needs to be performed in a process. It can be used to model any type of activity, such as a user task, service task, or script task.
+---
+
+import {ListTodo} from "lucide-react";
+import PreviewDynamicOptions from "../../../components/shop/details/PreviewDynamicOptions";
+import {OptionsStructureSpecialValues, OptionsStructureType} from "../../../model/OptionsModel";
+import {Card, CardContent} from "../../../components/ui/card";
+import {MarkdownContent} from "../../../components/MarkdownContent";
+import {Textarea} from "../../../components/ui/textarea";
+import {Button} from "../../../components/ui/button";
+import {RadioGroup, RadioGroupItem} from "../../../components/ui/radio-group";
+import {Checkbox} from "../../../components/ui/checkbox";
+
+## Structure
+
+Activities are the most common nodes in a process. They represent tasks or actions that need to be performed in a process. Activities can be manual user tasks or automatic scripted tasks. The ProcessFlow engine supports both types of activities. The engine will automatically execute the activity if it is a scripted task. If it is a manual user task, the engine will create a task in the worklist for the user to complete and wait for the task to be completed before continuing with the process. The activity node has one incoming connection and one outgoing connection.
+
+ProcessFlow supports four kinds of **manual** activities out of the box, which are all user tasks and can be configured inside the **Standard Activity Node**.
+
+- [Text Input](#text-input)
+- [Single Choice](#single-choice)
+- [Multiple Choice](#multiple-choice)
+- [Info](#info)
+
+For each of these activities, you can define a title and description that are displayed in the editor and later used for the tasks in the worklist. The activity type determines how the user interacts with the activity and what kind of input is expected. Lastly you can assign a role to the activity. This role is used to determine which users should be able to perform tge activity. Users with the role will automatically see the activity in their worklist when there are process instances waiting for them.
+
+<div className="flex flex-row justify-between gap-8 flex-wrap my-16">
+    <div style={{
+        borderRadius: 6,
+        height: 50,
+        boxShadow: `0px 0px 5px 1px #14803c`
+    }} className="flex flex-row gap-x-2 p-2 items-center bg-card border-2 border-primary">
+        <ListTodo></ListTodo>
+        <p>Activity Title</p>
+    </div>
+    <div className="flex-1 p-3 bg-card rounded-xl">
+        <PreviewDynamicOptions optionsDefinition={{
+            title: "Activity Options",
+            nodeId: "-1",
+            structure: [
+                {
+                    type: OptionsStructureType.INPUT,
+                    label: "Title",
+                    placeholder: "Activity title",
+                    keyString: "task"
+                },
+                {
+                    type: OptionsStructureType.TEXTAREA,
+                    label: "Description",
+                    placeholder: "Activity description",
+                    keyString: "description"
+                },
+                {
+                    type: OptionsStructureType.SEPARATOR,
+                },
+                {
+                    "type": "select",
+                    "label": "Activity type",
+                    "options": [
+                        {
+                            "values": [
+                                "Text input"
+                            ],
+                            "dependentStructure": [
+                                {
+                                    "type": "input",
+                                    "label": "Input regex",
+                                    "keyString": "inputRegex",
+                                    "placeholder": "[0-9]+",
+                                    "suggestions": [
+                                        "[0-9]+",
+                                        "[a-zA-Z .,-_]+",
+                                        "[a-zA-Z .,-_0-9]+",
+                                        "[a-zA-Z]+"
+                                    ]
+                                },
+                                {
+                                    "type": "VariableNameInput",
+                                    "label": "Save input as",
+                                    "keyString": "outputs.userInputVariableName",
+                                    "placeholder": "input1"
+                                }
+                            ]
+                        },
+                        {
+                            "values": [
+                                "Single choice",
+                                "Multiple Choice"
+                            ],
+                            "dependentStructure": [
+                                {
+                                    "type": "input",
+                                    "label": "Choices",
+                                    "keyString": "choices",
+                                    "placeholder": "choice 1,choice 2,..."
+                                },
+                                {
+                                    "type": "VariableNameInput",
+                                    "label": "Save input as",
+                                    "keyString": "outputs.userInputVariableName",
+                                    "placeholder": "input1"
+                                }
+                            ]
+                        },
+                        {
+                            "values": [
+                                "Info"
+                            ],
+                            "dependentStructure": [
+                                {
+                                    "type": "textarea",
+                                    "label": "Info text",
+                                    "keyString": "infoText",
+                                    "placeholder": "This is an info text"
+                                }
+                            ]
+                        }
+                    ],
+                    "keyString": "activityType",
+                    "defaultValue": "Text input"
+                },
+                {
+                    type: OptionsStructureType.SEPARATOR
+                },
+                {
+                    type: OptionsStructureType.SELECT,
+                    label: "Assigned role",
+                    defaultValue: "",
+                    keyString: "assignedRole",
+                    options: [ { values: [ OptionsStructureSpecialValues.AVAILABLE_ROLES ] } ]
+                }
+            ]
+        }} />
+    </div>
+</div>
+
+
+
+## Text Input
+
+The **Text Input** activity is a simple text input field. It allows the user to enter any text value. The text input can be used to collect information from the user, such as a name, email address, or any other text-based data.
+
+<div className="flex flex-row justify-between gap-8 flex-wrap my-16">
+    <Card className="h-full">
+        <CardContent className="mt-0">
+            <p className="text-2xl font-semibold">Example Title</p>
+            <MarkdownContent content="This is an example description. Please fill out the textfield."/>
+            <div className="space-y-6">
+                <Textarea
+                    defaultValue=""
+                    cols={3}
+                />
+                <Button>Submit</Button>
+            </div>
+        </CardContent>
+    </Card>
+    <div className="flex-1 p-3 bg-card rounded-xl">
+        <PreviewDynamicOptions optionsDefinition={{
+            title: "Activity Options",
+            nodeId: "-1",
+            structure: [
+                {
+                    "type": "select",
+                    "label": "Activity type",
+                    "options": [
+                        {
+                            "values": [
+                                "Text input"
+                            ],
+                            "dependentStructure": [
+                                {
+                                    "type": "input",
+                                    "label": "Input regex",
+                                    "keyString": "inputRegex",
+                                    "placeholder": "[0-9]+",
+                                    "suggestions": [
+                                        "[0-9]+",
+                                        "[a-zA-Z .,-_]+",
+                                        "[a-zA-Z .,-_0-9]+",
+                                        "[a-zA-Z]+"
+                                    ]
+                                },
+                                {
+                                    "type": "VariableNameInput",
+                                    "label": "Save input as",
+                                    "keyString": "outputs.userInputVariableName",
+                                    "placeholder": "input1"
+                                }
+                            ]
+                        }
+                    ],
+                    "keyString": "activityType",
+                    "defaultValue": "Text input"
+                }
+            ]
+        }} />
+    </div>
+</div>
+
+The user input is saved in the variable defined in the **Save input as** field and can be used in subsequent nodes. The input is validated against the regex defined in the **Input regex** field. If the input does not match the regex, an error message is displayed and the user is prompted to enter a valid value.
+
+## Single Choice
+
+The **Single Choice** activity allows the user to select one option from a list of predefined choices. The choices are displayed as radio buttons, and the user can select only one option.
+
+<div className="flex flex-row justify-between gap-8 flex-wrap my-16">
+    <Card className="h-full">
+        <CardContent className="mt-0">
+            <p className="text-2xl font-semibold">Example Title</p>
+            <MarkdownContent content="This is an example description. Please select one of the options."/>
+            <RadioGroup
+                className="flex flex-col space-y-1"
+            >
+                { ["Choice 1", "Choice 2"].map((choice, index) => {
+                    const id = `${choice}-${index}`
+
+                    return <div className="flex flex-row items-center space-x-3 space-y-0">
+                        <RadioGroupItem value={choice} id={id} />
+                        <p className="h-full">{ choice }</p>
+                    </div>
+                })}
+            </RadioGroup>
+            <Button className="mt-6">Submit</Button>
+        </CardContent>
+    </Card>
+    <div className="flex-1 p-3 bg-card rounded-xl">
+        <PreviewDynamicOptions optionsDefinition={{
+            title: "Activity Options",
+            nodeId: "-1",
+            structure: [
+                {
+                    "type": "select",
+                    "label": "Activity type",
+                    "options": [
+                        {
+                            "values": [
+                                "Single choice"
+                            ],
+                            "dependentStructure": [
+                                {
+                                    "type": "input",
+                                    "label": "Choices",
+                                    "keyString": "choices",
+                                    "placeholder": "choice 1,choice 2,..."
+                                },
+                                {
+                                    "type": "VariableNameInput",
+                                    "label": "Save input as",
+                                    "keyString": "outputs.userInputVariableName",
+                                    "placeholder": "input1"
+                                }
+                            ]
+                        }
+                    ],
+                    "keyString": "activityType",
+                    "defaultValue": "Single choice"
+                }
+            ]
+        }} />
+    </div>
+</div>
+
+The user input is saved in the variable defined in the **Save input as** field and can be used in subsequent nodes. The choices are defined in the **Choices** field and must be separated by commas. The user can select only one option from the list.
+
+## Multiple Choice
+
+The **Multiple Choice** activity allows the user to select multiple options from a list of predefined choices. The choices are displayed as checkboxes, and the user can select one or more options.
+
+<div className="flex flex-row justify-between gap-8 flex-wrap my-16">
+    <Card className="h-full">
+        <CardContent className="mt-0">
+            <p className="text-2xl font-semibold">Example Title</p>
+            <MarkdownContent content="This is an example description. Please select one or more options."/>
+            <div className="flex flex-col space-y-1">
+                { ["Choice 1", "Choice 2"].map((choice, index) => {
+                    const id = `${choice}-${index}`
+
+                    return <div className="flex flex-row items-center space-x-3 space-y-0">
+                        <Checkbox value={choice} id={id} />
+                        <p className="h-full">{ choice }</p>
+                    </div>
+                })}
+            </div>
+            <Button className="mt-6">Submit</Button>
+        </CardContent>
+    </Card>
+    <div className="flex-1 p-3 bg-card rounded-xl">
+        <PreviewDynamicOptions optionsDefinition={{
+            title: "Activity Options",
+            nodeId: "-1",
+            structure: [
+                {
+                    "type": "select",
+                    "label": "Activity type",
+                    "options": [
+                        {
+                            "values": [
+                                "Multiple Choice"
+                            ],
+                            "dependentStructure": [
+                                {
+                                    "type": "input",
+                                    "label": "Choices",
+                                    "keyString": "choices",
+                                    "placeholder": "choice 1,choice 2,..."
+                                },
+                                {
+                                    "type": "VariableNameInput",
+                                    "label": "Save input as",
+                                    "keyString": "outputs.userInputVariableName",
+                                    "placeholder": "input1"
+                                }
+                            ]
+                        }
+                    ],
+                    "keyString": "activityType",
+                    "defaultValue": "Multiple Choice"
+                }
+            ]
+        }} />
+    </div>
+</div>
+
+The user input is saved in the variable defined in the **Save input as** field and can be used in subsequent nodes. The choices are defined in the **Choices** field and must be separated by commas. The user can select one or more options from the list.
+
+## Info
+
+The **Info** activity is used to display information to the user. It does not require any input from the user other than acknowledging the information. The info activity can be used to display messages, instructions, or any other information that is relevant to the user.
+
+<div className="flex flex-row justify-between gap-8 flex-wrap my-16">
+    <Card className="h-full">
+        <CardContent className="mt-0">
+            <p className="text-2xl font-semibold">Example Title</p>
+            <MarkdownContent content="This is an example description. Please acknowledge the information below."/>
+            <p>This is the actual information text fom the "Info text" field.</p>
+            <Button className="mt-6">Acknowledge</Button>
+        </CardContent>
+    </Card>
+    <div className="flex-1 p-3 bg-card rounded-xl">
+        <PreviewDynamicOptions optionsDefinition={{
+            title: "Activity Options",
+            nodeId: "-1",
+            structure: [
+                {
+                    "type": "select",
+                    "label": "Activity type",
+                    "options": [
+                        {
+                            "values": [
+                                "Info"
+                            ],
+                            "dependentStructure": [
+                                {
+                                    "type": "textarea",
+                                    "label": "Info text",
+                                    "keyString": "infoText",
+                                    "placeholder": "This is an info text"
+                                }
+                            ]
+                        }
+                    ],
+                    "keyString": "activityType",
+                    "defaultValue": "Info"
+                }
+            ]
+        }} />
+    </div>
+</div>
+
+## More Activities
+
+It is possible to create custom manual or automatic activities or to use custom activities other users have created via the shop. For more information on how to create custom activities, please refer to the following documentation: [Custom Activity Node](../custom-Activities/0-create-custom-activity)

@@ -1,0 +1,35 @@
+---
+title: Parallel Gateway
+description: The Parallel Gateway is used to create parallel paths in a process. It allows multiple paths to be executed simultaneously.
+---
+
+import { Split, Merge } from "lucide-react";
+
+## Structure
+
+There are two nodes that are used to create parallel paths in a process: the **Split** and **Join** nodes. The Split node is used to create multiple paths, while the Join node is used to merge those paths back together. Split paths should always be joined with a Join node. The Split node has one incoming connection and multiple outgoing connections, while the Join node has multiple incoming connections and one outgoing connection.
+
+<div className="flex flex-row items-start justify-start gap-8 flex-wrap mt-16">
+    <div className="flex flex-col items-center">
+        <div style={{
+            transform: "rotateY(0deg) rotate(45deg)",
+            borderRadius: 6,
+            boxShadow: "0px 0px 5px 1px #14803c"
+        }} className="flex h-14 w-14 justify-center items-center border-2 border-primary" >
+            <Split style={{ transform: "rotate(45deg)" }} className="w-6 h-6" />
+        </div>
+        <p>Split</p>
+    </div>
+    <div className="flex flex-col items-center">
+        <div style={{
+            transform: "rotateY(0deg) rotate(45deg)",
+            borderRadius: 6,
+            boxShadow: "0px 0px 5px 1px #14803c"
+        }} className="flex h-14 w-14 justify-center items-center border-2 border-primary" >
+            <Merge style={{ transform: "rotate(45deg)" }} className="w-6 h-6" />
+        </div>
+        <p>Join</p>
+    </div>
+</div>
+
+Both nodes do not have any options and work automatically. The Split node will create a new path for each outgoing connection, and the Join node will wait for all incoming connections to be completed before continuing to the next step in the process. This allows for parallel execution of multiple paths in a workflow.

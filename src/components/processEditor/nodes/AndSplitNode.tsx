@@ -3,7 +3,6 @@ import {Handle, NodeProps, Position} from 'reactflow';
 import useStore, {handleStyle} from "@/stores/store";
 import {OptionsDefinition, OptionsStructureType, OptionsText} from "@/model/OptionsModel";
 import {setDefaultValues} from "@/components/processEditor/toolbars/dynamicOptions/DynamicOptions";
-import {ActivityNodeData} from "@/components/processEditor/nodes/ActivityNode";
 import {X} from "lucide-react";
 
 export type AndSplitNodeData = {

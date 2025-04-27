@@ -13,7 +13,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         <RootProvider>
             <ScrollToTop/>
             <HomepageNavigation/>
-            <DocsLayout tree={landingSource.pageTree} {...baseOptions} disableThemeSwitch>
+            <DocsLayout tree={landingSource.pageTree} {...baseOptions} disableThemeSwitch sidebar={{
+                defaultOpenLevel: 1
+            }}>
                 {children}
             </DocsLayout>
         </RootProvider>

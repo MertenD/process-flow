@@ -23,6 +23,7 @@ export default function Layout({ children, params }: { children: ReactNode, para
             <ScrollToTop />
             <DocsLayout tree={source.pageTree} {...baseOptions} disableThemeSwitch sidebar={{
                 collapsible: false,
+                defaultOpenLevel: 1
             }}>
                 {children}
             </DocsLayout>
