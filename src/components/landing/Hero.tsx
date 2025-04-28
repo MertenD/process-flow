@@ -30,7 +30,7 @@ export function Hero() {
                                     Get Started for Free <ArrowRight className="h-4 w-4" />
                                 </Button>
                             </Link>
-                            <Link href="/#features" >
+                            <Link href="/docs" >
                                 <Button size="lg" variant="outline">
                                     Learn More
                                 </Button>
