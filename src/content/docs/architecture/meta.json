@@ -2,6 +2,7 @@
   "title": "Architecture",
   "pages": [
     "process-engine",
-    "deployment"
+    "deployment",
+    "tech-stack"
   ]
 }
