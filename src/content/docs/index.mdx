@@ -1,3 +1,122 @@
 ---
 title: Project Overview
+description: ProcessFlow is a gamified business process management tool developed as part of a Master’s program at Ulm University.
 ---
+
+import { Rocket, Search, Target, Settings, Database, Eye, BookOpen } from 'lucide-react';
+
+## <Rocket className="inline h-6 w-6 mr-2 text-secondary" /> Project Overview
+
+**ProcessFlow** is a **gamified** business process management tool developed as part of a Master’s program at Ulm University. It helps teams design, manage, and monitor workflows in real time, while gamification elements such as points, levels, and badges drive motivation and engagement.
+
+---
+
+### <Search className="inline h-5 w-5 mr-2 text-secondary" /> What is ProcessFlow?
+
+ProcessFlow is an intuitive web application for modeling, executing, and tracking business processes. With a drag-and-drop editor, users can quickly build workflows, define custom activities, and assign role-based permissions to team members.
+
+---
+
+### <Target className="inline h-5 w-5 mr-2 text-secondary" /> Why ProcessFlow?
+
+- **Engagement through Gamification**
+Points, levels, and badges transform routine tasks into rewarding experiences.
+
+- **Increased Productivity**
+Real-time monitoring surfaces bottlenecks immediately.
+
+- **Flexibility**
+Customizable activities and role-based permissions adapt to your team's needs.
+
+---
+
+### <Settings className="inline h-5 w-5 mr-2 text-secondary" /> Key Features
+
+| Feature                   | Description                                      |
+| ------------------------- | ------------------------------------------------ |
+| Intuitive Process Editor  | Drag & drop start/end nodes, gateways, activities|
+| Team Management           | Invite members, assign roles, manage access      |
+| Gamified Task Management  | Reward system with points, levels, badges        |
+| Real-Time Monitoring      | Live dashboards for process oversight            |
+| Custom Activities         | Create and integrate your own activities tailored to specific needs or browse our shop for pre-built options. |
+
+---
+
+### <Database className="inline h-5 w-5 mr-2 text-secondary" /> Technical Architecture
+
+<div className="flex flex-row justify-center">
+    <img src="https://skillicons.dev/icons?i=nextjs,tailwind,supabase,postgres,docker,githubactions&theme=light&perline=15" width="75%" height="auto" alt="Tech Stack" />
+</div>
+
+| Component           | Details                                                                 |
+| ------------------- | ----------------------------------------------------------------------- |
+| **Frontend**        | Next.js & Shadcn/ui for a responsive, modern interface                 |
+| **Styling**         | Tailwind CSS for utility-first, consistent styling                     |
+| **Backend**         | Supabase (PostgreSQL, Auth) + Next.js API routes for server-side logic  |
+| **Deployment**      | Docker Compose for consistent local development and deployment         |
+| **Real-Time**       | Leveraging Supabase’s real-time features for live updates              |
+| **State Management**| Zustand for efficient client-side state handling                       |
+| **CI/CD**           | GitHub Actions for automated deployment and database migrations         |
+
+---
+
+### <Eye className="inline h-5 w-5 mr-2 text-secondary" /> Project Background & Vision
+
+Developed by **Merten Dieckmann**, a Master’s student, ProcessFlow was born from the observation that traditional BPM tools often struggle to keep users engaged. Gamification elements motivate users to continuously optimize and maintain transparency in their processes. This project is a continuation of his bachelor thesis, which focused on the integration of gamification in business process management:
+
+<iframe
+    src="/assets/Bachelorarbeit-Merten-Dieckmann.pdf"
+    width="100%"
+    height="800"
+    title="Merten Dieckmanne Bachelorarbeit"
+    className="mt-8"
+>
+    Ihr Browser unterstützt keine eingebetteten PDFs.
+</iframe>
+
+---
+
+### <BookOpen className="inline h-5 w-5 mr-2 text-secondary" /> Documentation Structure
+
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+    <div className="bg-card p-4 rounded-md">
+        <h3 className="mt-0">Tour</h3>
+        - [Dashboard](/docs/tour/dashboard)
+        - [Editor](/docs/tour/editor)
+        - [Tasks](/docs/tour/tasks)
+        - [Monitoring](/docs/tour/monitoring)
+        - [Team](/docs/tour/team)
+        - [Statistics](/docs/tour/statistics)
+        - [Settings](/docs/tour/settings)
+        - [Shop](/docs/tour/shop)
+    </div>
+
+    <div className="bg-card p-4 rounded-md">
+        <h3 className="mt-0">Available Nodes</h3>
+        - [Start Node](/docs/available-nodes/start-node)
+        - [End Node](/docs/available-nodes/end-node)
+        - [Exclusive Gateway](/docs/available-nodes/exclusive-gateway)
+        - [Parallel Gateway](/docs/available-nodes/parallel-gateway)
+        - [Activity](/docs/available-nodes/activity)
+    </div>
+
+    <div className="bg-card p-4 rounded-md">
+        <h3 className="mt-0">Custom Activities</h3>
+        - [Creating Custom Activities](/docs/custom-activities/create-custom-activities)
+        - [How Custom Activities Work](/docs/custom-activities/how-they-work)
+    </div>
+
+    <div className="bg-card p-4 rounded-md">
+        <h3 className="mt-0">Architecture</h3>
+        - [Process Engine](/docs/architecture/process-engine)
+        - [Deployment](/docs/architecture/deployment)
+    </div>
+
+    <div className="bg-card p-4 rounded-md">
+        <h3 className="mt-0">Additional Resources</h3>
+        - [Features](/#features)
+        - [FAQ](/#faq)
+        - [About Us](/#about)
+        - [Imprint](/imprint)
+    </div>
+</div>

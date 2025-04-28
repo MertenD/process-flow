@@ -1,0 +1,85 @@
+---
+title: Process Engine
+description: An inside look at how ProcessFlow’s Process Engine drives workflow execution with database functions and triggers.
+---
+
+import { Cpu, Database, Zap, RefreshCw, Code, SendToBack } from 'lucide-react';
+
+## <Cpu className="inline h-5 w-5 mr-2 text-secondary" /> Process Engine Architecture
+
+ProcessFlow’s engine is built directly into the database (via Supabase/PostgreSQL), using stored functions, triggers, and JSONB data to model, execute, and advance workflow instances without a separate execution service. This approach ensures that processes can run in the background without the need to have the web application open, and it allows for easy scaling and management of process instances.
+
+---
+
+### <SendToBack className="inline h-5 w-5 mr-2 text-secondary" /> High-Level Engine Overview
+
+To visualize the core lifecycle without diving into low-level SQL, here’s a simplified flowchart:
+
+![Engine Overview Diagram](/assets/engine-overview.png)
+
+This overview shows how tasks move from creation to completion and cycle until the workflow reaches an end node.
+
+---
+
+### <Database className="inline h-5 w-5 mr-2 text-secondary" /> Core Components
+
+- **Web Application**: Frontend and API Endpoint (Next.js) that start processes and displays tasks.
+- **Database (Supabase/PostgreSQL)**: Stores process models, instances, flow elements, and data objects. Acts as the execution engine via PL/pgSQL.
+- **External Task Servers**: Optional HTTP endpoints that render and collect user task input when an element is marked “Manual” or that automatically execute business logic when an element is marked “Automatic”.
+
+---
+
+### <RefreshCw className="inline h-5 w-5 mr-2 text-secondary" /> Lifecycle of a Process Instance
+
+1. **create_process_instance** (`PL/pgSQL` function) is invoked with a model ID. It:
+    - Validates a single `startNode` and at least one `endNode` in the model.
+    - Inserts a new `process_instance` row (status = Running).
+    - Creates the first `flow_element_instance` for the `startNode` and immediately marks it Completed.
+
+2. **create_next_flow_element_instance** (`AFTER UPDATE` trigger) fires when any flow element instance transitions to Completed. It:
+    - Reads the completed element’s type (`startNode`, `activityNode`, `gatewayNode`, `endNode`, etc.).
+    - Determines the next element ID via the corresponding element table (`start_element`, `activity_element`, `gateway_element`, …).
+    - Inserts a new `flow_element_instance` for that next element (or, if at an `endNode`, marks the process_instance Completed).
+
+3. **execute_created_flow_element_instance** (`AFTER INSERT` trigger) runs on new `flow_element_instance` rows with status = Created. It:
+    - Skips `startNode` and `endNode` (automatically completed).
+    - For **gatewayNodes** and **endNodes**, immediately marks them Completed.
+    - For **Manual** elements, sets status = Todo so it appears in the user’s Task list.
+    - For **Automatic** elements, sets status = In Progress and issues an HTTP POST to the element’s `execution_url`, passing the instance ID and any JSONB data payload.
+
+4. **complete_flow_element_instance** (`PL/pgSQL` function) is called by the app’s API when a user or external service finishes a task. It:
+    - Inserts or updates rows in `data_object_instance` to capture output data.
+    - Sets the corresponding `flow_element_instance` row status = Completed, recording a timestamp.
+
+5. **Cycle Continues**: Completion of any element triggers step 2 again, advancing the workflow until an `endNode` completes and the process instance status flips to Completed.
+
+---
+
+### <Zap className="inline h-5 w-5 mr-2 text-secondary" /> Triggers & Functions
+
+| Trigger / Function                         | Purpose                                               |
+| ------------------------------------------ | ----------------------------------------------------- |
+| `create_process_instance()`                | Validates model and seeds first element instance      |
+| `create_next_flow_element_instance` (TRG)  | Advances to the next flow element upon completion     |
+| `execute_created_flow_element_instance`    | Routes new instances to Todo or issues auto HTTP call |
+| `complete_flow_element_instance()`         | Persists outputs and marks an instance Completed      |
+
+---
+
+### <Code className="inline h-5 w-5 mr-2 text-secondary" /> Manual vs. Automatic Execution
+
+- **Manual**: Elements with `execution_mode = 'Manual'` are created with status Todo. Users see them in their worklist, open them (via iframe HTTP calls), submit results, and the API invokes `complete_flow_element_instance()`.
+- **Automatic**: Elements with `execution_mode = 'Automatic'` go In Progress immediately. The trigger POSTS to the configured `execution_url` and relies on the callback endpoint (`/api/instance/complete`) to finalize.
+
+---
+
+### <Database className="inline h-5 w-5 mr-2 text-secondary" /> Data Objects & Storage
+
+- **Flow Element Definitions** reside in `flow_element`, `activity_element`, `gateway_element`, etc., including JSONB `data` for conditional logic or input parameters.
+- **Instance Data**: `flow_element_instance` tracks each element’s runtime status, timestamps, and parent `process_instance`.
+- **Output Data**: `data_object_instance` stores arbitrary JSONB key/value pairs per instance, allowing downstream tasks or analytics to consume results.
+
+---
+
+*With this design, ProcessFlow achieves a **serverless**, scalable process engine fully driven by database logic—simplifying deployment and ensuring strong data consistency.*
+

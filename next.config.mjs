@@ -7,6 +7,9 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
+    images: {
+        domains: ['skillicons.dev'],
+    },
 };
 
 export default withNextIntl(
