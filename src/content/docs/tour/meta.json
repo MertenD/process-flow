@@ -1,6 +1,13 @@
 {
   "title": "Tour",
   "pages": [
-    "editor"
+    "dashboard",
+    "editor",
+    "tasks",
+    "monitoring",
+    "team",
+    "stats",
+    "settings",
+    "shop"
   ]
 }

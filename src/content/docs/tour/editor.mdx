@@ -3,7 +3,7 @@ title: Editor
 description: The editor is the main interface for creating processes. It allows users to design, edit, and visualize their processes using BPMN 2.0 notation.
 ---
 
-import {FileDown, Save} from "lucide-react";
+import {FileDown, Save, Undo, Redo, Play} from "lucide-react";
 
 ## Overview
 
@@ -30,15 +30,17 @@ The canvas is the main area where you design your process. You can drag and drop
 
 The property panel is located on the right side of the editor. It displays the options for the currently selected node. You can use this panel to configure the node's properties, such as input and output variables, conditions, and other settings. The options available in the property panel depend on the type of node you have selected.
 
-### Toolbar (Save, Export to .BPMN, Undo, Redo, Create Process Instance)
+### Toolbar
 
 The toolbar at the top of the editor provides several actions you can perform on your process model:
 
-<div className="flex flex-row gap-2 items-center">- <Save />**Save**: Save the current process model.</div>
-<div className="flex flex-row gap-2 items-center">- <FileDown />**Export to .BPMN**: Export the current process model as a BPMN 2.0 XML file.</div>
-- **Undo**: Undo the last action.
-- **Redo**: Redo the last undone action.
-- **Create Process Instance**: Create a new instance of the current process model. This will open a dialog where you can enter the input variables defined in the Start node. You can also find a URL to the API endpoint here that you can use to start a process instance programmatically.
+<ul>
+    <li><div className="flex flex-row gap-2 items-center"><Save /><div>**Save**: Save the current process model.</div></div></li>
+    <li><div className="flex flex-row gap-2 items-center"><FileDown /><div>**Export to .BPMN**: Export the current process model as a BPMN 2.0 XML file.</div></div></li>
+    <li><div className="flex flex-row gap-2 items-center"><Undo /><div>**Undo**: Undo the last action.</div></div></li>
+    <li><div className="flex flex-row gap-2 items-center"><Redo /><div>**Redo**: Redo the last undone action.</div></div></li>
+    <li><div className="flex flex-row gap-2 items-start"><Play className="flex-shrink-0" /><div>**Create Process Instance**: Create a new instance of the current process model. This will open a dialog where you can enter the input variables defined in the Start node. You can also find a URL to the API endpoint here that you can use to start a process instance programmatically.</div></div></li>
+</ul>
 
 
 

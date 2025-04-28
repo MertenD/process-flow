@@ -1,0 +1,67 @@
+---
+title: Monitoring
+description: The Monitoring page provides real-time insights into all your process instances and tasks. It lets you track overall counts, status breakdowns, time-based trends, and drill down per process model or individual task.
+---
+
+import {Home, PieChart, BarChart2, List, ChevronDown, Calendar} from "lucide-react";
+
+## Overview
+
+The Monitoring page is your command center for process analytics. At a glance you see total instance counts and status cards, a trend chart of starts vs completions, a collapsible overview per process model, and a full table of all tasks.
+
+![monitoring overview](/assets/monitoring-2.png)
+
+### Summary Cards
+
+The summary cards provide a quick overview of the current state of your process instances. Each card displays a specific metric related to the instances being monitored.
+
+<div className="grid sm:grid-cols-2 grid-cols-1 gap-4">
+    <div className="flex flex-col items-start bg-card rounded-md px-4">
+        <div className="flex flex-row items-center gap-2">
+            <Home className="flex-shrink-0" />
+            **Total Instances**
+        </div>
+        <p className="mt-0">The total number of process instances being monitored.</p>
+    </div>
+    <div className="flex flex-col items-start bg-card rounded-md px-4">
+        <div className="flex flex-row items-center gap-2">
+            <PieChart className="flex-shrink-0" />
+            **Completed**
+        </div>
+        <p className="mt-0">Count and percentage of instances that have finished.</p>
+    </div>
+    <div className="flex flex-col items-start bg-card rounded-md px-4">
+        <div className="flex flex-row items-center gap-2">
+            <BarChart2 className="flex-shrink-0" />
+            **In Progress**
+        </div>
+        <p className="mt-0">Count and percentage of instances still running.</p>
+    </div>
+    <div className="flex flex-col items-start bg-card rounded-md px-4">
+        <div className="flex flex-row items-center gap-2">
+            <List className="flex-shrink-0" />
+            **On Hold**
+        </div>
+        <p className="mt-0">Count and percentage of instances paused or waiting.</p>
+    </div>
+</div>
+
+### Trend of Process Instances
+
+A time-series chart showing **Started Instances** vs **Completed Instances** over your chosen date range. Use the dropdown in the top-right to switch time windows or focus on a particular process model.
+
+### Process Models Overview
+
+![monitoring process models](/assets/monitoring-3.png)
+
+The **Process Models** section provides a detailed overview of all your process models. Each model is represented by a card that displays key metrics and allows you to drill down into specific instances.
+
+Click the card with the desired process name to reveal the following information:
+
+- **Instance Status**: A pie chart of Completed vs Running (In Progress) instances.
+- **Task Progress**: A bar chart comparing the number of **Running** vs **Completed** tasks for each activity node.
+- **All Tasks**: A table listing all tasks related to this process model with more details like **type**, **execution mode**, **status**, and **created at** date.
+
+<aside className="p-4 bg-card rounded-md">
+    **Tip:** You can see error messages here when a task failed. Hover over the error status badge of the task to see it.
+</aside>
