@@ -2,7 +2,7 @@
 
 # `PROCESS-FLOW`
 
-#### Build and manage gamificated business processes with ease.
+#### Build and manage gamificated business processes with ease
 
 <p align="left">
 	<!-- Shields.io badges disabled, using skill icons. --></p>
