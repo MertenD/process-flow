@@ -1,174 +1,117 @@
-import {cookies, headers} from 'next/headers'
-import {createClient} from '@/utils/supabase/server'
-import {redirect, RedirectType} from 'next/navigation'
-import {AlertCircle, LogIn, UserPlus} from "lucide-react";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
-import {Profile} from "@/model/database/database.types";
+"use client"
 
-export default async function Login (
-    { searchParams }: Readonly<{ searchParams: { message: string } }>
-) {
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { AlertCircle, LogIn, UserPlus } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { authClient } from "@/lib/auth-client"
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-    const {data: user, error} = await supabase.auth.getUser()
-    if (user.user) {
-        return redirect('/dashboard', RedirectType.replace)
-    }
+export default function Login({ searchParams }: Readonly<{ searchParams: { message: string } }>) {
+    const router = useRouter()
+    const [message, setMessage] = useState(searchParams.message ?? "")
+    const [loading, setLoading] = useState(false)
 
-    const signIn = async (formData: FormData) => {
-        'use server'
+    const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setLoading(true)
+        const form = new FormData(e.currentTarget)
+        const email = form.get("email") as string
+        const password = form.get("password") as string
 
-        const email = formData.get('email') as string
-        const password = formData.get('password') as string
-        const cookieStore = cookies()
-        const supabase = createClient(cookieStore)
-
-        const {error} = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        })
+        const { error } = await authClient.signIn.email({ email, password })
+        setLoading(false)
 
         if (error) {
-            return redirect('/authenticate?message=Could not authenticate user', RedirectType.replace)
+            setMessage("Anmeldung fehlgeschlagen: " + (error.message ?? "Unbekannter Fehler"))
+            return
         }
 
-        return redirect('/dashboard', RedirectType.replace)
+        router.push("/dashboard")
     }
 
-    const signUp = async (formData: FormData) => {
-        'use server'
-
-        console.log('Sign up', formData)
-
-        const origin = headers().get('origin')
-        const email = formData.get('email') as string
-        const password = formData.get('password') as string
-        const passwordConfirm = formData.get('password-confirm') as string
-        const username = formData.get('username') as string
-        const cookieStore = cookies()
-        const supabase = createClient(cookieStore)
+    const signUp = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setLoading(true)
+        const form = new FormData(e.currentTarget)
+        const email = form.get("email") as string
+        const password = form.get("password") as string
+        const passwordConfirm = form.get("password-confirm") as string
+        const username = form.get("username") as string
 
         if (password !== passwordConfirm) {
-            return redirect(`/authenticate?message=Passwörter stimmen nicht überein`, RedirectType.replace)
+            setMessage("Passwörter stimmen nicht überein")
+            setLoading(false)
+            return
         }
 
-        const checkUsernameUniqueRequest = await supabase
-            .from('profiles')
-            .select()
-            .ilike('username', username)
-            .maybeSingle<Profile>()
-
-        if (checkUsernameUniqueRequest.data) {
-            return redirect(`/authenticate?message=Benutzername ist bereits vergeben`, RedirectType.replace)
-        }
-
-        const {error} = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                emailRedirectTo: `${origin}/auth/callback`,
-            },
-        })
+        const { data, error } = await authClient.signUp.email({ email, password, name: username })
+        setLoading(false)
 
         if (error) {
-
-            if (error.message === "User already registered") {
-                return redirect(`/authenticate?message=Email is already taken`, RedirectType.replace)
-            }
-            return redirect(`/authenticate?message=${error.message}`, RedirectType.replace)
+            const msg = error.message === "User already exists" ? "Email ist bereits vergeben" : (error.message ?? "Registrierung fehlgeschlagen")
+            setMessage(msg)
+            return
         }
 
-        const user = await supabase.auth.getUser().then((response) => response.data.user)
+        // Save username after successful sign-up via API
+        if (data?.user?.id) {
+            await fetch("/api/user/set-username", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: data.user.id, username }),
+            })
+        }
 
-        await supabase
-            .from('profiles')
-            .insert([{
-                id: user?.id,
-                username: formData.get('username') as string,
-                email: user?.email
-            } as Profile])
-
-        return redirect('/dashboard', RedirectType.replace)
+        router.push("/dashboard")
     }
 
-    return <div className="w-screen h-screen flex flex-col justify-center items-center">
-        <Card className="max-w-md mx-auto">
-            <CardHeader>
-                <CardTitle>Willkommen bei ProcessFlow</CardTitle>
-                <CardDescription>Melden Sie sich an oder registrieren Sie sich, um fortzufahren.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                { searchParams.message && (
-                    <Alert variant="destructive" className="border-red-500 bg-red-300 mb-10">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>
-                            { searchParams.message }
-                        </AlertDescription>
-                    </Alert>
-                ) }
-                <Tabs defaultValue="login">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="login">Anmelden</TabsTrigger>
-                        <TabsTrigger value="register">Registrieren</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="login">
-                        <form action={signIn} className="space-y-4">
-                            <Input
-                                name="email"
-                                type="email"
-                                placeholder="E-Mail"
-                                required
-                            />
-                            <Input
-                                name="password"
-                                type="password"
-                                placeholder="Passwort"
-                                required
-                            />
-                            <Button type="submit" className="w-full">
-                                <LogIn className="w-4 h-4 mr-2" /> Anmelden
-                            </Button>
-                        </form>
-                    </TabsContent>
-                    <TabsContent value="register">
-                        <form action={signUp} className="space-y-4">
-                            <Input
-                                name="email"
-                                type="email"
-                                placeholder="E-Mail"
-                                required
-                            />
-                            <Input
-                                name="password"
-                                type="password"
-                                placeholder="Passwort"
-                                required
-                            />
-                            <Input
-                                name="password-confirm"
-                                type="password"
-                                placeholder="Passwort bestätigen"
-                                required
-                            />
-                            <Input
-                                name="username"
-                                type="text"
-                                placeholder="Benutzername"
-                                required
-                            />
-                            <Button type="submit" className="w-full">
-                                <UserPlus className="w-4 h-4 mr-2" /> Registrieren
-                            </Button>
-                        </form>
-                    </TabsContent>
-                </Tabs>
-            </CardContent>
-        </Card>
-    </div>
+    return (
+        <div className="w-screen h-screen flex flex-col justify-center items-center">
+            <Card className="max-w-md mx-auto">
+                <CardHeader>
+                    <CardTitle>Willkommen bei ProcessFlow</CardTitle>
+                    <CardDescription>Melden Sie sich an oder registrieren Sie sich, um fortzufahren.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {message && (
+                        <Alert variant="destructive" className="border-red-500 bg-red-300 mb-10">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Fehler</AlertTitle>
+                            <AlertDescription>{message}</AlertDescription>
+                        </Alert>
+                    )}
+                    <Tabs defaultValue="login">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="login">Anmelden</TabsTrigger>
+                            <TabsTrigger value="register">Registrieren</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="login">
+                            <form onSubmit={signIn} className="space-y-4">
+                                <Input name="email" type="email" placeholder="E-Mail" required />
+                                <Input name="password" type="password" placeholder="Passwort" required />
+                                <Button type="submit" className="w-full" disabled={loading}>
+                                    <LogIn className="w-4 h-4 mr-2" /> Anmelden
+                                </Button>
+                            </form>
+                        </TabsContent>
+                        <TabsContent value="register">
+                            <form onSubmit={signUp} className="space-y-4">
+                                <Input name="email" type="email" placeholder="E-Mail" required />
+                                <Input name="password" type="password" placeholder="Passwort" required />
+                                <Input name="password-confirm" type="password" placeholder="Passwort bestätigen" required />
+                                <Input name="username" type="text" placeholder="Benutzername" required />
+                                <Button type="submit" className="w-full" disabled={loading}>
+                                    <UserPlus className="w-4 h-4 mr-2" /> Registrieren
+                                </Button>
+                            </form>
+                        </TabsContent>
+                    </Tabs>
+                </CardContent>
+            </Card>
+        </div>
+    )
 }

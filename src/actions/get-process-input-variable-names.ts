@@ -1,26 +1,19 @@
 "use server"
 
-import {createClient} from "@/utils/supabase/server";
-import {NodeTypes} from "@/model/NodeTypes";
+import { prisma } from "@/lib/prisma"
+import { NodeTypes } from "@/model/NodeTypes"
 
 export default async function(processModelId: number): Promise<string[]> {
 
-    const supabase = createClient()
+    const startElement = await prisma.flowElement.findFirst({
+        where: { modelId: BigInt(processModelId), type: NodeTypes.START_NODE as any },
+        select: { data: true },
+    })
 
-    const { data, error } = await supabase
-        .from("flow_element")
-        .select("inputVariableNames: data->outputs")
-        .eq("type", NodeTypes.START_NODE)
-        .eq("model_id", processModelId)
-        .single<{ inputVariableNames: { [key: string]: string }}>()
+    if (!startElement?.data) return []
 
-    console.log(data)
+    const data = startElement.data as Record<string, unknown>
+    const outputs = data.outputs as Record<string, string> | undefined
 
-    if (!data) return []
-
-    if (error) {
-        throw Error("Error fetching process model")
-    }
-
-    return Object.values(data.inputVariableNames || {})
+    return Object.values(outputs ?? {})
 }

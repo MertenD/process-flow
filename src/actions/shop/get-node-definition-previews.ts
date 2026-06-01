@@ -1,29 +1,22 @@
 "use server"
 
-import {NodeDefinitionPreview} from "@/model/NodeDefinition";
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma"
+import { NodeDefinitionPreview } from "@/model/NodeDefinition"
 
-// TODO Add Some sort of pagination and search functionality
+export default async function(): Promise<NodeDefinitionPreview[]> {
 
-export default async function (): Promise<NodeDefinitionPreview[]> {
+    const results = await prisma.nodeDefinition.findMany({
+        select: { id: true, definition: true },
+    })
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    const { data: result, error } = await supabase
-        .from("node_definition")
-        .select("id, " +
-            "name: definition->name, " +
-            "icon: definition->icon, " +
-            "shortDescription: definition->shortDescription, " +
-            "executionMode: definition->executionMode"
-        )
-        .returns<NodeDefinitionPreview[]>()
-
-    if (error || !result) {
-        throw new Error("Failed to fetch node definition previews")
-    }
-
-    return result
+    return results.map((r) => {
+        const def = r.definition as Record<string, unknown>
+        return {
+            id: Number(r.id),
+            name: def.name as string,
+            icon: def.icon as string,
+            shortDescription: def.shortDescription as string,
+            executionMode: def.executionMode as string,
+        } as NodeDefinitionPreview
+    })
 }

@@ -1,24 +1,19 @@
-import {createClient} from "@/utils/supabase/server";
-import React from "react";
-import TaskFrame from "@/components/tasks/TaskFrame";
-import {redirect} from "next/navigation";
-import getTasks from "@/actions/get-tasks";
-import {getTranslations} from "next-intl/server";
-import {ManualTaskWithOutputs} from "@/model/database/database.types";
-
-// TODO Generell middleware um zu überprüfen, ob man auf gewisse Routen zugriff hat
+import React from "react"
+import TaskFrame from "@/components/tasks/TaskFrame"
+import { redirect } from "next/navigation"
+import getTasks from "@/actions/get-tasks"
+import { getTranslations } from "next-intl/server"
+import { ManualTaskWithOutputs } from "@/model/database/database.types"
+import { requireSession } from "@/lib/session"
 
 export default async function SelectedTasksPage({ params }: Readonly<{ params: { taskId: string, teamId: number } }>) {
 
     const t = await getTranslations("tasks")
 
-    const supabase = createClient()
-    const {data: userData, error} = await supabase.auth.getUser()
-    if (error || !userData.user || !userData.user.id) {
-        redirect("/authenticate")
-    }
+    const session = await requireSession().catch(() => null)
+    if (!session?.user) redirect("/authenticate")
 
-    const tasks = await getTasks(params.teamId, userData.user.id)
+    const tasks = await getTasks(params.teamId, session.user.id)
     const currentTask = tasks?.find(task => task.id.toString() === params.taskId)
 
     if (currentTask && currentTask.status && currentTask?.status !== "Todo") {
@@ -29,35 +24,24 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
         if (task == null) return null
         let taskUrl = task.execution_url
         taskUrl += "?"
-
-        if (!task.data) {
-            return null
-        }
-
-        taskUrl += Object.entries(task.data)
-            .filter(([key, value]) =>
-                key !== "gamificationOptions" &&
-                key !== "gamificationType" &&
-                key !== "outputs"
-            )
+        if (!task.data) return null
+        taskUrl += Object.entries(task.data as Record<string, string>)
+            .filter(([key]) => key !== "gamificationOptions" && key !== "gamificationType" && key !== "outputs")
             .concat(Object.entries((task.outputs) || {}))
             .map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join("&")
-
         taskUrl += `&responsePath=${encodeURIComponent(`${process.env.APP_URL}/api/instance/complete`)}`
         taskUrl += `&flowElementInstanceId=${task.id}`
         taskUrl += `&userId=${userId}`
         return taskUrl
     }
 
-    const taskUrl: string | null = await buildTaskUrl(currentTask, userData.user.id)
+    const taskUrl: string | null = await buildTaskUrl(currentTask, session.user.id)
 
     return currentTask && <>
-        { currentTask && taskUrl ? (
-            <TaskFrame taskId={currentTask.id.toString()} taskUrl={taskUrl}  teamId={params.teamId}/>
+        {currentTask && taskUrl ? (
+            <TaskFrame taskId={currentTask.id.toString()} taskUrl={taskUrl} teamId={params.teamId}/>
         ) : (
-            <div>
-                {t("couldNotFoundSelectedTask")}
-            </div>
-        ) }
+            <div>{t("couldNotFoundSelectedTask")}</div>
+        )}
     </>
 }

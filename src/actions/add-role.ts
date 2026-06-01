@@ -1,8 +1,7 @@
 "use server"
 
-import {createClient} from "@/utils/supabase/server";
-import {cookies} from "next/headers";
-import {Page} from "@/model/database/database.types";
+import { prisma } from "@/lib/prisma"
+import { Page } from "@/model/database/database.types"
 
 export default async function(roleName: string, teamId: number, color: string, allowedPages: Page[]): Promise<number> {
 
@@ -10,24 +9,19 @@ export default async function(roleName: string, teamId: number, color: string, a
         throw new Error("Role name cannot be 'owner'")
     }
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const existing = await prisma.role.findFirst({
+        where: { name: roleName, belongsTo: BigInt(teamId) },
+    })
+    if (existing) throw new Error("Role with name " + roleName + " already exists in team.")
 
-    console.log("Adding role", roleName, teamId, color, allowedPages)
+    const role = await prisma.role.create({
+        data: {
+            name: roleName,
+            color,
+            belongsTo: BigInt(teamId),
+            pages: { allowed_pages: allowedPages },
+        },
+    })
 
-    let { data, error } = await supabase
-        .rpc('add_role', {
-            name_param: roleName,
-            color_param: color,
-            belongs_to_param: teamId,
-            pages_param: {
-                allowed_pages: allowedPages
-            }
-        }).single<number>()
-
-    if (error || !data) {
-        throw Error(error?.message || "Error adding role")
-    }
-
-    return data
+    return Number(role.id)
 }

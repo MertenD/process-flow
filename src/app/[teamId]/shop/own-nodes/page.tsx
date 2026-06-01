@@ -1,38 +1,28 @@
-import getNodeDefinitionsFromUser from "@/actions/shop/get-node-definition-previews-from-user";
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
-import {redirect} from "next/navigation";
-import {NodeDefinitionPreview} from "@/model/NodeDefinition";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Badge} from "@/components/ui/badge";
-import Link from "next/link";
-import {ArrowRight, Pencil, Trash2} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {getTranslations} from "next-intl/server";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import removeNodeDefinitionPermanently from "@/actions/shop/remove-node-definition-permanently";
+import getNodeDefinitionsFromUser from "@/actions/shop/get-node-definition-previews-from-user"
+import { redirect } from "next/navigation"
+import { NodeDefinitionPreview } from "@/model/NodeDefinition"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
+import { ArrowRight, Pencil, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { getTranslations } from "next-intl/server"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import removeNodeDefinitionPermanently from "@/actions/shop/remove-node-definition-permanently"
+import { requireSession } from "@/lib/session"
 
 export default async function OwnNodesPage({ params }: { params: { teamId: number } }) {
 
-    const t =  await getTranslations("shop")
+    const t = await getTranslations("shop")
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-    const {data: userData, error} = await supabase.auth.getUser()
-    if (error || !userData.user || !userData.user.id) {
-        redirect("/authenticate")
-    }
+    const session = await requireSession().catch(() => null)
+    if (!session?.user) redirect("/authenticate")
 
-    const nodeDefinitions = await getNodeDefinitionsFromUser(userData.user.id, params.teamId)
+    const nodeDefinitions = await getNodeDefinitionsFromUser(session.user.id, params.teamId)
 
     async function handleRemoveNode(nodeId: number) {
         "use server"
-
-        removeNodeDefinitionPermanently(nodeId).then(() => {
-            console.log("Node removed successfully")
-        })
-
-        console.log("Removing node with id: ", nodeId)
+        await removeNodeDefinitionPermanently(nodeId)
     }
 
     return <>
@@ -66,26 +56,18 @@ export default async function OwnNodesPage({ params }: { params: { teamId: numbe
                                             </Button>
                                         </Link>
                                     </TooltipTrigger>
-                                    <TooltipContent>
-                                        {t("node.editNodeDescription")}
-                                    </TooltipContent>
+                                    <TooltipContent>{t("node.editNodeDescription")}</TooltipContent>
                                 </Tooltip>
                                 {node.id && <form action={handleRemoveNode.bind(null, node.id)} method="POST">
                                     <Tooltip delayDuration={0}>
                                         <TooltipTrigger>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                type="submit"
-                                                className="h-8 w-8 text-muted-foreground hover:bg-destructive transition-colors"
-                                            >
+                                            <Button variant="ghost" size="icon" type="submit"
+                                                className="h-8 w-8 text-muted-foreground hover:bg-destructive transition-colors">
                                                 <Trash2 className="h-4 w-4"/>
                                                 <span className="sr-only">Remove node</span>
                                             </Button>
                                         </TooltipTrigger>
-                                        <TooltipContent>
-                                            {t("node.removeNodePermanently")}
-                                        </TooltipContent>
+                                        <TooltipContent>{t("node.removeNodePermanently")}</TooltipContent>
                                     </Tooltip>
                                 </form>}
                             </div>

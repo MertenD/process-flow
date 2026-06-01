@@ -1,34 +1,31 @@
 "use server"
 
-import {getRequestConfig} from 'next-intl/server';
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
-import {Profile} from "@/model/database/database.types";
+import { getRequestConfig } from 'next-intl/server'
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { prisma } from "@/lib/prisma"
 
-const defaultLocale: string = 'de';
+const defaultLocale = 'de'
 
 export default getRequestConfig(async () => {
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const session = await auth.api.getSession({ headers: await headers() })
 
-    const {data: userData, error: userError} = await supabase.auth.getUser()
-    if (userError || !userData.user || !userData.user.id) {
+    if (!session?.user) {
         return {
             locale: defaultLocale,
-            messages: (await import(`./dictionaries/${defaultLocale}.json`)).default
+            messages: (await import('./dictionaries/' + defaultLocale + '.json')).default
         }
     }
 
-    const {data: profile, error: profileError} = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userData.user.id)
-        .single<Profile>()
+    const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { language: true }
+    })
 
-    const locale = profile?.language || defaultLocale
+    const locale = user?.language || defaultLocale
 
     return {
         locale,
-        messages: (await import(`./dictionaries/${locale}.json`)).default
-    };
-});
+        messages: (await import('./dictionaries/' + locale + '.json')).default
+    }
+})

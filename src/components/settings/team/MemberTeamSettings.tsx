@@ -1,7 +1,6 @@
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
-import MemberDangerZoneSettings from "@/components/settings/team/member/MemberDangerZoneSettings";
-import {getTranslations} from "next-intl/server";
+import MemberDangerZoneSettings from "@/components/settings/team/member/MemberDangerZoneSettings"
+import { getTranslations } from "next-intl/server"
+import getTeam from "@/actions/get-team"
 
 export interface OwnerTeamSettingsProps {
     teamId: number
@@ -11,17 +10,9 @@ export interface OwnerTeamSettingsProps {
 export default async function MemberTeamSettings({ teamId, userId }: Readonly<OwnerTeamSettingsProps>) {
 
     const t = await getTranslations("settings.teamSettings")
+    const team = await getTeam(teamId)
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    const { data: team, error: teamError } = await supabase
-        .from("team")
-        .select("name")
-        .eq("id", teamId)
-        .single<{ name: string }>()
-
-    if (teamError || !team) {
+    if (!team) {
         return <div>{t("couldNotLoadTeam")}</div>
     }
 

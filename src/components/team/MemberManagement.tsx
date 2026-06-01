@@ -12,7 +12,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import getRoles from "@/actions/get-roles";
 import {Role} from "@/model/database/database.types";
-import {createClient} from "@/utils/supabase/client";
+
 import getMembers from "@/actions/get-members";
 import {Checkbox} from "@/components/ui/checkbox";
 import updateProfileRolesInTeam from "@/actions/update-profile-roles-in-team";
@@ -46,8 +46,6 @@ export function MemberManagement({teamId}: MemberManagementProps) {
 
     const t = useTranslations("team.members")
 
-    const supabase = createClient()
-
     const [members, setMembers] = useState<Member[]>([])
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [roleFilter, setRoleFilter] = useState<string>('all')
@@ -69,53 +67,6 @@ export function MemberManagement({teamId}: MemberManagementProps) {
         })
     }, [teamId]);
 
-    useEffect(() => {
-        const subscription = supabase
-            .channel("add_or_update_role_for_member_management")
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "role"
-            }, () => {
-                getRoles(teamId).then((roles: Role[]) => {
-                    setRoles(roles || [])
-                })
-            })
-            .subscribe()
-
-        return () => {
-            subscription.unsubscribe().then()
-        }
-    }, [supabase, teamId])
-
-    useEffect(() => {
-
-        const subscription = supabase
-            .channel("add_or_update_profile_role_team_for_member_management")
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "profile_team"
-            }, () => {
-                getMembers(teamId).then((members: Member[]) =>
-                    setMembers(members || [])
-                )
-            })
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "profile_role_team"
-            }, () => {
-                getMembers(teamId).then((members: Member[]) =>
-                    setMembers(members || [])
-                )
-            })
-            .subscribe()
-
-        return () => {
-            subscription.unsubscribe().then()
-        }
-    }, [supabase, teamId])
 
     useEffect(() => {
         getMembers(teamId).then((members: Member[]) =>

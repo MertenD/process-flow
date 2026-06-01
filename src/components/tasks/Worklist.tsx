@@ -12,7 +12,7 @@ import {Calendar} from "@/components/ui/calendar"
 import {CalendarIcon, UserIcon, SearchIcon, FilterIcon, Award, Search, ArrowUpDown} from 'lucide-react'
 import {format} from 'date-fns'
 import {useParams, usePathname, useRouter} from "next/navigation";
-import {createClient} from "@/utils/supabase/client";
+
 import {FlowElementInstanceState, ManualTaskWithOutputs, Role} from "@/model/database/database.types";
 import getRoles from "@/actions/get-roles";
 import getTasks from "@/actions/get-tasks";
@@ -50,29 +50,13 @@ export default function Worklist({ teamId, userId }: WorklistProps) {
     const router = useRouter()
     const params = useParams<{ taskId: string }>()
     const pathName = usePathname()
-    const supabase = createClient()
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(params.taskId)
     const [tasks, setTasks] = useState<ManualTaskWithOutputs[]>([])
     const [roles, setRoles] = useState<Role[]>([])
 
     useEffect(() => {
         getRoles(teamId).then(setRoles)
-
-        const subscription = supabase
-            .channel("flow_element_instance_update_role")
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "role"
-            }, () => {
-                getRoles(teamId).then(setRoles)
-            })
-            .subscribe()
-
-        return () => {
-            subscription.unsubscribe().then()
-        }
-    }, [supabase, teamId]);
+    }, [teamId])
 
     useEffect(() => {
         getTasks(teamId, userId).then(setTasks).catch((error) => {
@@ -84,43 +68,6 @@ export default function Worklist({ teamId, userId }: WorklistProps) {
         setSelectedTaskId(params.taskId)
     }, [params]);
 
-    useEffect(() => {
-        const updateSubscription = supabase
-            .channel("flow_element_instance_update_task")
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "flow_element_instance" // TODO hier eine bessere Tabelle wählen und ggf. die Bedingung anpassen
-            }, (payload) => {
-
-                getTasks(teamId, userId).then(setTasks).catch((error) => {
-                    console.error("Error fetching tasks", error)
-                })
-
-                if (payload.eventType === "UPDATE" && pathName === `/${teamId}/tasks/${payload.new.id}` && payload.new.status === "Completed") {
-                    setSelectedTaskId(null)
-                    toast({
-                        variant: "success",
-                        title: t("toasts.taskCompletedTitle"),
-                        description: t("toasts.taskCompletedDescription")
-                    })
-                }
-            })
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "profile_role_team"
-            }, () => {
-                getTasks(teamId, userId).then(setTasks).catch((error) => {
-                    console.error("Error fetching tasks", error)
-                })
-            })
-            .subscribe()
-
-        return () => {
-            updateSubscription.unsubscribe().then()
-        }
-    }, [pathName, supabase, t, teamId, userId]);
 
     const getStatusColor = (status: ManualTaskWithOutputs['status']) => {
         switch (status) {

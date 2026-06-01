@@ -1,22 +1,17 @@
 "use server"
 
-import {Page} from "@/model/database/database.types";
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma"
+import { Page } from "@/model/database/database.types"
 
 export default async function(teamId: number, profileId: string): Promise<Page[]> {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const profileRoleTeams = await prisma.profileRoleTeam.findMany({
+        where: { teamId: BigInt(teamId), profileId },
+        include: { role: { select: { pages: true } } },
+    })
 
-    const { data: allowedPages } = await supabase
-        .from('profile_role_team')
-        .select('role ( allowed_pages: pages->allowed_pages )')
-        .eq('team_id', teamId)
-        .eq('profile_id', profileId)
-        .returns<{ role: { allowed_pages: string[] } }[]>()
+    const allPages = profileRoleTeams
+        .flatMap((prt) => ((prt.role.pages as { allowed_pages?: string[] })?.allowed_pages ?? []))
 
-    const allowedPagesForUser = Array.from(new Set(allowedPages?.map(pages => pages.role.allowed_pages).flat()));
-
-    return allowedPagesForUser as Page[]
+    return Array.from(new Set(allPages)) as Page[]
 }

@@ -1,177 +1,139 @@
-import ProcessModelsStatistics, {ModelStatisticsData} from "@/components/monitoring/ProcessModelsStatistics";
-import GeneralMonitoringStatistics, {TrendData} from "@/components/monitoring/GeneralMonitoringStatistics";
-import React from "react";
-import {createClient} from "@/utils/supabase/server";
-import {redirect} from "next/navigation";
-import {
-    FlowElement,
-    FlowElementInstance,
-    ProcessInstance,
-    ProcessModel,
-    ProcessModelInstanceState
-} from "@/model/database/database.types";
-import {getTranslations} from "next-intl/server";
+import ProcessModelsStatistics, { ModelStatisticsData } from "@/components/monitoring/ProcessModelsStatistics"
+import GeneralMonitoringStatistics, { TrendData } from "@/components/monitoring/GeneralMonitoringStatistics"
+import React from "react"
+import { redirect } from "next/navigation"
+import { FlowElement, FlowElementInstance, ProcessInstance, ProcessModel, ProcessModelInstanceState } from "@/model/database/database.types"
+import { getTranslations } from "next-intl/server"
+import { requireSession } from "@/lib/session"
+import { prisma } from "@/lib/prisma"
 
-export type FlowElementInstanceWithFlowElement = FlowElementInstance & { flow_element: FlowElement & { name: string } };
+export type FlowElementInstanceWithFlowElement = FlowElementInstance & { flow_element: FlowElement & { name: string } }
 
 type ProcessInstanceWithFlowElements = Omit<ProcessInstance, 'flow_element_instance'> & {
-    flow_element_instance: (FlowElementInstanceWithFlowElement)[]
-};
+    flow_element_instance: FlowElementInstanceWithFlowElement[]
+}
 
 type ProcessModelWithInstances = ProcessModel & {
-    process_instance: ProcessInstanceWithFlowElements[];
-};
+    process_instance: ProcessInstanceWithFlowElements[]
+}
 
 export default async function MonitoringPage({ params }: Readonly<{ params: { teamId: string } }>) {
 
     const t = await getTranslations("monitoring")
 
-    const supabase = createClient()
-    const {data: userData, error} = await supabase.auth.getUser()
-    if (error || !userData.user) {
-        redirect("/authenticate")
-    }
+    const session = await requireSession().catch(() => null)
+    if (!session?.user) redirect("/authenticate")
 
-    const { data: processModels } = await supabase
-        .from("process_model")
-        .select(`*, process_instance(*, flow_element_instance(*, flow_element(*, name: data->task)))`)
-        .eq("belongs_to", params.teamId)
-        .returns<ProcessModelWithInstances[]>()
-
-    async function createTrendData(data: ProcessModelWithInstances[] | null, from: Date, to: Date): Promise<TrendData> {
-
-        if (!data) {
-            return {};
+    const rawModels = await prisma.processModel.findMany({
+        where: { belongsTo: BigInt(params.teamId) },
+        include: {
+            processInstances: {
+                include: {
+                    flowElementInstances: {
+                        include: { flowElement: true }
+                    }
+                }
+            }
         }
+    })
 
-        const trendDataFromDb: TrendData = {};
+    // Map to the shape expected by components
+    const processModels: ProcessModelWithInstances[] = rawModels.map(m => ({
+        id: Number(m.id),
+        created_at: m.createdAt.toISOString(),
+        name: m.name,
+        description: m.description,
+        created_by: m.createdBy,
+        updated_by: m.updatedBy,
+        updated_at: m.updatedAt?.toISOString() ?? null,
+        belongs_to: Number(m.belongsTo),
+        process_instance: m.processInstances.map(pi => ({
+            id: Number(pi.id),
+            created_at: pi.createdAt.toISOString(),
+            process_model_id: Number(pi.processModelId),
+            status: pi.status as any,
+            completed_at: pi.completedAt?.toISOString() ?? null,
+            flow_element_instance: pi.flowElementInstances.map(fei => ({
+                id: Number(fei.id),
+                created_at: fei.createdAt.toISOString(),
+                instance_of: Number(fei.instanceOf),
+                status: fei.status as any,
+                is_part_of: Number(fei.isPartOf),
+                completed_at: fei.completedAt?.toISOString() ?? null,
+                completed_by: fei.completedBy,
+                status_message: fei.statusMessage,
+                flow_element: {
+                    ...(fei.flowElement as any),
+                    id: Number(fei.flowElement.id),
+                    name: ((fei.flowElement.data as any)?.task as string) ?? ""
+                }
+            }))
+        }))
+    }))
 
-        // Erstelle eine Liste aller Daten zwischen from und to
-        const dateList: string[] = [];
+    function createTrendData(data: ProcessModelWithInstances[], from: Date, to: Date): TrendData {
+        if (!data) return {}
+        const trendDataFromDb: TrendData = {}
+        const dateList: string[] = []
         for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
-            dateList.push(d.toISOString().split("T")[0]);
+            dateList.push(d.toISOString().split("T")[0])
         }
-
-        for (const model of processModels ?? []) {
-            const modelName = model.name;
-            if (!trendDataFromDb[modelName]) {
-                trendDataFromDb[modelName] = [];
-            }
-
-            dateList.forEach(date => {
-                trendDataFromDb[modelName].push({ date, started: 0, completed: 0 });
-            });
-
+        for (const model of data) {
+            const modelName = model.name
+            if (!trendDataFromDb[modelName]) trendDataFromDb[modelName] = []
+            dateList.forEach(date => trendDataFromDb[modelName].push({ date, started: 0, completed: 0 }))
             for (const instance of model.process_instance ?? []) {
-
-                if (new Date(instance.created_at) < from || new Date(instance.created_at) > to ||
-                    instance.completed_at && (new Date(instance.completed_at) < from || new Date(instance.completed_at) > to)
-                ) {
-                    continue;
-                }
-
-                const instanceCreationDate = instance.created_at.split("T")[0];
-                let dateEntry = trendDataFromDb[modelName].find(data => data.date === instanceCreationDate);
-
+                const instanceCreationDate = instance.created_at.split("T")[0]
+                let dateEntry = trendDataFromDb[modelName].find(d => d.date === instanceCreationDate)
                 if (!dateEntry) {
-                    dateEntry = { date: instanceCreationDate, started: 0, completed: 0 };
-                    trendDataFromDb[modelName].push(dateEntry);
+                    dateEntry = { date: instanceCreationDate, started: 0, completed: 0 }
+                    trendDataFromDb[modelName].push(dateEntry)
                 }
-
-                dateEntry.started += 1;
-                if (instance.status === "Completed") {
-                    dateEntry.completed += 1;
-                }
+                dateEntry.started += 1
+                if (instance.status === "Completed") dateEntry.completed += 1
             }
         }
-
-        return trendDataFromDb;
+        return trendDataFromDb
     }
 
-    function createModelData(data: ProcessModelWithInstances[] | null, from: Date, to: Date): ModelStatisticsData[] {
-        if (!data) {
-            return [];
-        }
-
+    function createModelData(data: ProcessModelWithInstances[]): ModelStatisticsData[] {
+        if (!data) return []
         return data.map(model => {
             const instanceStates = model.process_instance.reduce((acc, instance) => {
-                //if (new Date(instance.created_at) >= from && new Date(instance.created_at) <= to ||
-                //    instance.completed_at && (new Date(instance.completed_at) >= from && new Date(instance.completed_at) <= to)
-                //) {
-                    const state = instance.status;
-                    if (!acc[state]) {
-                        acc[state] = 0;
-                    }
-                    acc[state] += 1;
-                //}
-                return acc;
+                const state = instance.status
+                acc[state] = (acc[state] || 0) + 1
+                return acc
             }, {} as { [key: string]: number })
-
             const stepForStepProgress = model.process_instance.reduce((acc, instance) => {
-                //if (new Date(instance.created_at) >= from && new Date(instance.created_at) <= to
-                //    && instance.completed_at && (new Date(instance.completed_at) >= from && new Date(instance.completed_at) <= to)
-                //) {
-                    instance.flow_element_instance.forEach(flowElementInstance => {
-                        if (flowElementInstance.flow_element.type === "endNode" ||
-                            flowElementInstance.flow_element.type === "startNode" ||
-                            flowElementInstance.flow_element.type === "gatewayNode"
-                        ) {
-                            return acc;
-                        }
-
-                        const stepName = flowElementInstance.flow_element.name
-                        if (!acc[stepName]) {
-                            acc[stepName] = {
-                                amountInProgress: 0,
-                                amountCompleted: 0,
-                                amountBlocked: 0
-                            }
-                        }
-
-                        if (flowElementInstance.status === "Completed") {
-                            acc[stepName].amountCompleted += 1;
-                        } else if (flowElementInstance.status === "Created" ||
-                            flowElementInstance.status === "In Progress" ||
-                            flowElementInstance.status === "Todo"
-                        ) {
-                            acc[stepName].amountInProgress += 1;
-                        } else {
-                            acc[stepName].amountBlocked += 1;
-                        }
-                    });
-                //}
-                return acc;
-            }, {} as { [key: string]: {
-                amountInProgress: number;
-                amountCompleted: number;
-                amountBlocked: number
-            } });
-
+                instance.flow_element_instance.forEach(fei => {
+                    if (["endNode","startNode","gatewayNode"].includes(fei.flow_element.type)) return
+                    const stepName = fei.flow_element.name
+                    if (!acc[stepName]) acc[stepName] = { amountInProgress: 0, amountCompleted: 0, amountBlocked: 0 }
+                    if (fei.status === "Completed") acc[stepName].amountCompleted += 1
+                    else if (["Created","In Progress","Todo"].includes(fei.status)) acc[stepName].amountInProgress += 1
+                    else acc[stepName].amountBlocked += 1
+                })
+                return acc
+            }, {} as { [key: string]: { amountInProgress: number; amountCompleted: number; amountBlocked: number } })
             return {
                 id: model.id,
                 name: model.name,
                 instancesAmount: model.process_instance.length,
-                instanceStates: Object.entries(instanceStates).map(([name, amount]) => {
-                    const typedName: ProcessModelInstanceState = name as ProcessModelInstanceState;
-                    return ({ name: typedName, amount })
-                }),
+                instanceStates: Object.entries(instanceStates).map(([name, amount]) => ({ name: name as ProcessModelInstanceState, amount })),
                 stepForStepProgress: Object.entries(stepForStepProgress).map(([step, amounts]) => ({ step, ...amounts }))
-            };
-        });
+            }
+        })
     }
 
-    const dateAgo = new Date();
-    dateAgo.setDate(dateAgo.getDate() - 30);
-    const trendData = await createTrendData(processModels, dateAgo, new Date());
-
-    const totalInstances = processModels?.reduce((acc, model) => acc + (model.process_instance?.length ?? 0), 0) ?? 0;
-    const totalCompleted = processModels?.reduce((acc, model) => acc + (model.process_instance?.filter(instance => instance.status === "Completed").length ?? 0), 0) ?? 0;
-    const totalInProgress = processModels?.reduce((acc, model) => acc + (model.process_instance?.filter(instance => instance.status === "Running").length ?? 0), 0) ?? 0;
-    const totalOnHold = processModels?.reduce((acc, model) => acc + (model.process_instance?.filter(instance => instance.status === "Error").length ?? 0), 0) ?? 0;
-
-    const modelData = createModelData(processModels, dateAgo, new Date());
-
-    const tasksData: FlowElementInstanceWithFlowElement[] = processModels?.map(model => model.process_instance).flat().map(instance => instance.flow_element_instance).flat() || [];
+    const dateAgo = new Date()
+    dateAgo.setDate(dateAgo.getDate() - 30)
+    const trendData = createTrendData(processModels, dateAgo, new Date())
+    const totalInstances = processModels.reduce((acc, m) => acc + m.process_instance.length, 0)
+    const totalCompleted = processModels.reduce((acc, m) => acc + m.process_instance.filter(i => i.status === "Completed").length, 0)
+    const totalInProgress = processModels.reduce((acc, m) => acc + m.process_instance.filter(i => i.status === "Running").length, 0)
+    const totalOnHold = processModels.reduce((acc, m) => acc + m.process_instance.filter(i => i.status === "Error").length, 0)
+    const modelData = createModelData(processModels)
+    const tasksData = processModels.flatMap(m => m.process_instance).flatMap(i => i.flow_element_instance)
 
     return <div className="w-full h-full overflow-y-auto">
         <div className="container mx-auto p-4 flex flex-col space-y-6">
@@ -183,7 +145,7 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
                 totalInProgress={totalInProgress}
                 trendData={trendData}
             />
-            <ProcessModelsStatistics modelData={modelData} tasksData={tasksData}/>
+            <ProcessModelsStatistics modelData={modelData} tasksData={tasksData as any}/>
         </div>
     </div>
 }

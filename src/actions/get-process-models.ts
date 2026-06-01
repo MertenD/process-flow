@@ -1,25 +1,23 @@
 "use server"
 
-import {ProcessModel} from "@/model/database/database.types";
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma"
+import { ProcessModel } from "@/model/database/database.types"
 
 export default async function(teamId: number): Promise<ProcessModel[]> {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const models = await prisma.processModel.findMany({
+        where: { belongsTo: BigInt(teamId) },
+        orderBy: { createdAt: "desc" },
+    })
 
-    const { data: processModels, error } = await supabase
-        .from("process_model")
-        .select("*")
-        .eq("belongs_to", teamId)
-        .returns<ProcessModel[]>()
-
-    if (error) {
-        throw Error(error.message)
-    } else if (!processModels) {
-        throw Error("Error while fetching process models.")
-    }
-
-    return processModels
+    return models.map((m) => ({
+        id: Number(m.id),
+        created_at: m.createdAt.toISOString(),
+        name: m.name,
+        description: m.description,
+        created_by: m.createdBy,
+        updated_by: m.updatedBy,
+        updated_at: m.updatedAt?.toISOString() ?? null,
+        belongs_to: Number(m.belongsTo),
+    }))
 }

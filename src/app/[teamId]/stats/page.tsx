@@ -1,23 +1,20 @@
-import UserStatsDashboard from "@/components/stats/UserStatsDashboard";
-import React from "react";
-import {UserStats} from "@/model/UserStats";
-import getUserStatistics from "@/actions/get-user-statistics";
-import {createClient} from "@/utils/supabase/server";
-import {redirect} from "next/navigation";
-import {getTranslations} from "next-intl/server";
+import UserStatsDashboard from "@/components/stats/UserStatsDashboard"
+import React from "react"
+import { UserStats } from "@/model/UserStats"
+import getUserStatistics from "@/actions/get-user-statistics"
+import { redirect } from "next/navigation"
+import { getTranslations } from "next-intl/server"
+import { requireSession } from "@/lib/session"
 
 export default async function StatsPage({ params }: Readonly<{ params: { teamId: number } }>) {
 
     const t = await getTranslations("stats")
 
-    const supabase = createClient()
-    const {data: userData, error} = await supabase.auth.getUser()
-    if (error || !userData.user || !userData.user?.id) {
-        redirect("/authenticate")
-    }
+    const session = await requireSession().catch(() => null)
+    if (!session?.user) redirect("/authenticate")
 
-    const userStats: UserStats | null = await getUserStatistics(userData.user.id, params.teamId).catch(e => {
-        console.error("Error while fetching user statistics", e, userData.user.id, params.teamId)
+    const userStats: UserStats | null = await getUserStatistics(session.user.id, params.teamId).catch(e => {
+        console.error("Error while fetching user statistics", e)
         return null
     })
 

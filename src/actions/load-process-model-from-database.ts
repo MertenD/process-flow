@@ -1,175 +1,121 @@
 "use server"
 
-import {Edge, Node} from "reactflow";
-import {NodeTypes} from "@/model/NodeTypes";
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
+import { Edge, Node } from "reactflow"
+import { NodeTypes } from "@/model/NodeTypes"
+import { prisma } from "@/lib/prisma"
 
-export default async function (processModelId: number): Promise<{ nodes: Node[], edges: Edge[] } | undefined> {
+export default async function(processModelId: number): Promise<{ nodes: Node[]; edges: Edge[] } | undefined> {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const flowElements = await prisma.flowElement.findMany({
+        where: { modelId: BigInt(processModelId) },
+        include: {
+            activityElement: true,
+            startElement: true,
+            endElement: true,
+            gatewayElement: true,
+            andSplitElement: true,
+            andJoinElement: true,
+        },
+    })
 
-    const { data: databaseFlowElements, error } = await supabase
-        .from("flow_element")
-        .select("*")
-        .eq("model_id", processModelId)
-        .returns<{ id: string, type: string, position_x: number, position_y: number, width: number, height: number, parent_flow_element_id: string, z_index: number }[]>()
+    if (!flowElements) return undefined
 
-    if (databaseFlowElements) {
-        const nodes: Node[] = []
-        const edges: Edge[] = []
+    const nodes: Node[] = []
+    const edges: Edge[] = []
 
-        await Promise.all(databaseFlowElements.map(async (node) => {
+    for (const el of flowElements) {
+        const nodeType = el.type as unknown as NodeTypes
+        const nodeData = (el.data ?? {}) as Record<string, unknown>
 
-            let nodeData: {} | undefined | null = {}
-            let nextFlowElementId = null
-
-            const nodeType = node.type as NodeTypes
-            if (nodeType === NodeTypes.ACTIVITY_NODE) {
-                const { data: activityElementData } = await supabase
-                    .from("activity_element")
-                    .select("next_flow_element_id, next_flow_element_handle")
-                    .eq("flow_element_id", node.id)
-                    .single()
-
-                nextFlowElementId = activityElementData?.next_flow_element_id
-
-                const { data: flowElementData } = await supabase
-                    .from("flow_element")
-                    .select("data")
-                    .eq("id", node.id)
-                    .single()
-                nodeData = flowElementData?.data
-
+        if (nodeType === NodeTypes.ACTIVITY_NODE) {
+            const ae = el.activityElement
+            if (ae?.nextFlowElementId) {
                 edges.push({
-                    id: `${node.id}-${nextFlowElementId}`,
-                    source: node.id.toString(),
-                    target: nextFlowElementId?.toString(),
-                    targetHandle: activityElementData?.next_flow_element_handle
+                    id: `${el.id}-${ae.nextFlowElementId}`,
+                    source: el.id.toString(),
+                    target: ae.nextFlowElementId.toString(),
+                    targetHandle: ae.nextFlowElementHandle ?? undefined,
                 } as Edge)
-            } else if (nodeType === NodeTypes.GATEWAY_NODE) {
-                const {data} = await supabase
-                    .from("gateway_element")
-                    .select("*")
-                    .eq("flow_element_id", node.id)
-                    .single()
-
-                const falseFlowElementId = data?.next_flow_element_false_id
-                edges.push({
-                    id: `${node.id}-${falseFlowElementId}`,
-                    source: node.id.toString(),
-                    target: falseFlowElementId?.toString() || "",
-                    sourceHandle: "False",
-                    targetHandle: data?.next_flow_element_false_handle
-                })
-                const trueFlowElementId = data?.next_flow_element_true_id
-                edges.push({
-                    id: `${node.id}-${trueFlowElementId}`,
-                    source: node.id.toString(),
-                    target: trueFlowElementId?.toString() || "",
-                    sourceHandle: "True",
-                    targetHandle: data?.next_flow_element_true_handle
-                })
-
-                const {data: flowElementData} = await supabase
-                    .from("flow_element")
-                    .select("data")
-                    .eq("id", node.id)
-                    .single()
-
-                nodeData = flowElementData?.data
-            } else if (nodeType === NodeTypes.AND_SPLIT_NODE) {
-                const {data} = await supabase
-                    .from("and_split_element")
-                    .select("*")
-                    .eq("flow_element_id", node.id)
-                    .single()
-
-                const nextFlowElementId1 = data?.next_flow_element_id_1
-                edges.push({
-                    id: `${node.id}-${nextFlowElementId1}`,
-                    source: node.id.toString(),
-                    target: nextFlowElementId1?.toString() || "",
-                    sourceHandle: "1",
-                    targetHandle: data?.next_flow_element_handle_1
-                })
-                const nextFlowElementId2 = data?.next_flow_element_id_2
-                edges.push({
-                    id: `${node.id}-${nextFlowElementId2}`,
-                    source: node.id.toString(),
-                    target: nextFlowElementId2?.toString() || "",
-                    sourceHandle: "2",
-                    targetHandle: data?.next_flow_element_handle_2
-                })
-
-                const {data: flowElementData} = await supabase
-                    .from("flow_element")
-                    .select("data")
-                    .eq("id", node.id)
-                    .single()
-
-                nodeData = flowElementData?.data
-            } else if (nodeType === NodeTypes.AND_JOIN_NODE) {
-                const {data} = await supabase
-                    .from("and_join_element")
-                    .select("*")
-                    .eq("flow_element_id", node.id)
-                    .single()
-
-                const nextFlowElementId = data?.next_flow_element_id
-                if (nextFlowElementId) {
+            }
+        } else if (nodeType === NodeTypes.GATEWAY_NODE) {
+            const ge = el.gatewayElement
+            if (ge) {
+                if (ge.nextFlowElementFalseId) {
                     edges.push({
-                        id: `${node.id}-${nextFlowElementId}`,
-                        source: node.id.toString(),
-                        target: nextFlowElementId?.toString() || "",
-                        targetHandle: data?.next_flow_element_handle
+                        id: `${el.id}-${ge.nextFlowElementFalseId}`,
+                        source: el.id.toString(),
+                        target: ge.nextFlowElementFalseId.toString(),
+                        sourceHandle: "False",
+                        targetHandle: ge.nextFlowElementFalseHandle ?? undefined,
                     })
                 }
-            } else if (nodeType === NodeTypes.START_NODE) {
-                const { data: startElementData } = await supabase
-                    .from("start_element")
-                    .select("*")
-                    .eq("flow_element_id", node.id)
-                    .single()
-                nextFlowElementId = startElementData?.next_flow_element_id
-
-                const { data: flowElementData } = await supabase
-                    .from("flow_element")
-                    .select("data")
-                    .eq("id", node.id)
-                    .single()
-                nodeData = flowElementData?.data
-
-                edges.push({
-                    id: `${node.id}-${nextFlowElementId}`,
-                    source: node.id.toString(),
-                    target: nextFlowElementId?.toString(),
-                    targetHandle: startElementData?.next_flow_element_handle
-                } as Edge)
-            } else if (nodeType === NodeTypes.END_NODE) {
-                // No data to load
-            } else {
-                const exhaustiveCheck: never = nodeType;
-                throw new Error(`Unhandled nodeType case: ${exhaustiveCheck}`);
-            }
-
-            nodes.push({
-                id: node.id.toString(),
-                type: node.type,
-                position: {x: node.position_x, y: node.position_y},
-                parentId: node.parent_flow_element_id?.toString() || undefined,
-                zIndex: node.z_index || undefined,
-                data: {
-                    ...nodeData,
-                    width: node.width || 50,
-                    height: node.height || 50,
+                if (ge.nextFlowElementTrueId) {
+                    edges.push({
+                        id: `${el.id}-${ge.nextFlowElementTrueId}`,
+                        source: el.id.toString(),
+                        target: ge.nextFlowElementTrueId.toString(),
+                        sourceHandle: "True",
+                        targetHandle: ge.nextFlowElementTrueHandle ?? undefined,
+                    })
                 }
-            } as Node)
-        })).catch((error) => {
-            throw error
-        })
+            }
+        } else if (nodeType === NodeTypes.AND_SPLIT_NODE) {
+            const ase = el.andSplitElement
+            if (ase) {
+                if (ase.nextFlowElementId1) {
+                    edges.push({
+                        id: `${el.id}-${ase.nextFlowElementId1}`,
+                        source: el.id.toString(),
+                        target: ase.nextFlowElementId1.toString(),
+                        sourceHandle: "1",
+                        targetHandle: ase.nextFlowElementHandle1 ?? undefined,
+                    })
+                }
+                if (ase.nextFlowElementId2) {
+                    edges.push({
+                        id: `${el.id}-${ase.nextFlowElementId2}`,
+                        source: el.id.toString(),
+                        target: ase.nextFlowElementId2.toString(),
+                        sourceHandle: "2",
+                        targetHandle: ase.nextFlowElementHandle2 ?? undefined,
+                    })
+                }
+            }
+        } else if (nodeType === NodeTypes.AND_JOIN_NODE) {
+            const aje = el.andJoinElement
+            if (aje?.nextFlowElementId) {
+                edges.push({
+                    id: `${el.id}-${aje.nextFlowElementId}`,
+                    source: el.id.toString(),
+                    target: aje.nextFlowElementId.toString(),
+                    targetHandle: aje.nextFlowElementHandle ?? undefined,
+                })
+            }
+        } else if (nodeType === NodeTypes.START_NODE) {
+            const se = el.startElement
+            if (se?.nextFlowElementId) {
+                edges.push({
+                    id: `${el.id}-${se.nextFlowElementId}`,
+                    source: el.id.toString(),
+                    target: se.nextFlowElementId.toString(),
+                    targetHandle: se.nextFlowElementHandle ?? undefined,
+                } as Edge)
+            }
+        }
 
-        return {nodes: nodes, edges: edges}
+        nodes.push({
+            id: el.id.toString(),
+            type: el.type,
+            position: { x: el.positionX, y: el.positionY },
+            parentId: el.parentFlowElementId?.toString() ?? undefined,
+            zIndex: el.zIndex ? Number(el.zIndex) : undefined,
+            data: {
+                ...nodeData,
+                width: el.width ?? 50,
+                height: el.height ?? 50,
+            },
+        } as Node)
     }
+
+    return { nodes, edges }
 }

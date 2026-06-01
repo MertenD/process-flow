@@ -1,5 +1,5 @@
 import {DocsLayout} from 'fumadocs-ui/layouts/docs';
-import {ReactNode} from 'react';
+import React, {ReactNode} from 'react';
 import {baseOptions} from '@/app/layout.config';
 import {getInTeamSource} from '@/lib/source';
 import ScrollToTop from "@/app/docs/ScrollToTop";
@@ -12,7 +12,7 @@ export default function Layout({ children, params }: { children: ReactNode, para
 
     const source = getInTeamSource(params.teamId);
 
-    return <div className="overscroll-y-hidden">
+    return <div className="overscroll-y-hidden" style={{'--fd-layout-width': '100%'} as React.CSSProperties}>
         <RootProvider
             search={{
                 options: {

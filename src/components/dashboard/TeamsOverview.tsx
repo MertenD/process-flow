@@ -14,7 +14,6 @@ import {toast} from "@/components/ui/use-toast";
 import {useRouter} from "next/navigation";
 import {InvitationWithTeam} from "@/model/database/database.types";
 import acceptInvite from "@/actions/accept-invite";
-import {createClient} from "@/utils/supabase/client";
 import getTeams from "@/actions/get-teams";
 import getInvitations from "@/actions/get-invitations";
 import declineInvite from "@/actions/decline-invite";
@@ -31,7 +30,6 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
 
     const t = useTranslations("Homepage")
 
-    const supabase = createClient()
 
     const teamColorSchemes = [
         { name: t("colors.blue"), from: 'from-blue-400', to: 'to-indigo-500' },
@@ -49,43 +47,7 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
 
     const router = useRouter()
 
-    useEffect(() => {
-        const subscription = supabase
-            .channel("teams_overview_teams_update")
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "profile_team"
-            }, () => {
-                getTeams(userId).then(setTeams).catch((error) => {
-                    console.error("Error loading teams in TeamsOverview", error.message)
-                })
-            })
-            .subscribe()
 
-        return () => {
-            subscription.unsubscribe().then()
-        }
-    }, [supabase, userId]);
-
-    useEffect(() => {
-        const subscription = supabase
-            .channel("teams_overview_invitations_update")
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "invitation"
-            }, () => {
-                getInvitations(userEmail).then(setInvitations).catch((error) => {
-                    console.error("Error loading invitations in TeamsOverview", error.message)
-                })
-            })
-            .subscribe()
-
-        return () => {
-            subscription.unsubscribe().then()
-        }
-    }, [supabase, userEmail]);
 
     function onAcceptInvite(invitation: InvitationWithTeam) {
         acceptInvite(invitation, userId).then(() => {

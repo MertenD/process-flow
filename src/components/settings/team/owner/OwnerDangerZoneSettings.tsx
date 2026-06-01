@@ -5,9 +5,9 @@ import {Button} from "@/components/ui/button";
 import React, {useState} from "react";
 import {ConfirmationDialog} from "@/components/ConfirmationDialog";
 import {toast} from "@/components/ui/use-toast";
-import {createClient} from "@/utils/supabase/client";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
+import deleteTeam from "@/actions/delete-team";
 
 export interface OwnerDangerZoneSettingsProps {
     teamId: number
@@ -20,18 +20,11 @@ export default function OwnerDangerZoneSettings({ teamId, teamName }: Readonly<O
 
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState<boolean>(false)
 
-    const supabase = createClient()
-
     const router = useRouter()
 
     const confirmDeleteTeam = async () => {
         try {
-            const {error} = await supabase
-                .from('team')
-                .delete()
-                .eq('id', teamId)
-
-            if (error) throw error
+            await deleteTeam(teamId)
 
             toast({
                 title: "Team gelöscht",

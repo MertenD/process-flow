@@ -20,7 +20,7 @@ export default function ProfileSettings({ profile }: Readonly<ProfileSettingsPro
 
     const t = useTranslations("settings.profileSettings")
 
-    const [username, setUsername] = useState(profile.username)
+    const [username, setUsername] = useState(profile.username ?? "")
     const [email] = useState(profile.email)
     const [avatarSrc, setAvatarSrc] = useState(profile.avatar || "")
     const fileInputRef = useRef<HTMLInputElement>(null)

@@ -1,31 +1,23 @@
 "use server"
 
-import {RoleWithAllowedPages} from "@/model/database/database.types";
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma"
+import { RoleWithAllowedPages } from "@/model/database/database.types"
 
 export default async function(teamId: number): Promise<RoleWithAllowedPages[]> {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    const {data: roles, error: tasksError} = await supabase
-        .from("role")
-        .select(`*, allowed_pages: pages->allowed_pages`)
-        .eq("belongs_to", teamId)
-        .returns<RoleWithAllowedPages[]>()
-
-    if (tasksError || !roles) {
-        throw Error(tasksError.message)
-    }
-
-    return roles.filter(role => role.name !== "owner").map(role => {
-        if (!role.allowed_pages) {
-            return {
-                ...role,
-                allowed_pages: []
-            }
-        }
-        return role
+    const roles = await prisma.role.findMany({
+        where: { belongsTo: BigInt(teamId) },
     })
+
+    return roles
+        .filter((r) => r.name !== "owner")
+        .map((r) => ({
+            id: Number(r.id),
+            created_at: r.createdAt.toISOString(),
+            name: r.name,
+            belongs_to: Number(r.belongsTo),
+            color: r.color,
+            pages: r.pages as { allowed_pages: string[] },
+            allowed_pages: ((r.pages as { allowed_pages?: string[] })?.allowed_pages ?? []) as any[],
+        })) as RoleWithAllowedPages[]
 }

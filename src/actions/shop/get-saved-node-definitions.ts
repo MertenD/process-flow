@@ -1,31 +1,25 @@
 "use server"
 
-import {NodeDefinitionPreview} from "@/model/NodeDefinition";
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
+import { prisma } from "@/lib/prisma"
+import { NodeDefinitionPreview } from "@/model/NodeDefinition"
 
-// TODO Add Some sort of pagination and search functionality
+export default async function(teamId: number): Promise<NodeDefinitionPreview[]> {
 
-export default async function (teamId: number): Promise<NodeDefinitionPreview[]> {
+    const records = await prisma.teamsNodeDefinitions.findMany({
+        where: { teamId: BigInt(teamId) },
+        include: { nodeDefinition: { select: { id: true, definition: true } } },
+    })
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    const { data: result, error } = await supabase
-        .from("teams_node_definitions")
-        .select("team_id, node_definition(" +
-            "id, " +
-            "name: definition->name, " +
-            "icon: definition->icon, " +
-            "shortDescription: definition->shortDescription, " +
-            "executionMode: definition->executionMode)"
-        )
-        .eq("team_id", teamId)
-        .returns<{ team_id: number, node_definition: NodeDefinitionPreview}[]>()
-
-    if (error || result == null) {
-        throw new Error("Failed to fetch node definition previews")
-    }
-
-    return result.map(r => r.node_definition)
+    return records
+        .filter((r) => r.nodeDefinition != null)
+        .map((r) => {
+            const def = r.nodeDefinition!.definition as Record<string, unknown>
+            return {
+                id: Number(r.nodeDefinition!.id),
+                name: def.name as string,
+                icon: def.icon as string,
+                shortDescription: def.shortDescription as string,
+                executionMode: def.executionMode as string,
+            } as NodeDefinitionPreview
+        })
 }

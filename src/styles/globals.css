@@ -2,75 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 210 15% 94%;
-    --foreground: 210 60% 10%;
-    --muted: 210 20% 85%;
-    --muted-foreground: 210 40% 30%;
-    --popover: 210 15% 94%;
-    --popover-foreground: 210 60% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 210 60% 10%;
-    --border: 210 25% 75%;
-    --input: 210 25% 75%;
-    --primary: 142 80% 28%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 25% 80%;
-    --secondary-foreground: 210 60% 15%;
-    --accent: 142 70% 30%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 90% 35%;
-    --destructive-foreground: 0 0% 100%;
-    --warning: 38 95% 50%;
-    --warning-foreground: 38 100% 95%;
-    --ring: 142 80% 28%;
-    --radius: 0.5rem;
+/* Unlayered — overrides fumadocs-ui/style.css which is also unlayered but loaded before globals.css */
+:root {
+  --background: 210 15% 94%;
+  --foreground: 210 60% 10%;
+  --muted: 210 20% 85%;
+  --muted-foreground: 210 40% 30%;
+  --popover: 210 15% 94%;
+  --popover-foreground: 210 60% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 210 60% 10%;
+  --border: 210 25% 75%;
+  --input: 210 25% 75%;
+  --primary: 142 80% 28%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 25% 80%;
+  --secondary-foreground: 210 60% 15%;
+  --accent: 142 70% 30%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 90% 35%;
+  --destructive-foreground: 0 0% 100%;
+  --warning: 38 95% 50%;
+  --warning-foreground: 38 100% 95%;
+  --ring: 142 80% 28%;
+  --radius: 0.5rem;
 
-    /* Sidebar colors with improved contrast */
-    --sidebar-background: 210 20% 90%;
-    --sidebar-foreground: 210 60% 15%;
-    --sidebar-primary: 142 80% 28%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 142 70% 30%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 210 25% 75%;
-    --sidebar-ring: 142 80% 28%;
-  }
+  --sidebar-background: 210 20% 90%;
+  --sidebar-foreground: 210 60% 15%;
+  --sidebar-primary: 142 80% 28%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 142 70% 30%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 210 25% 75%;
+  --sidebar-ring: 142 80% 28%;
+}
 
-  .dark {
-    --background: 215 28% 12%;
-    --foreground: 210 10% 90%;
-    --muted: 215 25% 18%;
-    --muted-foreground: 210 10% 65%;
-    --popover: 215 28% 14%;
-    --popover-foreground: 210 10% 90%;
-    --card: 215 28% 16%;
-    --card-foreground: 210 10% 90%;
-    --border: 215 25% 22%;
-    --input: 215 25% 22%;
-    --primary: 142 65% 40%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 215 25% 20%;
-    --secondary-foreground: 210 10% 80%;
-    --accent: 142 65% 40%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 70% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --warning: 38 90% 55%;
-    --warning-foreground: 38 80% 10%;
-    --ring: 142 65% 40%;
+.dark {
+  --background: 215 28% 12%;
+  --foreground: 210 10% 90%;
+  --muted: 215 25% 18%;
+  --muted-foreground: 210 10% 65%;
+  --popover: 215 28% 14%;
+  --popover-foreground: 210 10% 90%;
+  --card: 215 28% 16%;
+  --card-foreground: 210 10% 90%;
+  --border: 215 25% 22%;
+  --input: 215 25% 22%;
+  --primary: 142 65% 40%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 215 25% 20%;
+  --secondary-foreground: 210 10% 80%;
+  --accent: 142 65% 40%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 70% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --warning: 38 90% 55%;
+  --warning-foreground: 38 80% 10%;
+  --ring: 142 65% 40%;
 
-    /* Sidebar colors aligned with GitHub style */
-    --sidebar-background: 215 28% 10%;
-    --sidebar-foreground: 210 10% 80%;
-    --sidebar-primary: 142 65% 40%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 142 65% 40%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 215 25% 18%;
-    --sidebar-ring: 142 65% 40%;
-  }
+  --sidebar-background: 215 28% 10%;
+  --sidebar-foreground: 210 10% 80%;
+  --sidebar-primary: 142 65% 40%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 142 65% 40%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 215 25% 18%;
+  --sidebar-ring: 142 65% 40%;
 }
 
 @layer base {

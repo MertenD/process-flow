@@ -1,27 +1,22 @@
-import BpmnEditor from "@/components/processEditor/BpmnEditor";
-import {createClient} from "@/utils/supabase/server";
-import {redirect} from "next/navigation";
-import React from "react";
-import {NodeDefinitionPreview} from "@/model/NodeDefinition";
-import getSavedNodeDefinitions from "@/actions/shop/get-saved-node-definitions";
-
-// TODO Generell middleware um zu überprüfen, ob man auf gewisse Routen zugriff hat
+import BpmnEditor from "@/components/processEditor/BpmnEditor"
+import { redirect } from "next/navigation"
+import React from "react"
+import { NodeDefinitionPreview } from "@/model/NodeDefinition"
+import getSavedNodeDefinitions from "@/actions/shop/get-saved-node-definitions"
+import { requireSession } from "@/lib/session"
+import { prisma } from "@/lib/prisma"
 
 export default async function EditorProcessPage({ params }: Readonly<{ params: { processModelId: number, teamId: number } }>) {
 
-    const supabase = createClient()
-    const {data: userData, error} = await supabase.auth.getUser()
-    if (error || !userData.user) {
-        redirect("/authenticate")
-    }
+    const session = await requireSession().catch(() => null)
+    if (!session?.user) redirect("/authenticate")
 
-    const { data: processModel } = await supabase
-        .from('process_model')
-        .select('belongs_to, name')
-        .eq('id', params.processModelId)
-        .single<{ belongs_to: number, name: string }>()
+    const processModel = await prisma.processModel.findUnique({
+        where: { id: BigInt(params.processModelId) },
+        select: { belongsTo: true, name: true },
+    })
 
-    if (params.teamId != processModel?.belongs_to) {
+    if (Number(processModel?.belongsTo) !== Number(params.teamId)) {
         redirect(`/${params.teamId}/editor`)
     }
 
@@ -32,6 +27,6 @@ export default async function EditorProcessPage({ params }: Readonly<{ params: {
             processModelId={params.processModelId}
             teamId={params.teamId}
             nodeDefinitionPreviews={nodeDefinitionPreviews}
-        /> : <div>Select a process model to edit</div>
+        />
     </div>
 }

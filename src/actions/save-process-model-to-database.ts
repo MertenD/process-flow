@@ -1,161 +1,148 @@
 "use server"
 
-import {Edge, Node} from "reactflow";
-import {NodeTypes} from "@/model/NodeTypes";
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
-
-// TODO Save viewport as well
-
-// TODO Track and cache changed nodes and edges ans only update those
-
-// TODO Beim speichern soll das updated by in der Datenbank des process_model auf den aktuellen User gesetzt werden
+import { Edge, Node } from "reactflow"
+import { NodeTypes } from "@/model/NodeTypes"
+import { prisma } from "@/lib/prisma"
 
 export default async function(nodes: Node[], edges: Edge[], processModelId: number): Promise<Map<string, number>> {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    const existingNodes: number[] = []
+    const existingNodeIds: bigint[] = []
     const oldNewIdMapping = new Map<string, number>()
 
-    // Save base flow elements to database
+    // Upsert base flow elements
     await Promise.all(nodes.map(async (node) => {
+        const hasNumericId = !node.id.toString().includes("-")
+        const id = hasNumericId ? BigInt(node.id) : undefined
 
-        const id = node.id.toString().includes("-") ? undefined : node.id.toString()
+        const upserted = await prisma.flowElement.upsert({
+            where: { id: id ?? BigInt(0) },
+            create: {
+                ...(id ? { id } : {}),
+                modelId: BigInt(processModelId),
+                type: node.type as any,
+                positionX: node.position.x,
+                positionY: node.position.y,
+                width: node.data.width ?? null,
+                height: node.data.height ?? null,
+                parentFlowElementId: node.parentId ? BigInt(node.parentId) : null,
+                zIndex: node.zIndex ? BigInt(node.zIndex) : null,
+                data: node.data ?? {},
+            },
+            update: {
+                type: node.type as any,
+                positionX: node.position.x,
+                positionY: node.position.y,
+                width: node.data.width ?? null,
+                height: node.data.height ?? null,
+                parentFlowElementId: node.parentId ? BigInt(node.parentId) : null,
+                zIndex: node.zIndex ? BigInt(node.zIndex) : null,
+                data: node.data ?? {},
+            },
+        })
 
-        const insertedElement = await supabase.from("flow_element").upsert({
-            // @ts-ignore
-            id: id,
-            model_id: processModelId,
-            type: node.type,
-            position_x: node.position.x,
-            position_y: node.position.y,
-            width: node.data.width,
-            height: node.data.height,
-            parent_flow_element_id: node.parentId || null,
-            z_index: node.zIndex,
-            data: node.data || {}
-        }, {onConflict: "id"}).select()
-
-        const assignedId = insertedElement.data?.[0].id
-
-        if (!assignedId) {
-            throw new Error("Could not save node")
-        }
-
-        oldNewIdMapping.set(node.id, assignedId)
-
-        existingNodes.push(assignedId)
+        oldNewIdMapping.set(node.id, Number(upserted.id))
+        existingNodeIds.push(upserted.id)
     }))
 
-    // Save specific flow elements to database
+    // Upsert type-specific elements
     await Promise.all(nodes.map(async (node) => {
-
+        const dbId = BigInt(oldNewIdMapping.get(node.id)!)
         const nodeType = node.type as NodeTypes
+
         if (nodeType === NodeTypes.ACTIVITY_NODE) {
-            const outgoingEdge = edges.find(edge => edge.source === node.id)
-            let targetNodeId = null
-            if (outgoingEdge) {
-                targetNodeId = oldNewIdMapping.get(outgoingEdge.target)
-            }
-
-            await supabase.from("activity_element").upsert({
-                // @ts-ignore
-                flow_element_id: oldNewIdMapping.get(node.id),
-                next_flow_element_id: targetNodeId,
-                next_flow_element_handle: outgoingEdge?.targetHandle
-            }, {onConflict: "flow_element_id"})
+            const out = edges.find((e) => e.source === node.id)
+            const nextId = out ? BigInt(oldNewIdMapping.get(out.target)!) : null
+            await prisma.activityElement.upsert({
+                where: { flowElementId: dbId },
+                create: { flowElementId: dbId, nextFlowElementId: nextId, nextFlowElementHandle: out?.targetHandle ?? null },
+                update: { nextFlowElementId: nextId, nextFlowElementHandle: out?.targetHandle ?? null },
+            })
         } else if (nodeType === NodeTypes.GATEWAY_NODE) {
-            const outgoingEdges = edges.filter(edge => edge.source === node.id)
-
-            const falseOutgoingEdge = outgoingEdges.find(edge => edge.sourceHandle === "False")
-            let falseTargetNodeId = null
-            if (falseOutgoingEdge) {
-                falseTargetNodeId = oldNewIdMapping.get(falseOutgoingEdge.target)
-            }
-
-            const trueOutgoingEdge = outgoingEdges.find(edge => edge.sourceHandle === "True")
-            let trueTargetNodeId = null
-            if (trueOutgoingEdge) {
-                trueTargetNodeId = oldNewIdMapping.get(trueOutgoingEdge.target)
-            }
-
-            await supabase.from("gateway_element").upsert({
-                // @ts-ignore
-                flow_element_id: oldNewIdMapping.get(node.id),
-                next_flow_element_false_id: falseTargetNodeId,
-                next_flow_element_false_handle: falseOutgoingEdge?.targetHandle,
-                next_flow_element_true_id: trueTargetNodeId,
-                next_flow_element_true_handle: trueOutgoingEdge?.targetHandle
-            }, {onConflict: "flow_element_id"})
+            const outEdges = edges.filter((e) => e.source === node.id)
+            const falseEdge = outEdges.find((e) => e.sourceHandle === "False")
+            const trueEdge = outEdges.find((e) => e.sourceHandle === "True")
+            await prisma.gatewayElement.upsert({
+                where: { flowElementId: dbId },
+                create: {
+                    flowElementId: dbId,
+                    nextFlowElementFalseId: falseEdge ? BigInt(oldNewIdMapping.get(falseEdge.target)!) : null,
+                    nextFlowElementFalseHandle: falseEdge?.targetHandle ?? null,
+                    nextFlowElementTrueId: trueEdge ? BigInt(oldNewIdMapping.get(trueEdge.target)!) : null,
+                    nextFlowElementTrueHandle: trueEdge?.targetHandle ?? null,
+                },
+                update: {
+                    nextFlowElementFalseId: falseEdge ? BigInt(oldNewIdMapping.get(falseEdge.target)!) : null,
+                    nextFlowElementFalseHandle: falseEdge?.targetHandle ?? null,
+                    nextFlowElementTrueId: trueEdge ? BigInt(oldNewIdMapping.get(trueEdge.target)!) : null,
+                    nextFlowElementTrueHandle: trueEdge?.targetHandle ?? null,
+                },
+            })
         } else if (nodeType === NodeTypes.AND_SPLIT_NODE) {
-            const outgoingEdges = edges.filter(edge => edge.source === node.id)
-
-            const targetNodeIds = outgoingEdges.map(edge => oldNewIdMapping.get(edge.target))
-
-            await supabase.from("and_split_element").upsert({
-                // @ts-ignore
-                flow_element_id: oldNewIdMapping.get(node.id),
-                next_flow_element_id_1: targetNodeIds[0],
-                next_flow_element_handle_1: outgoingEdges[0]?.targetHandle,
-                next_flow_element_id_2: targetNodeIds[1],
-                next_flow_element_handle_2: outgoingEdges[1]?.targetHandle
-            }, {onConflict: "flow_element_id"})
+            const outEdges = edges.filter((e) => e.source === node.id)
+            const [e1, e2] = outEdges
+            await prisma.andSplitElement.upsert({
+                where: { flowElementId: dbId },
+                create: {
+                    flowElementId: dbId,
+                    nextFlowElementId1: e1 ? BigInt(oldNewIdMapping.get(e1.target)!) : null,
+                    nextFlowElementHandle1: e1?.targetHandle ?? null,
+                    nextFlowElementId2: e2 ? BigInt(oldNewIdMapping.get(e2.target)!) : null,
+                    nextFlowElementHandle2: e2?.targetHandle ?? null,
+                },
+                update: {
+                    nextFlowElementId1: e1 ? BigInt(oldNewIdMapping.get(e1.target)!) : null,
+                    nextFlowElementHandle1: e1?.targetHandle ?? null,
+                    nextFlowElementId2: e2 ? BigInt(oldNewIdMapping.get(e2.target)!) : null,
+                    nextFlowElementHandle2: e2?.targetHandle ?? null,
+                },
+            })
         } else if (nodeType === NodeTypes.AND_JOIN_NODE) {
-            const outgoingEdge = edges.find(edge => edge.source === node.id)
-
-            console.log("AND JOIN NODE", node.id, edges.filter(edge => edge.target === node.id))
-
-            const incomingEdge1 = edges.filter(edge => edge.target === node.id).find(edge => edge.targetHandle === "1")
-            const incomingEdge2 = edges.filter(edge => edge.target === node.id).find(edge => edge.targetHandle === "2")
-
-            await supabase.from("and_join_element").upsert({
-                // @ts-ignore
-                flow_element_id: oldNewIdMapping.get(node.id),
-                next_flow_element_id: outgoingEdge ? oldNewIdMapping.get(outgoingEdge.target) : null,
-                next_flow_element_handle: outgoingEdge?.targetHandle,
-                previous_flow_element_id_1: incomingEdge1 ? oldNewIdMapping.get(incomingEdge1.source) : null,
-                previous_flow_element_id_2: incomingEdge2 ? oldNewIdMapping.get(incomingEdge2.source) : null
-            }, { onConflict: "flow_element_id" })
-
+            const outEdge = edges.find((e) => e.source === node.id)
+            const inEdge1 = edges.filter((e) => e.target === node.id).find((e) => e.targetHandle === "1")
+            const inEdge2 = edges.filter((e) => e.target === node.id).find((e) => e.targetHandle === "2")
+            await prisma.andJoinElement.upsert({
+                where: { flowElementId: dbId },
+                create: {
+                    flowElementId: dbId,
+                    nextFlowElementId: outEdge ? BigInt(oldNewIdMapping.get(outEdge.target)!) : null,
+                    nextFlowElementHandle: outEdge?.targetHandle ?? null,
+                    previousFlowElementId1: inEdge1 ? BigInt(oldNewIdMapping.get(inEdge1.source)!) : null,
+                    previousFlowElementId2: inEdge2 ? BigInt(oldNewIdMapping.get(inEdge2.source)!) : null,
+                },
+                update: {
+                    nextFlowElementId: outEdge ? BigInt(oldNewIdMapping.get(outEdge.target)!) : null,
+                    nextFlowElementHandle: outEdge?.targetHandle ?? null,
+                    previousFlowElementId1: inEdge1 ? BigInt(oldNewIdMapping.get(inEdge1.source)!) : null,
+                    previousFlowElementId2: inEdge2 ? BigInt(oldNewIdMapping.get(inEdge2.source)!) : null,
+                },
+            })
         } else if (nodeType === NodeTypes.START_NODE) {
-            const outgoingEdge = edges.find(edge => edge.source === node.id)
-            let targetNodeId = null
-            if (outgoingEdge) {
-                targetNodeId = oldNewIdMapping.get(outgoingEdge.target)
-            }
-
-            await supabase.from("start_element").upsert({
-                // @ts-ignore
-                flow_element_id: oldNewIdMapping.get(node.id),
-                next_flow_element_id: targetNodeId,
-                next_flow_element_handle: outgoingEdge?.targetHandle
-            }, {onConflict: "flow_element_id"})
+            const out = edges.find((e) => e.source === node.id)
+            const nextId = out ? BigInt(oldNewIdMapping.get(out.target)!) : null
+            await prisma.startElement.upsert({
+                where: { flowElementId: dbId },
+                create: { flowElementId: dbId, nextFlowElementId: nextId, nextFlowElementHandle: out?.targetHandle ?? null },
+                update: { nextFlowElementId: nextId, nextFlowElementHandle: out?.targetHandle ?? null },
+            })
         } else if (nodeType === NodeTypes.END_NODE) {
-            await supabase.from("end_element").upsert({
-                // @ts-ignore
-                flow_element_id: oldNewIdMapping.get(node.id)
-            }, {onConflict: "flow_element_id"})
+            await prisma.endElement.upsert({
+                where: { flowElementId: dbId },
+                create: { flowElementId: dbId },
+                update: {},
+            })
         } else {
-            const exhaustiveCheck: never = nodeType;
-            throw new Error(`Unhandled nodeType case: ${exhaustiveCheck}`);
+            const exhaustiveCheck: never = nodeType
+            throw new Error(`Unhandled nodeType case: ${exhaustiveCheck}`)
         }
-    })).catch((error) => {
-        throw error
-    })
+    }))
 
-    // Delete any nodes that are not existing nodes and have the process model id
-    await supabase
-        .from("flow_element")
-        .delete()
-        .not("id", "in", `(${existingNodes.join(",")})`)
-        .eq("model_id", processModelId)
-        .then(res => {
-            if (res.error) {
-                throw res.error
-            }
-        })
+    // Delete removed flow elements
+    await prisma.flowElement.deleteMany({
+        where: {
+            modelId: BigInt(processModelId),
+            id: { notIn: existingNodeIds },
+        },
+    })
 
     return oldNewIdMapping
 }

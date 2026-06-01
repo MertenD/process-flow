@@ -1,42 +1,19 @@
 "use client"
 
-import {useTheme} from "next-themes";
-import {createClient} from "@/utils/supabase/client";
-import {useEffect, useState} from "react";
-import {Theme} from "@/model/database/database.types";
-
+import { useTheme } from "next-themes"
+import { useEffect } from "react"
+import { authClient } from "@/lib/auth-client"
 
 export default function ThemeSetter() {
-
     const { setTheme } = useTheme()
-
-    const supabase = createClient()
-    const [userId, setUserId] = useState<string>("")
+    const { data: session } = authClient.useSession()
 
     useEffect(() => {
-        async function fetchUser() {
-            const {data: userData, error} = await supabase.auth.getUser()
-            if (error || !userData.user || !userData.user.id) {
-                return
-            }
-            setUserId(userData.user.id)
+        if (session?.user) {
+            const isDark = (session.user as any).isDarkModeEnabled
+            setTheme(isDark ? "dark" : "light")
         }
-
-        fetchUser().then()
-    }, [supabase, setUserId]);
-
-    useEffect(() => {
-        supabase
-            .from("profiles")
-            .select("theme")
-            .eq("id", userId)
-            .single<{ theme: Theme }>()
-            .then(({ data, error }) => {
-                if (!error && data) {
-                    setTheme(data.theme)
-                }
-            })
-    }, [setTheme, supabase, userId]);
+    }, [session, setTheme])
 
     return <></>
 }

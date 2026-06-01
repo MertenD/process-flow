@@ -1,64 +1,154 @@
-import { MergeDeep } from 'type-fest'
-import { Database as DatabaseGenerated } from './database-generated.types'
+// Domain types derived from Prisma-generated types and manual definitions.
+// Replaces the previous Supabase-generated types.
 
-export type { Json } from './database-generated.types'
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]
 
-export type Database = MergeDeep<
-    DatabaseGenerated,
-    {
-        public: {
-            Views: {
-                manual_task: {
-                    Row: {
-                        // id is a primary key in public.movies, so it must be `not null`
-                        id: number
-                    }
-                }
-            }
-        }
-    }
->
+// ─── Table row types (mirror final DB schema) ────────────────────────────────
 
-export type Tables<T extends keyof Database['public']['Tables']> =
-    Database['public']['Tables'][T]['Row']
+export type Profile = {
+    id: string
+    name: string
+    email: string
+    username: string | null
+    avatar: string | null
+    is_dark_mode_enabled: boolean
+    language: string
+    theme: string
+    created_at: string
+    updated_at: string
+}
 
-export type Views<T extends keyof Database['public']['Views']> =
-    Database['public']['Views'][T]['Row']
+export type Team = {
+    id: number
+    created_at: string
+    name: string
+    created_by: string
+    color_scheme: { from: string; to: string } | null
+}
 
-export type Profile = Tables<'profiles'>
+export type Role = {
+    id: number
+    created_at: string
+    name: string
+    belongs_to: number
+    color: string
+    pages: { allowed_pages: string[] }
+}
 
-export type ProfilesWithRoles = Views<'profiles_with_roles'>
+export type RoleWithAllowedPages = Role & { allowed_pages: Page[] }
 
-export type ManualTask = Views<'manual_task'>
-export type ManualTaskWithOutputs = MergeDeep<ManualTask, { name: string, description: string, outputs: { [key: string]: string } }>
+export type Invitation = {
+    id: number
+    created_at: string
+    email: string
+    team_id: number
+}
 
-export type ProcessModel = Tables<'process_model'>
+export type InvitationWithTeam = Invitation & { team: Team }
 
-export type ProcessInstance = Tables<"process_instance">
+export type ProcessModel = {
+    id: number
+    created_at: string
+    name: string
+    description: string | null
+    created_by: string | null
+    updated_by: string | null
+    updated_at: string | null
+    belongs_to: number
+}
 
-export type FlowElement = Tables<"flow_element">
+export type ProcessInstance = {
+    id: number
+    created_at: string
+    process_model_id: number
+    status: ProcessModelInstanceState
+    completed_at: string | null
+}
 
-export type FlowElementInstance = Tables<"flow_element_instance">
+export type FlowElement = {
+    id: number
+    created_at: string
+    type: string
+    model_id: number
+    position_x: number
+    position_y: number
+    width: number | null
+    height: number | null
+    data: Json | null
+    parent_flow_element_id: number | null
+    z_index: number | null
+    execution_url: string | null
+}
 
-export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T]
+export type FlowElementInstance = {
+    id: number
+    created_at: string
+    instance_of: number
+    status: FlowElementInstanceState
+    is_part_of: number
+    completed_at: string | null
+    completed_by: string | null
+    status_message: string | null
+}
 
-export type ProcessModelInstanceState = Enums<"process_instance_status">
+export type Statistics = {
+    id: number
+    created_at: string
+    experience: number
+    coins: number
+    profile_id: string
+    team_id: number
+    badges: { badges: string[] }
+}
 
-export type Role = Tables<"role">
-export type RoleWithAllowedPages = MergeDeep<Role, { allowed_pages: Page[] }>
-export type Page = Enums<"page">
+// ─── View types ───────────────────────────────────────────────────────────────
 
-export type Team = Tables<"team">
+export type ProfilesWithRoles = {
+    profile_id: string
+    email: string
+    username: string | null
+    team_id: number
+    role_id: number | null
+    role_name: string | null
+    role_color: string | null
+}
 
-export type Invitation = Tables<"invitation">
-export type InvitationWithTeam = MergeDeep<Invitation, { team: Team }>
+export type ManualTask = {
+    id: number
+    created_at: string
+    instance_of: number
+    status: FlowElementInstanceState
+    is_part_of: number
+    completed_at: string | null
+    completed_by: string | null
+    belongs_to: number
+    type: string
+    execution_url: string | null
+    data: Json | null
+    assigned_role: string | null
+}
 
-export type Statistics = Tables<"statistics">
+export type ManualTaskWithOutputs = ManualTask & {
+    name: string
+    description: string
+    outputs: { [key: string]: string }
+}
 
-export type Theme = Enums<"theme">
+// ─── Enum types ───────────────────────────────────────────────────────────────
 
-export type FlowElementInstanceState = Enums<"flow_element_instance_status">
+export type ProcessModelInstanceState = "Running" | "Completed" | "Error"
 
-export type ExecutionMode = Enums<"execution_mode">
+export type FlowElementInstanceState = "Created" | "Todo" | "In Progress" | "Completed" | "Error"
 
-export type NodeDefinitionVisibility = Enums<"node_definition_visibility">
+export type Page = "Editor" | "Tasks" | "Monitoring" | "Team" | "Stats" | "Shop"
+
+export type ExecutionMode = "Manual" | "Automatic"
+
+export type NodeDefinitionVisibility = "Public" | "Team"
+
+export type Theme = string  // "light" | "dark" | "system"
+
+export type TeamColorScheme = {
+    from: string
+    to: string
+}

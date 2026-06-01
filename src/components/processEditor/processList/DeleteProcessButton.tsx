@@ -2,10 +2,11 @@ import {Button} from "@/components/ui/button";
 import {ConfirmationDialog} from "@/components/ConfirmationDialog";
 import React, {useState} from "react";
 import {toast} from "@/components/ui/use-toast";
-import {createClient} from "@/utils/supabase/client";
+
 import {Trash2} from "lucide-react";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "next-intl";
+import deleteProcessModel from "@/actions/delete-process-model";
 
 export interface DeleteProcessButtonProps {
     teamId: number
@@ -15,8 +16,6 @@ export interface DeleteProcessButtonProps {
 export default function DeleteProcessButton({ teamId, processModelId }: DeleteProcessButtonProps) {
 
     const t = useTranslations("editor.delete")
-
-    const supabase = createClient();
 
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState<boolean>(false)
 
@@ -30,23 +29,13 @@ export default function DeleteProcessButton({ teamId, processModelId }: DeletePr
     const handleDeleteConfirm = async () => {
         if (processModelId) {
             try {
-                const { error } = await supabase
-                    .from('process_model')
-                    .delete()
-                    .eq('id', processModelId);
-
-                if (error) throw error;
-
-                router.push(`/${teamId}/editor`)
+                await deleteProcessModel(processModelId);
+                router.push(`/${teamId}/editor`);
             } catch (error) {
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: "Failed to delete the process model."
-                });
+                toast({ variant: 'destructive', title: 'Error', description: 'Failed to delete the process model.' });
             }
         }
-        setIsConfirmDialogOpen(false)
+        setIsConfirmDialogOpen(false);
     };
 
     return <>

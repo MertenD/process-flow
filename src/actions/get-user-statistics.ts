@@ -1,35 +1,20 @@
 "use server"
 
-import {UserStats} from "@/model/UserStats";
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
-import {Statistics} from "@/model/database/database.types";
+import { prisma } from "@/lib/prisma"
+import { UserStats } from "@/model/UserStats"
 
 export default async function(userId: string, teamId: number): Promise<UserStats> {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const stats = await prisma.statistics.findFirst({
+        where: { profileId: userId, teamId: BigInt(teamId) },
+    })
 
-    // TODO Hier werden manchmal zwei Ergebnisse zurückgegeben
-    const { data: stats, error } = await supabase
-        .from("statistics")
-        .select("*, badgeNames: badges->badges")
-        .eq("profile_id", userId)
-        .eq("team_id", teamId)
-        .single<Statistics & { badgeNames: string[] }>()
-
-    if (error) {
-        throw error
-    }
-
-    if (!stats) {
-        throw new Error("No statistics found")
-    }
+    if (!stats) throw new Error("No statistics found")
 
     return {
-        experience: stats.experience,
+        experience: Number(stats.experience),
         experiencePerLevel: 100,
-        coins: stats.coins,
-        badges: stats.badgeNames
+        coins: Number(stats.coins),
+        badges: ((stats.badges as { badges?: string[] })?.badges ?? []),
     } as UserStats
 }

@@ -5,7 +5,7 @@ import { useParams, usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Grid, Trash2 } from "lucide-react"
-import { createClient } from "@/utils/supabase/client"
+
 import { useUndoRedoStore } from "@/stores/UndoRedoStore"
 import type { ProcessModel } from "@/model/database/database.types"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
@@ -28,7 +28,6 @@ export default function ProcessList({ userId, teamId, isMobile }: Readonly<Proce
     const params = useParams<{ processModelId: string }>()
     const pathName = usePathname()
     const router = useRouter()
-    const supabase = createClient()
     const [processes, setProcesses] = useState<ProcessModel[]>([])
     const [selectedProcessId, setSelectedProcessId] = useState<string | null>(params.processModelId)
     const { setPast, setFuture } = useUndoRedoStore()
@@ -50,59 +49,6 @@ export default function ProcessList({ userId, teamId, isMobile }: Readonly<Proce
         setSelectedProcessId(params.processModelId)
     }, [params, selectedProcessId, setPast, setFuture])
 
-    useEffect(() => {
-        const updateSubscription = supabase
-            .channel("process_model_insertion")
-            .on(
-                "postgres_changes",
-                {
-                    event: "*",
-                    schema: "public",
-                    table: "process_model",
-                },
-                (payload) => {
-                    if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
-                        getProcessModels(teamId)
-                            .then((models) => models.sort((a, b) => a.name.localeCompare(b.name)))
-                            .then(setProcesses)
-                            .catch((error) => {
-                                console.error("Error fetching processes", error)
-                            })
-
-                        if (payload.eventType === "INSERT" && (payload.new as ProcessModel).created_by === userId) {
-                            toast({
-                                variant: "success",
-                                title: t("toasts.processCreatedTitle"),
-                                description: t("toasts.processCreatedDescription"),
-                            })
-                        }
-                    } else if (payload.eventType === "DELETE") {
-                        getProcessModels(teamId)
-                            .then((models) => models.sort((a, b) => a.name.localeCompare(b.name)))
-                            .then(setProcesses)
-                            .catch((error) => {
-                                console.error("Error fetching processes", error)
-                            })
-
-                        if (pathName === `/${teamId}/editor/${payload.old.id}`) {
-                            toast({
-                                variant: "success",
-                                title: t("toasts.processDeletedSuccessfullyTitle", {
-                                    name: processes.find((p) => p.id === payload.old.id)?.name,
-                                }),
-                                description: t("toasts.processDeletedSuccessfullyDescription"),
-                            })
-                            router.push(`/${teamId}/editor`)
-                        }
-                    }
-                },
-            )
-            .subscribe()
-
-        return () => {
-            updateSubscription.unsubscribe().then()
-        }
-    }, [pathName, processes, router, supabase, t, teamId, userId, toast])
 
     return (
         <section className="container mx-auto p-4 flex flex-col space-y-6">

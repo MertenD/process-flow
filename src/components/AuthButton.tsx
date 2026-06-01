@@ -1,47 +1,32 @@
-import {createClient} from '@/utils/supabase/server'
-import {cookies} from 'next/headers'
-import {redirect} from 'next/navigation'
-import Link from "next/link";
-import {Profile} from "@/model/database/database.types";
-import {Button} from "@/components/ui/button";
+import { redirect } from 'next/navigation'
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { prisma } from "@/lib/prisma"
 
 export default async function AuthButton() {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const session = await auth.api.getSession({ headers: await headers() })
 
-    const {
-        data: {user},
-    } = await supabase.auth.getUser()
-
-    const {data} = await supabase
-        .from('profiles')
-        .select('id, username')
-        .eq('id', user?.id || "")
-        .single<Profile>()
+    const profile = session?.user
+        ? await prisma.user.findUnique({ where: { id: session.user.id }, select: { id: true, username: true } })
+        : null
 
     const signOut = async () => {
         'use server'
-
-        const cookieStore = cookies()
-        const supabase = createClient(cookieStore)
-        await supabase.auth.signOut()
+        await auth.api.signOut({ headers: await headers() })
         return redirect('/')
     }
 
-    return data ? (
+    return profile ? (
         <div className="flex items-center gap-4">
-            Hey, {data?.username}!
+            Hey, {profile?.username}!
             <form action={signOut}>
                 <Button variant="outline">Abmelden</Button>
             </form>
         </div>
     ) : (
-        <Link
-            href="/authenticate"
-            className="btn-primary"
-        >
-            Sign in
-        </Link>
+        <Link href="/authenticate" className="btn-primary">Sign in</Link>
     )
 }

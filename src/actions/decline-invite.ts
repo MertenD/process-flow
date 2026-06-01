@@ -1,20 +1,8 @@
 "use server"
 
-import {cookies} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
-import {InvitationWithTeam} from "@/model/database/database.types";
+import { prisma } from "@/lib/prisma"
+import { InvitationWithTeam } from "@/model/database/database.types"
 
 export default async function(invitationWithTeam: InvitationWithTeam, userId: string): Promise<void> {
-
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    let { error } = await supabase
-        .from("invitation")
-        .delete()
-        .eq("id", invitationWithTeam.id)
-
-    if (error) {
-        throw Error(error.message)
-    }
+    await prisma.invitation.delete({ where: { id: BigInt(invitationWithTeam.id) } })
 }

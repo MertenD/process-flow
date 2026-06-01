@@ -5,9 +5,9 @@ import {Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator,} from '
 import {usePathname} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import Link from "next/link";
-import {createClient} from "@/utils/supabase/client";
 import getTasks from "@/actions/get-tasks";
 import getNodeDefinition from "@/actions/shop/get-node-definition";
+import getProcessModelName from "@/actions/get-process-model-name";
 
 interface BreadcrumbModel {
     name: string;
@@ -22,8 +22,6 @@ interface AppBreadcrumbsProps {
 export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) {
     const pathname = usePathname();
     const t = useTranslations('Header.nav');
-    const supabase = createClient()
-
     const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbModel[]>([]);
 
     useEffect(() => {
@@ -75,11 +73,8 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
                 const parts = pathname.split('/');
                 const modelId = Number(parts[3] || null);
                 if (modelId) {
-                    const {data: model} = await supabase
-                        .from('process_model')
-                        .select('name')
-                        .eq('id', modelId)
-                        .single<{ name: string }>()
+                    const name = await getProcessModelName(modelId);
+                    const model = name ? { name } : null;
 
                     if (model && model.name) {
                         newBreadcrumbs.push({
@@ -170,7 +165,7 @@ export default function AppBreadcrumbs({ teamId, userId }: AppBreadcrumbsProps) 
         }
 
         fetchBreadcrumbs();
-    }, [pathname, teamId, t, userId, supabase]);
+    }, [pathname, teamId, t, userId]);
 
     return (
         <Breadcrumb>

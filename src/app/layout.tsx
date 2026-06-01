@@ -1,5 +1,6 @@
 import type {Metadata} from "next";
 import {Inter as FontSans} from "next/font/google";
+import 'fumadocs-ui/style.css';
 import "../styles/globals.css";
 import {cn} from "@/lib/utils"
 import {ThemeProvider} from "@/components/ui/ThemeProvider";
@@ -8,7 +9,6 @@ import {Toaster} from "@/components/ui/toaster";
 import {getLocale, getMessages} from "next-intl/server";
 import {NextIntlClientProvider} from "next-intl";
 import {RootProvider} from 'fumadocs-ui/provider';
-import ThemeSetter from "@/components/ThemeSetter";
 
 const fontSans = FontSans({
     subsets: ["latin"],
@@ -47,7 +47,6 @@ export default async function AppRootLayout({children,}: Readonly<{ children: Re
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <ThemeSetter />
                     <Toaster/>
                     {children}
                 </ThemeProvider>

@@ -1,22 +1,12 @@
 "use server"
 
-import { createClient } from "@/utils/supabase/server";
-import {cookies} from "next/headers";
+import { prisma } from "@/lib/prisma"
 
-export default async function(taskData: any, processInstanceId: number) {
+export default async function(taskData: Record<string, unknown>, processInstanceId: number) {
 
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+    const result = await prisma.$queryRaw<[{ replace_with_variable_values: Record<string, unknown> }]>`
+        SELECT replace_with_variable_values(${JSON.stringify(taskData)}::jsonb, ${BigInt(processInstanceId)}::bigint)
+    `
 
-    const { data, error } = await supabase
-        .rpc('replace_with_variable_values', {
-            data: taskData,
-            process_instance_id: processInstanceId
-        });
-
-    if (error) {
-        throw new Error(`Error replacing task data: ${error.message}`);
-    }
-
-    return data;
+    return result?.[0]?.replace_with_variable_values ?? taskData
 }

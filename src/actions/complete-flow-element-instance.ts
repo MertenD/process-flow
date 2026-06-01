@@ -1,38 +1,44 @@
 "use server"
 
-import {createClient} from "@/utils/supabase/server";
-import {cookies} from "next/headers";
+import { prisma } from "@/lib/prisma"
+import { dispatchAutomaticActivities } from "@/lib/dispatch-automatic-activities"
 
-export default async function(flowElementInstanceId: number, outputData: any, completedBy: string | undefined): Promise<boolean> {
+export default async function(
+    flowElementInstanceId: number,
+    outputData: Record<string, unknown>,
+    completedBy: string | undefined
+): Promise<boolean> {
 
-    // TODO Das soll in eine einzelne Transaktion zusammengefasst werden
+    const result = await prisma.$queryRaw<[{ complete_flow_element_instance: boolean }]>`
+        SELECT complete_flow_element_instance(
+            ${flowElementInstanceId}::bigint,
+            ${JSON.stringify(outputData)}::jsonb,
+            ${completedBy ?? null}::uuid
+        )
+    `
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore, process.env.SUPABASE_SERVICE_KEY)
-
-    let { data, error } = await supabase
-        .rpc('complete_flow_element_instance', {
-            flow_element_instance_id_param: flowElementInstanceId,
-            output_data: outputData,
-            completed_by_param: completedBy
-        }).single<boolean>()
-
-    if (error || !data) {
-        throw Error(error?.message || "Error completing flow element instance")
+    if (!result?.[0]?.complete_flow_element_instance) {
+        throw new Error("Error completing flow element instance")
     }
 
-    if (completedBy !== null && completedBy !== undefined && completedBy !== "") {
-        let {data: _, error: gamificationOptionsError} = await supabase
-            .rpc('apply_gamification', {
-                "profile_id_param": completedBy,
-                "flow_element_instance_id_param": flowElementInstanceId,
-            }).single()
-
-        if (gamificationOptionsError) {
-            console.log(gamificationOptionsError)
-            throw Error(gamificationOptionsError.message)
+    if (completedBy) {
+        try {
+            await prisma.$executeRaw`
+                SELECT apply_gamification(${completedBy}::uuid, ${flowElementInstanceId}::bigint)
+            `
+        } catch (err) {
+            console.error("apply_gamification error:", err)
         }
     }
 
-    return data
+    // Dispatch any automatic activities that were created as a result of completion
+    const instance = await prisma.flowElementInstance.findUnique({
+        where: { id: BigInt(flowElementInstanceId) },
+        select: { isPartOf: true },
+    })
+    if (instance) {
+        await dispatchAutomaticActivities(instance.isPartOf)
+    }
+
+    return true
 }

@@ -12,8 +12,8 @@ import {Page, RoleWithAllowedPages} from "@/model/database/database.types";
 import addRole from "@/actions/add-role";
 import removeRole from "@/actions/remove-role";
 import {toast} from "@/components/ui/use-toast";
-import {createClient} from "@/utils/supabase/client";
 import getRoles from "@/actions/get-roles";
+import updateRoleAction from "@/actions/update-role";
 import {Checkbox} from "@/components/ui/checkbox";
 import {useTranslations} from "next-intl";
 
@@ -26,8 +26,6 @@ const availablePages: Page[] = ["Editor", "Tasks", "Monitoring", "Team", "Shop"]
 export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) {
 
     const t = useTranslations("team.roles")
-
-    const supabase = createClient()
 
     const [newRoleName, setNewRoleName] = useState<string>('')
     const [editingRole, setEditingRole] = useState<RoleWithAllowedPages | null>(null)
@@ -52,45 +50,12 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
         })
     }, [teamId]);
 
-    useEffect(() => {
-        const subscription = supabase
-            .channel("add_or_update_role_for_role_management")
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "role"
-            }, () => {
-                console.log("Role updated")
-                getRoles(teamId).then((roles: RoleWithAllowedPages[]) => {
-                    setRoles(roles || [])
-                })
-            })
-            .subscribe()
-
-        return () => {
-            subscription.unsubscribe().then()
-        }
-    }, [supabase, teamId])
-
     const updateRole = () => {
         if (!editingRole) return
-        supabase
-            .from('role')
-            .update({
-                name: editingRole.name,
-                color: editingRole.color,
-                pages: {
-                    allowed_pages: editingRole.allowed_pages
-                }
-            })
-            .eq('id', editingRole.id)
-            .then(() => {
-                toast({
-                    title: t("toasts.roleUpdatedTitle"),
-                    description: t("toasts.roleUpdatedDescription"),
-                    variant: 'success'
-                })
-            })
+        updateRoleAction(editingRole.id, editingRole.name, editingRole.color, editingRole.allowed_pages).then(() => {
+            toast({ title: t("toasts.roleUpdatedTitle"), description: t("toasts.roleUpdatedDescription"), variant: 'success' })
+            getRoles(teamId).then(roles => setRoles(roles || []))
+        })
         setEditingRole(null)
     }
 

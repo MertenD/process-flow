@@ -1,49 +1,47 @@
 "use server"
 
-import {createClient} from "@/utils/supabase/server";
-import {cookies} from "next/headers";
-import {ProfilesWithRoles} from "@/model/database/database.types";
-import {Member} from "@/components/team/MemberManagement";
+import { prisma } from "@/lib/prisma"
+import { Member } from "@/components/team/MemberManagement"
 
 export default async function(teamId: number): Promise<Member[]> {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    const { data: profilesWithRoles, error } = await supabase
-        .from("profiles_with_roles")
-        .select("*")
-        .eq("team_id", teamId)
-        .returns<ProfilesWithRoles[]>()
-
-    if (error || !profilesWithRoles) {
-        throw Error(error?.message || "Error fetching members")
+    type ProfileWithRolesRow = {
+        profile_id: string
+        email: string
+        username: string | null
+        team_id: bigint
+        role_id: bigint | null
+        role_name: string | null
+        role_color: string | null
     }
 
-    return profilesWithRoles.reduce((acc: Member[], profile: ProfilesWithRoles): Member[] => {
-        const existingMember = acc.find((member) => member.id === profile.profile_id)
+    const rows = await prisma.$queryRaw<ProfileWithRolesRow[]>`
+        SELECT profile_id, email, username, team_id, role_id, role_name, role_color
+        FROM profiles_with_roles
+        WHERE team_id = ${BigInt(teamId)}
+    `
 
-        if (!profile.profile_id || !profile.username || !profile.email) {
-            console.error("Invalid profile data while fetching members", profile)
-            return acc
-        }
+    const memberMap = new Map<string, Member>()
 
-        if (existingMember) {
-            if (!profile.role_id || !profile.role_name) {
-                return acc
-            }
-            existingMember.roles.push({ id: profile.role_id, name: profile.role_name })
-        } else {
-            const roles = profile.role_id && profile.role_name ?
-                [{ id: profile.role_id, name: profile.role_name }] :
-                []
-            acc.push({
-                id: profile.profile_id,
-                name: profile.username,
-                email: profile.email,
-                roles: roles
+    for (const row of rows) {
+        if (!row.profile_id || !row.username || !row.email) continue
+
+        if (!memberMap.has(row.profile_id)) {
+            memberMap.set(row.profile_id, {
+                id: row.profile_id,
+                name: row.username,
+                email: row.email,
+                roles: [],
             })
         }
-        return acc
-    }, [])
+
+        if (row.role_id && row.role_name) {
+            memberMap.get(row.profile_id)!.roles.push({
+                id: Number(row.role_id),
+                name: row.role_name,
+            })
+        }
+    }
+
+    return Array.from(memberMap.values())
 }

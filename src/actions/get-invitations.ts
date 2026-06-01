@@ -1,23 +1,26 @@
 "use server"
 
-import {createClient} from "@/utils/supabase/server";
-import {cookies} from "next/headers";
-import {InvitationWithTeam} from "@/model/database/database.types";
+import { prisma } from "@/lib/prisma"
+import { InvitationWithTeam } from "@/model/database/database.types"
 
 export default async function(userEmail: string): Promise<InvitationWithTeam[]> {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const invitations = await prisma.invitation.findMany({
+        where: { email: userEmail },
+        include: { team: true },
+    })
 
-    const { data: invitations, error } = await supabase
-        .from('invitation')
-        .select("*, team:team_id ( *, colorSchemeFrom: color_scheme->from, colorSchemeTo: color_scheme->to )")
-        .eq('email', userEmail)
-        .returns<InvitationWithTeam[]>()
-
-    if (error) {
-        throw Error(error?.message || "Error loading invitations")
-    }
-
-    return invitations || []
+    return invitations.map((inv) => ({
+        id: Number(inv.id),
+        created_at: inv.createdAt.toISOString(),
+        email: inv.email,
+        team_id: Number(inv.teamId),
+        team: {
+            id: Number(inv.team.id),
+            created_at: inv.team.createdAt.toISOString(),
+            name: inv.team.name,
+            created_by: inv.team.createdBy,
+            color_scheme: inv.team.colorScheme as { from: string; to: string } | null,
+        },
+    }))
 }

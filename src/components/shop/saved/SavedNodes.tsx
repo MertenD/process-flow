@@ -1,16 +1,14 @@
 "use client"
 
-import {NodeDefinitionPreview} from "@/model/NodeDefinition"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Badge} from "@/components/ui/badge";
-import Link from "next/link";
-import {ArrowRight, Trash2} from "lucide-react";
-import {useTranslations} from "next-intl";
-import {useEffect, useState} from "react";
-import removeNodeFromTeam from "@/actions/shop/remove-node-from-team";
-import {Button} from "@/components/ui/button";
-import {createClient} from "@/utils/supabase/client";
-import getSavedNodeDefinitions from "@/actions/shop/get-saved-node-definitions";
+import { NodeDefinitionPreview } from "@/model/NodeDefinition"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
+import { ArrowRight, Trash2 } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { useState } from "react"
+import removeNodeFromTeam from "@/actions/shop/remove-node-from-team"
+import { Button } from "@/components/ui/button"
 
 export interface AddedNodesProps {
     teamId: number
@@ -18,32 +16,11 @@ export interface AddedNodesProps {
 }
 
 export default function SavedNodes({ teamId, initialSavedNodes }: Readonly<AddedNodesProps>) {
-    const t =  useTranslations("shop")
-    const supabase = createClient()
-
+    const t = useTranslations("shop")
     const [savedNodes, setSavedNodes] = useState<NodeDefinitionPreview[]>(initialSavedNodes)
 
-    useEffect(() => {
-        const subscription = supabase
-            .channel("update_saved_nodes")
-            .on("postgres_changes", {
-                event: "*",
-                schema: "public",
-                table: "teams_node_definitions",
-            }, () => {
-                getSavedNodeDefinitions(teamId).then((nodeDefinitions: NodeDefinitionPreview[]) => {
-                    setSavedNodes(nodeDefinitions)
-                })
-            })
-            .subscribe()
-
-        return () => {
-            subscription.unsubscribe().then()
-        }
-    }, [supabase, teamId]);
-
     if (savedNodes.length === 0) {
-        return <div className="text-center text-muted-foreground">{ t("addedNodesPage.noNodes") }</div>
+        return <div className="text-center text-muted-foreground">{t("addedNodesPage.noNodes")}</div>
     }
 
     return (
@@ -62,7 +39,7 @@ export default function SavedNodes({ teamId, initialSavedNodes }: Readonly<Added
                     <CardContent>
                         <div className="flex items-center justify-between">
                             <Link href={`/${teamId}/shop/node/${node.id}`} className="inline-flex items-center text-sm text-primary hover:underline">
-                                { t("node.viewDetails") }
+                                {t("node.viewDetails")}
                                 <ArrowRight className="ml-1 h-4 w-4" />
                             </Link>
                             <Button
@@ -70,7 +47,9 @@ export default function SavedNodes({ teamId, initialSavedNodes }: Readonly<Added
                                 size="icon"
                                 onClick={() => {
                                     if (node.id) {
-                                        removeNodeFromTeam(teamId, node.id)
+                                        removeNodeFromTeam(teamId, node.id).then(() =>
+                                            setSavedNodes(prev => prev.filter(n => n.id !== node.id))
+                                        )
                                     }
                                 }}
                                 className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
@@ -85,4 +64,3 @@ export default function SavedNodes({ teamId, initialSavedNodes }: Readonly<Added
         </div>
     )
 }
-

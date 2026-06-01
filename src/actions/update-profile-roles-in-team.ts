@@ -1,21 +1,34 @@
 "use server"
 
-import {createClient} from "@/utils/supabase/server";
-import {cookies} from "next/headers";
+import { prisma } from "@/lib/prisma"
 
 export default async function(teamId: number, profileId: string, roleIds: number[]): Promise<void> {
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    await prisma.$transaction(async (tx) => {
+        // Remove roles not in the new list
+        await tx.profileRoleTeam.deleteMany({
+            where: {
+                teamId: BigInt(teamId),
+                profileId,
+                roleId: { notIn: roleIds.map(BigInt) },
+            },
+        })
 
-    const { error } = await supabase
-        .rpc('update_profiles_roles_in_team', {
-            team_id_param: teamId,
-            profile_id_param: profileId,
-            role_ids_param: roleIds
-        }).single()
-
-    if (error) {
-        throw Error(error.message)
-    }
+        // Add new roles (ignore conflicts)
+        await Promise.all(
+            roleIds.map((roleId) =>
+                tx.profileRoleTeam.upsert({
+                    where: {
+                        unique_profile_role_team: {
+                            profileId,
+                            roleId: BigInt(roleId),
+                            teamId: BigInt(teamId),
+                        },
+                    },
+                    create: { profileId, roleId: BigInt(roleId), teamId: BigInt(teamId) },
+                    update: {},
+                })
+            )
+        )
+    })
 }

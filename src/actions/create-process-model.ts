@@ -1,7 +1,6 @@
 "use server"
 
-import {createClient} from "@/utils/supabase/server";
-import {cookies} from "next/headers";
+import { prisma } from "@/lib/prisma"
 
 export default async function(teamId: number, name: string, description: string, creatorId: string): Promise<number> {
 
@@ -13,20 +12,14 @@ export default async function(teamId: number, name: string, description: string,
         throw new Error("Process name must be at least 3 characters long")
     }
 
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
+    const model = await prisma.processModel.create({
+        data: {
+            name,
+            description,
+            createdBy: creatorId,
+            belongsTo: BigInt(teamId),
+        },
+    })
 
-    let { data, error } = await supabase
-        .rpc('create_process_model', {
-            belongs_to_param: teamId,
-            name_param: name,
-            description_param: description,
-            created_by_param: creatorId
-        })
-
-    if (error || !data) {
-        throw Error(error?.message || "Error creating process model.")
-    }
-
-    return data
+    return Number(model.id)
 }
