@@ -1,0 +1,41 @@
+services:
+  process-flow:
+    image: mertend/process-flow:latest
+    container_name: merten-process-flow
+    restart: unless-stopped
+    networks:
+      - web
+    depends_on:
+      - process-flow-db
+    environment:
+      DATABASE_URL: postgresql://processflow:${DB_PASSWORD}@process-flow-db:5432/processflow
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: https://processflow.merten.tech
+      APP_URL: https://processflow.merten.tech
+      NEXT_PUBLIC_APP_URL: https://processflow.merten.tech
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.process-flow.rule=Host(`processflow.merten.tech`)
+      - traefik.http.routers.process-flow.entrypoints=websecure
+      - traefik.http.routers.process-flow.tls.certresolver=le-merten
+      - traefik.http.services.process-flow.loadbalancer.server.port=3000
+
+  process-flow-db:
+    image: postgres:17-alpine
+    container_name: merten-process-flow-db
+    restart: unless-stopped
+    networks:
+      - web
+    environment:
+      POSTGRES_DB: processflow
+      POSTGRES_USER: processflow
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - process-flow-db-data:/var/lib/postgresql/data
+
+volumes:
+  process-flow-db-data:
+
+networks:
+  web:
+    external: true

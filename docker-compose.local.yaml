@@ -1,0 +1,40 @@
+services:
+  process-flow:
+    build: .
+    image: mertend/process-flow:latest
+    container_name: merten-process-flow
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - process-flow-db
+    networks:
+      - local
+    environment:
+      DATABASE_URL: postgresql://processflow:${DB_PASSWORD}@process-flow-db:5432/processflow
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: http://localhost:3000
+      APP_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+
+  process-flow-db:
+    image: postgres:17-alpine
+    container_name: merten-process-flow-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    networks:
+      - local
+    environment:
+      POSTGRES_DB: processflow
+      POSTGRES_USER: processflow
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - process-flow-db-data:/var/lib/postgresql/data
+
+volumes:
+  process-flow-db-data:
+
+networks:
+  local:
+    driver: bridge

@@ -1,0 +1,434 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── better-auth tables ───────────────────────────────────────────────────────
+
+model User {
+  id                String   @id @default(uuid())
+  name              String
+  email             String   @unique
+  emailVerified     Boolean  @default(false) @map("email_verified")
+  image             String?
+  username          String?  @unique
+  avatar            String?
+  isDarkModeEnabled Boolean  @default(false) @map("is_dark_mode_enabled")
+  language          String   @default("de")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  sessions     Session[]
+  accounts     Account[]
+  ownedTeams   Team[]                @relation("TeamCreatedBy")
+  profileTeams ProfileTeam[]
+  profileRoleTeams ProfileRoleTeam[]
+  statistics   Statistics[]
+  nodeDefinitions NodeDefinition[]  @relation("NodeDefinitionCreatedBy")
+  processModelsCreated ProcessModel[] @relation("ProcessModelCreatedBy")
+  processModelsUpdated ProcessModel[] @relation("ProcessModelUpdatedBy")
+  completedFlowElementInstances FlowElementInstance[] @relation("FlowElementInstanceCompletedBy")
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime @map("expires_at")
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id")
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("verification")
+}
+
+// ─── Domain tables ────────────────────────────────────────────────────────────
+
+model Team {
+  id          BigInt   @id @default(autoincrement())
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  name        String   @db.VarChar
+  createdBy   String   @map("created_by")
+  colorScheme Json?    @map("color_scheme") @db.JsonB
+
+  creator              User                   @relation("TeamCreatedBy", fields: [createdBy], references: [id])
+  roles                Role[]
+  profileTeams         ProfileTeam[]
+  profileRoleTeams     ProfileRoleTeam[]
+  processModels        ProcessModel[]
+  invitations          Invitation[]
+  statistics           Statistics[]
+  nodeDefinitions      NodeDefinition[]       @relation("NodeDefinitionTeam")
+  teamsNodeDefinitions TeamsNodeDefinitions[]
+
+  @@map("team")
+}
+
+model Role {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  name      String
+  belongsTo BigInt   @map("belongs_to")
+  color     String
+  pages     Json     @default("{\"allowed_pages\":[]}") @db.JsonB
+
+  team             Team              @relation(fields: [belongsTo], references: [id], onDelete: Cascade)
+  profileRoleTeams ProfileRoleTeam[]
+
+  @@map("role")
+}
+
+model ProfileRoleTeam {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  profileId String   @map("profile_id")
+  roleId    BigInt   @map("role_id")
+  teamId    BigInt   @map("team_id")
+
+  profile User @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  role    Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  team    Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, roleId, teamId], name: "unique_profile_role_team")
+  @@map("profile_role_team")
+}
+
+model ProfileTeam {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  profileId String   @map("profile_id")
+  teamId    BigInt   @map("team_id")
+
+  profile User @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  team    Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("profile_team")
+}
+
+model Invitation {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  email     String
+  teamId    BigInt   @map("team_id")
+
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@map("invitation")
+}
+
+model ProcessModel {
+  id          BigInt    @id @default(autoincrement())
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  name        String    @db.VarChar
+  description String?
+  createdBy   String?   @map("created_by")
+  updatedBy   String?   @map("updated_by")
+  updatedAt   DateTime? @map("updated_at")
+  belongsTo   BigInt    @map("belongs_to")
+
+  team             Team              @relation(fields: [belongsTo], references: [id], onDelete: Cascade)
+  creator          User?             @relation("ProcessModelCreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+  updater          User?             @relation("ProcessModelUpdatedBy", fields: [updatedBy], references: [id], onDelete: SetNull)
+  flowElements     FlowElement[]
+  processInstances ProcessInstance[]
+
+  @@map("process_model")
+}
+
+enum NodeType {
+  challengeNode
+  activityNode
+  gatewayNode
+  startNode
+  endNode
+  infoNode
+  gamificationEventNode
+  andSplitNode
+  andJoinNode
+
+  @@map("node_type")
+}
+
+model FlowElement {
+  id                  BigInt    @id @default(autoincrement())
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  type                NodeType
+  modelId             BigInt    @map("model_id")
+  positionX           Float     @map("position_x")
+  positionY           Float     @map("position_y")
+  width               Float?
+  height              Float?
+  data                Json?     @db.JsonB
+  parentFlowElementId BigInt?   @map("parent_flow_element_id")
+  zIndex              BigInt?   @map("z_index")
+  executionUrl        String?   @map("execution_url")
+
+  processModel      ProcessModel  @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  parentFlowElement FlowElement?  @relation("FlowElementParent", fields: [parentFlowElementId], references: [id], onDelete: SetNull)
+  childFlowElements FlowElement[] @relation("FlowElementParent")
+
+  activityElement  ActivityElement?
+  startElement     StartElement?
+  endElement       EndElement?
+  gatewayElement   GatewayElement?
+  andSplitElement  AndSplitElement?
+  andJoinElement   AndJoinElement?
+
+  // Back-references for named "next/previous" relations from child element tables
+  activityElementAsNext    ActivityElement[]  @relation("ActivityElementNext")
+  startElementAsNext       StartElement[]     @relation("StartElementNext")
+  gatewayElementAsTrue     GatewayElement[]   @relation("GatewayElementTrue")
+  gatewayElementAsFalse    GatewayElement[]   @relation("GatewayElementFalse")
+  andSplitElementAsNext1   AndSplitElement[]  @relation("AndSplitNext1")
+  andSplitElementAsNext2   AndSplitElement[]  @relation("AndSplitNext2")
+  andJoinElementAsPrev1    AndJoinElement[]   @relation("AndJoinPrev1")
+  andJoinElementAsPrev2    AndJoinElement[]   @relation("AndJoinPrev2")
+  andJoinElementAsNext     AndJoinElement[]   @relation("AndJoinNext")
+
+  flowElementInstances FlowElementInstance[]
+
+  @@map("flow_element")
+}
+
+model ActivityElement {
+  id                    BigInt   @id @default(autoincrement())
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz
+  flowElementId         BigInt   @unique @map("flow_element_id")
+  nextFlowElementId     BigInt?  @map("next_flow_element_id")
+  nextFlowElementHandle String?  @map("next_flow_element_handle")
+
+  flowElement     FlowElement  @relation(fields: [flowElementId], references: [id], onDelete: Cascade)
+  nextFlowElement FlowElement? @relation("ActivityElementNext", fields: [nextFlowElementId], references: [id], onDelete: SetNull)
+
+  @@map("activity_element")
+}
+
+model StartElement {
+  id                    BigInt   @id @default(autoincrement())
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz
+  flowElementId         BigInt   @unique @map("flow_element_id")
+  nextFlowElementId     BigInt?  @map("next_flow_element_id")
+  nextFlowElementHandle String?  @map("next_flow_element_handle")
+
+  flowElement     FlowElement  @relation(fields: [flowElementId], references: [id], onDelete: Cascade)
+  nextFlowElement FlowElement? @relation("StartElementNext", fields: [nextFlowElementId], references: [id], onDelete: SetNull)
+
+  @@map("start_element")
+}
+
+model EndElement {
+  id            BigInt   @id @default(autoincrement())
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  flowElementId BigInt   @unique @map("flow_element_id")
+
+  flowElement FlowElement @relation(fields: [flowElementId], references: [id], onDelete: Cascade)
+
+  @@map("end_element")
+}
+
+model GatewayElement {
+  id                         BigInt   @id @default(autoincrement())
+  createdAt                  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  flowElementId              BigInt   @unique @map("flow_element_id")
+  nextFlowElementTrueId      BigInt?  @map("next_flow_element_true_id")
+  nextFlowElementFalseId     BigInt?  @map("next_flow_element_false_id")
+  nextFlowElementTrueHandle  String?  @map("next_flow_element_true_handle")
+  nextFlowElementFalseHandle String?  @map("next_flow_element_false_handle")
+
+  flowElement          FlowElement  @relation(fields: [flowElementId], references: [id], onDelete: Cascade)
+  nextFlowElementTrue  FlowElement? @relation("GatewayElementTrue", fields: [nextFlowElementTrueId], references: [id], onDelete: SetNull)
+  nextFlowElementFalse FlowElement? @relation("GatewayElementFalse", fields: [nextFlowElementFalseId], references: [id], onDelete: SetNull)
+
+  @@map("gateway_element")
+}
+
+model AndSplitElement {
+  id                       BigInt   @id @default(autoincrement())
+  createdAt                DateTime @default(now()) @map("created_at") @db.Timestamptz
+  flowElementId            BigInt   @unique @map("flow_element_id")
+  nextFlowElementId1       BigInt?  @map("next_flow_element_id_1")
+  nextFlowElementId2       BigInt?  @map("next_flow_element_id_2")
+  nextFlowElementHandle1   String?  @map("next_flow_element_handle_1")
+  nextFlowElementHandle2   String?  @map("next_flow_element_handle_2")
+
+  flowElement       FlowElement  @relation(fields: [flowElementId], references: [id], onDelete: Cascade)
+  nextFlowElement1  FlowElement? @relation("AndSplitNext1", fields: [nextFlowElementId1], references: [id], onDelete: SetNull)
+  nextFlowElement2  FlowElement? @relation("AndSplitNext2", fields: [nextFlowElementId2], references: [id], onDelete: SetNull)
+
+  @@map("and_split_element")
+}
+
+model AndJoinElement {
+  id                        BigInt   @id @default(autoincrement())
+  createdAt                 DateTime @default(now()) @map("created_at") @db.Timestamptz
+  flowElementId             BigInt   @unique @map("flow_element_id")
+  previousFlowElementId1    BigInt?  @map("previous_flow_element_id_1")
+  previousFlowElementId2    BigInt?  @map("previous_flow_element_id_2")
+  nextFlowElementId         BigInt?  @map("next_flow_element_id")
+  nextFlowElementHandle     String?  @map("next_flow_element_handle")
+
+  flowElement            FlowElement  @relation(fields: [flowElementId], references: [id], onDelete: Cascade)
+  previousFlowElement1   FlowElement? @relation("AndJoinPrev1", fields: [previousFlowElementId1], references: [id], onDelete: SetNull)
+  previousFlowElement2   FlowElement? @relation("AndJoinPrev2", fields: [previousFlowElementId2], references: [id], onDelete: SetNull)
+  nextFlowElement        FlowElement? @relation("AndJoinNext", fields: [nextFlowElementId], references: [id], onDelete: SetNull)
+
+  @@map("and_join_element")
+}
+
+enum NodeDefinitionVisibility {
+  Public
+  Team
+
+  @@map("node_definition_visibility")
+}
+
+model NodeDefinition {
+  id         BigInt                   @id @default(autoincrement())
+  createdAt  DateTime                 @default(now()) @map("created_at") @db.Timestamptz
+  definition Json                     @default("{}") @db.JsonB
+  createdBy  String?                  @map("created_by")
+  teamId     BigInt?                  @map("team_id")
+  visibility NodeDefinitionVisibility @default(Team)
+
+  creator              User?                  @relation("NodeDefinitionCreatedBy", fields: [createdBy], references: [id], onDelete: Cascade)
+  team                 Team?                  @relation("NodeDefinitionTeam", fields: [teamId], references: [id], onDelete: Cascade)
+  teamsNodeDefinitions TeamsNodeDefinitions[]
+
+  @@map("node_definition")
+}
+
+model TeamsNodeDefinitions {
+  id               BigInt  @id @default(autoincrement())
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  teamId           BigInt  @map("team_id")
+  nodeDefinitionId BigInt? @map("node_definition_id")
+
+  team           Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  nodeDefinition NodeDefinition? @relation(fields: [nodeDefinitionId], references: [id], onDelete: SetNull)
+
+  @@map("teams_node_definitions")
+}
+
+enum ProcessInstanceStatus {
+  Running
+  Completed
+  Error
+
+  @@map("process_instance_status")
+}
+
+model ProcessInstance {
+  id             BigInt                @id @default(autoincrement())
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz
+  processModelId BigInt                @map("process_model_id")
+  status         ProcessInstanceStatus @default(Running)
+  completedAt    DateTime?             @map("completed_at") @db.Timestamptz
+
+  processModel         ProcessModel          @relation(fields: [processModelId], references: [id], onDelete: Cascade)
+  flowElementInstances FlowElementInstance[]
+  dataObjectInstances  DataObjectInstance[]
+
+  @@map("process_instance")
+}
+
+enum FlowElementInstanceStatus {
+  Created
+  Todo
+  InProgress @map("In Progress")
+  Completed
+  Error
+
+  @@map("flow_element_instance_status")
+}
+
+model FlowElementInstance {
+  id            BigInt                    @id @default(autoincrement())
+  createdAt     DateTime                  @default(now()) @map("created_at") @db.Timestamptz
+  instanceOf    BigInt                    @map("instance_of")
+  status        FlowElementInstanceStatus @default(Created)
+  isPartOf      BigInt                    @map("is_part_of")
+  completedAt   DateTime?                 @map("completed_at") @db.Timestamptz
+  completedBy   String?                   @map("completed_by")
+  statusMessage String?                   @map("status_message")
+
+  flowElement     FlowElement     @relation(fields: [instanceOf], references: [id], onDelete: Cascade)
+  processInstance ProcessInstance @relation(fields: [isPartOf], references: [id], onDelete: Cascade)
+  completedByUser User?           @relation("FlowElementInstanceCompletedBy", fields: [completedBy], references: [id], onDelete: SetNull)
+
+  @@unique([instanceOf, isPartOf], name: "unique_instance_of_is_part_of")
+  @@map("flow_element_instance")
+}
+
+model DataObjectInstance {
+  id              BigInt   @id @default(autoincrement())
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  isPartOf        BigInt   @map("is_part_of")
+  name            String
+  value           Json?    @db.JsonB
+
+  processInstance ProcessInstance @relation(fields: [isPartOf], references: [id], onDelete: Cascade)
+
+  @@unique([isPartOf, name], name: "data_object_instance_unique_constraint")
+  @@map("data_object_instance")
+}
+
+model Statistics {
+  id         BigInt   @id @default(autoincrement())
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+  experience BigInt   @default(0)
+  coins      BigInt   @default(0)
+  profileId  String   @map("profile_id")
+  teamId     BigInt   @map("team_id")
+  badges     Json     @default("{\"badges\":[]}") @db.JsonB
+
+  profile User @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  team    Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("statistics")
+}
+
+model Config {
+  key   String @id
+  value String
+
+  @@map("config")
+}
