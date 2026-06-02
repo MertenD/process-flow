@@ -299,7 +299,7 @@ EXECUTE FUNCTION create_next_flow_element_instance();
 CREATE OR REPLACE FUNCTION public.complete_flow_element_instance(
     flow_element_instance_id_param bigint,
     output_data jsonb,
-    completed_by_param uuid DEFAULT NULL::uuid
+    completed_by_param text DEFAULT NULL
 )
     RETURNS boolean
     LANGUAGE plpgsql
@@ -321,7 +321,7 @@ BEGIN
         DO UPDATE SET value = EXCLUDED.value;
 
     UPDATE flow_element_instance
-    SET status = 'Completed', completed_at = now(), completed_by = COALESCE(completed_by_param, completed_by)
+    SET status = 'Completed', completed_at = now(), completed_by = COALESCE(completed_by_param::text, completed_by)
     WHERE id = flow_element_instance_id_param;
 
     RETURN TRUE;
@@ -354,7 +354,7 @@ BEGIN
 END;$function$;
 
 CREATE OR REPLACE FUNCTION public.apply_gamification(
-    profile_id_param uuid,
+    profile_id_param text,
     flow_element_instance_id_param bigint
 )
     RETURNS void
@@ -473,7 +473,8 @@ CREATE OR REPLACE VIEW "manual_task" AS
     JOIN process_instance pi ON fei.is_part_of = pi.id
     JOIN process_model pm ON pi.process_model_id = pm.id
     JOIN node_definition nd ON (fe.data->>'nodeDefinitionId')::bigint = nd.id
-    WHERE (nd.definition ->> 'executionMode') = 'Manual';
+    WHERE (nd.definition ->> 'executionMode') = 'Manual'
+      AND fei.status = 'Todo';
 
 CREATE OR REPLACE FUNCTION public.get_manual_tasks_with_replaced_data(team_id bigint, user_role_ids bigint[])
     RETURNS jsonb

@@ -19,18 +19,19 @@ export default function InfoTask({ task, description, infoText, flowElementInsta
     function onFinish() {
         fetch(responsePath, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 flowElementInstanceId,
                 data: {},
                 completedBy: userId
             })
-        }).then(() => {
-            console.log("Submitted")
+        }).then((response) => {
+            if (response.ok) {
+                window.parent.postMessage({ type: "taskComplete" }, "*")
+            } else {
+                console.error("Error submitting: HTTP", response.status)
+            }
         }).catch((error) => {
-            // TODO Nicht sicher den error einfach so auszugeben
             console.error("Error submitting", error)
         })
     }

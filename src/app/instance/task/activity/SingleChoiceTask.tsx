@@ -31,23 +31,21 @@ export default function SingleChoiceTask({ task, description, choices, responseP
     })
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        console.log("Submitting", userInputVariableName, data.choice)
         fetch(responsePath, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 flowElementInstanceId,
-                data: {
-                    [userInputVariableName]: data.choice
-                },
+                data: { [userInputVariableName]: data.choice },
                 completedBy: userId
             })
-        }).then(() => {
-            console.log("Submitted")
+        }).then((response) => {
+            if (response.ok) {
+                window.parent.postMessage({ type: "taskComplete" }, "*")
+            } else {
+                console.error("Error submitting: HTTP", response.status)
+            }
         }).catch((error) => {
-            // TODO Nicht sicher den error einfach so auszugeben
             console.error("Error submitting", error)
         })
     }

@@ -13,7 +13,7 @@ export default async function(
         SELECT complete_flow_element_instance(
             ${flowElementInstanceId}::bigint,
             ${JSON.stringify(outputData)}::jsonb,
-            ${completedBy ?? null}::uuid
+            ${completedBy ?? null}::text
         )
     `
 
@@ -24,7 +24,7 @@ export default async function(
     if (completedBy) {
         try {
             await prisma.$executeRaw`
-                SELECT apply_gamification(${completedBy}::uuid, ${flowElementInstanceId}::bigint)
+                SELECT apply_gamification(${completedBy}::text, ${flowElementInstanceId}::bigint)
             `
         } catch (err) {
             console.error("apply_gamification error:", err)

@@ -23,11 +23,11 @@ export default async function Page({ searchParams }: { searchParams: ActivitySea
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                flowElementInstanceId,
+                flowElementInstanceId: searchParams.flowElementInstanceId,
                 data: {
-                    [userInputVariableName]: data.textInput
+                    [searchParams.userInputVariableName]: data.textInput
                 },
-                completedBy: userId
+                completedBy: searchParams.userId
             })
         }).then(() => {
             console.log("Submitted")

@@ -17,6 +17,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
+    "db:seed": "npx tsx prisma/seed.ts",
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {

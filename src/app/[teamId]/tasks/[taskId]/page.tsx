@@ -22,7 +22,9 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
 
     async function buildTaskUrl(task: ManualTaskWithOutputs | undefined, userId: string): Promise<string | null> {
         if (task == null) return null
-        let taskUrl = task.execution_url
+        const rawUrl = task.execution_url
+        if (!rawUrl) return null
+        let taskUrl = rawUrl.startsWith("/") ? `${process.env.APP_URL}${rawUrl}` : rawUrl
         taskUrl += "?"
         if (!task.data) return null
         taskUrl += Object.entries(task.data as Record<string, string>)
