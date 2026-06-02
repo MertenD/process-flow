@@ -1,0 +1,89 @@
+---
+title: Authentication
+description: How ProcessFlow handles user authentication using better-auth with email/password, sessions, and custom user fields.
+---
+
+import { Lock, User, Key, Code } from 'lucide-react';
+
+## <Lock className="inline h-6 w-6 mr-2 text-secondary" /> Authentication Overview
+
+ProcessFlow uses **better-auth** for all authentication. It is configured server-side in `lib/auth.ts` and uses the **Prisma adapter**, storing all auth-related data (users, sessions, accounts, verifications) directly in the same PostgreSQL database as the application data.
+
+---
+
+### <Key className="inline h-5 w-5 mr-2 text-secondary" /> Configuration
+
+```ts
+// lib/auth.ts (simplified)
+export const auth = betterAuth({
+    database: prismaAdapter(prisma, { provider: 'postgresql' }),
+    baseURL: process.env.BETTER_AUTH_URL,
+    secret: process.env.BETTER_AUTH_SECRET,
+    emailAndPassword: { enabled: true },
+    user: {
+        additionalFields: {
+            username: { type: 'string', unique: true },
+            avatar:   { type: 'string' },
+            isDarkModeEnabled: { type: 'boolean', defaultValue: false },
+            language: { type: 'string', defaultValue: 'de' },
+        },
+    },
+})
+```
+
+The browser-side client is exported from `lib/auth-client.ts` and used in client components to call sign-in/sign-up methods.
+
+Required environment variables:
+
+| Variable             | Purpose                                          |
+| -------------------- | ------------------------------------------------ |
+| `BETTER_AUTH_SECRET` | Signs session tokens — generate with `openssl rand -base64 32` |
+| `BETTER_AUTH_URL`    | The canonical origin of the app (e.g. `https://processflow.merten.tech`) |
+
+---
+
+### <User className="inline h-5 w-5 mr-2 text-secondary" /> Sign-Up & Sign-In Flow
+
+Both flows live on `/authenticate` (`src/app/authenticate/page.tsx`) as a tabbed card:
+
+**Sign-Up**
+1. User submits email, password, and username.
+2. `authClient.signUp.email()` creates the `user`, `account`, and `session` rows via better-auth.
+3. A server action creates a `statistics` row for the new user (initialises gamification state).
+4. The user is redirected to `/dashboard`.
+
+**Sign-In**
+1. User submits email and password.
+2. `authClient.signIn.email()` validates credentials and issues a session cookie.
+3. The user is redirected to `/dashboard`.
+
+---
+
+### <Code className="inline h-5 w-5 mr-2 text-secondary" /> Session Access in Server Actions
+
+All Server Actions that require authentication call `requireSession()` from `lib/session.ts`:
+
+```ts
+import { requireSession } from '@/lib/session'
+
+export async function someAction() {
+    const session = await requireSession() // redirects to /authenticate if no session
+    const userId = session.user.id
+    // ...
+}
+```
+
+The better-auth API route is mounted at `src/app/api/auth/[...all]/route.ts` and handles all auth requests (sign-in, sign-up, session refresh, sign-out).
+
+---
+
+### Database Tables
+
+better-auth manages four tables in the same PostgreSQL database:
+
+| Table          | Purpose                                              |
+| -------------- | ---------------------------------------------------- |
+| `user`         | User profile including custom fields (username, avatar, language, dark mode) |
+| `session`      | Active sessions with expiry timestamps               |
+| `account`      | OAuth provider accounts (email/password uses this too) |
+| `verification` | Email verification and password reset tokens        |

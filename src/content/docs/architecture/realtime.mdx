@@ -1,0 +1,77 @@
+---
+title: Realtime
+description: How ProcessFlow delivers live updates to the browser using PostgreSQL LISTEN/NOTIFY and Server-Sent Events (SSE).
+---
+
+import { Zap, Database, Radio, Code } from 'lucide-react';
+
+## <Zap className="inline h-6 w-6 mr-2 text-secondary" /> Realtime Architecture
+
+ProcessFlow delivers live UI updates — such as new task assignments, process instance progress, and team membership changes — without WebSockets or a third-party service. The stack is **PostgreSQL `LISTEN/NOTIFY`** on the server side and **Server-Sent Events (SSE)** on the client side.
+
+---
+
+### <Database className="inline h-5 w-5 mr-2 text-secondary" /> PostgreSQL LISTEN/NOTIFY
+
+Each relevant table (e.g. `flow_element_instance`, `profile_team`, `role`) has an `AFTER INSERT/UPDATE/DELETE` trigger that calls `pg_notify()` with a channel name and a JSON payload:
+
+```sql
+-- Example trigger payload on flow_element_instance changes
+pg_notify('flow_element_instance_changes', json_build_object(
+    'operation', TG_OP,
+    'id',        NEW.id,
+    'status',    NEW.status,
+    'is_part_of', NEW.is_part_of,
+    'team_id',   ...
+)::text)
+```
+
+The available channels are:
+
+| Channel                        | Fires when…                                 |
+| ------------------------------ | ------------------------------------------- |
+| `flow_element_instance_changes`| A task is created, updated, or completed    |
+| `role_changes`                 | A team role is created or modified          |
+| `profile_team_changes`         | A member joins or leaves a team             |
+| `profile_role_team_changes`    | A member's role assignment changes          |
+| `invitation_changes`           | An invitation is created or revoked         |
+
+---
+
+### <Radio className="inline h-5 w-5 mr-2 text-secondary" /> Server-Sent Events Endpoint
+
+`/api/realtime` (`src/app/api/realtime/route.ts`) opens a persistent SSE stream per browser connection:
+
+1. The handler reads the requested channels, `teamId`, `email`, and `profileId` from the query string.
+2. It subscribes to the requested channels on a module-level **`PgListenerSingleton`** (`lib/pg-listener.ts`), which maintains a single `pg` client connection with `LISTEN` commands across all SSE subscribers.
+3. Incoming `pg_notify` payloads are filtered server-side by `team_id` / `email` / `profile_id` before being forwarded to the client.
+4. When the browser disconnects, the handler unsubscribes and the stream closes cleanly.
+
+---
+
+### <Code className="inline h-5 w-5 mr-2 text-secondary" /> Client Hook
+
+Components subscribe to realtime events via the `useRealtimeSubscription` hook (`src/hooks/useRealtimeSubscription.ts`):
+
+```tsx
+useRealtimeSubscription({
+    channels: ['flow_element_instance_changes'],
+    teamId: teamId,
+    onEvent: (event) => {
+        // event.operation === 'INSERT' | 'UPDATE' | 'DELETE'
+        // event.status, event.id, event.is_part_of, ...
+        router.refresh() // or update local state
+    },
+})
+```
+
+The hook opens an `EventSource` on mount, parses each SSE message, and calls `onEvent` for every non-heartbeat event. It closes the connection on unmount.
+
+---
+
+### Why SSE over WebSockets?
+
+- **Simpler infrastructure**: SSE is plain HTTP — no upgrade handshake, no separate WS server.
+- **Works with Next.js serverless/edge model**: A `ReadableStream` response is all that's needed.
+- **One-directional by design**: The server pushes events; clients respond via Server Actions or API routes. No bidirectional channel is required.
+- **pg_notify is sufficient**: PostgreSQL's built-in notification system handles all use cases without an additional message broker.

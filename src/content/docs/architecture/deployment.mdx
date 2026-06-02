@@ -1,9 +1,9 @@
 ---
 title: Deployment
-description: How ProcessFlow is built, published, and deployed using GitHub Actions, Docker Hub, Supabase, Traefik, and Watchtower.
+description: How ProcessFlow is built, published, and deployed using GitHub Actions, Docker Hub, Traefik, and Watchtower.
 ---
 
-import { Github, Server, Cloud, Play, RefreshCw, Settings } from 'lucide-react';
+import { Github, Server, Cloud, Play, RefreshCw, Settings, Database } from 'lucide-react';
 
 ## <Play className="inline h-6 w-6 mr-2" /> Deployment Overview
 
@@ -20,91 +20,122 @@ A concise guide to the **CI/CD pipeline**, **hosting architecture**, and **deplo
     - Authenticate to Docker Hub
     - Build the Next.js Docker image
     - Push `mertend/process-flow:latest` to Docker Hub
-3. **Database Migrations**:
-    - Install Supabase CLI
-    - Link to production project
-    - Run `supabase db push` to apply migrations
 
-![CI/CD Workflow](/assets/cicd.png)
+Database migrations are **not** run in CI. They run automatically on container startup via `docker-entrypoint.sh` (`prisma migrate deploy`), so every new deployment picks up pending migrations before serving traffic.
 
 ---
 
 ### <Cloud className="inline h-5 w-5 mr-2 text-secondary" /> Hosting Components
 
-| Component      | Role                                                                 |
-| -------------- | -------------------------------------------------------------------- |
-| **Supabase**   | Hosted PostgreSQL, Auth, Realtime (engine logic execution)          |
-| **Docker Hub** | Image registry for `mertend/process-flow:latest`                    |
-| **Ubuntu Server**  | Runs Docker Compose, Traefik, and Watchtower on a Linux server and hosts the app |
+| Component              | Role                                                                             |
+| ---------------------- | -------------------------------------------------------------------------------- |
+| **process-flow**       | The Next.js application container                                                |
+| **process-flow-db**    | Self-hosted PostgreSQL 17 container with a named volume for data persistence     |
+| **activity-openrouter**| Sidecar container providing the built-in OpenRouter custom activity              |
+| **Docker Hub**         | Image registry for `mertend/process-flow:latest`                                 |
+| **Ubuntu Server**      | Hetzner VPS running Docker Compose, Traefik, and Watchtower                      |
 
 ---
 
 ### <Server className="inline h-5 w-5 mr-2 text-secondary" /> Server Deployment (Docker Compose)
 
-The Ubuntu host uses this `docker-compose.yml`:
+The Ubuntu host uses `docker-compose.yaml`:
 
 ```yaml
 services:
-  app:
-    container_name: process-flow
+  process-flow:
     image: mertend/process-flow:latest
-    env_file:
-      - .env
+    container_name: merten-process-flow
+    restart: unless-stopped
     networks:
       - web
-    restart: unless-stopped
+    depends_on:
+      - process-flow-db
+    environment:
+      DATABASE_URL: postgresql://processflow:${DB_PASSWORD}@process-flow-db:5432/processflow
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: https://processflow.merten.tech
+      APP_URL: https://processflow.merten.tech
+      NEXT_PUBLIC_APP_URL: https://processflow.merten.tech
+      ACTIVITY_OPENROUTER_URL: https://processflow.merten.tech/activities/openrouter/call
     labels:
       - traefik.enable=true
-      - traefik.http.routers.process-flow.rule=Host(`processflow.mertendieckmann.de`) || Host(`www.processflow.mertendieckmann.de`)
+      - traefik.http.routers.process-flow.rule=Host(`processflow.merten.tech`) && !PathPrefix(`/activities`)
       - traefik.http.routers.process-flow.entrypoints=websecure
-      - traefik.http.routers.process-flow.tls=true
-      - traefik.http.routers.process-flow.tls.certresolver=lets-encrypt
-      - traefik.docker.network=web
-      - com.centurylinklabs.watchtower.enable=true
+      - traefik.http.routers.process-flow.tls.certresolver=le-merten
+      - traefik.http.services.process-flow.loadbalancer.server.port=3000
+
+  activity-openrouter:
+    image: mertend/activity-openrouter:latest
+    container_name: merten-activity-openrouter
+    restart: unless-stopped
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.activity-openrouter.rule=Host(`processflow.merten.tech`) && PathPrefix(`/activities/openrouter`)
+      - traefik.http.routers.activity-openrouter.entrypoints=websecure
+      - traefik.http.routers.activity-openrouter.tls.certresolver=le-merten
+      - traefik.http.services.activity-openrouter.loadbalancer.server.port=3000
+
+  process-flow-db:
+    image: postgres:17-alpine
+    container_name: merten-process-flow-db
+    restart: unless-stopped
+    networks:
+      - web
+    environment:
+      POSTGRES_DB: processflow
+      POSTGRES_USER: processflow
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - process-flow-db-data:/var/lib/postgresql/data
+
+volumes:
+  process-flow-db-data:
 
 networks:
   web:
     external: true
 ```
 
-- **Container Name**: `process-flow` for easy identification.
-- **Image**: `mertend/process-flow:latest` from Docker Hub.
-- **Restart Policy**: `unless-stopped` to ensure the app runs continuously.
-- **Network** `web` connects Traefik and the app.
-- **Traefik labels** configure routing, HTTPS, and auto-reloading by Watchtower.
+Key points:
+- **`process-flow-db`** runs PostgreSQL 17 in the same Docker network. Data is persisted in a named volume.
+- **`depends_on`** ensures the DB container is running before the app starts.
+- **`activity-openrouter`** is served under `/activities/openrouter` on the same domain via Traefik path-prefix routing.
+- The app container's entrypoint runs `prisma migrate deploy` + seeding before starting the Next.js server.
+
+---
+
+### <Database className="inline h-5 w-5 mr-2 text-secondary" /> Database Migrations
+
+Migrations are managed with **Prisma Migrate**:
+
+- Schema changes: `npx prisma migrate dev` (creates a new migration file locally)
+- Production: migrations run automatically on every container startup via `docker-entrypoint.sh`
+
+No manual migration step is needed after a deployment — Watchtower pulls the new image and restarts the container, which applies any pending migrations on boot.
 
 ---
 
 ### <RefreshCw className="inline h-5 w-5 mr-2 text-secondary" /> Automatic Updates (Watchtower)
 
-There runs a **Watchtower** container on the Ubuntu server that:
+A **Watchtower** container running on the Ubuntu server:
 
 - Continuously checks Docker Hub for new `:latest` tags.
 - Stops the running `process-flow` container.
-- Pulls the updated image and restarts the container with existing settings.
-- Ensures minimal downtime when combined with Traefik’s load balancing.
+- Pulls the updated image and restarts it with the existing environment config.
+- Ensures minimal downtime when combined with Traefik's load balancing.
 
 ---
 
 ### <Settings className="inline h-5 w-5 mr-2 text-secondary" /> Traffic Routing (Traefik)
 
 - **Entrypoint**: `websecure` (HTTPS port 443).
-- **TLS**: Managed by Let’s Encrypt via the `certresolver`.
-- **Router Rule**: Matches both `processflow.mertendieckmann.de` and `www.processflow.mertendieckmann.de`.
+- **TLS**: Managed by Let's Encrypt via the `le-merten` cert resolver.
+- **Router Rule**: `processflow.merten.tech` — app traffic excludes `/activities/*` paths which are routed to activity sidecar containers.
 - **Network**: Attached to the external `web` network for service discovery.
 
 ---
 
-### <Cloud className="inline h-5 w-5 mr-2 text-secondary" /> Supabase Management
-
-Supabase is hosted via the official dashboard:
-
-- **Database**: PostgreSQL for data storage and engine logic.
-- **Auth**: User authentication and security.
-- **Realtime**: Live updates for client dashboards.
-- **Migrations**: Automatically applied by the CI/CD workflow.
-
----
-
-*This deployment setup provides a robust, automated path from code to production—with secure routing and continuous updates.*
-
+*This setup provides a fully automated path from code to production — Watchtower handles rolling updates, Prisma handles migrations, and Traefik handles SSL and routing.*

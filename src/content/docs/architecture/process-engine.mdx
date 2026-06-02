@@ -7,7 +7,7 @@ import { Cpu, Database, Zap, RefreshCw, Code, SendToBack } from 'lucide-react';
 
 ## <Cpu className="inline h-5 w-5 mr-2 text-secondary" /> Process Engine Architecture
 
-ProcessFlow’s engine is built directly into the database (via Supabase/PostgreSQL), using stored functions, triggers, and JSONB data to model, execute, and advance workflow instances without a separate execution service. This approach ensures that processes can run in the background without the need to have the web application open, and it allows for easy scaling and management of process instances.
+ProcessFlow’s engine is built directly into the database (PostgreSQL), using stored functions, triggers, and JSONB data to model, execute, and advance workflow instances without a separate execution service. This approach ensures that processes can run in the background without the need to have the web application open, and it allows for easy scaling and management of process instances.
 
 ---
 
@@ -24,7 +24,7 @@ This overview shows how tasks move from creation to completion and cycle until t
 ### <Database className="inline h-5 w-5 mr-2 text-secondary" /> Core Components
 
 - **Web Application**: Frontend and API Endpoint (Next.js) that start processes and displays tasks.
-- **Database (Supabase/PostgreSQL)**: Stores process models, instances, flow elements, and data objects. Acts as the execution engine via PL/pgSQL.
+- **Database (PostgreSQL)**: Stores process models, instances, flow elements, and data objects. Acts as the execution engine via PL/pgSQL.
 - **External Task Servers**: Optional HTTP endpoints that render and collect user task input when an element is marked “Manual” or that automatically execute business logic when an element is marked “Automatic”.
 
 ---

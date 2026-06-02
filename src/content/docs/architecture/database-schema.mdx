@@ -1,0 +1,84 @@
+---
+title: Database Schema
+description: Overview of all Prisma models and their relationships in the ProcessFlow database.
+---
+
+import { Database, GitBranch, Cpu, Trophy } from 'lucide-react';
+
+## <Database className="inline h-6 w-6 mr-2 text-secondary" /> Database Schema
+
+ProcessFlow uses a self-hosted **PostgreSQL 17** database managed via **Prisma**. The schema is defined in `prisma/schema.prisma` and organised into four logical groups.
+
+---
+
+### <GitBranch className="inline h-5 w-5 mr-2 text-secondary" /> Authentication (better-auth)
+
+These tables are managed by better-auth and should not be modified manually.
+
+| Table          | Key Fields                                    | Notes                               |
+| -------------- | --------------------------------------------- | ----------------------------------- |
+| `user`         | `id` (uuid), `email`, `username`, `language`, `isDarkModeEnabled` | Primary user profile table |
+| `session`      | `id`, `userId`, `token`, `expiresAt`          | One row per active browser session  |
+| `account`      | `id`, `userId`, `providerId`, `password`      | Credential storage                  |
+| `verification` | `id`, `identifier`, `value`, `expiresAt`      | Email verification / password reset |
+
+---
+
+### <GitBranch className="inline h-5 w-5 mr-2 text-secondary" /> Teams & Roles
+
+| Table                 | Key Fields                                      | Notes                                   |
+| --------------------- | ----------------------------------------------- | --------------------------------------- |
+| `team`                | `id` (bigint), `name`, `createdBy`, `colorScheme` | Top-level workspace                   |
+| `role`                | `id`, `teamId`, `name`, `color`, `pages` (JSONB) | Per-team role with page access config |
+| `profile_team`        | `profileId`, `teamId`                           | User ↔ Team membership                 |
+| `profile_role_team`   | `profileId`, `roleId`, `teamId`                 | User ↔ Role assignment within a team   |
+| `invitation`          | `id`, `email`, `teamId`                         | Pending team invitations               |
+
+---
+
+### <Cpu className="inline h-5 w-5 mr-2 text-secondary" /> Process Engine
+
+| Table                    | Key Fields                                       | Notes                                           |
+| ------------------------ | ------------------------------------------------ | ----------------------------------------------- |
+| `process_model`          | `id`, `name`, `belongsTo` (teamId)               | The BPMN diagram definition                     |
+| `flow_element`           | `id`, `type` (NodeType), `modelId`, `data` (JSONB), `executionUrl` | A single node in the diagram  |
+| `activity_element`       | `flowElementId`, `nextFlowElementId`             | Activity node successor                         |
+| `start_element`          | `flowElementId`, `nextFlowElementId`             | Start node successor                            |
+| `end_element`            | `flowElementId`                                  | Terminal node                                   |
+| `gateway_element`        | `flowElementId`, `nextFlowElementTrueId`, `nextFlowElementFalseId` | Exclusive gateway branches |
+| `and_split_element`      | `flowElementId`, `nextFlowElementId1/2`          | Parallel split — two outgoing paths             |
+| `and_join_element`       | `flowElementId`, `previousFlowElementId1/2`, `nextFlowElementId` | Parallel join — waits for both paths |
+| `process_instance`       | `id`, `processModelId`, `status`, `completedAt`  | A running or completed process run              |
+| `flow_element_instance`  | `id`, `instanceOf`, `isPartOf`, `status`, `completedBy` | Runtime state of one node in one instance |
+| `data_object_instance`   | `isPartOf`, `name`, `value` (JSONB)              | Key/value output data per process instance      |
+
+**`NodeType` enum**: `startNode`, `endNode`, `activityNode`, `gatewayNode`, `andSplitNode`, `andJoinNode`, `challengeNode`, `infoNode`, `gamificationEventNode`
+
+**`FlowElementInstanceStatus` enum**: `Created` → `Todo` / `In Progress` → `Completed` / `Error`
+
+---
+
+### <Trophy className="inline h-5 w-5 mr-2 text-secondary" /> Gamification & Shop
+
+| Table                    | Key Fields                                           | Notes                                         |
+| ------------------------ | ---------------------------------------------------- | --------------------------------------------- |
+| `statistics`             | `profileId`, `teamId`, `experience`, `coins`, `badges` (JSONB) | Per-user, per-team gamification state |
+| `node_definition`        | `id`, `definition` (JSONB), `createdBy`, `teamId`, `visibility` | Reusable node definition for the shop |
+| `teams_node_definitions` | `teamId`, `nodeDefinitionId`                         | Which teams have imported a node definition   |
+| `config`                 | `key`, `value`                                       | Application-wide key/value configuration      |
+
+---
+
+### Relationships at a Glance
+
+```
+User ──< ProfileTeam >── Team ──< ProcessModel ──< FlowElement ──< FlowElementInstance
+                          │                                              │
+                         Role                                     DataObjectInstance
+                          │
+                  ProfileRoleTeam
+                          │
+                       Statistics
+```
+
+All primary keys for domain tables use **`BigInt` (auto-increment)** except `user`, `session`, `account`, and `verification` which use **UUID strings** (managed by better-auth).

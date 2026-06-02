@@ -1,0 +1,72 @@
+---
+title: Gamification
+description: How ProcessFlow motivates users through experience points, coins, badges, and challenges tied to workflow execution.
+---
+
+import { Trophy, Star, Coins, Award } from 'lucide-react';
+import { Trophy as TrophyIcon } from 'lucide-react';
+
+## <TrophyIcon className="inline h-6 w-6 mr-2 text-secondary" /> Gamification System
+
+ProcessFlow rewards users for completing workflow tasks. Each process node can be configured to grant **experience points**, **coins**, and **badges** when its task is completed. Rewards are tracked per user per team in the `statistics` table.
+
+---
+
+### Reward Types
+
+| Type                | Description                                                     |
+| ------------------- | --------------------------------------------------------------- |
+| **Experience (XP)** | Cumulative score representing overall activity in a team        |
+| **Coins**           | Currency earned through task completion                         |
+| **Badges**          | One-time achievement markers awarded under specific conditions  |
+
+---
+
+### Badge Types
+
+| Badge               | Awarded when…                                                   |
+| ------------------- | --------------------------------------------------------------- |
+| **Explorer Badge**  | User completes a node for the first time                        |
+| **Completion Badge**| User completes a process instance                               |
+| **Speed Badge**     | User completes a task within a time challenge threshold         |
+
+---
+
+### Challenges
+
+| Challenge           | Description                                                     |
+| ------------------- | --------------------------------------------------------------- |
+| **Time Challenge**  | Task must be completed within a configured time limit           |
+
+---
+
+### Configuration per Node
+
+In the process editor, each activity node has a **Gamification** configuration section. The options (`src/model/GamificationOptions.ts`) include:
+
+| Field                    | Purpose                                                      |
+| ------------------------ | ------------------------------------------------------------ |
+| `pointType`              | Whether to award `Experience` or `Coins`                     |
+| `pointsForSuccess`       | Number of points awarded on successful completion            |
+| `pointsApplicationMethod`| How points are applied (e.g. add, multiply)                 |
+| `hasCondition`           | Whether an extra condition must be met to earn the reward    |
+| `comparison`             | Comparison operator for the condition (`value1 OP value2`)   |
+| `value1` / `value2`      | Values used in the condition expression                      |
+| `badgeType`              | Which badge (if any) to award on completion                  |
+
+---
+
+### Statistics Storage
+
+Gamification state is stored in the `statistics` table — one row per user per team:
+
+```
+statistics
+├── profileId   (→ user)
+├── teamId      (→ team)
+├── experience  (BigInt, cumulative)
+├── coins       (BigInt, cumulative)
+└── badges      (JSONB: { badges: string[] })
+```
+
+A `statistics` row is automatically created when a user registers (handled in the sign-up Server Action). The `/statistics` page in each team workspace displays leaderboards and personal progress using Recharts.

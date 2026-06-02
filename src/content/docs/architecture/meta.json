@@ -2,6 +2,10 @@
   "title": "Architecture",
   "pages": [
     "process-engine",
+    "realtime",
+    "authentication",
+    "database-schema",
+    "gamification",
     "deployment",
     "tech-stack"
   ]

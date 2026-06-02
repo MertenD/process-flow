@@ -13,9 +13,8 @@ A concise list of the core technologies and services powering **ProcessFlow**, c
 
 ### <GitBranch className="inline h-5 w-5 mr-2 text-secondary" /> Frontend
 
-
 - <img src="https://nextjs.org/favicon.ico" alt="Next.js" className="inline h-7 w-7 mr-2" /> **Next.js** ([nextjs.org](https://nextjs.org/))
-    React framework for server-side rendering and static site generation.
+    React framework for server-side rendering, server actions, and API routes.
 - <img src="https://ui.shadcn.com/favicon.ico" alt="Shadcn/ui" className="inline h-7 w-7 mr-2" /> **Shadcn/ui** ([github.com/shadcn/ui](https://github.com/shadcn/ui))
   Component library built on Radix and Tailwind CSS.
 - <img src="https://tailwindcss.com/favicons/favicon-32x32.png?v=4" alt="Tailwind CSS" className="inline h-7 w-7 mr-2" /> **Tailwind CSS** ([tailwindcss.com](https://tailwindcss.com/))
@@ -24,21 +23,33 @@ A concise list of the core technologies and services powering **ProcessFlow**, c
   Icon library used for UI embellishments.
 - <img src="https://reactflow.dev/favicon.ico" alt="React Flow" className="inline h-7 w-7 mr-2" /> **React Flow** ([reactflow.dev](https://reactflow.dev/))
   Library for building interactive node-based UIs and flow diagrams.
-- <img src="https://zustand-demo.pmnd.rs/favicon.ico" alt="Zustand" className="inline h-7 w-7 mr-2" /> **Zustand** ([https://zustand-demo.pmnd.rs/](https://zustand-demo.pmnd.rs/))
+- <img src="https://zustand-demo.pmnd.rs/favicon.ico" alt="Zustand" className="inline h-7 w-7 mr-2" /> **Zustand** ([zustand-demo.pmnd.rs](https://zustand-demo.pmnd.rs/))
   Lightweight state management for React.
+- **Framer Motion** ([framer.com/motion](https://www.framer.com/motion/))
+  Animation library for smooth UI transitions.
+- **Recharts** ([recharts.org](https://recharts.org/))
+  Composable charting library used for gamification statistics.
+- **next-intl** ([next-intl.dev](https://next-intl.dev/))
+  Internationalization for Next.js with server and client component support.
+- **Fumadocs** ([fumadocs.vercel.app](https://fumadocs.vercel.app/))
+  Documentation framework integrated directly into the Next.js app.
 
 ---
 
 ### <Database className="inline h-5 w-5 mr-2 text-secondary" /> Backend & Database
 
-- <img src="https://supabase.com/favicon/favicon-32x32.png" alt="Supabase" className="inline h-7 w-7 mr-2" /> **Supabase** ([supabase.com](https://supabase.com/))
-  Backend-as-a-service providing PostgreSQL, authentication, and realtime subscriptions.
 - <img src="https://www.postgresql.org/favicon.ico" alt="PostgreSQL" className="inline h-7 w-7 mr-2" /> **PostgreSQL** ([postgresql.org](https://www.postgresql.org/))
-  Relational database; JSONB support powers the in-database process engine.
+  Relational database; JSONB support and PL/pgSQL power the in-database process engine. Also used for realtime via `LISTEN/NOTIFY`.
 - <img src="https://www.postgresql.org/favicon.ico" alt="PL/pgSQL" className="inline h-7 w-7 mr-2" /> **PL/pgSQL** ([postgresql.org/docs](https://www.postgresql.org/docs/current/plpgsql.html))
-  Procedural language for writing stored functions and triggers.
-- <img src="https://nextjs.org/favicon.ico" alt="Next.js API Routes" className="inline h-7 w-7 mr-2" /> **Next.js API Routes** ([nextjs.org/docs/api-routes/introduction](https://nextjs.org/docs/api-routes/introduction))
-  Server-side logic and API endpoints for the application.
+  Procedural language for stored functions and triggers that drive workflow execution.
+- <img src="https://www.prisma.io/favicon.ico" alt="Prisma" className="inline h-7 w-7 mr-2" /> **Prisma** ([prisma.io](https://www.prisma.io/))
+  ORM for type-safe database access. Schema in `prisma/schema.prisma`, generated client in `lib/generated/prisma`.
+- **better-auth** ([better-auth.com](https://www.better-auth.com/))
+  Authentication library handling email/password sign-up and sign-in, session management, and custom user fields.
+- <img src="https://nextjs.org/favicon.ico" alt="Next.js API Routes" className="inline h-7 w-7 mr-2" /> **Next.js API Routes & Server Actions** ([nextjs.org](https://nextjs.org/))
+  Server-side logic, API endpoints, and database mutations.
+- **SSE (Server-Sent Events)**
+  Used for realtime updates — backed by PostgreSQL `LISTEN/NOTIFY` via a persistent `pg` connection and streamed to clients through `/api/realtime`.
 
 ---
 
@@ -47,9 +58,9 @@ A concise list of the core technologies and services powering **ProcessFlow**, c
 - <img src="https://www.docker.com/favicon.ico" alt="Docker" className="inline h-7 w-7 mr-2" /> **Docker** ([docker.com](https://www.docker.com/))
   Container platform for packaging and running the application.
 - <img src="https://docs.docker.com/favicons/docs@2x.ico" alt="Docker Compose" className="inline h-7 w-7 mr-2" /> **Docker Compose** ([docs.docker.com/compose](https://docs.docker.com/compose/))
-  Define and manage multi-container deployments.
+  Define and manage multi-container deployments (app + database + activity services).
 - <img src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub Actions" className="inline h-7 w-7 mr-2" /> **GitHub Actions** ([github.com/features/actions](https://github.com/features/actions))
-  CI/CD workflows for building, testing, and deploying images.
+  CI/CD workflow: builds and pushes the Docker image to Docker Hub on every push to `main`.
 - <img src="https://hub.docker.com/favicon.ico" alt="Docker Hub" className="inline h-7 w-7 mr-2" /> **Docker Hub** ([hub.docker.com](https://hub.docker.com/))
   Public registry for hosting Docker images.
 
@@ -57,15 +68,14 @@ A concise list of the core technologies and services powering **ProcessFlow**, c
 
 ### <Zap className="inline h-5 w-5 mr-2 text-secondary" /> Automation & Routing
 
-- <img src="https://containrrr.dev/watchtower/images/favicon.ico" alt="Watchtower" className="inline h-7 w-7 mr-2" /> **Watchtower** ([https://containrrr.dev/watchtower/](https://containrrr.dev/watchtower/))
-  Monitors Docker Hub and updates running containers automatically.
+- <img src="https://containrrr.dev/watchtower/images/favicon.ico" alt="Watchtower" className="inline h-7 w-7 mr-2" /> **Watchtower** ([containrrr.dev/watchtower](https://containrrr.dev/watchtower/))
+  Monitors Docker Hub and updates running containers automatically when a new image is pushed.
 - <img src="https://traefik.io/favicon.svg" alt="Traefik" className="inline h-7 w-7 mr-2" /> **Traefik** ([traefik.io](https://traefik.io/))
-  Dynamic edge router and load balancer with automatic SSL.
+  Dynamic edge router and load balancer with automatic SSL via Let's Encrypt.
 
 ---
 
 ### <Cloud className="inline h-5 w-5 mr-2 text-secondary" /> Hosting & Infrastructure
 
 - <img src="https://assets.ubuntu.com/v1/be7e4cc6-COF-favicon-32x32.png" alt="Ubuntu Server" className="inline h-7 w-7 mr-2" /> **Ubuntu Server** ([ubuntu.com](https://ubuntu.com/))
-  Linux distribution used for the production host.
-
+  Linux distribution used for the production host (Hetzner VPS).
