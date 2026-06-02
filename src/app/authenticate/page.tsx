@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { AlertCircle, LogIn, UserPlus } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { authClient } from "@/lib/auth-client"
 
-export default function Login({ searchParams }: Readonly<{ searchParams: { message: string } }>) {
+export default function Login() {
     const router = useRouter()
-    const [message, setMessage] = useState(searchParams.message ?? "")
+    const searchParams = useSearchParams()
+    const [message, setMessage] = useState(searchParams.get("message") ?? "")
     const [loading, setLoading] = useState(false)
 
     const signIn = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -19,47 +19,49 @@ export interface ActivitySearchParams {
 }
 
 
-export default async function Page({ searchParams }: { searchParams: ActivitySearchParams }) {
+export default async function Page({ searchParams }: { searchParams: Promise<ActivitySearchParams> }) {
+
+    const params = await searchParams
 
     let activityContent = <div>There is no activity matching the given activity type.</div>
-    if (searchParams.activityType === ActivityType.TEXT_INPUT) {
+    if (params.activityType === ActivityType.TEXT_INPUT) {
         activityContent = <TextInputTask
-            task={searchParams.task}
-            description={searchParams.description}
-            inputRegex={searchParams.inputRegex}
-            flowElementInstanceId={searchParams.flowElementInstanceId}
-            userInputVariableName={searchParams.userInputVariableName}
-            responsePath={searchParams.responsePath}
-            userId={searchParams.userId}
+            task={params.task}
+            description={params.description}
+            inputRegex={params.inputRegex}
+            flowElementInstanceId={params.flowElementInstanceId}
+            userInputVariableName={params.userInputVariableName}
+            responsePath={params.responsePath}
+            userId={params.userId}
         />
-    } else if (searchParams.activityType === ActivityType.SINGLE_CHOICE) {
+    } else if (params.activityType === ActivityType.SINGLE_CHOICE) {
         activityContent = <SingleChoiceTask
-            task={searchParams.task}
-            description={searchParams.description}
-            choices={searchParams.choices.split(",").map(choice => choice.trim())}
-            userInputVariableName={searchParams.userInputVariableName}
-            responsePath={searchParams.responsePath}
-            flowElementInstanceId={searchParams.flowElementInstanceId}
-            userId={searchParams.userId}
+            task={params.task}
+            description={params.description}
+            choices={params.choices.split(",").map(choice => choice.trim())}
+            userInputVariableName={params.userInputVariableName}
+            responsePath={params.responsePath}
+            flowElementInstanceId={params.flowElementInstanceId}
+            userId={params.userId}
         />
-    } else if (searchParams.activityType === ActivityType.MULTIPLE_CHOICE) {
+    } else if (params.activityType === ActivityType.MULTIPLE_CHOICE) {
         activityContent = <MultipleChoiceTask
-            task={searchParams.task}
-            description={searchParams.description}
-            choices={searchParams.choices.split(",").map(choice => choice.trim())}
-            userInputVariableName={searchParams.userInputVariableName}
-            responsePath={searchParams.responsePath}
-            flowElementInstanceId={searchParams.flowElementInstanceId}
-            userId={searchParams.userId}
+            task={params.task}
+            description={params.description}
+            choices={params.choices.split(",").map(choice => choice.trim())}
+            userInputVariableName={params.userInputVariableName}
+            responsePath={params.responsePath}
+            flowElementInstanceId={params.flowElementInstanceId}
+            userId={params.userId}
         />
-    } else if (searchParams.activityType === ActivityType.INFO) {
+    } else if (params.activityType === ActivityType.INFO) {
         activityContent = <InfoTask
-            task={searchParams.task}
-            description={searchParams.description}
-            infoText={searchParams.infoText}
-            responsePath={searchParams.responsePath}
-            flowElementInstanceId={searchParams.flowElementInstanceId}
-            userId={searchParams.userId}
+            task={params.task}
+            description={params.description}
+            infoText={params.infoText}
+            responsePath={params.responsePath}
+            flowElementInstanceId={params.flowElementInstanceId}
+            userId={params.userId}
         />
     }
 

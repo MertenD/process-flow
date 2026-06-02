@@ -6,14 +6,17 @@ import { redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { requireSession } from "@/lib/session"
 
-export default async function StatsPage({ params }: Readonly<{ params: { teamId: number } }>) {
+export default async function StatsPage({ params }: Readonly<{ params: Promise<{ teamId: string }> }>) {
+
+    const { teamId: _teamId } = await params
+    const teamId = Number(_teamId)
 
     const t = await getTranslations("stats")
 
     const session = await requireSession().catch(() => null)
     if (!session?.user) redirect("/authenticate")
 
-    const userStats: UserStats | null = await getUserStatistics(session.user.id, params.teamId).catch(e => {
+    const userStats: UserStats | null = await getUserStatistics(session.user.id, teamId).catch(e => {
         console.error("Error while fetching user statistics", e)
         return null
     })

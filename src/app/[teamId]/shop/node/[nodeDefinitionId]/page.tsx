@@ -7,15 +7,19 @@ import {getTranslations} from "next-intl/server";
 import PreviewDynamicOptions from "@/components/shop/details/PreviewDynamicOptions";
 import AddOrRemoveNodeButton from "@/components/shop/details/AddOrRemoveNodeButton";
 
-export default async function NodeDetails({ params }: { params: { teamId: number, nodeDefinitionId: number } }) {
+export default async function NodeDetails({ params }: { params: Promise<{ teamId: string, nodeDefinitionId: string }> }) {
+
+    const { teamId: _teamId, nodeDefinitionId: _nodeDefinitionId } = await params
+    const teamId = Number(_teamId)
+    const nodeDefinitionId = Number(_nodeDefinitionId)
 
     const t = await getTranslations("shop.node.details")
 
     let nodeDefinition: NodeDefinition | null = null
     try {
-        nodeDefinition = await getNodeDefinition(params.nodeDefinitionId)
+        nodeDefinition = await getNodeDefinition(nodeDefinitionId)
     } catch (error) {
-        console.log("Error while getting node definition for node ", params.nodeDefinitionId, error)
+        console.log("Error while getting node definition for node ", nodeDefinitionId, error)
     }
 
     if (!nodeDefinition) {
@@ -35,7 +39,7 @@ export default async function NodeDetails({ params }: { params: { teamId: number
                     <p className="text-muted-foreground">{nodeDefinition.shortDescription}</p>
                 </div>
 
-                <AddOrRemoveNodeButton teamId={params.teamId} nodeDefinitionId={params.nodeDefinitionId} />
+                <AddOrRemoveNodeButton teamId={teamId} nodeDefinitionId={nodeDefinitionId} />
 
                 <Card>
                     <CardHeader>

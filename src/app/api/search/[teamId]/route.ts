@@ -7,9 +7,10 @@ export const fetchCache = 'force-no-store'
 
 export async function GET(
     request: NextRequest,
-    context: { params: { teamId: string } }
+    context: { params: Promise<{ teamId: string }> }
 ) {
-    const teamId = parseInt(context.params.teamId, 10);
+    const { teamId: teamIdStr } = await context.params
+    const teamId = parseInt(teamIdStr, 10);
     const source = getInTeamSource(teamId);
     const { GET: originalGet } = createFromSource(source);
     // @ts-ignore

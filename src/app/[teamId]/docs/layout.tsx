@@ -8,15 +8,16 @@ import {RootProvider} from "fumadocs-ui/provider";
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
-export default function Layout({ children, params }: { children: ReactNode, params: { teamId: number } }) {
+export default async function Layout({ children, params }: { children: ReactNode, params: Promise<{ teamId: string }> }) {
 
-    const source = getInTeamSource(params.teamId);
+    const { teamId } = await params
+    const source = getInTeamSource(parseInt(teamId));
 
     return <div className="overscroll-y-hidden" style={{'--fd-layout-width': '100%'} as React.CSSProperties}>
         <RootProvider
             search={{
                 options: {
-                    api: `/api/search/${params.teamId}`,
+                    api: `/api/search/${parseInt(teamId)}`,
                 },
             }}
         >

@@ -12,10 +12,10 @@ export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
 export default async function Page(props: {
-    params: Promise<{ slug?: string[], teamId: number }>;
+    params: Promise<{ slug?: string[], teamId: string }>;
 }) {
     const params = await props.params;
-    const page = getInTeamSource(params.teamId).getPage(params.slug);
+    const page = getInTeamSource(parseInt(params.teamId)).getPage(params.slug);
     if (!page) notFound();
 
     const MDX = page.data.body;
@@ -32,16 +32,16 @@ export default async function Page(props: {
 }
 
 export async function generateStaticParams(props: {
-    params: { slug?: string[], teamId: number };
+    params: { slug?: string[], teamId: string };
 }) {
-    return getInTeamSource(props.params.teamId).generateParams();
+    return getInTeamSource(parseInt(props.params.teamId)).generateParams();
 }
 
 export async function generateMetadata(props: {
-    params: Promise<{ slug?: string[], teamId: number }>;
+    params: Promise<{ slug?: string[], teamId: string }>;
 }) {
     const params = await props.params;
-    const page = getInTeamSource(params.teamId).getPage(params.slug);
+    const page = getInTeamSource(parseInt(params.teamId)).getPage(params.slug);
     if (!page) notFound();
 
     return {

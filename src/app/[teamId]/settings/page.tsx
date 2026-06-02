@@ -6,7 +6,10 @@ import { getTranslations } from "next-intl/server"
 import { requireSession } from "@/lib/session"
 import { prisma } from "@/lib/prisma"
 
-export default async function SettingsPage({ params }: Readonly<{ params: { teamId: number }}>) {
+export default async function SettingsPage({ params }: Readonly<{ params: Promise<{ teamId: string }> }>) {
+
+    const { teamId: _teamId } = await params
+    const teamId = Number(_teamId)
 
     const t = await getTranslations("settings")
 
@@ -14,7 +17,7 @@ export default async function SettingsPage({ params }: Readonly<{ params: { team
     if (!session?.user) redirect("/authenticate")
 
     const userRoles = await prisma.profileRoleTeam.findMany({
-        where: { teamId: BigInt(params.teamId), profileId: session.user.id },
+        where: { teamId: BigInt(teamId), profileId: session.user.id },
         include: { role: { select: { name: true } } },
     })
     const isUserOwner = userRoles.some(r => r.role.name === "owner")
@@ -24,9 +27,9 @@ export default async function SettingsPage({ params }: Readonly<{ params: { team
         <SettingsDashboard userId={session.user.id}/>
         <h1 className="text-3xl font-bold">{t("teamSettingsTitle")}</h1>
         {isUserOwner ?
-            <OwnerTeamSettings teamId={params.teamId} />
+            <OwnerTeamSettings teamId={teamId} />
             :
-            <MemberTeamSettings teamId={params.teamId} userId={session.user.id} />
+            <MemberTeamSettings teamId={teamId} userId={session.user.id} />
         }
     </div>
 }

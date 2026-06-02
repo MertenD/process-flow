@@ -4,7 +4,10 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import Worklist from "@/components/tasks/Worklist"
 import { requireSession } from "@/lib/session"
 
-export default async function TasksLayout({ children, params }: Readonly<{ children: React.ReactNode, params: { teamId: number, taskId: string } }>) {
+export default async function TasksLayout({ children, params }: Readonly<{ children: React.ReactNode, params: Promise<{ teamId: string }> }>) {
+
+    const { teamId: _teamId } = await params
+    const teamId = Number(_teamId)
 
     const session = await requireSession().catch(() => null)
     if (!session?.user) redirect("/authenticate")
@@ -14,7 +17,7 @@ export default async function TasksLayout({ children, params }: Readonly<{ child
             <div className="flex flex-col h-full">
                 <h1 className="text-3xl font-bold p-4">Aufgaben</h1>
                 <div className="flex-1 overflow-auto">
-                    <Worklist teamId={params.teamId} userId={session.user.id}/>
+                    <Worklist teamId={teamId} userId={session.user.id}/>
                 </div>
             </div>
         </ResizablePanel>

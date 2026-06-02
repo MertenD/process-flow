@@ -14,20 +14,22 @@ export interface ActivitySearchParams {
 }
 
 
-export default async function Page({ searchParams }: { searchParams: ActivitySearchParams }) {
+export default async function Page({ searchParams }: { searchParams: Promise<ActivitySearchParams> }) {
+
+    const params = await searchParams
 
     function onSubmit(data: any) {
-        fetch(searchParams.responsePath, {
+        fetch(params.responsePath, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                flowElementInstanceId: searchParams.flowElementInstanceId,
+                flowElementInstanceId: params.flowElementInstanceId,
                 data: {
-                    [searchParams.userInputVariableName]: data.textInput
+                    [params.userInputVariableName]: data.textInput
                 },
-                completedBy: searchParams.userId
+                completedBy: params.userId
             })
         }).then(() => {
             console.log("Submitted")

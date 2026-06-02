@@ -11,14 +11,17 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import removeNodeDefinitionPermanently from "@/actions/shop/remove-node-definition-permanently"
 import { requireSession } from "@/lib/session"
 
-export default async function OwnNodesPage({ params }: { params: { teamId: number } }) {
+export default async function OwnNodesPage({ params }: { params: Promise<{ teamId: string }> }) {
+
+    const { teamId: _teamId } = await params
+    const teamId = Number(_teamId)
 
     const t = await getTranslations("shop")
 
     const session = await requireSession().catch(() => null)
     if (!session?.user) redirect("/authenticate")
 
-    const nodeDefinitions = await getNodeDefinitionsFromUser(session.user.id, params.teamId)
+    const nodeDefinitions = await getNodeDefinitionsFromUser(session.user.id, teamId)
 
     async function handleRemoveNode(nodeId: number) {
         "use server"
@@ -41,7 +44,7 @@ export default async function OwnNodesPage({ params }: { params: { teamId: numbe
                     </CardHeader>
                     <CardContent>
                         <div className="flex items-center justify-between">
-                            <Link href={`/${params.teamId}/shop/node/${node.id}`}
+                            <Link href={`/${teamId}/shop/node/${node.id}`}
                                   className="inline-flex items-center text-sm text-primary hover:underline">
                                 {t("node.viewDetails")}
                                 <ArrowRight className="ml-1 h-4 w-4"/>
@@ -49,7 +52,7 @@ export default async function OwnNodesPage({ params }: { params: { teamId: numbe
                             <div className="flex flex-row space-x-2">
                                 <Tooltip delayDuration={0}>
                                     <TooltipTrigger>
-                                        <Link href={`/${params.teamId}/shop/update-node/${node.id}`}>
+                                        <Link href={`/${teamId}/shop/update-node/${node.id}`}>
                                             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-secondary">
                                                 <Pencil className="h-4 w-4"/>
                                                 <span className="sr-only">{t("node.editNode")}</span>

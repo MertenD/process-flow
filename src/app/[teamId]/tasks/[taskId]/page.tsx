@@ -6,18 +6,21 @@ import { getTranslations } from "next-intl/server"
 import { ManualTaskWithOutputs } from "@/model/database/database.types"
 import { requireSession } from "@/lib/session"
 
-export default async function SelectedTasksPage({ params }: Readonly<{ params: { taskId: string, teamId: number } }>) {
+export default async function SelectedTasksPage({ params }: Readonly<{ params: Promise<{ taskId: string, teamId: string }> }>) {
+
+    const { taskId, teamId: _teamId } = await params
+    const teamId = Number(_teamId)
 
     const t = await getTranslations("tasks")
 
     const session = await requireSession().catch(() => null)
     if (!session?.user) redirect("/authenticate")
 
-    const tasks = await getTasks(params.teamId, session.user.id)
-    const currentTask = tasks?.find(task => task.id.toString() === params.taskId)
+    const tasks = await getTasks(teamId, session.user.id)
+    const currentTask = tasks?.find(task => task.id.toString() === taskId)
 
     if (currentTask && currentTask.status && currentTask?.status !== "Todo") {
-        redirect(`/${params.teamId}/tasks`)
+        redirect(`/${teamId}/tasks`)
     }
 
     async function buildTaskUrl(task: ManualTaskWithOutputs | undefined, userId: string): Promise<string | null> {
@@ -41,7 +44,7 @@ export default async function SelectedTasksPage({ params }: Readonly<{ params: {
 
     return currentTask && <>
         {currentTask && taskUrl ? (
-            <TaskFrame taskId={currentTask.id.toString()} taskUrl={taskUrl} teamId={params.teamId}/>
+            <TaskFrame taskId={currentTask.id.toString()} taskUrl={taskUrl} teamId={teamId}/>
         ) : (
             <div>{t("couldNotFoundSelectedTask")}</div>
         )}

@@ -17,7 +17,10 @@ type ProcessModelWithInstances = ProcessModel & {
     process_instance: ProcessInstanceWithFlowElements[]
 }
 
-export default async function MonitoringPage({ params }: Readonly<{ params: { teamId: string } }>) {
+export default async function MonitoringPage({ params }: Readonly<{ params: Promise<{ teamId: string }> }>) {
+
+    const { teamId: _teamId } = await params
+    const teamId = Number(_teamId)
 
     const t = await getTranslations("monitoring")
 
@@ -25,7 +28,7 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
     if (!session?.user) redirect("/authenticate")
 
     const rawModels = await prisma.processModel.findMany({
-        where: { belongsTo: BigInt(params.teamId) },
+        where: { belongsTo: BigInt(teamId) },
         include: {
             processInstances: {
                 include: {
