@@ -16,6 +16,7 @@ services:
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: http://localhost:3000
       APP_URL: http://localhost:3000
+      INTERNAL_APP_URL: http://process-flow:3000
       NEXT_PUBLIC_APP_URL: http://localhost:3000
       # Custom activity URLs — reachable via Docker network
       ACTIVITY_OPENROUTER_URL: http://activity-openrouter:3000/call

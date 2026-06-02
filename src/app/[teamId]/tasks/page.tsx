@@ -5,7 +5,7 @@ export default async function TasksPage({ params }: Readonly<{ params: { teamId:
 
     const t = await getTranslations("tasks")
 
-    return <div className="w-full h-full flex flex-col justify-center items-center bg-accent">
+    return <div className="w-full h-full flex flex-col justify-center items-center bg-background">
         {t("selectTask")}
     </div>
 }

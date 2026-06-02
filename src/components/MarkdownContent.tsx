@@ -1,6 +1,7 @@
 "use client"
 
 import ReactMarkdown from "react-markdown"
+import remarkBreaks from "remark-breaks"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism"
 
@@ -9,9 +10,11 @@ interface MarkdownContentProps {
 }
 
 export function MarkdownContent({ content }: MarkdownContentProps) {
+    const normalized = content?.replace(/\\n/g, "\n") ?? ""
 
     return (
         <ReactMarkdown
+            remarkPlugins={[remarkBreaks]}
             components={{
                 h1: ({ node, ...props }) => <h1 className="text-lg sm:text-xl font-bold mb-4" {...props} />,
                 h2: ({ node, ...props }) => <h2 className="text-base sm:text-lg font-semibold mb-3" {...props} />,
@@ -50,7 +53,7 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
                 },
             }}
         >
-            {content}
+            {normalized}
         </ReactMarkdown>
     )
 }

@@ -65,6 +65,7 @@ export default async function MonitoringPage({ params }: Readonly<{ params: { te
                 flow_element: {
                     ...(fei.flowElement as any),
                     id: Number(fei.flowElement.id),
+                    model_id: Number(fei.flowElement.modelId),
                     name: ((fei.flowElement.data as any)?.task as string) ?? ""
                 }
             }))

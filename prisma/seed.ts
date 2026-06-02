@@ -203,7 +203,7 @@ async function main() {
               label: "User Input",
               keyString: "userInput",
               defaultValue: "",
-              options: [],
+              options: [{ values: ["{availableVariables}"], dependentStructure: [] }],
             },
             {
               type: "VariableNameInput",

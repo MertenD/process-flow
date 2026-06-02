@@ -49,3 +49,4 @@ certificates
 openrouter-activity/node_modules
 
 /lib/generated/
+/custom-activities/openrouter/node_modules/
