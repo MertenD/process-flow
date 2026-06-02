@@ -16,6 +16,7 @@ import getRoles from "@/actions/get-roles";
 import updateRoleAction from "@/actions/update-role";
 import {Checkbox} from "@/components/ui/checkbox";
 import {useTranslations} from "next-intl";
+import {useRealtimeSubscription} from "@/hooks/useRealtimeSubscription";
 
 export interface RoleManagementProps {
     teamId: number
@@ -44,11 +45,18 @@ export default function RoleManagement({teamId}: Readonly<RoleManagementProps>) 
     useEffect(() => {
         getRoles(teamId).then((roles: RoleWithAllowedPages[]) => {
             setRoles(roles || [])
-            console.log(roles)
         }).catch((error) => {
             console.error("Error fetching roles", error)
         })
     }, [teamId]);
+
+    useRealtimeSubscription({
+        channels: ['role_changes'],
+        teamId,
+        onEvent: () => {
+            getRoles(teamId).then(roles => setRoles(roles || []))
+        },
+    });
 
     const updateRole = () => {
         if (!editingRole) return

@@ -18,6 +18,7 @@ import getTeams from "@/actions/get-teams";
 import getInvitations from "@/actions/get-invitations";
 import declineInvite from "@/actions/decline-invite";
 import {useTranslations} from "next-intl";
+import {useRealtimeSubscription} from "@/hooks/useRealtimeSubscription";
 
 export interface TeamsOverviewProps {
     userId: string
@@ -47,7 +48,21 @@ export function TeamsOverview({userId, userEmail, initialTeams, initialInvitatio
 
     const router = useRouter()
 
+    useRealtimeSubscription({
+        channels: ['profile_team_changes'],
+        profileId: userId,
+        onEvent: () => {
+            getTeams(userId).then(setTeams).catch(console.error)
+        },
+    });
 
+    useRealtimeSubscription({
+        channels: ['invitation_changes'],
+        email: userEmail,
+        onEvent: () => {
+            getInvitations(userEmail).then(setInvitations).catch(console.error)
+        },
+    });
 
     function onAcceptInvite(invitation: InvitationWithTeam) {
         acceptInvite(invitation, userId).then(() => {

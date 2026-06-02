@@ -19,6 +19,7 @@ import updateProfileRolesInTeam from "@/actions/update-profile-roles-in-team";
 import {toast} from "@/components/ui/use-toast";
 import removeProfileFromTeam from "@/actions/remove-profile-from-team";
 import {useTranslations} from "next-intl";
+import {useRealtimeSubscription} from "@/hooks/useRealtimeSubscription";
 
 type MemberRole = {
     id: number
@@ -73,6 +74,18 @@ export function MemberManagement({teamId}: MemberManagementProps) {
             setMembers(members || [])
         )
     }, [teamId]);
+
+    useRealtimeSubscription({
+        channels: ['role_changes', 'profile_team_changes', 'profile_role_team_changes'],
+        teamId,
+        onEvent: (event) => {
+            if (event.channel === 'role_changes') {
+                getRoles(teamId).then(roles => setRoles(roles || []))
+            } else {
+                getMembers(teamId).then(members => setMembers(members || []))
+            }
+        },
+    });
 
     const filteredMembers = useMemo(() => {
         if (roleFilter === 'none') {

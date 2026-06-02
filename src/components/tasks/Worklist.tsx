@@ -18,6 +18,7 @@ import getRoles from "@/actions/get-roles";
 import getTasks from "@/actions/get-tasks";
 import {toast} from "@/components/ui/use-toast";
 import {useTranslations} from "next-intl";
+import {useRealtimeSubscription} from "@/hooks/useRealtimeSubscription";
 import {GamificationType} from "@/model/GamificationType";
 import {GamificationOptions} from "@/model/GamificationOptions";
 import {PointsType} from "@/model/PointsType";
@@ -67,6 +68,32 @@ export default function Worklist({ teamId, userId }: WorklistProps) {
     useEffect(() => {
         setSelectedTaskId(params.taskId)
     }, [params]);
+
+    useRealtimeSubscription({
+        channels: ['flow_element_instance_changes', 'role_changes', 'profile_role_team_changes'],
+        teamId,
+        onEvent: (event) => {
+            if (event.channel === 'role_changes') {
+                getRoles(teamId).then(setRoles)
+            } else if (event.channel === 'flow_element_instance_changes') {
+                getTasks(teamId, userId).then(setTasks).catch(console.error)
+                if (
+                    event.operation === 'UPDATE' &&
+                    event.status === 'Completed' &&
+                    pathName === `/${teamId}/tasks/${event.id}`
+                ) {
+                    setSelectedTaskId(null)
+                    toast({
+                        variant: 'success',
+                        title: t('toasts.taskCompletedTitle'),
+                        description: t('toasts.taskCompletedDescription'),
+                    })
+                }
+            } else {
+                getTasks(teamId, userId).then(setTasks).catch(console.error)
+            }
+        },
+    });
 
 
     const getStatusColor = (status: ManualTaskWithOutputs['status']) => {
