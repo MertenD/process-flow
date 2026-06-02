@@ -3,17 +3,22 @@ import { PrismaClient } from "../lib/generated/prisma"
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log("Seeding node definitions from Supabase backup (2025-07-07)...")
+  console.log("Seeding node definitions...")
+
+  // Remove legacy AI activity definitions that have been replaced by OpenRouter Call
+  const legacyNames = ["ChactivityGPT", "ChatGPT Call"]
+  for (const name of legacyNames) {
+    const deleted = await prisma.nodeDefinition.deleteMany({
+      where: { definition: { path: ["name"], equals: name } },
+    })
+    if (deleted.count > 0) {
+      console.log(`  Deleted legacy definition "${name}" (${deleted.count} row(s))`)
+    }
+  }
 
   // ---------------------------------------------------------------------------
   // Node Definitions
-  // Original IDs from Supabase: 1, 2, 3, 5
-  // created_by / team_id set to null — old Supabase user/team IDs no longer exist.
-  // TeamsNodeDefinitions from the old DB:
-  //   Team 5  → NodeDefs 1, 2, 3, 5
-  //   Team 11 → NodeDefs 1, 2
-  //   Team 13 → NodeDef  3
-  // Re-add those via the Shop UI or via TeamsNodeDefinitions inserts once teams exist.
+  // created_by / team_id set to null — public/team-level definitions.
   // ---------------------------------------------------------------------------
 
   const nodeDefs = [
@@ -159,61 +164,44 @@ async function main() {
     },
     {
       definition: {
-        icon: "BotMessageSquare",
-        name: "ChactivityGPT",
-        executionUrl: "https://processflow.mertendieckmann.de/chatgpt",
-        executionMode: "Automatic",
-        shortDescription: "Führt einen ChatGPT Prompt aus",
-        optionsDefinition: {
-          title: "ChactivityGPT",
-          nodeId: "",
-          structure: [
-            {
-              type: "textarea",
-              label: "Prompt",
-              keyString: "prompt",
-              placeholder: "Gib hier den Prompt für ChatGPT ein",
-            },
-            {
-              type: "VariableNameInput",
-              label: "Variablenname",
-              keyString: "outputs.variablenname",
-              placeholder: "Die Variable in der die Antwort gespeichert wird",
-            },
-          ],
-        },
-        markdownDocumentation:
-          "Gib den Prompt ein der ausgeführt werden soll und gib an wie die Variable heißen soll, in die die Ausgabe von ChatGPT gespeichert werden soll",
-      },
-      visibility: "Team" as const,
-    },
-    {
-      definition: {
         icon: "BrainCircuit",
-        name: "ChatGPT Call",
-        executionUrl: "https://chatgpt.mertendieckmann.de/call",
+        name: "OpenRouter Call",
+        executionUrl: process.env.ACTIVITY_OPENROUTER_URL ?? "https://processflow.merten.tech/activities/openrouter/call",
         executionMode: "Automatic",
-        shortDescription: "Send a request to ChatGPT",
+        shortDescription: "Send a prompt to any AI model via OpenRouter",
         optionsDefinition: {
-          title: "ChatGPT Call",
-          nodeId: "",
+          title: "OpenRouter Call",
           structure: [
             {
               type: "input",
-              label: "OpenAI API Key",
-              keyString: "openAIAPIKey",
-              placeholder: "sk-...x9wA",
+              label: "OpenRouter API Key",
+              keyString: "apiKey",
+              placeholder: "sk-or-v1-...",
+            },
+            {
+              type: "input",
+              label: "Model",
+              keyString: "model",
+              placeholder: "openai/gpt-4o-mini",
+              suggestions: [
+                "openai/gpt-4o",
+                "openai/gpt-4o-mini",
+                "anthropic/claude-3-5-sonnet",
+                "anthropic/claude-3-haiku",
+                "meta-llama/llama-3.1-8b-instruct",
+                "google/gemini-flash-1.5",
+              ],
             },
             {
               type: "textarea",
-              label: "Prompt",
+              label: "System Prompt",
               keyString: "prompt",
-              placeholder: "Do something with the following data...",
+              placeholder: "You are a helpful assistant.",
             },
             {
               type: "Select with custom",
-              label: "Additional Data",
-              keyString: "additionalData",
+              label: "User Input",
+              keyString: "userInput",
               defaultValue: "",
               options: [],
             },
@@ -221,16 +209,20 @@ async function main() {
               type: "VariableNameInput",
               label: "Output Variable Name",
               keyString: "outputs.outputVariableName",
-              placeholder: "e.g. chatgptAnswer",
+              placeholder: "e.g. aiResponse",
             },
           ],
         },
         markdownDocumentation:
-          "## How to use\n\n1. Provide your OepnAI API Key.\n2. Provide a prompt that the AI should use.\n3. Provide additional data in form of a variable value that should be used to extend the prompt.\n4. Provide a variable name where the ChatGPT output should be saved to.",
+          "## OpenRouter Call\n\nSend a prompt to any AI model via [OpenRouter](https://openrouter.ai).\n\n### Configuration\n\n1. **API Key** – Your OpenRouter API key (starts with `sk-or-`).\n2. **Model** – Model identifier in `provider/model-name` format. Examples:\n   - `openai/gpt-4o`\n   - `anthropic/claude-3-5-sonnet`\n   - `meta-llama/llama-3.1-8b-instruct`\n3. **System Prompt** – Instructions that define the AI's behavior.\n4. **User Input** – Optional process variable whose value is sent as the user message.\n5. **Output Variable Name** – The process variable that will store the AI's response.\n\n### How it works\n\nAt runtime the node calls the OpenRouter API and writes the AI response into the specified output variable. Downstream nodes can then read this variable.",
       },
       visibility: "Public" as const,
     },
   ]
+
+  // Activities whose executionUrl is resolved from env vars must always be
+  // upserted so a URL change takes effect when the seed is re-run.
+  const alwaysUpdate = new Set(["OpenRouter Call"])
 
   for (const def of nodeDefs) {
     const name = (def.definition as { name: string }).name
@@ -238,7 +230,15 @@ async function main() {
       where: { definition: { path: ["name"], equals: name } },
     })
     if (existing) {
-      console.log(`  Skipping "${name}" — already exists (id=${existing.id})`)
+      if (alwaysUpdate.has(name)) {
+        await prisma.nodeDefinition.update({
+          where: { id: existing.id },
+          data: { definition: def.definition, visibility: def.visibility },
+        })
+        console.log(`  Updated "${name}" (id=${existing.id})`)
+      } else {
+        console.log(`  Skipping "${name}" — already exists (id=${existing.id})`)
+      }
       continue
     }
     const created = await prisma.nodeDefinition.create({

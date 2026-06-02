@@ -1,0 +1,14 @@
+{
+  "name": "activity-openrouter",
+  "version": "1.0.0",
+  "description": "OpenRouter custom activity for ProcessFlow",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "express": "^4.21.2"
+  }
+}

@@ -1,11 +1,11 @@
----
+﻿---
 title: Creating Custom Activities
 description: How to develop, configure, and deploy custom manual or automatic activities for your process flows.
 ---
 
 It is possible to create your own activities that can be used in the editor and then executed on your own server when they are reached in the process. These activities can be either **manual tasks**—made available to users in their worklists for processing—or **automatic activities**, which run immediately without user interaction.
 
-In this walk‑through we build an automatic **ChatGPT** activity. In the editor you will be able to supply a *system prompt* and a *user input*. At runtime the node calls the OpenAI API and writes ChatGPT’s reply back into the workflow. The sample process lets a user enter a topic, asks ChatGPT to explain it, and finally shows the explanation to the user.
+In this walk‑through we build an automatic **OpenRouter** activity. In the editor you will be able to supply a *system prompt* and a *user input*. At runtime the node calls the OpenRouter API and writes the AI response back into the workflow. The sample process lets a user enter a topic, asks the AI to explain it, and finally shows the explanation to the user.
 
 ![Final Process Preview](/assets/custom-node/final-process.png)
 
@@ -76,7 +76,7 @@ Your server receives the option values **plus** three technical fields:
 
 💡 Always return **HTTP 200 OK immediately** to avoid workflow timeouts.
 
-### Example – ChatGPT server (Node.js)
+### Example – OpenRouter server (Node.js)
 
 ```javascript
 const express = require('express');
@@ -92,46 +92,46 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 
-app.post('/call', async (req, res) => {
-  // 1 — acknowledge immediately
+app.post('/openrouter', async (req, res) => {
+  // 1 — acknowledge immediately
   res.sendStatus(200);
 
   const { responsePath, errorResponsePath, flowElementInstanceId } = req.body;
-  const { openAIAPIKey, prompt, additionalData, outputs } = req.body.data;
+  const { apiKey, model, prompt, userInput, outputs } = req.body.data;
   const outputVar = outputs.outputVariableName;
 
   try {
-    const openAiResp = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+    const messages = [{ role: 'system', content: prompt }];
+    if (userInput) messages.push({ role: 'user', content: userInput });
+
+    const response = await axios.post(
+      'https://openrouter.ai/api/v1/chat/completions',
       {
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: prompt },
-          { role: 'user', content: additionalData },
-        ],
+        model: model || 'openai/gpt-4o-mini',
+        messages,
       },
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${openAIAPIKey}`,
+          Authorization: `Bearer ${apiKey}`,
         },
       },
     );
 
     await axios.post(responsePath, {
       flowElementInstanceId,
-      data: { [outputVar]: openAiResp.data.choices[0].message.content },
+      data: { [outputVar]: response.data.choices[0].message.content },
     });
   } catch (err) {
     await axios.post(errorResponsePath, {
       flowElementInstanceId,
-      errorMessage: `ChatGPT call failed: ${err.message}`,
+      errorMessage: `OpenRouter call failed: ${err.message}`,
     });
   }
 });
 
 app.listen(process.env.PORT || 3030, () =>
-  console.log('ChatGPT node listening …'),
+  console.log('OpenRouter node listening …'),
 );
 ```
 
@@ -141,11 +141,11 @@ Once saved, the activity appears for everyone under **Shop**. The detail page sh
 
 ![Step 5 – Shop Detail](/assets/custom-node/details-in-shop.png)
 
-In the sample workflow below, a previous node stores the user‑entered topic in the variable `{input}`. The ChatGPT node reads this value via the **Additional Data** field.
+In the sample workflow below, a previous node stores the user‑entered topic in the variable `{input}`. The OpenRouter node reads this value via the **User Input** field.
 
 ![Step 6 – Editor Usage](/assets/custom-node/create-process-2.png)
 
-Finally, the process shows ChatGPT’s reply (`{chatGPTAnswer}`) to the user in an info‑text task.
+Finally, the process shows the AI’s reply (`{aiResponse}`) to the user in an info‑text task.
 
 ![Step 7 – Display Result](/assets/custom-node/create-process-3.png)
 

@@ -13,12 +13,29 @@ services:
       BETTER_AUTH_URL: https://processflow.merten.tech
       APP_URL: https://processflow.merten.tech
       NEXT_PUBLIC_APP_URL: https://processflow.merten.tech
+      # Custom activity URLs (used by seed + dispatch)
+      ACTIVITY_OPENROUTER_URL: https://processflow.merten.tech/activities/openrouter/call
     labels:
       - traefik.enable=true
-      - traefik.http.routers.process-flow.rule=Host(`processflow.merten.tech`)
+      - traefik.http.routers.process-flow.rule=Host(`processflow.merten.tech`) && !PathPrefix(`/activities`)
       - traefik.http.routers.process-flow.entrypoints=websecure
       - traefik.http.routers.process-flow.tls.certresolver=le-merten
       - traefik.http.services.process-flow.loadbalancer.server.port=3000
+
+  activity-openrouter:
+    image: mertend/activity-openrouter:latest
+    container_name: merten-activity-openrouter
+    restart: unless-stopped
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.activity-openrouter.rule=Host(`processflow.merten.tech`) && PathPrefix(`/activities/openrouter`)
+      - traefik.http.routers.activity-openrouter.entrypoints=websecure
+      - traefik.http.routers.activity-openrouter.tls.certresolver=le-merten
+      - traefik.http.routers.activity-openrouter.middlewares=strip-openrouter@docker
+      - traefik.http.middlewares.strip-openrouter.stripprefix.prefixes=/activities/openrouter
+      - traefik.http.services.activity-openrouter.loadbalancer.server.port=3000
 
   process-flow-db:
     image: postgres:17-alpine

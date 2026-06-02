@@ -161,8 +161,34 @@ Requires an external `web` Docker network with Traefik and a `le-merten` TLS res
 | `NEXT_PUBLIC_APP_URL` | ✅ | Public app URL (used client-side) |
 | `APP_URL` | ✅ | App URL used by the process engine for callbacks |
 | `DB_PASSWORD` | Docker | PostgreSQL password for the Docker Compose DB service |
+| `ACTIVITY_OPENROUTER_URL` | | Endpoint of the OpenRouter activity service (see below) |
 
 Copy `.env.example` to `.env` and fill in the values before running.
+
+---
+
+## Custom Activities
+
+Bundled automatic activity services live in `custom-activities/<name>/`. Each is an independent Node.js service (Express, `POST /call`, port 3000) that is built and deployed alongside the main app.
+
+| Service | Folder | Description |
+|---------|--------|-------------|
+| OpenRouter Call | `custom-activities/openrouter/` | Calls any LLM via [OpenRouter](https://openrouter.ai) |
+
+**URL routing per environment**
+
+| Environment | How the app reaches an activity |
+|---|---|
+| Local dev (`npm run dev`) | `http://localhost:<port>/call` — run the service separately |
+| Local Docker Compose | `http://activity-<name>:3000/call` — started automatically |
+| Production | `https://processflow.merten.tech/activities/<name>/call` — routed by Traefik |
+
+**Adding a new activity**
+
+1. Create `custom-activities/<name>/` with `server.js` (`POST /call`), `package.json`, and a `Dockerfile`
+2. Add an `activity-<name>` service to both compose files (copy the openrouter block as a template)
+3. Add `ACTIVITY_<NAME>_URL` to `.env`, `.env.example`, and both compose files
+4. Add the node definition to `prisma/seed.ts` and include the name in the `alwaysUpdate` set so URL changes are applied on re-seed
 
 ---
 
