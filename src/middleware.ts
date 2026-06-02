@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
         pathname.startsWith("/authenticate") ||
         pathname.startsWith("/api/auth") ||
         pathname.startsWith("/api/instance") ||
-        pathname === "/docs" ||
+        pathname.startsWith("/docs") ||
         pathname === "/"
 
     if (isPublic) return response
