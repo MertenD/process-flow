@@ -23,6 +23,7 @@ services:
       - traefik.http.services.process-flow.loadbalancer.server.port=3000
 
   activity-openrouter:
+    build: ./custom-activities/openrouter
     image: mertend/activity-openrouter:latest
     container_name: merten-activity-openrouter
     restart: unless-stopped
